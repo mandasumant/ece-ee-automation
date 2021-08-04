@@ -1,0 +1,33 @@
+{
+    "user": {
+        "email": "{{email}}" ,
+        "currency": "{{currency}}" ,
+        "paymentProfile": {
+            "billingInfo": {
+                "city": "{{city}}" ,
+                "companyName": "{{companyName}}" ,
+                "country": "{{country}}" ,
+                "firstName": "{{firstName}}" ,
+                "lastName": "{{lastName}}" ,
+                "phoneNumber": "{{phoneNumber}}" ,
+                "postalCode": "{{postalCode}}" ,
+                "stateProvince": "{{stateProvince}}" ,
+                "streetAddress": "{{streetAddress}}" 
+            },
+            "isVatExempt": false,
+            "paymentInfo": {
+                "encryptedCardNumber": "test_4111111111111111",
+                "expMonth": "test_03",
+                "expYear": "test_2030",
+                "encryptedCVV": "test_737",
+                "paymentMethod": "VISA",
+                "formattedPaymentMethod": "Visa"
+            },
+            "paymentProcessor": "ADYEN",
+            "type": "CREDIT_CARD"
+        },
+        "origin": "ESTORE",
+        "phone": "11234567890",
+        "ip": "132.188.1.20"
+    }
+}
