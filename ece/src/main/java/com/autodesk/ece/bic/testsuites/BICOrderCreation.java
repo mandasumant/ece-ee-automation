@@ -44,7 +44,6 @@ public class BICOrderCreation extends ECETestBase {
 		testDataForEachMethod.put("paymentType", paymentType);
 	}
 
-	
 	@Test(groups = { "bic-changePayment-US" }, description = "Validation of BIC change payment details functionality")
 	public void validateBICChangePaymentProfile() {
 		Util.printInfo("Gathering payment details...");
