@@ -25,8 +25,6 @@ public class BICOrderCreation extends ECETestBase {
 	public void beforeClass() {
 		String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
 		loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-		String restFileKey = "REST_" + GlobalConstants.ENV.toUpperCase();
-		loadRestYaml = YamlUtil.loadYmlUsingTestManifest(restFileKey);
 	}
 
 	@BeforeMethod(alwaysRun = true)
