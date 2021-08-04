@@ -1,0 +1,8 @@
+Set-StrictMode -Off
+route DELETE 169.254.169.123
+route DELETE 169.254.169.249
+route DELETE 169.254.169.250
+route DELETE 169.254.169.251
+route DELETE 169.254.169.253
+route DELETE 169.254.169.254
+Remove-Item C:\TestingHub\SAPConfig\*.*

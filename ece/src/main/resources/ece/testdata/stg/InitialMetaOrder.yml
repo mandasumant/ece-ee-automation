@@ -1,0 +1,1432 @@
+﻿#Test data for initial order
+---
+default:
+    soldToParty: "5151245166"
+    ratePlanPPU: "NO"
+    shipToParty: "5151245129"
+    supportingReseller: "5151245166"
+    conPerson: "3232406836"
+    salesOrg: "3000"
+    division: "10"
+    sapOrderType: "GOR"
+    version: "Y"
+    distributionChannel: "02"
+    streetAddress: "116486 Falk Trail"  #"1550 Wewatta Street"
+    addressCity: "Northfield" #"Denver"
+    country: "United States"
+    countryCode : "US"
+    geo: "Amer"
+    currency: "USD"
+    language: "EN"
+    postalCode: "55057" #"80202"
+    region: "MN" #"Col"
+    timeZone: "CST"
+    contractStartDate: "No"
+    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+    consumerSecret: "7uEvzknwGleyd3Kv"
+    callbackURL: "https://autodesk.com"
+    csn: "123456789"
+    apigeeURL: "https://enterprise-api-stg.autodesk.com"
+    transcoding: "UTF-8"
+    responseType: "application/xml"
+    accessTokenURL: "https://enterprise-api-stg.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    macCSN: "5129772911"
+    macHeaderCSN: "123456789"
+    macResponseType: "application/xml"
+    macTranscoding: "UTF-8"
+    macSALEREPRESENT: "s9999"
+    macUser: "sysid_SFDC"
+    macPass: "Password1"
+    cepURL: "https://customer-stg.autodesk.com/"
+    getMyPriceURL: "http://tibappst-vip.autodesk.com:4139/Services/Price/SKUPriceService"
+    name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
+    matchAccountContactServiceEndPointURL: "https://enterprise-api-stg.autodesk.com/v2/matchaccountcontact"    
+    stack: "api-dev"
+    type: "new"
+    ordertype: "nonbicindirect"
+    versionN: "N"
+    switchSkuDetails: "sku=02HI1-WWNC44-L123,qty=1,hgvlt="
+    partialSwitch: "NO"  
+    Maintenance: "No"
+    overrideContractDates: "No"
+    password: "Password1"
+    customerCSNGMP : "5131488572"                          #Need to check with Aravind
+    consumerKeyGMP : "gcyKXIXz2wsvNM0b8xdkGEp4B3oRybld"    #Need to check with Aravind
+    consumerSecretGMP : "ogWy2UHJapMYWmvR"                 #Need to check with Aravind
+    callbackURLGMP : "www.deseqaautomation.com"            #Need to check with Aravind
+    partnerAccount: "0000248038"      
+    purchaseOrderType: null
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+    order: "undefined"
+
+#----------------------------------BOSS2 SKU--------------------------------
+
+#Initial    
+    skuBoss2SAPDesktopInitialOrder : &SAPDesktopInitialOrderQty5 "sku=128M1-WWN881-L782,qty=5,hgvlt="
+    skuBoss2SAPDesktopInitialOrder1 : &SAPDesktopInitialOrderQty1 "sku=128M1-WWN881-L782,qty=1,hgvlt="
+    skuBoss2SAPDesktopInitialOrder2 : &SAPDesktopInitialOrderQty2 "sku=128M1-WWN881-L782,qty=2,hgvlt="
+    skuBoss2SAPDesktopInitialOrder22 : &SAPDesktopInitialOrderQty22 "sku=128M1-WWN881-L782;128M1-WWN881-L782,qty=2;2,hgvlt="
+    skuBoss2SAPInitialOrder : &SAPInitialOrder "sku=128M1-WWN881-L782,qty=1,hgvlt="    
+    
+#Meta_SUS   
+    skuBoss2SAPMetaOrderSUS5 : &SAPMetaOrderSUSQty5 "sku=128M1-WWN881-L782,qty=5,hgvlt="  
+    skuBoss2SAPMetaOrderSUS1 : &SAPMetaOrderSUSQty1 "sku=128M1-WWN881-L782,qty=1,hgvlt=" 
+    skuBoss2SAPMetaOrderSUS2 : &SAPMetaOrderSUSQty2 "sku=128M1-WWN881-L782,qty=2,hgvlt="
+    
+#Meta_Network / MultiUser
+    skuBoss2SAPMetaOrderNetwork : &SAPMetaOrderNetwork "sku=02HI1-WWN760-L231,qty=1,hgvlt="
+    skuBoss2SAPMetaOrderNetwork1 : &SAPMetaOrderNetwork1 "sku=02HI1-WWN760-L231;02HI1-WWN760-L231,qty=2;2,hgvlt="
+#MUS_SUS    
+    skuBoss2SAPMUSSUS : &SAPMUSSUS "sku=128H1-WW6542-L618;02HI1-WW7691-L522,qty=1;1,hgvlt="
+    skuBoss2SAPMUSSUS1 : &SAPMUSSUS1 "sku=02HI1-WWN760-L231;02HI1-WW7691-L522,qty=5;5,hgvlt="
+    skuBoss2SAPMUSSUS2 : &SAPMUSSUS2 "sku=128H1-WW6542-L618;128K1-WW6542-L618,qty=5;5,hgvlt="
+    
+#IC Order
+    skuBoss2SAPICOrder : &SAPICOrder "sku=02HI1-WWN760-L231,qty=1,hgvlt="
+    skuBoss2SAPICOrder1 : &SAPICOrder1 "sku=02HI1-WWN760-L231;02HI1-WWN760-L231,qty=1;1,hgvlt="
+    skuBoss2SAPICOrder2 : &SAPICOrder2 "sku=02HI1-WW7691-L522,qty=1,hgvlt="
+    skuBoss2SAPICOrderOnly : &SAPICOrderOnly "02HI1-WW7691-L522"
+    
+#Sorrento   
+    skuBoss2SAPSorrentoOrder : &SAPSorrentoOrder "sku=C1RK1-WW1367-L168,qty=1,hgvlt="
+    skuBoss2SAPSorrentOnly : &SAPSorrentOnly "C1RK1-WW1367-L168"
+   
+#EDU
+    skuBoss2SAPEDUOrder : &SAPEDUOrder "sku=208H1-WWN221-L461,qty=1,hgvlt="
+
+#Perpetual
+    skuBoss2SAPPerpetualOrder :  &SAPPerpetualOrder "sku=128H1-00Z1C1-100N,qty=4,hgvlt="
+   
+#Maintenance
+    skuBoss2SAPMaintenanceOrder : &SAPMaintenanceOrder "sku=001M1-WWR117-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+    skuBoss2SAPMaintenanceOrder1 : &SAPMaintenanceOrder1 "sku=001M1-WWR217-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+    skuBoss2SAPMaintenanceOrder2 : &SAPMaintenanceOrder2 "sku=001M1-WWR217-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+    skuBoss2SAPMaintenanceOrder3 : &SAPMaintenanceOrder3 "sku=001M1-WWR117-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+    skuBoss2SAPMaintenanceOrder4 : &SAPMaintenanceOrder4 "sku=001M1-WWR217-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+    skuBoss2SAPMaintenanceOrder5 : &SAPMaintenanceOrder5 "sku=001M1-WWR217-1001;00100-000000-9860,qty=4;4,hgvlt=10;"
+    skuBoss2SAPMaintenanceOrder6 : &SAPMaintenanceOrder6 "sku=001M1-WWR217-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+    
+#M2S
+    skuBoss2SAPM2SOrder : &SAPM2SOrder "sku=A9KN1-WW1C74-L471,qty=1;1,hgvlt="
+    skuBoss2SAPM2SOrder1 : &SAPM2SOrder1 "sku=A9KN1-WW1C74-L471,qty=1,hgvlt="
+    skuBoss2SAPM2SOrder2 : &SAPM2SOrder2 "sku=A9KN1-WW1C74-L471,qty=1,hglt="
+    skuBoss2SAPM2SOrder3 : &SAPM2SOrder3 "sku=057N1-WWNC57-L121,qty=1,hglt="
+    skuBoss2SAPM2SOrder4 : &SAPM2SOrder4 "sku=A9KN1-WW1C74-L471,qty=1,hgvlt="
+    skuBoss2SAPM2SOrder5 : &SAPM2SOrder5 "sku=A9KN1-WW1C74-L471;SUS,qty=2;2,hgvlt=" 
+    
+#MU M2S SKUs
+    skuBoss2SAPMUM2SOrder : &SAPMUM2SOrder "sku=057N1-WWNC57-L121,qty=1,hglt="
+    skuBoss2SAPMUM2SOrder2 : &SAPMUM2SOrder2 "sku=057N1-WWNC57-L121,qty=2,hglt="
+    
+#BicIndirect_Meta    
+    skuBoss2SAPMetaBicIndirect : &SAPMetaBicIndirect "sku=128K1-WW6542-L618,qty=1,hgvlt="
+    skuBoss2SAPMetaBicIndirect1 : &SAPMetaBicIndirect1 "128K1-WW6542-L618"
+    
+#Switch_SKU   
+    skuBoss2SAPSwitchOrderBicIndirect : &SAPSwitchOrderBicIndirect "sku=128K1-WW6542-L618,qty=1,hgvlt="
+    skuBoss2SAPSwitchOrderBicIndirect2 : &SAPSwitchOrderBicIndirect2 "sku=128K1-WW6542-L618,qty=2,hgvlt="
+    skuBoss2SAPSwitchOrder : &SAPSwitchOrder "sku=02JI1-WW8C33-L551,qty=1,hgvlt="
+    skuBoss2SAPPartialSwitchOrder : &SAPPartialSwitchOrder "sku=128K1-WW6542-L618;128K1-WW6542-L618,qty=1;1,hgvlt="
+ 
+#Tflex
+    skuBoss2SAPTflexInitialOrderOld : &SAPTflexInitialOrderOld "sku=535M1-000711-MTFX,qty=1,hgvlt="
+    skuBoss2SAPTflexInitialOrder : &SAPTflexInitialOrder "sku=535M1-000711-MTFX,qty=1,hgvlt="
+    skuBoss2SAPTflexTokenOrder : &SAPTflexTokenOrder "sku=53500-INITOK-TFLX,qty=1,hgvlt="
+    
+#User Pack
+    skuBoss2SAPUserPackOrder : &SAPUserPackOrder "sku=C38L1-WW1043-L264,qty=1,hgvlt="
+    
+#Mix Order
+    skuBoss2SAPMixedOrder : &SAPMixedOrder "sku=128K1-WW6542-L618;02HI1-WWN760-L231,qty=1;1,hgvlt="
+    skuBoss2SAPMixedOrder1 : &SAPMixedOrder1 "sku=02HI1-WWN760-L231,qty=1,hgvlt="
+    skuBoss2SAPMixedOrder2 : &SAPMixedOrder2 "sku=02HI1-WWN760-L231,qty=2,hgvlt="
+    skuBoss2DROnlyMixedOrder3 : &DROnlyMixedOrder "128K1-WW6542-L618;02HI1-WWN760-L231"
+    
+#MYR
+    skuBoss2SAPMYROrder : &SAPMYROrder "sku=C1RK1-WW1525-L657,qty=2,hgvlt="
+    skuBoss2SAPMYROrder1 : &SAPMYROrder1 "sku=C1RK1-WW1525-L657,qty=1,hgvlt="
+    skuBoss2SAPMYROrder2 : &SAPMYROrder2 "sku=C1RK1-WW1525-L657;C1RK1-WW1525-L657,qty=1;1,hgvlt="
+    MYRAddProduct : &MYRAddProduct "sku=C1RK1-WW1525-L657,qty=1,hglv="
+    MYRRenewalOrder : &MYRRenewalOrder "sku=02HI1-WW2625-L590,qty=2,hgvlt="
+    MYRAddCreditsOrder : &MYRAddCreditsOrder "sku=88100-000000-5401,qty=1,hgvlt="
+    
+#PremiumSubs
+    skuBoss2SAPPremiumSubscription : &SAPPremiumSubscription "sku=C3JM1-WW005M-L946,qty=1,hgvlt="
+    skuBoss2SAPPremiumSubscriptionInitialOrder : &SAPPremiumSubscriptionInitialOrder "sku=128K1-WW6542-L618,qty=1,hgvlt="
+    
+#NFR
+    skuBoss2SAPNFROrder : &SAPNFROrder "sku=128M1-WW8451-L245,qty=1,hgvlt="
+    
+#CRDR
+    skuBoss2SAPCRDROrder : &SAPCRDROrder "sku=529M1-WS51T1-L001,qty=5,hgvlt="
+    skuBoss2SAPCRDROrderOnly : &SAPCRDROrderOnly "529M1-WS51T1-L001"
+    
+#Extension 
+    skuBoss2SAPExtensionOrder : &SAPExtensionOrder "sku=02KI1-005995-L403,qty=1,hgvlt="
+    
+#MU2SU
+    skuBoss2SAPMU2SUOrder : &SAPMU2SUOrder "sku=657N1-WW3C98-L103,qty=1,hglt="   #Maint to Mu2Su
+    skuBoss2SAPMU2SUOrder1 : &SAPMU2SUOrder1 "sku=657N1-WW3C47-L972,qty=1,hglt=" #M2S to mu2su
+    skuBoss2SAPMU2SUOrder2 : &SAPMU2SUOrder2 "sku=657N1-WW3C90-L894,qty=1,hglt=" #Meta to Mu2su
+    skuBoss2SAPMU2SUOrder3 : &SAPMU2SUOrder3 "sku=657N1-WW7C80-L316,qty=1,hglt=" #MY4 to mu2su
+
+#PPU
+    skuBoss2PSAPPUOrder1 : &skuBoss2PSAPPPUOrder "sku=C21L1-WW8500-L937;85933-157571-5723,qty=1;130,hgvlt="
+    skuBoss2SAPPPUOrder2 : &SAPPPUOrder "sku=C21L1-WW8500-L937,qty=1,hgvlt="
+   
+#DR   
+    DROrder : &DROrder "128M1-WWN881-L782"
+    DRPremiumSubsOrder : &DRPremiumSubsOrder "C3JM1-WW005M-L946"
+    DRICOrder : &DRICOrder "02HI1-WWN760-L231"
+    DRBICIndirect : &DRBICIndirect "057N1-WW7198-L544"
+    DRSorrentoOrder : &DRSorrentoOrder "C1RK1-WW1367-L168"
+    DRUpdateOrder : &DRUpdateOrder "128M1-WWN881-L782"
+    DRRecurringOrder : &DRRecurringOrder  "128M1-WW1038-L575"
+    DRCancelOrder : &DRCancelOrder "128M1-WW1038-L575"   
+    
+#-------------------------------------------------------------------------------------------------------------------
+
+#===================================== Testdata creation and validation ===================================
+validateNewUserDynamo:
+    vaidationType: "no"
+    type: "new"
+    
+#======================================== DR Orders Mesh =================================================== 
+validateDigitalRiverOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DROrder
+    qty: "1"
+    price: "" 
+    accountCSN: "5151245096"
+    
+validateDRPremiumSubsOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRPremiumSubsOrder
+    qty: "1"
+    price: "" 
+    accountCSN: "5151245096"
+    
+validateDigitalRiverOrderMUS:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WWN390-L178"
+    qty: "1"
+    price: ""
+    accountCSN: "5151245096"
+    
+validateDigitalRiverICOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRICOrder
+    qty: "1"
+    dataSets: "US"
+    price: ""
+    accountCSN: "5151245096"
+    
+validateDigitalRiverSorrentoOrder:  
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRSorrentoOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5151245096"
+    
+validateDigitalRiverUpdateOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRUpdateOrder
+    qty: "1"
+    accountCSN: "5151245096"
+    price: ""
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"  
+
+validateDigitalRiverRecurringUpdateOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRRecurringOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5151245096"
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+
+DigitalRiverBicIndirectE2EOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRBICIndirect
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5151245096"
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+    cancelEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitcancelsubscription"
+    ordertype: "bicindirect"
+    
+validateDigitalRiverCancelOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DROrder
+    qty: "1"
+    price: ""
+    accountCSN: "5151245096"
+    cancelEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitcancelsubscription"
+    
+validateDigitalRiverRecurringCancelOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRCancelOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5151245096"
+    cancelEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitcancelsubscription"
+    
+validateDigitalRiverBicIndirectOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5151245096"
+    ordertype: "bicindirect"
+    
+validateDRBicIndirectSorrentoOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPSorrentOnly
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5151245096"
+    ordertype: "bicindirect"
+
+validateDRBicIndirectICOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPICOrderOnly
+    qty: "1"
+    price: ""
+    accountCSN: "5151245096"
+    dataSets: "US"
+    ordertype: "bicindirect"
+    region: ""
+    
+validateDigitalRiverBicIndirectUpdateOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5151245096"
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+    ordertype: "bicindirect"
+
+validateDigitalRiverAddCloudCredit:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    addProductSku: "88100-000000-5401"
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5151245096"
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+    ordertype: "bicindirect"
+    
+validateDigitalRiverBicIndirectCancelOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5151245096"
+    cancelEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitcancelsubscription"
+    ordertype: "bicindirect"
+
+#Akarsh Missing SKU and CSN 
+validateDigitalRiverOrderDenmark:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "Business Center Havnegade APS"
+    addressCity: "Northfield" #"Denver"
+    country: "Denmark"
+    countryCode : "DK"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "1058" 
+    region: "NE" 
+    currency: "DKK"
+
+#Akarsh Missing SKU and CSN
+validateDigitalRiverOrderNorway:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "Postboks 447 Sentrum"
+    emailid: "norwaycontnew01@letscheck.pw"
+    addressCity: "OSLO"
+    country: "Norway"
+    countryCode : "NO"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "0104" 
+    region: ""
+    currency: "NOK"
+    partnerAccount: "0000248038"
+
+#Akarsh Missing SKU and CSN 
+validateDigitalRiverOrderSweden:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "Moelndalsvaegen 24"
+    emailid: "swedencontnew02@letscheck.pw"
+    addressCity: "Göteborg"
+    country: "Sweden"
+    countryCode : "SE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "400 20" 
+    region: "" 
+    currency: "SEK"
+    partnerAccount: "0000248038"
+
+#Akarsh Missing SKU and CSN
+validateDigitalRiverOrderSwitzerland:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "Worbstrasse 223"
+    emailid: "switzercontnew01@letscheck.pw"
+    addressCity: "Gümligen"
+    country: "Switzerland"
+    countryCode : "CH"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "3073" 
+    region: "" 
+    currency: "CHF"
+    partnerAccount: "0000248038"
+
+#Akarsh Missing SKU and CSN 
+validateDigitalRiverOrderPoland:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "ul. Odlewnicza 68"
+    emailid: "polandcontnew01@letscheck.pw"
+    addressCity: "Kraków"
+    country: "Poland"
+    countryCode : "PL"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "30-142" 
+    region: "" 
+    currency: "PLN"
+    partnerAccount: "0000248038"
+
+#Akarsh Missing SKU and CSN 
+validateDigitalRiverOrderChezRepublic:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "Karolinska 650/1 5 Th Floor"
+    emailid: "ChezRepubliccontnew01@letscheck.pw"
+    addressCity: "Praha 8"
+    country: "Czech Republic"
+    countryCode : "CZ"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "186 00" 
+    region: "" 
+    currency: "CZK"
+    partnerAccount: "0000248038"
+
+#Akarsh Missing SKU and CSN 
+validateDigitalRiverOrderAustralia:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Kilsyth"
+    country: "Austrailia"
+    countryCode : "AU"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "3137" 
+    region: "" 
+    currency: "AUD"
+    partnerAccount: "0000702014"
+
+#Akarsh Missing SKU and CSN 
+validateDigitalRiverOrderGermany:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Mainz"
+    country: "Germany"
+    countryCode : "DE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "55129"
+    region: "RP"
+    currency: "EUR"
+    partnerAccount: "0000702014"
+
+#Akarsh Missing SKU and CSN 
+validateDigitalRiverOrderFrance:
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Pessac"
+    country: "France"
+    countryCode : "FR"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "33600"
+    region: "RP"
+    currency: "EUR"
+    campaignIdentifier: "ADSKEREN"
+
+#Akarsh Missing SKU and CSN
+validateDigitalRiverOrderIreland:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: ""
+    qty: "1"
+    price: ""
+    accountCSN: ""
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Monasterevin"
+    country: "Ireland"
+    countryCode : "IE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "W34"
+    region: "N8"
+    currency: "EUR"
+    partnerAccount: "0000702014"
+    
+validateDigitalRiverMixedOrder:
+   endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+   sku: *DROnlyMixedOrder
+   qty: "1;1"
+   price: ""
+   accountCSN: "5151245096"
+   dataSets: "US"
+   ordertype: "mixed"
+   region: ""
+   
+validateDigitalRiverMediaKitOrder:
+   endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+   sku: "529M1-WS51T1-L001"
+   qty: "1"
+   dataSets: "US"
+   price: ""
+   accountCSN: "5151245096"
+
+validateDigitalRiverNCEOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "128M1-WW2014-L573"
+    qty: "1"
+    price: ""
+    accountCSN: "5151245096"
+
+#======================================== DR Orders Quarry ===================================================
+createDRInitialOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    accountCSN: "5151245096"
+    
+createDRICOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    accountCSN: "5130522094"
+    
+createDRSorrentoOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    accountCSN: "5151245096"
+    
+createDRBicindIrectOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    accountCSN: "5151245096"
+                    
+#================================================= AOE Orders =====================================
+createInitialAndAOERenewOrderWithExistinguser:
+    url: "https://adsknewstg-autodesk-communities.cs59.force.com/partnercommunity"     
+    skuDetails: *SAPDesktopInitialOrderQty1
+    soldToParty: "5151242995"
+    shipToParty: "5151245121"
+    supportingReseller: "5151242995"
+    enduserForFTrade: "5151245121"
+    contMgrSoftCoord: "5151245121"
+    emailid: "fy302106jdsj@letscheck.pw"
+    conPerson: "32401949"
+    enduserCSN: "5151245121"
+    email: "asklklsafiu68263partner@letscheck.pw"
+    username: "asklklsafiu68263partner@letscheck.pw" 
+    password: "Password1"     
+    dealer: "5131469036"
+    type: "5151242995"
+    
+#=================================== SAP HANA Fiori ===========================================================   
+validatateSAPHanaLogin:
+    tcode: "/nas01"
+    assetClassHANA: "HARDWARE"
+    companyCodeHANA: "1200"
+    costCenterTimeDependentHana: "1200200004"
+    plantTimeDependentHana: "1200"
+    locationTimeDependentHana: "BOURKE ST"
+    type: "no"
+
+validatateSAPFioriLoginTest:
+    GLAccountLine1: "612015"
+    DebitLine1: "10.00"
+    GLAccountLine2: "214017"
+    CreditLine2: "10.00"
+    TaxCode1: "ZZ"
+    TaxJurisdiction1: "0100100000"
+    costCenter1: "3000120001"
+    TaxCode2: "ZZ"
+    TaxJurisdiction2: "0100100000"
+    type: "no"
+            
+SAPS4APAnalyst:
+    GLAccountLine1: "612015"
+    DebitLine1: "10.00"
+    GLAccountLine2: "214017"
+    CreditLine2: "10.00"
+    TaxCode1: "ZZ"
+    TaxJurisdiction1: "0100100000"
+    costCenter1: "3000120001"
+    TaxCode2: "ZZ"
+    TaxJurisdiction2: "0100100000" 
+    
+SAPS4ManageSubscriptionOrders:
+    applicationName: "Manage Subscription Orders"   
+    criterion: "Transaction ID"
+    criterionOperator: "is"   
+    
+#====================================== Asset Transactions ========================================================     
+validateModifyCloudCredits:
+    modifyCloudCredit: "10"
+    skuDetails: *SAPMixedOrder2
+    soldToParty: "5151245272"
+    shipToParty: "5151245272"
+    supportingReseller: "5151245272"
+    enduserCSN:  "5151245272"
+    emailid: "djandsj@letscheck.pw"
+
+validateModifyCloudCreditsSUS:
+    modifyCloudCredit: "50"
+    
+validateContractTransfer:
+    skuDetails: *SAPDesktopInitialOrderQty5 
+    accountCSN: "5151245272"
+    
+validateAssetMove: 
+    test: ""
+    
+validateAssetMoveSUS:
+    test: ""    
+    
+validateContractMerge:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    enduserCSN:  "5151245272"
+    emailid: "djandsj@letscheck.pw"
+
+#============================== Asset Transations =============================================
+##---------------------------------- 
+## https://wiki.autodesk.com/pages/viewpage.action?spaceKey=SPGE&title=Testing+Hub+Enhancements 
+##---------------------------------- 
+#Asset Transaction
+executeApigeeMergeAPI :
+    skuDetails: *SAPDesktopInitialOrderQty22 
+
+#Asset Transaction    
+executeApigeeMergeAPISUS:
+    test: "" 
+  
+#Asset Transactions
+executeApigeeSplitAPI :
+   skuDetails: *SAPDesktopInitialOrderQty2 
+
+#Asset Transactions 
+executeApigeeSplitAPISUS:
+    test: ""
+
+#Asset Transactions
+executeApigeeMergeContractAPI :
+    skuDetails: *SAPDesktopInitialOrderQty1 
+ 
+#Asset Transactions
+executeApigeeMergeContractAPISUS :
+    skuDetails: *SAPMetaOrderSUSQty1
+
+#Asset Transactions
+executeApigeeSplitAPINonSubs :
+   skuDetails: *SAPPerpetualOrder
+   version: ""
+   Maintenance: "Yes"
+
+#Asset Transactions     
+executeContractTransfer :
+   skuDetails: *SAPDesktopInitialOrderQty2
+
+#Asset Transactions   
+executeContractTransferSUS :   
+   skuDetails: *SAPMetaOrderSUSQty2
+   
+#Akarsh Need agreement here
+changeCM :
+   agreement : ""
+
+#Akarsh Need agreement here
+changeSC :
+   agreement : ""
+ 
+#Akarsh Need agreement here
+changeReseller :
+   agreement : ""
+
+createPOSAOrderMesh:
+   activatePinURL: "https://customer-stg.autodesk.com/cep/#pin-activate"
+   streetAddress: "9 Pier"
+   addressCity: "San Francisco"
+   country: "United States"
+   stateProvinceStore: "Colorado"
+   pinCode: "94111"
+   sku: "128H1-WW6542-L618" #Apart from IC SKU we can give any SKU
+   qty: "1"
+   
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  DEFFERED  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#=============================================== SAP ===============================================
+
+#Related method not found hence commented these lines
+#validatateInitialOrderNewUser:
+#    sku: "128M1-WWN881-L782"   
+
+#Related method not found hence commented these lines    
+#validatateInitialOrderSUSNewUser:
+#    skuDetails: *SAPMetaOrderSUSQty5    
+
+#Related method not found hence commented these lines        
+#validatateInitialOrderExistingUser:
+#    skuDetails: *SAPDesktopInitialOrderQty1
+#    soldToParty: "5151245272"
+#    shipToParty: "5151245272"
+#    supportingReseller: "5151245272"
+#    enduserCSN: "5151245272"
+#    emailid: "djandsj@letscheck.pw"
+#    type: "existing"
+
+#Related method not found hence commented these lines 
+#validatateMusSusOrderExistingUser:
+#    skuDetails: *SAPMUSSUS
+#    soldToParty: "5151245272"
+#    shipToParty: "5151245272"
+#    supportingReseller: "5151245272"
+#    type: "existing"
+
+#Related method not found hence commented these lines     
+#validatateICOrderNewUser:
+#    skuDetails: *SAPICOrder
+#    soldToParty: "5151245272"
+#    shipToParty: "5151245272"
+#    supportingReseller: "5151245272"
+
+#Related method not found hence commented these lines 
+#validatateICOrderExistingUser:
+#    skuDetails: *SAPICOrder
+#    soldToParty: "5151245272"
+#    shipToParty: "5151245272"
+#    supportingReseller: "5151245272"
+#    enduserCSN: "5151245272"
+#    emailid: "djandsj@letscheck.pw"
+#    type: "existing"
+
+#Related method not found hence commented these lines     
+#validatateSorrentoOrderExistingUser:
+#    skuDetails: *SAPSorrentoOrder
+#    soldToParty: "5151245272"
+#    shipToParty: "5151245272"
+#    supportingReseller: "5151245272"
+#    type: "existing"
+
+#Related method not found hence commented these lines 
+#validatateEDUOrder:
+#    skuDetails: *SAPEDUOrder
+#    soldToParty: "5151245272"
+#    shipToParty: "5151245272"
+#    supportingReseller: "5151245272"
+ 
+#Related method not found hence commented these lines 
+#validatateEDUOrderExistingUser:
+#    skuDetails: *SAPEDUOrder
+#    soldToParty: "5151245272"
+#    shipToParty: "5151245272"
+#    supportingReseller: "5151245272"
+#    enduserCSN: "5151245272"
+#    emailid: "djandsj@letscheck.pw"
+#    type: "existing"
+
+#Related method not found hence commented these lines       
+#validatatePerpetualOrderNewUser:    
+#    skuDetails: *SAPPerpetualOrder
+#    soldToParty: "5151245272"
+#    shipToParty: "5151245272"
+#    supportingReseller: "5151245272"
+#    version: ""
+#    Maintenance: "Yes"
+
+#Related method not found hence commented these lines 
+# validatatePerpetualOrderExistingUser:
+   # skuDetails: *SAPPerpetualOrder 
+   # soldToParty: "5151245272"
+   # shipToParty: "5151245272"
+   # supportingReseller: "5151245272"
+   # enduserCSN: "5151245272"
+   # emailid: "djandsj@letscheck.pw"
+   # version: ""
+   # type: "existing"
+   # Maintenance: "Yes"
+
+#Related method not found hence commented these lines 
+# validatateMaintenanceOrderNewUser:
+    # skuDetails: *SAPMaintenanceOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # Maintenance: "Yes"
+
+#Related method not found hence commented these lines 
+# validatateMaintenanceOrderExitingUser:
+    # skuDetails: *SAPMaintenanceOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+    # Maintenance: "Yes"
+
+# Related method not found hence commented these lines   
+# validatateM2SOrder:
+    # skuDetails: *SAPMaintenanceOrder
+    # skuDetailsM2S: *SAPM2SOrder
+    # ratioOfSKUToSwitch: "1"
+    # opportunityType: "M"
+    # Maintenance: "Yes"
+
+# Related method not found hence commented these lines
+# validatateM2SOrderExisting:
+    # skuDetails: *SAPMaintenanceOrder
+    # skuDetailsM2S: *SAPM2SOrder
+    # ratioOfSKUToSwitch: "1"
+    # opportunityType: "M"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+    # Maintenance: "Yes"
+
+# Related method not found hence commented these lines        
+# validatateBicIndirectMetaOrder:
+    # skuDetails: *SAPMetaBicIndirect
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # dataSets: "US"
+    # ordertype: "bicindirect"
+
+# Related method not found hence commented these lines
+# validatateBicIndirectMetaOrderExistingUser:
+    # skuDetails: *SAPMetaBicIndirect
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # dataSets: "US"
+    # type: "existing"
+    # ordertype: "bicindirect"
+        
+# Related method not found hence commented these lines
+# validatateBicIndirectICOrder:
+    # skuDetails: *SAPICOrder2
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # dataSets: "US"
+    # ordertype: "bicindirect"
+
+# Related method not found hence commented these lines
+# validatateBicIndirectICOrderExistingUser:
+    # skuDetails: *SAPICOrder2
+    # soldToParty: "5131469515"
+    # shipToParty: "5131469515"
+    # supportingReseller: "5131469515"
+    # enduserCSN: "5130562525"
+    # emailid: "thub1574853292@letscheck.pw"
+    # dataSets: "US"
+    # type: "existing"
+    # ordertype: "bicindirect"
+
+# Related method not found hence commented these lines
+# validatateBicIndirectAddSeatOrderExistingUser:
+    # skuDetails: *SAPMetaBicIndirect
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # dataSets: "US"
+    # type: "existing"
+    # ordertype: "bicindirect"
+
+# Related method not found hence commented these lines
+# validatateBicIndirectAddProductOrderExistingUser:
+    # skuDetails: *SAPMetaBicIndirect
+    # addProductSkuDetails: *SAPSwitchOrderBicIndirect
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # dataSets: "US"
+    # type: "existing"
+    # ordertype: "bicindirect"
+
+# Related method not found hence commented these lines        
+# validatateTflexEstoreOrder:
+    # skuDetails: *SAPTflexInitialOrder
+    # skuDetailsToken: *SAPTflexTokenOrder
+    # orderReason: "Z81"
+
+# Related method not found hence commented these lines
+# validatateTflexOrderExistingUser:
+    # skuDetails: *SAPTflexInitialOrderOld
+    # orderReason: "Z81"
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # contMgrSoftCoord: "5151245272"
+    # conPerson: "32402104"
+    # type: "existing" 
+
+# Related method not found hence commented these lines
+# validatateUserpacksOrder:
+    # skuDetails: *SAPUserPackOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserForFTrade: "5151245272"
+    # enterSiteDataForCaseCreation: "Yes"
+    # customerType_SiteData: "N"
+    # siteName_SiteData: "Test1"
+    # siteAdminEmail_SiteData: "TestUPSiteDataa@gmail.com"
+    # siteDataCenter_SiteData: "US"
+    # siteURL_SiteData: "testURL.com"
+    
+# Related method not found hence commented these lines
+# validatateMixOrderNewUser:
+    # skuDetails: *SAPMixedOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserForFTrade: "5151245272"
+ 
+# Related method not found hence commented these lines
+# validateMYROrderNewUser:
+    # skuDetails: *SAPMYROrder
+
+# Related method not found hence commented these lines
+# validatePPUOrderNewUser:
+    # skuDetails: *SAPPPUOrder
+
+# Related method not found hence commented these lines
+# validatePremiumSubsOrderNewUser:
+    # skuDetails: *SAPPremiumSubscription
+ 
+# Related method not found hence commented these lines   
+# validateNFROrderNewUser:    
+    # skuDetails: *SAPNFROrder
+
+# Related method not found hence commented these lines
+# validatateAddSeatOrderExistingUser:
+    # skuDetails: *SAPDesktopInitialOrderQty1
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+
+# Related method not found hence commented these lines      
+# validatateAddProductOrderExistingUser:
+    # skuDetails: *SAPDesktopInitialOrderQty1
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+ 
+# Related method not found hence commented these lines
+# validatateReturnOrderExistingUser:
+    # skuDetails: *SAPDesktopInitialOrderQty1
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserCSN: "5151245272"
+    # supportingReseller: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # reason: "ZTO"
+    # type: "existing"
+  
+# Related method not found hence commented these lines  
+# validatateInitialAndSwitchOrderBicIndirectExistingUser:
+    # skuDetails: *SAPSwitchOrderBicIndirect
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # dataSets: "US"
+    # type: "existing"
+    # ordertype: "bicindirect"
+
+# Related method not found hence commented these lines
+# validatateInitialAndSwitchOrderExistingUser:
+    # skuDetails: *SAPInitialOrder
+    # switchSkuDetails: *SAPSwitchOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+ 
+# Related method not found hence commented these lines
+# validatateCROrderExistingUser:
+    # skuDetails: *SAPCRDROrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserForFTrade: "5151245272"
+    # cardValidity: "12/20"
+    # cardNo: "4444 3333 2222 1111"
+    # cardType: "VISA" 
+    # orderReason: "102"
+    # enduserCSN:  "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+
+# Related method not found hence commented these lines    
+# validatateSAPDRDebitMemoExistingUser:
+    # skuDetails: *SAPCRDROrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserForFTrade: "5151245272"
+    # cardValidity: "03/30"
+    # cardNo: "4400 0000 0000 0008"
+    # cardType: "VISA" 
+    # cvv: "737"
+    # orderReason: "ZTO"
+    # enduserCSN:  "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+
+# Related method not found hence commented these lines    
+# validatateExtensionOrderExistingUser:
+    # skuDetails: *SAPMixedOrder1
+    # extensionSku: *SAPExtensionOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserCSN:  "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+ 
+# Related method not found hence commented these lines
+# validateMaintenanceorderwithOppty:
+    # skuDetails: *SAPMaintenanceOrder1 
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # contMgrSoftCoord: "5151245272"
+    # Maintenance: "Yes"  
+
+# Related method not found hence commented these lines
+# validateNetworkSubsorderwithOppty:
+    # skuDetails: *SAPMetaOrderNetwork
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"
+    # contMgrSoftCoord: "5151245272"
+    # Maintenance: "Yes"
+ 
+# Related method not found hence commented these lines   
+# validatateInitialOrderWithUserCreation:
+    # skuDetails: *SAPDesktopInitialOrderQty2
+    # streetAddress: "17300 Brandywine"
+    # addressCity: "Bend"
+    # country: "US"
+    # language: "EN"
+    # postalCode: "97701-9137"
+    # region: "OR"
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+
+# Related method not found hence commented these lines
+# validatateBicindirectOrderWithUserCreation:
+    # skuDetails: *SAPSwitchOrderBicIndirect2
+    # streetAddress: "17300 Brandywine"
+    # addressCity: "Bend"
+    # country: "US"
+    # language: "EN"
+    # postalCode: "97701-9137"
+    # region: "OR"
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+
+# Related method not found hence commented these lines    
+# validatateBoss2OrderWithUserCreation:
+    # skuDetails: "sku=02GI1-WW7302-L221,qty=2,hgvlt="
+    # streetAddress: "17300 Brandywine"
+    # addressCity: "Bend"
+    # country: "US"
+    # language: "EN"
+    # postalCode: "97701-9137"
+    # region: "OR"
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+
+# Related method not found hence commented these lines
+# validatatePartialReturnOrderExistingUser:
+    # skuDetails: *SAPICOrder1
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # reason: "120"
+    # type: "existing"
+
+# Related method not found hence commented these lines
+# validatateReturnOrderExistingUser:
+    # skuDetails: *SAPDesktopInitialOrderQty1
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # reason: "ZTO"
+    # type: "existing"
+
+# Related method not found hence commented these lines
+# validatateMUSMultiProductMultiQtytNewUser:
+    # skuDetails: *SAPMUSSUS1
+  
+# Related method not found hence commented these lines  
+# validatateSUSMultiProductMultiQtytNewUser:
+    # skuDetails: *SAPMUSSUS2
+
+# Related method not found hence commented these lines
+# validatateZeroDollerBicIndOrderNewUser:
+    # skuDetails: "sku=128K1-WW6542-L618,qty=1,hgvlt="
+    # zeroDollarOrder: "yes"
+    # ordertype: "bicindirect"
+    # dataSets: "US"
+    
+# Related method not found hence commented these lines
+# validatateZeroDollerMUSOrderNewUser:
+    # skuDetails: "sku=966M1-WWN881-L782,qty=1,hgvlt="
+    # zeroDollarOrder: "yes"    
+   
+# Related method not found hence commented these lines
+# validateZeroDollarInitialAndSwitchOrder:   
+    # skuDetails: *SAPInitialOrder
+    # switchSkuDetails: *SAPSwitchOrder
+    # zeroDollarOrder: "yes"
+    # type: "existing"
+    
+# Related method not found hence commented these lines
+# createACDISTBoss2Order:
+    # skuDetails: "sku=C1RK1-WWN305-L810,qty=1,hgvlt="
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+        
+# Related method not found hence commented these lines
+# createBIM360Boss2Order:
+    # skuDetails: "sku=85433-029470-4901,qty=1,hgvlt="
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+  
+# Related method not found hence commented these lines
+# validateMediaKitOrderNewUser:
+    # skuDetails: "sku=529M1-WS51T1-L001,qty=1,hgvlt="
+    # version: ""
+    
+#SAP CJT - This method does not read the value from this file
+# validateMaintenancetoMU2SUOrder:
+    # skuDetails: *SAPMaintenanceOrder1 
+    # skuDetailsMu2Su: *SAPMU2SUOrder
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"
+    # contMgrSoftCoord: "5151245272"
+    # opportunityType: "MT"
+    # oldSerialNumberRowSelected: "1"
+    # Maintenance: "Yes"
+
+# Related method not found hence commented these lines
+# validatatePartialM2StoMU2SUOrder:
+    # skuDetailsM: *SAPMaintenanceOrder5
+    # skuDetailsM2S: *SAPMUM2SOrder2
+    # opportunityTypeM2S: "M"    
+    # skuDetailsMu2Su: *SAPMU2SUOrder1 
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"
+    # contMgrSoftCoord: "5151245272"
+    # opportunityTypeMu2Su: "MUS"
+    # parialSwitch: "YES"  
+    # rowSelectInterval: "1"
+    # Maintenance: "Yes"
+    # NonMaintenance: "No"
+    # overrideContractDates: "Yes"
+    
+#SAP CJT - Method is commented in SAP CJT
+# validateExistingNetworkM2SswitchtoMU2SU:
+    # skuDetails: *SAPMaintenanceOrder2 
+    # skuDetailsM2S: *SAPMUM2SOrder
+    # skuDetailsMu2Su: *SAPMU2SUOrder1
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"
+    # contMgrSoftCoord: "5151245272"
+    # opportunityType: "M"
+    # oldSerialNumberRowSelected: "1"
+    # Maintenance: "Yes"
+    # NonMaintenance: "No"
+    # overrideContractDates: "Yes"
+
+#SAP CJT - Method is commented in SAP CJT
+# validateMetaNetworkSubstoMU2SU:
+    # skuDetails: *SAPMetaOrderNetwork
+    # skuDetailsMu2Su: *SAPMU2SUOrder2
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"
+    # contMgrSoftCoord: "5151245272"
+    # opportunityType: "MUS"
+    # oldSerialNumberRowSelected: "1"
+    
+#SAP CJT - Method is commented in SAP CJT
+# validateMY4toMU2SU:
+    # skuDetails: *SAPMaintenanceOrder2
+    # skuDetailsM2S: *SAPMUM2SOrder
+    # skuDetailsMu2Su: *SAPMU2SUOrder3
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"
+    # contMgrSoftCoord: "5151245272"
+    # opportunityType: "M"
+    # oldSerialNumberRowSelected: "1"  
+    # Maintenance: "Yes"
+ 
+#SAP CJT - Method is commented in SAP CJT 
+# validateMaintenanceNetworktoMY4MU:
+    # skuDetails: *SAPMaintenanceOrder2
+    # skuDetailsMu2Su: *SAPMU2SUOrder
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"
+    # contMgrSoftCoord: "5151245272"
+    # opportunityType: "MT"
+    # oldSerialNumberRowSelected: "1"
+    # Maintenance: "Yes"
+
+#SAP CJT - This method does not read the value from this file
+# partialSwitchOrderExistingUser:
+    # skuDetails: *SAPPartialSwitchOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # enduserCSN:  "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+
+#SAP CJT - This method does not read the value from this file
+# partialSwitchM2SOrderSU:
+    # skuDetails: *SAPMaintenanceOrder3
+    # skuDetailsM2S: *SAPM2SOrder1
+    # ratioOfSKUToSwitch: "1"
+    # opportunityType: "M"
+    # Maintenance: "Yes"
+    
+#SAP CJT - This method does not read the value from this file
+# partialSwitchM2SOrderMU:
+    # skuDetails: *SAPMaintenanceOrder4
+    # skuDetailsM2S: *SAPMUM2SOrder
+    # ratioOfSKUToSwitch: "1"
+    # opportunityType: "M" 
+    # Maintenance: "Yes"
+    
+#SAP CJT - This method does not read the value from this file
+# MU2SUReturnOrder:
+    # skuDetails: *SAPMaintenanceOrder2
+    # skuDetailsMu2Su: *SAPMU2SUOrder
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"
+    # contMgrSoftCoord: "5151245272"
+    # opportunityType: "MT"
+    # oldSerialNumberRowSelected: "1"
+    # reason: "ZTO" 
+    
+#SAP CJT - This method does not read the value from this file
+# validatePartialMaintenancetoMU2SUOrder:
+    # skuDetails: *SAPMaintenanceOrder6
+    # skuDetailsMu2Su: *SAPMU2SUOrder
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # ratioOfSKUToSwitch: "1"    
+    # opportunityType: "MT"
+    # Maintenance: "Yes"
+    # NonMaintenance: "No"
+    
+#SAP CJT - This method does not read the value from this file
+# validatePartialMetatoMU2SU:
+    # skuDetails: *SAPMetaOrderNetwork1
+    # skuDetailsMu2Su: *SAPMU2SUOrder2    
+    # opportunityType: "MUS"    
+    # NonMaintenance: "No"
+    
+#SAP CJT - This method does not read the value from this file
+#validatePPUAddTokenOrderNewUser:
+    # skuDetails: *skuBoss2PSAPPPUOrder
+    
+    
+#===================================== Renewal =========================================================
+# Related method not found hence commented these lines
+# createInitialAndRenewOrderWithExistinguser:
+    # skuDetails: *SAPMixedOrder1
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # contMgrSoftCoord: "5151245272"
+    # conPerson: "32402104"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+
+# Related method not found hence commented these lines
+# createInitialBicIndirectAndRenewOrderWithExistinguser:
+    # skuDetails: *SAPMetaBicIndirect
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserForFTrade: "5151245272"
+    # contMgrSoftCoord: "5151245272"
+    # conPerson: "32402104"
+    # emailid: "djandsj@letscheck.pw"    
+    # type: "existing"
+    # ordertype: "bicindirect"
+
+# Related method not found hence commented these lines
+# createInitialPremiumSubsAndRenewOrderWithExistinguser:
+    # skuDetails:  *SAPPremiumSubscription
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserForFTrade: "5151245272"
+    # contMgrSoftCoord: "5151245272"
+    # conPerson: "32402104"
+    # emailid: "djandsj@letscheck.pw"    
+    # type: "existing"
+   
+   
+#===================================== MYR =========================================================   
+# Related method not found hence commented these lines
+# validatateMYRReturnOrderExistingUser:
+    # skuDetails: *SAPMYROrder1
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # reason: "120"
+    # type: "existing"
+
+# Related method not found hence commented these lines    
+# validatateMYRPartialReturnOrderExistingUser:
+    # skuDetails: *SAPMYROrder2
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # reason: "120"
+    # type: "existing"
+ 
+# Related method not found hence commented these lines   
+# validatateMYRAddProductOrderExistingUser:
+    # skuDetails: *SAPMYROrder1
+    # addproductSKUDetails: *MYRAddProduct
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"  
+    
+# Related method not found hence commented these lines
+# createInitialAndMYRRenewOrderWithExistinguser:
+    # skuDetails: *MYRRenewalOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+
+# Related method not found hence commented these lines
+# validatateMYRAddCreditsOrderExistingUser:
+    # skuDetails: *SAPMixedOrder1
+    # addCreditSkuDetails: *MYRAddCreditsOrder
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"
+    # supportingReseller: "5151245272"
+    # enduserCSN: "5151245272"
+    # emailid: "djandsj@letscheck.pw"
+    # type: "existing"
+
+# Related method not found hence commented these lines
+# validatatePremiumSubsBicIndirectExistingUser:
+    # skuDetails: *SAPPremiumSubscriptionInitialOrder
+    # addProductSkuDetails:  *SAPPremiumSubscription
+    # soldToParty: "5151245272"
+    # shipToParty: "5151245272"    
+    # type: "existing"
+    # dataSets: "US"
+    # ordertype: "bicindirect"
+ 
+
+#=================================== SAP HANA Fiori ================================================
+# Related method not found hence commented these lines
+# FinmartCompareRevmart:
+    # nullTest: ""
+
+# Related method not found hence commented these lines    
+# FinmartM2S:
+    # nullTest: ""
+    
+# Related method not found hence commented these lines
+# FinmartOrderNumber:
+    # nullTest: ""
+    
+
+#============================== Asset Transations =============================================
+#Related method not found hence commented these lines
+# executeApigeeSplitAPINonSubsSUS :
+   # test: "" 

@@ -1,0 +1,162 @@
+# EMR Data to be captured here for PRD
+
+---
+default:
+    salesOrg: "3000"
+    consumerKey: "6jE7Fx5XYiAA5Z54aoWSemwHyAQJBzdn"
+    consumerSecret: "T7KMqnwgtBNLLZGu"
+    callbackURL: "https://autodesk.com"
+    csn: "123456789"
+    transcoding: "UTF-8"
+    accountCSN: "5151183482"
+    responseType: "application/xml"
+    
+URL:    
+    PCAOE:  "https://partner.autodesk.com/partner"
+    Call Center:  "https://sbl-prd.autodesk.com/callcenter_enu/start.swe?SWECmd=AutoOn"
+    UCM:  "http://ucprd.autodesk.com/ucm_enu/start.swe ?SWECmd=AutoOn"
+    CEP:  "https://manage.autodesk.com"
+    Regonce:  "https://registeronce.autodesk.com/custreg/beginRegistration.action"
+    QlickView:  "https://bi.autodesk.com/Qlikview/ "
+    BO1:  "https://ussclsdbiweb001.ads.autodesk.com:8443/BOE/BI"
+    BO2:  "https://boprd.autodesk.com"
+    LicensingProductActivation:  "https://registeronce.autodesk.com/custreg/beginRegistration.action "
+    IFDB:  "https://ifdb.autodesk.com/"
+    Trinity:  "https://trinity.autodesk.com/trinity/"
+    ACM1:  "http://uscrlpejvacm001.autodesk.com:8080/AuthCodeManager/"
+    ACM2:  "http://uscrlpejvacm002.autodesk.com:8080/AuthCodeManager/"
+    BIC:  "https://cart.autodesk.com/cart/  "
+    SFDC:  "https://autodesk.my.salesforce.com"
+    ECSVapor:  "https://ecsvapor.autodesk.com/ecsvapor"
+    Qlikview1:  "https://bi.autodesk.com"
+    Qlikview2:  "https://ssso.autodesk.com/qlikview/QvAJAXZfc/opendoc.htm?document=Public/Presidents.qvw&host=Local  "
+    Qlikview3:  "http://uscrlpepsbiqv05.autodesk.com:4780/qmc/ServiceStatusOverview.htm"
+    RevPro:  "https://prd.revpro.autodesk.com/ords/f?p=511:101:14340555859473"
+    RedCar:  "http://uscrlperdcarw01.autodesk.com/carreceiver/emulator.aspx"
+    RedRocket:  "https://cur.autodesk.com/rockReceiver/emulator.aspx"
+    ServiceNow:  "https://autodesk.service-now.com"
+    BICCheckOut:  "https://checkout.autodesk.com/en-US/checkout?priceIds=13883"
+    Gold:  "https://gold.autodesk.com"
+    
+emrEndPointValidation:
+    nullCheck : ""
+
+getContactEntitlement_v3:
+    endpointApplication: "getcontactentitlements"
+    soapAction: "GetContactEntitlementsAction"
+    version: "3"
+   
+getContactEntitlement_v5:
+    endpointApplication: "getcontactentitlements"
+    soapAction: "GetContactEntitlementsAction"
+    version: "5"
+    
+getContactEntitlement_v6:
+    endpointApplication: "getcontactentitlements"
+    soapAction: "GetContactEntitlementsAction"
+    version: "6"
+    
+getContactEntitlement_v7:
+    endpointApplication: "getcontactentitlements"
+    soapAction: "GetContactEntitlementsAction"
+    version: "7"
+    
+getContactEntitlement_v8:
+    endpointApplication: "getcontactentitlements"
+    soapAction: "GetContactEntitlementsAction"
+    version: "8"
+
+getContactEntitlement_v9:
+    endpointApplication: "getcontactentitlements"
+    soapAction: "GetContactEntitlementsAction"
+    version: "9"
+    
+apigeeGetContactProfile:
+    endpointApplication: "getcontactprofile"
+    soapAction: "GetContactProfileAction"
+    
+apigeeGetContactDetails:
+    endpointApplication: "getcontactdetails"
+    soapAction: "GetContactDetailsAction"
+    
+apigeeGetRenewalOppty:
+    endpointApplication: "getrenewalopportunity"
+    soapAction: "GetRenewalOpportunityAction"
+    
+apigeeGetLicense:
+    endpointApplication: "getlicense"
+    soapAction: "GetLicenseAction"
+    
+apigeeGetAgreementBySerialNumber:
+    endpointApplication: "getagreementbyserialnumber"
+    soapAction: "GetAgreementBySerialNumberAction"
+    
+apigeeGetSubscriptionEndDate:
+    endpointApplication: "subservice"
+    soapAction: "NOAction"
+        
+apigeeGetUserByUserId:
+    endpointApplication: "getuserbyuserid"
+    soapAction: "GetUserByUserIdAction"
+    
+apigeeGetUserByEmail:
+    endpointApplication: "getuserbyemail"
+    soapAction: "GetUserByEmailAction"
+    
+apigeeGetUserByGUID:
+    endpointApplication: "getuserbyguid"
+    soapAction: "GetUserByGUIDAction"
+    
+apigeeGetEntitlementPelicanOxygen:
+    authRequired: "false"
+    endpointURL: "entitlements/v1/user/{GUID}?apikey={APIKEY}&filterBy=pelican,oxygen"
+    
+apigeeUserAccountHeliumCall:
+    authRequired: "false"
+    endpointURL: "accounts/v1/usage/{GUID}?apikey={APIKEY}"
+    
+apigeeV2GetEntitlementPelicanLegacy:
+    authRequired: "true"
+    endpointURL: "entitlements/v2/users/{GUID}"
+    
+apigeeV2GetEntitlementPelicanLegacyCacheFalse:
+    authRequired: "true"
+    X_TRANSACTION_REF: "PT_APIGEE_V2_LEM_GetEntitlement"
+    endpointURL: "entitlements/v2/users/{GUID}?source=pelican,legacy&cache=false"
+    
+apigeeV2GetEntitlementPelicanLegacyType:
+    authRequired: "true"
+    endpointURL: "entitlements/v2/users/{GUID}?source=pelican,legacy&featureType=CSR"
+    
+apigeeV2GetBenifits:
+    authRequired: "true"
+    endpointURL: "users/v2/{GUID}/benefits"
+    
+apigeeV2GetBenifitsByContainerId:
+    authRequired: "true"
+    endpointURL: "users/v2/{GUID}/benefits?containerId={CONTAINER_ID}"
+    
+apigeeV2GetEntitlementByO2Id:
+    authRequired: "true"
+    endpointURL: "entitlements/v2/users/{GUID}"
+    
+querySubscriptionBalance:
+    authRequired: "false"
+    endpointURL: "/querySubscriptionBalance?apikey={apiKey}"
+    
+getCCTransactions:
+    authRequired: "false"
+    endpointURL: "/getcctransactions?apikey={apiKey}"
+    
+getCCTransactionSummary:
+    authRequired: "false"
+    endpointURL: "/GetCcTransactionSummary?apikey={apiKey}"
+    
+getCCUsageSummary:
+    authRequired: "false"
+    endpointURL: "/GetCcUsageSummary?apikey={apiKey}"
+    
+getProductBurnrates:
+    authRequired: "false"
+    endpointURL: "/GetProductBurnRates?apikey={apiKey}"
+    

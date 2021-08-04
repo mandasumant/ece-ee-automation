@@ -1,0 +1,17 @@
+**/.classpath
+**/.settings
+**/.project
+**/.DS_Store
+**/target
+/target/
+*/target/**
+*/allure-results/**
+*/test-output/**
+**/META-INF/
+!.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
