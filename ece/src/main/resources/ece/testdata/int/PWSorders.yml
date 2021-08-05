@@ -1,0 +1,375 @@
+#Test data for initial order INT 
+default:
+    enduserCSN: ""
+    resellerCSN: "0070176510"
+    language: "EN"
+    endCustomerAddressLine1: "69645 Brandywine Ahumada"
+    endCustomerAddressLine2: "Apartment 931064691"
+    endCustomerAddressLine3: "Floor 580"
+    endCustomerCity: "Bend"
+    endCustomerCountryCode: "US"
+    endCustomerPostalCode: "97701-9137"
+    endCustomerState: "CA"
+    salesOrg: "3000"
+    timeZone: "CST"
+    #pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y" 
+    #pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    #pwsCallbackURL: "www.autodesk.com"
+    callbackURL: "https://autodesk.com"
+    csn: "123456789"
+    #csn: "5133751650"
+    apigeeURL: "https://enterprise-api-int.autodesk.com"
+    transcoding: "UTF-8"
+    responseType: "application/xml"
+    accessTokenURL: "https://enterprise-api-int.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    macCSN: "0070176510"
+    macHeaderCSN: "123456789"
+    macResponseType: "application/xml"
+    macTranscoding: "UTF-8"
+    macSALEREPRESENT: "s9999"
+    macUser: "sysid_SFDC"
+    macPass: "Password1"
+    cepURL: "https://customer-int.autodesk.com/"
+    name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
+    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+    consumerSecret: "7uEvzknwGleyd3Kv"    
+    matchAccountContactServiceEndPointURL: "https://enterprise-api-int.autodesk.com/v2/matchaccountcontact"
+    soldToParty: "5130874065"
+    shipToParty: "5130874065"
+    supportingReseller: "5130874065"
+    conPerson: "37207680"
+    division: "10"
+    version: "Y"
+    distributionChannel: "02"
+    streetAddress: "1550 Wewatta Street"
+    addressCity: "Denver"
+    country: "US" 
+    postalCode: "80202"
+    type: "new"   
+    ordertype: "nonbicindirect"
+    endpointURL: "https://enterprise-api-int.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-int.autodesk.com/v2/orders/status/"
+    opportunityNumber: ""
+    agreementNumber: ""
+    oldSerialNumber: ""
+    overrideContractDates: "No"
+    #getMyPriceCSN: "0070176510"
+    Maintenance: "No"
+    sapOrderType: "GOR"
+    ratePlanPPU: "NO"
+    order: "undefined"
+    api_host: "enterprise-api-int.autodesk.com"
+    #api_host_invoice: "invoice.ddwsint.autodesk.com"
+    consumerKeyInvoice: "F9wavEkpAtM90DKq5a1opVp05HWOtQcG"
+    consumerSecretInvoice: "0ZIGA4JrjukdiAQo"
+    callbackURLInvoice: "www.example.com"
+   # x-api-key-invoice: "K38pZj9Jo63b6KzczLQ2mHG0ejy2fE7ahaWP3dj6"
+    invoiceApiURL:  "https://API_HOST/v1/invoices?customer_number=SOLDTOPARTY"
+    # https://{{api_host}}/v1/invoices?customer_number=5070016993&purchase_order_number=4699399389848529&sales_order_number=7062300604&invoice_number=9100010006
+
+    skuBoss2PWSBICIndirectOrder : &BicIndirectOrderPWSSKU "128M1-WW6542-L618"
+   # skuBoss2PWSInitialOrderV1 : &PWSInitialOrderV1 "057J1-WW505P-T455"
+    skuBoss2PWSInitialOrderV2 : &PWSInitialOrderV2 "02KI1-WW8500-L937"
+   # skuBoss2PWSAustraliaInitialOrderV2 : &PWSAustraliaInitialOrderV2 "657H1-WW9613-T408"
+   # skuBoss2PWSSingaporeInitialOrderV2 : &PWSSingaporeInitialOrderV2 "057J1-WW8695-T548"
+    skuBoss2PWSMaintenanceMUSOrder : &PWSMaintenanceMUSOrder "001G1-WWR211-1001;00100-000000-9860"
+    skuBoss2PWSMaintenanceSUSOrder : &PWSMaintenanceSUSOrder "001H1-WWR111-1001;00100-000000-9860"
+    skuBoss2PWSSU2InitalOrder : &PWSSU2InitalOrder "128M1-WWN881-L782"
+    skuBoss2PWSM2SSUSOrder : &PWSM2SSUSOrder "128M1-WW5C55-L791"
+    skuBoss2PWSM2SMUSOrder : &PWSM2SMUSOrder "057M1-WWNC50-L401"
+    skuBoss2PWSSU1MU2SUOrder : &PWSSU1MU2SUOrder "657L1-WW4C52-L462"
+    skuBoss2PWSSU2MU2SUOrder : &PWSSU2MU2SUOrder "657L1-WW3C39-L874"
+    skuBoss2PWSSU3MU2SUOrder : &PWSSU3MU2SUOrder "057M1-WW7C36-L565"
+    skuBoss2PWSSU4MU2SUOrder : &PWSSU4MU2SUOrder "657L1-WW9C45-L383"
+    skuBoss2PWSSU2AddProduct : &PWSSU2AddProduct "02KI1-WWN760-L231"
+    skuBoss2PWSPremiumSubscription : &PWSPremiumSubscription "C3JM1-NS805M-V776"
+    skuBoss2PWSExtensionSku : &ExtensionPWSKU "02HI1-00N384-L105"
+    skuBoss2PWSExtensionInitialSku : &ExtensionInitialPWSKU "02HI1-WWN760-L231"
+    skuBoss2PWSRenewalInitialSku : &PWSInitialRenewalSku "02HI1-WW8500-L937"
+    skuBoss2PWSRenewalSku : &PWSRenewalSku "02HI1-005995-L403"
+    skuBoss2PWSSU9MU2SUOrder : &PWSSU9MU2SUOrder "02HI1-WW3C85-L739"
+
+    
+AMER_3000:
+    endCustomerAddressLine1: "69645 Brandywine Ahumada"
+    endCustomerAddressLine2: "Apartment 931064691"
+    endCustomerAddressLine3: "Floor 580"
+    endCustomerCity: "Bend"
+    endCustomerCountryCode: "US"
+    endCustomerPostalCode: "97701-9137"
+    endCustomerState: "CA"
+    
+EMEA_2006: #Ireland
+    endCustomerAddressLine1: "sdf1st ad 2nd Floor"
+    endCustomerAddressLine2: "Windmill Lane"
+    endCustomerAddressLine3: ""
+    endCustomerCity: "Dublin"
+    endCustomerCountryCode: "IR"
+    endCustomerPostalCode: "D02 F206"
+    endCustomerState: ""
+    
+EMEA_2060: #Germany
+    endCustomerAddressLine1: "SiemensstraBe 10"
+    endCustomerAddressLine2: ""
+    endCustomerAddressLine3: ""
+    endCustomerCity: "Bonn"
+    endCustomerCountryCode: "DE"
+    endCustomerPostalCode: "D-53121"
+    endCustomerState: "DE"
+
+EMEA_2040: #Germany
+    endCustomerAddressLine1: "MeBsc 20"
+    endCustomerAddressLine2: ""
+    endCustomerAddressLine3: ""
+    endCustomerCity: "Accrington"
+    endCustomerCountryCode: "UK"
+    endCustomerPostalCode: "BB5 1NJ"
+    endCustomerState: "DE"
+    
+APAC_1000: #singapore
+    endCustomerAddressLine1: "3 Fusionopolis Way"
+    endCustomerAddressLine2: "#10-21 Symbiosis"
+    endCustomerAddressLine3: "Floor 580"
+    endCustomerCity: "Bend"
+    endCustomerCountryCode: "SG"
+    endCustomerPostalCode: "138633"
+    endCustomerState: "SG"
+    
+APAC_1100: #japan
+    endCustomerAddressLine1: "5FL. Park Side 1336 Bldg"
+    endCustomerAddressLine2: "1-13-36, Izumi, Higoshi-ku"
+    endCustomerAddressLine3: ""
+    endCustomerCity: "Chiyoda Ward"
+    endCustomerCountryCode: "JP"
+    endCustomerPostalCode: "102-0074"
+    endCustomerState: "Tokyo-to"
+
+APAC_1200: #Australia
+    endCustomerAddressLine1: "BJBDJBIHKBOCMNPEGEDIEHGJDNOPGP"
+    endCustomerAddressLine2: ""
+    endCustomerAddressLine3: ""
+    endCustomerCity: "Eastern Creek"
+    endCustomerCountryCode: "AU"
+    endCustomerPostalCode: "2766"
+    endCustomerState: "NSW"
+    
+#need sku    
+createPWSV2Order:
+    type: "existing"
+
+#Done     
+createPWSBicIndirectOrder:
+    test: ""
+
+#Done
+createPWSBicIndirectICOrder:
+    test: ""
+    
+#Done
+createPWSSorrentoOrder:
+    test: ""
+
+#need sku
+createPWSPremiumSubsOrder:
+     test: ""
+      
+#need sku
+createPWSGOVOrder:
+     test: ""
+
+#Done         
+createPWSNCEOrder:
+     test: ""
+
+#Done
+createPWSAddProductOrder:
+     test: "" 
+
+#Done
+createPWSAddSeatOrder:
+     test: "" 
+
+#Done
+createPWSMultiSkuOrder:
+     test: "" 
+
+#Done     
+createPWSUserPacksOrder:    
+     test: "" 
+
+createPWSMixedSkuOrder:
+     test: ""     
+     
+createPWSM2STOMU2SUOrder:
+   Maintenance: "Yes"
+   m2sSwitchYearDate : "5/5/2020"
+   m2sSwitchYear : "FY20"
+   overrideContractDates: "Yes"
+      
+createPWSNetworkToMU2SUOrder:
+    opportunityType: "MUS"
+    overrideContractDates: "Yes"
+    
+placePWSV2EDIOrder:
+    sku: *PWSInitialOrderV2
+    qty: "1"
+    price: ""
+
+placePWSV2InitialOrder:
+    sku: *PWSInitialOrderV2
+    qty: "1"
+    price: ""
+    
+placePWSV2InitialOrderExistingUser: 
+    sku: *PWSInitialOrderV2
+    qty: "1"
+    price: ""
+    type: "existing"
+    
+placePWSBICIndirectOrder:
+    sku: *BicIndirectOrderPWSSKU
+    qty: "1"
+    dataSets: "BICIndirect"
+    ordertype: "bicindirect"
+    
+placePWSV2addseatOrder:
+    sku: *PWSInitialOrderV2
+    type: "existing"
+    
+placePWSV2addProductOrder:
+    sku: *PWSInitialOrderV2
+    addProductSku : *PWSSU2AddProduct
+    type: "existing"
+    
+pwsSU1OrderCreation:
+    skuDetails: *PWSMaintenanceMUSOrder
+    skuDetailsM2S: *PWSM2SMUSOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU1MU2SUOrder
+    price: ""
+    Maintenance: "Yes"
+    type: "existing"
+    m2sSwitchYearDate : "5/5/2020"
+    m2sSwitchYear : "FY20"
+    overrideContractDates: "Yes"
+    
+pwsSU2OrderCreation:
+    skuDetails: *PWSSU2InitalOrder 
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "MUS"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU2MU2SUOrder
+    qty: "1"
+    Maintenance: "No"
+    
+pwsSU3OrderCreation:
+    skuDetails: *PWSMaintenanceMUSOrder
+    skuDetailsM2S: *PWSM2SMUSOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU3MU2SUOrder
+    qty: "1"
+    price: ""
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    m2sSwitchYearDate : "5/11/2020"
+    m2sSwitchYear : "May 2020+"
+    
+pwsSU4OrderCreation:
+    skuDetails: *PWSMaintenanceMUSOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "MT"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU4MU2SUOrder
+    Maintenance: "Yes"
+    
+placePWSMixedSkuOrderExistingUser:
+    sku: *PWSInitialOrderV2
+    bicIndirectSku: *BicIndirectOrderPWSSKU
+    type: "existing"
+    
+createPWSMY4ToMU2SUOrder:
+    Maintenance: "Yes"
+    m2sSwitchYearDate : "5/11/2020"
+    m2sSwitchYear : "May 2020+"
+    overrideContractDates: "Yes"
+    
+createPWSM2SOrder:
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    
+createPWSMaintToMu2SuOrder:
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    
+placePWSPremiumSubsOrderExistingUser: 
+    sku: *PWSPremiumSubscription
+    type: "existing" 
+    
+placePWSsubscriptionExtOrder:
+    sku: *ExtensionInitialPWSKU
+    extensionSku: *ExtensionPWSKU
+    qty: "1"
+    price: ""
+    
+createPWSSubsExetnsionOrder :
+    overrideContractDates: "Yes"
+    
+pwsRenewalOrderCreation:
+    skuDetails: *PWSInitialRenewalSku 
+    ratioOfSKUToSwitch: "1"
+    oldSerialNumberRowSelected: "1"
+    renewalSku: *PWSRenewalSku
+    qty: "1"
+    Maintenance: "No"
+    csn: "5131488572"
+    
+createPWSPremiumRenewalOrder:
+    overrideContractDates: "Yes"
+    
+pwsSU9OrderCreation:
+    skuDetails: *PWSMaintenanceMUSOrder
+    skuDetailsM2S: *PWSM2SMUSOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU9MU2SUOrder
+    qty: "1"
+    price: "" 
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"  
+    m2sSwitchYearDate : "5/5/2019"
+    m2sSwitchYear : "FY19"
+
+getInvoiceDetails:
+   invoiceApiURL:  "https://API_HOST/v1/invoices?customer_number=SOLDTOPARTY"
+   
+createPWSRenewalOrder:
+    overrideContractDates: "Yes"
+
+getInvoiceList:
+   invoiceApiURL:  "https://API_HOST/v1/invoices?customer_number=SOLDTOPARTY"
+
+createPWSMU2SUOrderSU9:
+   m2sSwitchYearDate : "2019-05-07"
+   m2sSwitchYear : "FY19"
+
+createPWSMU2SUOrderSU3:
+   m2sSwitchYearDate : "2020-05-07" #after this 
+   m2sSwitchYear : "May 2020+"
+
+createPWSMU2SUOrderSU1:
+   m2sSwitchYearDate : "2020-05-07" ## before this
+   m2sSwitchYear : "FY20"
+
+createPWSMU2SUOrderSU2:
+   Maintenance: "No"
+
+createPWSMU2SUOrderSU4:
+   Maintenance: "Yes"
+   
+createPWSsplitRenewalOrder:
+   Maintenance: "No"

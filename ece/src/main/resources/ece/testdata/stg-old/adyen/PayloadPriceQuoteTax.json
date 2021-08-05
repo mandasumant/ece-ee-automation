@@ -1,0 +1,35 @@
+{
+  "tax": {
+    "currency": "RegionCurrency3Code",
+    "paymentProfile": {
+      "id": "PASSTOKEN1",
+      "vatRegistrationId": "",
+      "paymentProcessor": "ADYEN",
+      "type": "CREDIT_CARD",
+      "paymentInfo": {
+        "paymentProcessor": "ADYEN",
+        "paymentReference": "4644",
+        "paymentMethod": "VISA",
+        "formattedPaymentMethod": "visa",
+        "expMonth": "03",
+        "expYear": "2030"
+      },
+      "isVatExempt": false,
+      "billingInfo": {
+        "firstName": "PASSTOKEN2",
+        "lastName": "PASSTOKEN3",
+        "companyName": "PASSTOKEN4",
+        "streetAddress": "Region_StreetAddress",
+        "city": "Region_City",
+        "country": "Region_Country2Code",
+        "stateProvince": "Region_StateProvince2Code",
+        "postalCode": "Region_Postal2Code",
+        "phoneNumber": "(310) 341-3502",
+        "lastUsed": "2021-04-19T02:05:33.000Z",
+		"vatRegistrationId": ""
+      }
+    },
+    "cartReference": "PASSTOKEN5",
+	"origin": "ESTORE"
+  }
+}

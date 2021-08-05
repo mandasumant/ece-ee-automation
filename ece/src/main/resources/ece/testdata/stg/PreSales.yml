@@ -1,0 +1,40 @@
+#Test data for lead creation
+  
+default :
+   United States : "+1"
+   products : "autoCad,3DS"
+   ratePlanPPU: "NO"
+
+generateLeadFromSFDC :  
+   test : "" 
+   
+generateLeadFromAOE : 
+   url: "https://partner-stg.autodesk.com/"   
+   username: "fy21q2bfr1pcuser1" 
+   password: "Password1" 
+   partnerCSN: "5131198498"
+        
+opptyCreation :
+   url: "https://partner-stg.autodesk.com/"   
+   username: "fy21q2bfr1pcuser1" 
+   password: "Password1" 
+   enduserCSN: "5130929144"
+   
+dealRegistrationOrder : 
+   url: "https://partner-stg.autodesk.com/"   
+   username: "amerdvarautoone" 
+   password: "Password1" 
+   enduserCSN: "5115704721"
+   emailid : "pumqds13@maildrop.cc"
+   productName : "3ds Max"
+   qty : "5"
+   contractTerm : "Annual"
+   yearOfProduct : "2015"
+   
+AMER :
+   country : "United States"
+   Boston : "Massachusetts"
+   Boulder : "Colorado"
+   San Francisco : "California"
+   Portland : "Oregon"
+   Ithaca : "New York"
