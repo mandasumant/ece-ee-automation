@@ -1,0 +1,604 @@
+# INT Test data for initial order
+---
+default:
+    soldToParty: "5150375596"
+    purchaseOrderType: null
+    shipToParty: "5150375596"
+    supportingReseller: "5150375596"
+    conPerson: "50121569"
+    salesOrg: "3000"
+    division: "10"
+    sapOrderType: "GOR"
+    version: "Y"
+    distributionChannel: "02"
+    streetAddress: "116486 Falk Trail"  #"1550 Wewatta Street"
+    addressCity: "Northfield" #"Denver"
+    country: "United States"
+    countryCode : "US"
+    geo: "Amer"
+    currency: "USD"
+    language: "EN"
+    postalCode: "55057" #"80202"
+    region: "MN" #"Col"
+    timeZone: "CST"
+    contractStartDate: "No"
+    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+    consumerSecret: "7uEvzknwGleyd3Kv"
+    callbackURL: "https://autodesk.com"
+    csn: "123456789"
+    apigeeURL: "https://enterprise-api-int.autodesk.com"
+    transcoding: "UTF-8"
+    responseType: "application/xml"
+    accessTokenURL: "https://enterprise-api-int.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    macCSN: "5129772911"
+    macHeaderCSN: "123456789"
+    macResponseType: "application/xml"
+    macTranscoding: "UTF-8"
+    macUser: "sysid_SFDC"
+    macPass: "Password1"
+    name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
+    cepURL: "https://customer-int.autodesk.com/"
+    matchAccountContactServiceEndPointURL: "https://enterprise-api-int.autodesk.com/v2/matchaccountcontact"    
+    ordertype: "nonbicindirect"
+    versionN: "N"
+    partialSwitch: "NO"  
+    Maintenance: "No"
+    overrideContractDates: "No"
+    password: "Password1"
+    ratePlanPPU: "NO"
+    order: "undefined"
+    
+#contact : fy21resellerforint@letscheck.pw    
+# -------------------------------------------------------------------------------------------------------------------
+#Initial_MUS    
+    initialOrderMUS : &MetaInitialOrderMUS "128L1-WWN881-L782"
+  
+#Initial_SUS_Or_BicIndirect
+    initialOrderSUS : &BicIndirectOrSUS "128M1-WW6542-L618" 
+
+#IC_SUS_Or_BicIndirect
+    icOrderSUS : &BicIndirectOrSUSIC "02HI1-WW8500-L937" 
+ 
+#IC Order
+    ICOrder : &ICOrder "02HI1-WWN760-L231"
+ 
+#EDU
+    EDUOrder : &EDUOrder "208H1-WWN221-L461"
+ 
+#Perpetual
+    PerpetualOrder :  &PerpetualOrder "128H1-00Z1C1-100N"
+    
+#Maintenance
+    MaintenanceSusOrder : &MaintenanceSusOrder "001G1-WWR111-1001;00100-000000-9860"
+    MaintenanceMusOrder : &MaintenanceMusOrder "001G1-WWR211-1001;00100-000000-9860" 
+        
+#PPU
+    PPUOrder : &PPUOrder "C21L1-WW8500-L937"
+#"C21L1-WW8500-L937"
+
+#NFR
+    NFROrder : &NFROrder "128M1-WWN905-L490"
+
+#MediaKit
+    MediaKitOrder : &MediaKitOrder "001J1-G251T1-L001"
+
+#Sorrento   
+    SorrentoOrder : &SorrentoOrder "C1RK1-WW1762-L158"
+    
+#User Pack
+    UserPackOrder : &UserPackOrder "835H1-NS3379-V624"
+#C0PL1-WWN183-L836
+
+#Mix Order
+    MixedOrder : &MixedOrder "128H1-WW6542-L618;02KI1-WWN618-L185"
+
+#MYR
+    MYROrder : &MYROrder "128M1-WW3082-L614"
+
+#Switch
+    SwitchOrderMUS : &SwitchOrderMUS "02JI1-WW8C33-L552"
+    SwitchOrderSUS : &SwitchOrderSUS "02KI1-WWNC44-L122"
+    
+#Zero_Doller
+    ZeroDoller : &ZeroDoller "966N1-WWN805-L413"    
+
+#Tflex
+    TflexInitialOrder : &TflexInitialOrder "535M1-000711-MTFX"
+    TflexTokenOrder : &TflexTokenOrder "53500-INITOK-TFLX"
+
+#Extension 
+    ExtensionOrder : &ExtensionOrder "00100-000000-9880"
+
+#NCEOrder
+    NCEOrder : &NCEOrder "569M1-WW6307-L939"
+
+#GOVOrder
+    GOVOrder : &GOVOrder "128M1-WW1318-L702"
+
+#M2SOrder
+    M2SSusOrder : &M2SSusOrder "057M1-WW2C17-L191"
+    M2SMusOrder : &M2SMusOrder "057M1-WWNC50-L401"
+    
+#MU2SU
+    SU1MU2SUOrder : &SU1MU2SUOrder "657L1-WW4C52-L462"   # M2S to Mu2Su order
+    SU2MU2SUOrder : &SU2MU2SUOrder "657L1-WW3C39-L874"   # Network MUS (Meta) to Mu2Su order
+    SU3Mu2SUOrder : &SU3MU2SUOrder "657L1-WW7C23-L365"   # MY4 to Mu2Su Order
+    SU4MU2SUOrder : &SU4MU2SUOrder "657L1-WW9C45-L383"   # Maint to Mu2Su Order
+    #SU9 SKUs are not available in INT
+    #SU9MU2SUOrder : &SU9MU2SUOrder ""   # MY2 to Mu2Su Order
+
+#Offline SKU
+    OfflineSKU : &OfflineSKU "838M1-WWN847-L265"
+ 
+#-----------------------------------------------------------------------------      
+
+validateInitialOrderExistingUser:
+    sku: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+   
+validateInitialOrderSUSExistingUser:
+    sku: *BicIndirectOrSUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateICOrderExistingUser:
+    sku: *ICOrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateEDUOrderExistingUser:
+    sku: *EDUOrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatePerpetualOrderExistingUser:
+    sku: *PerpetualOrder
+    version: ""
+    Maintenance: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateMaintenanceOrderExitingUser:
+    sku: *MaintenanceSusOrder
+    Maintenance: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateBicIndirectMetaOrderExistingUser:
+    sku: *BicIndirectOrSUS 
+    ordertype: "bicindirect"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    dataSets: "US"
+
+validateBicIndirectICOrderExistingUser:
+    sku: *BicIndirectOrSUSIC 
+    ordertype: "bicindirect"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    dataSets: "US"
+
+validatePPUOrderExistingUser:
+    sku: *PPUOrder 
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    ratePlanPPU: "Yes"
+
+validateNFROrderExistingUser:
+    sku: *NFROrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateMediaKitOrderExistingUser:
+    sku: *MediaKitOrder
+    version: ""
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateSorrentoOrderExistingUser:
+    sku: *SorrentoOrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateUserpacksOrderExistingUser:
+    sku: *UserPackOrder
+    enterSiteDataForCaseCreation: "Yes"
+    customerType_SiteData: "N"
+    siteName_SiteData: "TestUP1"
+    siteAdminEmail_SiteData: "TestUPSiteDataa1@gmail.com"
+    siteDataCenter_SiteData: "US"
+    siteURL_SiteData: "testURL.com"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateMixOrderexistingUser:
+    sku: *MixedOrder 
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateMYROrderExistingUser:
+    sku: *MYROrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateConsultingOrder:
+    sku : *GOVOrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateMaintenanceorderwithOpptyExistingUser:
+    sku: *MaintenanceSusOrder 
+    Maintenance: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateZeroDollerMUSOrderExistingUser:
+    zeroDollarOrder: "yes" 
+    sku: *ZeroDoller
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateZeroDollerBicIndOrderExistingUser:
+    zeroDollarOrder: "yes" 
+    sku: *BicIndirectOrSUS
+    ordertype: "bicindirect"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    dataSets: "US"
+
+validateTflexEstoreOrderExistingUser:
+    sku: *TflexInitialOrder
+    skuDetailsToken: *TflexTokenOrder
+    orderReason: "Z81"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+#Remove it for switch
+validateZeroDollarInitialAndSwitchOrder:   
+    #sku: *SAPInitialOrder
+    switchSkuDetails: *SwitchOrderMUS
+    zeroDollarOrder: "yes"
+
+validateZeroDollarInitialAndSwitchOrderExistingUser:
+    #sku: *SAPInitialOrder
+    switchSkuDetails: *SwitchOrderMUS
+    zeroDollarOrder: "yes"
+
+validateADNOrderExistingUser:
+    sku: "13500-000000-A104"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateNCEOrderExistingUser:
+    sku : *NCEOrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateGOVOrderExistingUser:
+    sku : *GOVOrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateInitialAndRenewOrderWithExistinguser:
+    sku: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateInitialAndPartialRenewOrder:
+    sku: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatePremSubsAndRenewOrderWithExistinguser:
+    sku: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateCloudCreditOrderExistingUser:
+    sku: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+
+#-------------------add seat-------------------------------
+
+validateAddSeatOrderNewUser:
+    sku: *MetaInitialOrderMUS
+
+validateAddSeatOrderExistingUser:
+    sku: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateBicIndirectAddSeatOrderNewUser:
+    sku: *BicIndirectOrSUS
+    ordertype: "bicindirect"
+    dataSets: "US"
+
+validateBicIndirectAddSeatOrderExistingUser:
+    sku: *BicIndirectOrSUS
+    ordertype: "bicindirect"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    dataSets: "US"
+
+#--------------------- add product------------------------
+
+validateAddProductOrderNewUser:
+    sku: *MetaInitialOrderMUS
+    addProductSKU: *MetaInitialOrderMUS
+
+validateAddProductOrderExistingUser:
+    sku: *MetaInitialOrderMUS
+    addProductSKU: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateBicIndirectAddProductOrderNewUser:
+    sku: *MetaInitialOrderMUS
+    addProductSKU: *MetaInitialOrderMUS
+    ordertype: "bicindirect"
+    dataSets: "US"
+
+validateBicIndirectAddProductOrderExistingUser:
+    sku: *MetaInitialOrderMUS
+    addProductSKU: *MetaInitialOrderMUS
+    ordertype: "bicindirect"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    dataSets: "US"
+
+validateMYRAddProductOrderNewUser:
+    sku : *MYROrder
+
+validateMYRAddProductOrderExistingUser:
+    sku : *MYROrder   
+    addProductSKU: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateAddCreditsOrderNewUser:
+    sku: "128H1-WW6542-L618"
+    addProductSKU: "C3JM1-NS805M-V776"
+
+validateAddCreditsOrderExistingUser:
+    sku: "128H1-WW6542-L618"
+    addProductSKU: "C3JM1-NS805M-V776"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatePremiumSubsNewUser:
+    sku: "C3JM1-NS805M-V778"
+
+validatePremiumSubsExistingUser:
+    sku: "C3JM1-NS805M-V778"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateExtensionOrderExistingUser:
+    sku: *MaintenanceSusOrder
+    addProductSKU: *ExtensionOrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    overrideContractDates: "Yes"
+    Maintenance: "Yes"
+
+#-----------------------Return order-------------------------
+
+validateReturnOrderNewUser:
+    sku: *MetaInitialOrderMUS
+    reason: "ZTO"
+
+validateReturnOrderExistingUser:
+    sku: *MetaInitialOrderMUS
+    reason: "ZTO"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateMYRReturnOrderNewUser:
+    sku : *MYROrder
+    reason: "ZTO"
+
+validateMYRReturnOrderExistingUser:
+    sku : *MYROrder
+    reason: "ZTO"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatePartialReturnOrderExistingUser:
+    sku: *MixedOrder
+    reason: "ZTO"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateMYRPartialReturnOrderExistingUser:
+    sku : *MixedOrder
+    reason: "ZTO"
+    #type: "existing"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+#--------------- M2S or Switch------------------------------
+validateM2SOrder:
+    sku: *MaintenanceMusOrder
+    m2ssku: *M2SSusOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+     
+validateM2SOrderExisting:
+    sku: *MaintenanceMusOrder
+    m2ssku: *M2SSusOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+partialSwitchM2SOrderSU:
+    sku: *MaintenanceMusOrder
+    switchSku: *M2SSusOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+partialSwitchM2SOrderMU:
+    sku: *MaintenanceMusOrder
+    switchSku: *M2SSusOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+partialSwitchOrderExistingUser:
+    sku: *MetaInitialOrderMUS 
+    switchSku: *SwitchOrderMUS 
+   # type: "no"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateInitialAndSwitchOrderExistingUser:
+    sku: *MetaInitialOrderMUS 
+    switchSku: *SwitchOrderMUS 
+   # type: "no" #"existing"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    
+validateInitialAndSwitchOrderBicIndirectExistingUser:
+    sku: *BicIndirectOrSUS 
+    switchSku: *SwitchOrderSUS
+   # type: "no" #"existing"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+# --------------------------- MU2SU Order Parameters ----------------------------- 
+validatingM2SToMU2SUOrder:
+    sku: *MaintenanceMusOrder
+    m2ssku: *M2SMusOrder
+    mu2susku: "657L1-WW9C87-L963"
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    m2sSwitchYearDate : "5/5/2020"
+    m2sSwitchYear : "FY20"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+   
+validatingM2SToMU2SUOrder2:
+    sku: *MaintenanceMusOrder
+    m2ssku: *M2SMusOrder
+    mu2susku: "657L1-WW9C45-L383"
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    m2sSwitchYearDate : "5/5/2020"
+    m2sSwitchYear : "FY20"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatingMY4ToMU2SUOrder:
+    sku: *MaintenanceMusOrder
+    m2ssku: *M2SMusOrder
+    mu2susku: *SU3MU2SUOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    m2sSwitchYearDate : "5/11/2020"
+    m2sSwitchYear : "May 2020+"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatingMaintToMU2SUOrder: 
+    sku: *MaintenanceMusOrder
+    mu2susku: *SU4MU2SUOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "MT"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatingMaintToMU2SUOrder2:
+    sku: *MaintenanceMusOrder
+    mu2susku: *SU4MU2SUOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "MT"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatingMetaToMU2SUOrder: 
+    sku: *MetaInitialOrderMUS
+    mu2susku: "657L1-WW8C60-L742"
+#*SU2MU2SUOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "MUS"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatingMetaToMU2SUOrder2:
+    sku: *MetaInitialOrderMUS
+    mu2susku: "657L1-WW3C39-L874"
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "MUS"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validatingMY2ToMU2SUOrder:
+    sku: *MaintenanceMusOrder
+    m2ssku: *M2SMusOrder
+    mu2susku: "657L1-WW1C94-L596"
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    m2sSwitchYearDate : "5/5/2019"
+    m2sSwitchYear : "FY19"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateNetworkSubsorderwithOpptyExistingUser:
+    sku: "02KI1-WWN618-L185"
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    Maintenance: "Yes"
+
+validateInitialAndRenewOrder:
+    sku: *MetaInitialOrderMUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateInitialBicIndirectAndRenewOrder:
+    sku: *BicIndirectOrSUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateInitialPremiumSubsAndRenewOrder:
+    sku: *BicIndirectOrSUS
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateInitialAndMYRRenewOrder:
+    sku: *MYROrder
+    enduserCSN: "5150906062"
+    emailid: "thubint1607864735@letscheck.pw"
+
+validateOfflineOrderWithNewUser:
+     sku: *OfflineSKU
+     enduserCSN: "5150906062"
+     emailid: "thubint1607864735@letscheck.pw"

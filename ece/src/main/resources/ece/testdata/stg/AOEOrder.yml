@@ -1,0 +1,378 @@
+#Test data for initial order
+---
+default:
+    soldToParty: "5151242995"
+    ordertypeAOE: "Order Subscription for a Customer"
+    using: "using Existing Contract"
+    url: "https://adsknewstg-autodesk-communities.cs59.force.com/partnercommunity"   
+    urlSoldtoSTG: "http://ussclsetomaoe01.ads.autodesk.com:8080/IOrder/abc?simulate=true"
+    urlSoldtoINT: "http://ussclqdtomaoe01.ads.autodesk.com:8080/IOrder/abc?simulate=true"
+                   
+    username: "asklklsafiu68263partner@letscheck.pw"  
+    password: "Password1" 
+    username3000: &username3000 "asklklsafiu68263partner@letscheck.pw" # need to change              
+    username2006: &username2006 ""  # need to change 
+    username2040: &username2040 ""  # need to change
+    username1000: &username1000 ""  # need to change
+    username1100: &username1100 ""  # need to change
+    dealer: "5151242995"  
+    accName: "Autodesks3"    
+    acctype: "End User"
+    streetAddress: "1550 Wewatta Street"
+    addressCity: "Denver"
+    country: "US"
+    language: "EN"
+    postalCode: "80202"
+    region: "Col"  
+    timeZone: "CST"  
+    term: "Annual"       
+    selectDate: "Start on credit release date"   
+    cepURL: "https://customer-stg.autodesk.com/"
+    division: "10"
+    distributionChannel: "02"
+    #consumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    #consumerSecret: "08CdAI0J96IgZ6xO"
+    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+    consumerSecret: "7uEvzknwGleyd3Kv" 
+    callbackURL: "https://autodesk.com"
+    csn: "123456789"
+    apigeeURL: "https://enterprise-api-stg.autodesk.com"
+    transcoding: "UTF-8"
+    responseType: "application/xml"
+    accessTokenURL: "https://enterprise-api-stg.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    macCSN: "5129772911"   #Need to check what kind of CSN is this
+    macHeaderCSN: "123456789"
+    macResponseType: "application/xml"
+    macTranscoding: "UTF-8"
+    macSALEREPRESENT: "s9999"
+    macUser: "sysid_SFDC"   # Need to check with Rashmi where we are using it
+    macPass: "Password1"
+    name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
+    matchAccountContactServiceEndPointURL: "https://enterprise-api-stg.autodesk.com/v2/matchaccountcontact"    
+    ordertype: "nonbicindirect"
+    salesOrg: "3000"
+    ratePlanPPU: "NO"
+    purchaseOrderType: null
+    order: "undefined"
+    version: "Y" 
+    type: "new" 
+    sapOrderType: "GOR"  
+       
+    skuBOSS2InitialMetaOrder: &initialMetaOrderAOESKU "128M1-WWN881-L782"
+    skuBOSS2InitialS2SOrder: &InitialS2SOrderAOESKU "128K1-WW6542-L618"
+    skuBOSS2InitialS2SOrderSwitch: &S2SorderSwitchAOESKU "02HI1-WW8C33-L552"
+    skuBOSS2InitialBICIndirectOrder: &InitialBICIndirectOrderAOESKU "128K1-WW6542-L618"
+    skuBOSS2ICOrder: &ICOrderAOESKU "02HI1-WW2836-L867"
+    skuBOSS2RecurringOrder : &RecurringOrderAOESKU "736N1-WW3849-L498"
+    skuBOSS2AddProductOrder : &AddProductOrderAOESKU "128K1-WW6542-L618"    # SUS Meta SKU we can also use IC SKU here
+
+    skuBOSS2MaintenanceOrder : &MaintenanceOrderAOESKU "001K1-WWR217-1001;00100-000000-9860"  
+    # MUS SKU : 001K1-WWR217-1001;00100-000000-9860 
+    # SUS SKU : 001K1-WWR117-1001;00100-000000-9860
+    
+    skuBOSS2ExtensionMaintenanceOrder : &ExtensionMaintenanceOrderAOESKU "001K1-WWR117-1001;00100-000000-9860"
+    skuBOSS2MediaKitInventoryOrder : &MediaKitInventoryOrderAOESKU "001M1-G251T1-L001"      
+    skuBOSS2CoTermOrder : &CoTermOrderAOESKU "128K1-WW6542-L618"
+    skuBOSS2SwitchPlanInitialOrder : &SwitchPlanInitialOrderAOESKU "128K1-WW6542-L618"
+    skuBOSS2PremiumSubscriptionOrder : &PremiumSubscriptionOrderAOESKU "C3JM1-NS805M-V776"   # C3JM1-WW005M-L947 --> SKU is not in catalog
+    
+    skuBOSS2M2SSubscriptionOrder : &M2SSubscriptionOrderAOESKU "057N1-WWNC57-L121"
+    # MUS SKU : 057N1-WWNC57-L121
+    # SUS SKU : 057N1-WW6C90-L931
+   
+validateS2SInitialOrderNewUser:
+    sku: *InitialS2SOrderAOESKU
+    qty: "1"
+    switchSku: *S2SorderSwitchAOESKU
+    accountType: "enduser"
+    companyName: "autodeskThubOct"
+    streetAddress: "591 Memorial Dr"
+    addressCity: "Dover" 
+    country: "USA"
+    language: "EN"
+    postalCode: "19901"
+    region: "DE" 
+    timeZone: "CST"
+    newEndUser: "Yes"
+    newContact: "Yes"
+    action: ""
+    fName: "Thubfn11"
+    lName: "Thubln11"
+    username: "thuboct12partneruser02" 
+    password: "Password1"     
+    dealer: "5131469105"
+    type: "no"
+
+validateS2SBicIndirectOrderNewUser:
+    sku: *InitialBICIndirectOrderAOESKU 
+    qty: "1"
+    switchSku: *S2SorderSwitchAOESKU 
+    accountType: "enduser"
+    companyName: "autodeskOct"
+    address: "591 Memorial Dr"
+    city: "Dover"   
+    country: "USA"    
+    state: "DE"      
+    zipcode: "19901"  
+    timeZone: "CST"
+    newEndUser: "Yes" 
+    newContact: "Yes"
+    action: ""
+    fName: "Thubfn12"
+    lName: "Thubln12"
+    username: "thuboct12partneruser05" 
+    password: "Password1"     
+    dealer: "5131469250" 
+    ordertype: "bicindirect"   
+    type: "no"
+    
+validateInitialOrderExistingUser:
+    sku: *initialMetaOrderAOESKU
+    qty: "1"
+        
+
+validateICOrderExistingUser:
+    sku: *ICOrderAOESKU
+    qty: "1"
+    term: "3-Year"
+
+validateRecurringOrderNewUser:
+    sku: *RecurringOrderAOESKU
+    qty: "1"
+    enduserCSN: "No"
+    email: "No"
+ 
+validateAddProductExistingUser:
+    sku: *AddProductOrderAOESKU
+    qty: "1"
+    addProductSku: *initialMetaOrderAOESKU
+    addProductQty: "1"
+
+validateS2SAddProductExistingUser:
+    sku: *initialMetaOrderAOESKU
+    qty: "1"
+    addProductSku: *initialMetaOrderAOESKU
+    addProductQty: "1"
+    
+validateM2SOrder:
+    sku: *MaintenanceOrderAOESKU
+    skuM2S: *M2SSubscriptionOrderAOESKU
+    qty: "1;1"
+    ordertypeAOE: "Order Maintenance Plan for a Customer"
+    term: "1 Year"
+
+validateM2SExistingUser:
+    sku: *MaintenanceOrderAOESKU
+    qty: "1;1"
+    ordertypeAOE: "Order Maintenance Plan for a Customer"
+    term: "1 Year"
+    endUserCSN: "5151245129"
+    email: "thubmr772021611@letscheck.pw"
+ 
+validateAddSeatExistingUser:
+    sku: *initialMetaOrderAOESKU
+    qty: "3"
+
+validateS2SAddSeatExistingUser:
+    sku: *initialMetaOrderAOESKU
+    qty: "2"
+       
+validateExtensionExistingUser:
+    sku: *ExtensionMaintenanceOrderAOESKU
+    qty: "1;1"
+    ordertypeAOE: "Order Products / Maintenance Plan for a Customer"
+    extensionOrderType: "Order a Maintenance Plan Extension for a Customer"
+    term: "1 Year"
+
+validateProductMaintenancePlanExistingUser:
+    sku: *ExtensionMaintenanceOrderAOESKU
+    qty: "1;1"
+    ordertypeAOE: "Order Products / Maintenance Plan for a Customer"
+    extensionOrderType: "Order a Maintenance Plan Extension for a Customer"
+    term: "1 Year"
+    
+validateMaintenancePlanExistingUser:
+    sku: *MaintenanceOrderAOESKU
+    qty: "1;1"
+    ordertypeAOE: "Order Maintenance Plan for a Customer"
+    term: "1 Year"
+
+validateMediaKitInventory:
+    sku: *MediaKitInventoryOrderAOESKU
+    qty: "1"
+    ordertypeAOE: "Order  Media Kit for My Inventory"     
+    dealer: "5130586744"
+    type: "no"
+
+validateCoTermOrderExistingUser:
+    sku: *initialMetaOrderAOESKU
+    cotermsku: *CoTermOrderAOESKU
+    qty: "1"
+    ordertypeAOE: "Order Subscription for a Customer"
+    
+validateSwitchPlanExistingUser:
+    sku: *SwitchPlanInitialOrderAOESKU
+    switchSku: *S2SorderSwitchAOESKU
+    qty: "1"
+    ordertypeAOE: "Order Subscription for a Customer"
+
+validateOrderSearch:
+    sku: *initialMetaOrderAOESKU
+    qty: "1"
+    
+premiumSubscriptionOrder:
+    sku: *PremiumSubscriptionOrderAOESKU 
+    qty: "1"
+    accountType: "enduser"
+    companyName: "autodesk"
+    address: "591 Memorial Dr"
+    city: "Dover"   
+    country: "USA"    
+    state: "DE"      
+    zipcode: "19901"  
+    timeZone: "CST"
+    newEndUser: "Yes"
+    newContact: "Yes"
+    action: ""
+    fName: "Thubfn"
+    lName: "Thubln"
+    username: "fy21q2bfr1pcuser2" 
+    password: "Password1"     
+    dealer: "5130929191"
+    type : "new"
+   
+       
+ #=========================================== Quarry ========================================
+ 
+createMetaInitialOrderAOE:
+    username: *username3000 
+    usernameapac: *username1000
+    usernameemea: *username2040 
+    password: "Password1"     
+    ordertype: "nonbicindirect"
+    ordertypeAOE: "Order Subscription for a Customer"
+    selectDate: "Start on credit release date" 
+    type: "new"
+    endUserCSN: "5151245129"
+    email: "thubmr772021611@letscheck.pw"
+    term: "Annual"
+ 
+createBicIndirectOrderAOE:
+    username: *username3000 
+    usernameapac: *username1000
+    usernameemea: *username2040 
+    password: "Password1"     
+    ordertype: "bicindirect"
+    ordertypeAOE: "Order Subscription for a Customer"
+    selectDate: "Start on credit release date" 
+    type: "new"
+    endUserCSN: "5151245129"
+    email: "thubmr772021611@letscheck.pw"
+    term: "Annual" 
+
+createBicIndirectICOrderAOE:
+    username: *username3000 
+    usernameapac: *username1000
+    usernameemea: *username2040 
+    password: "Password1"     
+    ordertype: "aoe_bicindirectic"
+    ordertypeAOE: "Order Subscription for a Customer"
+    selectDate: "Start on credit release date" 
+    type: "new"
+    endUserCSN: "5151245129"
+    email: "thubmr772021611@letscheck.pw"
+    term: "Annual"
+
+createSorrentoOrderAOE:
+    username: *username3000 
+    usernameapac: *username1000
+    usernameemea: *username2040 
+    password: "Password1"
+    ordertype: "aoe_sorrento"
+    ordertypeAOE: "Order Subscription for a Customer"
+    selectDate: "Start on credit release date" 
+    type: "new"
+    endUserCSN: "5151245129"
+    email: "thubmr772021611@letscheck.pw"
+    term: "Annual" 
+    
+requestForPhysicalShipment:
+    accountCSN: "5129614126"    
+    type: "no"
+    
+    
+createPremiumSubOrderAOE:
+    accountType: "enduser"
+    username: "fy21q2bfr1pcuser2" 
+    password: "Password1"     
+    premiumSubscriptionCSN: "5151245129"
+
+
+createCoTermOrderAOE:
+   ordertypeAOE: "Order Subscription for a Customer"
+    
+createM2SOrderAOE:
+    ordertypeAOE: "Order Maintenance Plan for a Customer"
+    username: *username3000 
+    password: "Password1"    
+    term: "1 Year"
+
+createS2SOrderAOE:
+    username: *username3000  
+    password: "Password1"
+ 
+createNCEOrderAOE:
+   ordertypeAOE: "Order Subscription for a Customer"
+
+createGOVOrderAOE:
+   ordertypeAOE: "Order Subscription for a Customer"
+   
+createNFROrderAOE:
+   ordertypeAOE: "Order Subscription for a Customer"   
+   
+createMediaKitInventoryOrderAOE:  
+   ordertypeAOE: "Order  Media Kit for My Inventory"
+
+createMixedOrderAOE:  
+   ordertypeAOE: "Order Subscription for a Customer"
+
+createMultiSkuOrderAOE:   
+   ordertypeAOE: "Order Subscription for a Customer"
+   
+createUserPacksOrderAOE:
+   ordertype: "UserPacks"
+
+createMaintenanceToMU2SUOrderAOE:
+   ordertypeAOE: "Order Maintenance Plan for a Customer"
+   term: "1 Year"
+
+createNetworkToMU2SUOrderAOE:
+   ordertypeAOE: "Order Subscription for a Customer"
+
+createMaintSubExtOrderAOE:
+    ordertypeAOE: "Order Maintenance Plan for a Customer"
+    term: "1 Year"
+    extensionOrderType: "Order a Maintenance Plan Extension for a Customer"
+
+createAddProductExistingUser:
+    type: "existing"
+     
+
+createAddSeatExistingUser:
+    type: "existing" 
+
+createM2SToMU2SUOrderAOE:
+    Maintenance: "Yes"   
+    overrideContractDates: "Yes"
+    m2sSwitchYearDate : "5/11/2020"
+    m2sSwitchYear : "May 2020+"    
+
+createFullRenewalOrderAOE:
+    sku: *initialMetaOrderAOESKU
+    qty: "1"
+    ordertypeAOE: "Order Subscription for a Customer"
+    
+createPartialRenewalOrderAOE:
+    sku: *initialMetaOrderAOESKU
+    qty: "1"
+    ordertypeAOE: "Order Subscription for a Customer"

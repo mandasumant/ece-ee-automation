@@ -1,0 +1,30 @@
+{
+  "action": "Renewal",
+  "shipTo":{
+    "csn": "{{enduserCSN}}"
+  },
+  "reseller":{
+    "csn": "{{resellerCSN}}"
+  },
+  "soldTo":{
+    "csn": "{{soldToCSN}}"
+  },
+  "poNumber": "{{poNumber}}",
+  "customerPoNumber": "CustPO4-{{ponumber}}",
+  "contractNumber": "{{ponumber}}",
+  "opportunityNumber": "{{opportunityNumber}}",
+  "lineItems":[
+   {
+      "action": "true-up",
+      "partNumber":"{{trueupSku}}",
+      "quantity":"{{trueupQty}}",
+      "netPrice":"{{price}}"
+    },
+    {
+      "partNumber": "{{actualSku}}",
+      "subscriptionReferenceNumber": "{{serialNumber}}",
+      "quantity": "{{actualqty}}",
+      "netPrice": "{{price}}"
+    }
+  ]
+}

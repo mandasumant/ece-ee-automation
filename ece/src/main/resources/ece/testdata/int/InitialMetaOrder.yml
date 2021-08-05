@@ -1,0 +1,589 @@
+#Test data for initial order
+---
+default:
+    soldToParty: "5150375596" #"5150375205"
+    shipToParty: "5150375596" #"5150375683"
+    conPerson: ""
+    purchaseOrderType: null
+    salesOrg: "3000"
+    division: "10"
+    sapOrderType: "GOR"
+    version: "Y"
+    distributionChannel: "02"
+    streetAddress: "1550 Wewatta Street"
+    addressCity: "Denver"
+    country: "US"
+    language: "EN"
+    postalCode: "80202"
+    region: "Col"
+    timeZone: "CST"
+    contractStartDate: "No"
+    macUser: "thubuser"
+    macPass: "Password1"
+    password: "Password1"
+    type: "new"
+    ordertype: "nonbicindirect"
+    versionN: "N"
+    partialSwitch: "NO"
+    Maintenance: "No"
+    overrideContractDates: "No"
+    accessTokenURL: "https://enterprise-api-int.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    customerCSNGMP: "0070176510"
+    consumerKeyGMP: "gcyKXIXz2wsvNM0b8xdkGEp4B3oRybld"
+    consumerSecretGMP: "ogWy2UHJapMYWmvR"
+    callbackURLGMP: "www.deseqaautomation.com"
+    csn: "123456789"
+    apigeeURL: "https://enterprise-api-int.autodesk.com"
+    transcoding: "UTF-8"
+    responseType: "application/xml"
+    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+    consumerSecret: "7uEvzknwGleyd3Kv"
+    callbackURL: "https://autodesk.com"
+    partnerAccount: "0000700603"
+    countryCode: "US"
+    geo: "Amer"
+    currency: "USD"
+    order: "undefined"
+    ratePlanPPU: "NO"
+    updateEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitupdateorder"
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+
+    #===============================================================================
+    skuSAPDesktopInitialOrder : &SAPDesktopInitialOrderQty5 "sku=128K1-WWN500-T427,qty=5,hgvlt="
+    skuBoss2SAPDesktopInitialOrder : &SAPDesktopInitialOrderQty2 "sku=128H1-WW6542-L618,qty=2,hgvlt="
+    skuBFRSAPICOrder : &SAPICOrderQty2 "sku=02JI1-WWN480-T460,qty=2,hgvlt="
+    skuBoss2SAPMYROrder : &SAPMYROrder "sku=C1RK1-WW1525-L657,qty=1,hgvlt="
+    skuBoss2SAPSorrentoOrder : &SAPSorrentoOrder "sku=C1RK1-WW1762-T727,qty=1,hgvlt="
+    skuBoss2SAPMetaBicIndirect1 : &SAPMetaBicIndirect1 "02HI1-WW8500-L937"
+    skuBoss2SAPSorrentOnly : &SAPSorrentOnly "C1RK1-WW1762-L158"
+    skuBoss2SAPICOrderOnly : &SAPICOrderOnly "02HI1-WWN760-L231"
+
+
+    #==============================================================================
+    #DR
+    DROrder: &DROrder "02HI1-WWN390-L178"
+    DRPremiumSubsOrder : &DRPremiumSubsOrder "C3JM1-NS805M-V776"
+    DRICOrder: &DRICOrder "02HI1-WWN760-L231"
+    DRBICIndirect: &DRBICIndirect "128M1-WW6542-L618"
+    DRSorrentoOrder: &DRSorrentoOrder "C1RK1-WW1762-L158"
+    DRUpdateOrder: &DRUpdateOrder "02HI1-WWN390-L178"
+    DRRecurringOrder: &DRRecurringOrder  ""
+    DRCancelOrder: &DRCancelOrder "02HI1-WWN390-L178"
+
+validateNewUserDynamo:
+    vaidationType: "no"
+    type: "new"
+
+validatateInitialOrderNewUser:
+    skuDetails: *SAPDesktopInitialOrderQty5
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+    type : "new"
+
+validatateICOrderNewUser:
+    type: "new"
+    skuDetails: *SAPICOrderQty2
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+
+validatateBicIndirectMetaOrder:
+    type: "new"
+    skuDetails: "sku=A9EI1-WW2859-T981,qty=1,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+
+validatateBicIndirectICOrder:
+    type: "new"
+    skuDetails: *SAPICOrderQty2
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+
+validateMYROrderNewUser:
+    type: "new"
+    skuDetails: *SAPMYROrder
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+
+#BFR SKU
+validatateICOrderExistingUser:
+    type: "no"
+    skuDetails: *SAPICOrderQty2
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+
+#BFR SKU
+validatateBicIndirectICOrderExistingUser:
+    type: "no"
+    skuDetails: "sku=001H1-WW2859-T981,qty=1,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+
+#BFR SKU
+validatateInitialOrderExistingUser:
+    type: "no"
+    skuDetails: "sku=001G1-WW6542-L618,qty=1,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+
+validatateReturnOrderExistingUser:
+    type: "no"
+    skuDetails: "sku=001G1-WW6542-L618,qty=1,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+    reason: "ZTO"
+
+validatatePerpetualOrderExistingUser:
+    skuDetails: "sku=128H1-00Z1C1-100N,qty=1,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+    version: ""
+    Maintenance: "Yes"
+    type: "no"
+
+validatatePartialReturnOrderExistingUser:
+    type: "no"
+    skuDetails: "sku=02JI1-WWN480-T460;02HI1-WWN480-T460,qty=1;1,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+    reason: "120"
+
+validatateMYRPartialReturnOrderExistingUser:
+    type: "no"
+    skuDetails: "sku=C0RI1-WW6927-T615;C0RI1-WW6927-T615,qty=1;1,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+    reason: "120"
+
+validatateEDUOrderExistingUser:
+    skuDetails: "sku=208H1-WWN221-L461,qty=1,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+    type: "no" #"existing"
+
+validatateMaintenanceOrderExitingUser:
+    skuDetails: "sku=001H1-WWR111-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+    type: "no" #"existing"
+    Maintenance: "Yes"
+
+validatateInitialAndSwitchOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    switchSkuDetails: "sku=02JI1-WW8C33-L552,qty=2,hgvlt="
+    enduserCSN : "5150375683"
+    emailid : "fy20oct20intenduser01cont01@letscheck.pw"
+    type: "no" #"existing"
+
+validatateBicIndirectAddProductOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    addProductSkuDetails: *SAPDesktopInitialOrderQty2
+    enduserCSN: "5150375683"
+    emailid: "thub1574859253@letscheck.pw"
+    dataSets: "US"
+    type: "no" #"existing"
+    ordertype: "bicindirect"
+
+validatateMYRAddProductOrderExistingUser:
+    skuDetails: *SAPMYROrder
+    addproductSKUDetails: *SAPMYROrder
+    enduserCSN: "5150375683"
+    emailid: "thub1574859253@letscheck.pw"
+    type: "no" #"existing"
+
+validatateMYRReturnOrderExistingUser:
+    skuDetails: *SAPMYROrder
+    reason: "120"
+    enduserCSN: "5150375683"
+    emailid: "thub1574859253@letscheck.pw"
+    type: "no" #"existing"
+
+validatateAddSeatOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    enduserCSN: "5150375683"
+    emailid: "thub1574859253@letscheck.pw"
+    type: "no" #"existing"
+
+validatateBicIndirectAddSeatOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    enduserCSN: "5150375683"
+    emailid: "thub1574859253@letscheck.pw"
+    type: "no" #"existing"
+    dataSets: "US"
+    ordertype: "bicindirect"
+
+validatateAddProductOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    enduserCSN: "5150375683"
+    emailid: "thub1574859253@letscheck.pw"
+    type: "no" #"existing"
+
+validatateSorrentoOrderExistingUser:
+    skuDetails: *SAPSorrentoOrder
+    enduserCSN: "5150375683"
+    emailid: "thub1574859253@letscheck.pw"
+    type: "no" #"existing"
+
+createInitialBicIndirectAndRenewOrderWithExistinguser:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    ordertype: "bicindirect"
+    enduserCSN: "5150375683"
+    emailid: "thub1574859253@letscheck.pw"
+    type: "no" #"existing"
+
+#======================================== DR===================================================
+validateDigitalRiverOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DROrder
+    qty: "1"
+    price: "" #"4240.00"
+    accountCSN: "5150375079"
+    
+validateDRPremiumSubsOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRPremiumSubsOrder
+    qty: "1"
+    price: "" 
+    accountCSN: "5150375079"
+
+validateDigitalRiverOrderMUS:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "128M1-WWNC11-L911"
+    #*SAPCRDROrderOnly
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+
+validateDigitalRiverICOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRICOrder
+    qty: "1"
+    dataSets: "US"
+    price: ""
+    accountCSN: "5150375079"
+
+validateDigitalRiverSorrentoOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRSorrentoOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+
+validateDigitalRiverUpdateOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRUpdateOrder
+    qty: "1"
+    accountCSN: "5150375079"
+    price: ""
+    updateEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitupdateorder"
+
+validateDigitalRiverRecurringUpdateOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRRecurringOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    updateEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitupdateorder"
+
+DigitalRiverBicIndirectE2EOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRBICIndirect
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5150375079"
+    updateEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitupdateorder"
+    cancelEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitcancelsubscription"
+    ordertype: "bicindirect"
+
+validateDigitalRiverCancelOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DROrder
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    cancelEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitcancelsubscription"
+
+validateDigitalRiverRecurringCancelOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRCancelOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    cancelEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitcancelsubscription"
+
+validateDigitalRiverBicIndirectOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    #sku: "057L1-WW7678-T517"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5150375079"
+    ordertype: "bicindirect"
+
+validateDRBicIndirectSorrentoOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPSorrentOnly
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5150375079"
+    ordertype: "bicindirect"
+
+validateDRBicIndirectICOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPICOrderOnly
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    dataSets: "US"
+    ordertype: "bicindirect"
+    region: ""
+
+validateDigitalRiverBicIndirectUpdateOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5150375079"
+    updateEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitupdateorder"
+    ordertype: "bicindirect"
+
+validateDigitalRiverAddCloudCredit:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    addProductSku: "88100-000000-5401"
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5150375079"
+    ordertype: "bicindirect"
+
+validateDigitalRiverBicIndirectCancelOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5150375079"
+    cancelEndpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitcancelsubscription"
+    ordertype: "bicindirect"
+
+
+validateDigitalRiverOrderDenmark:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "02KI1-WW9596-L967"
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    streetAddress: "Business Center Havnegade APS"
+    addressCity: "Northfield" #"Denver"
+    country: "Denmark"
+    countryCode : "DK"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "1058"
+    region: "NE"
+    currency: "DKK"
+
+validateDigitalRiverOrderNorway:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "02KI1-WW9596-L967"
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    streetAddress: "Postboks 447 Sentrum"
+    emailid: "norwaycontnew01@letscheck.pw"
+    addressCity: "OSLO"
+    country: "Norway"
+    countryCode : "NO"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "0104"
+    region: ""
+    currency: "NOK"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderSweden:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    streetAddress: "Moelndalsvaegen 24"
+    emailid: "swedencontnew02@letscheck.pw"
+    addressCity: "Göteborg"
+    country: "Sweden"
+    countryCode : "SE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "400 20"
+    region: ""
+    currency: "SEK"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderSwitzerland:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    streetAddress: "Worbstrasse 223"
+    emailid: "switzercontnew01@letscheck.pw"
+    addressCity: "Gümligen"
+    country: "Switzerland"
+    countryCode : "CH"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "3073"
+    region: ""
+    currency: "CHF"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderPoland:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    streetAddress: "ul. Odlewnicza 68"
+    emailid: "polandcontnew01@letscheck.pw"
+    addressCity: "Kraków"
+    country: "Poland"
+    countryCode : "PL"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "30-142"
+    region: ""
+    currency: "PLN"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderChezRepublic:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "966N1-WW7407-L592"
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    streetAddress: "Karolinska 650/1 5 Th Floor"
+    emailid: "ChezRepubliccontnew01@letscheck.pw"
+    addressCity: "Praha 8"
+    country: "Czech Republic"
+    countryCode : "CZ"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "186 00"
+    region: ""
+    currency: "CZK"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderAustralia:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Kilsyth"
+    country: "Austrailia"
+    countryCode : "AU"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "3137"
+    region: ""
+    currency: "AUD"
+    partnerAccount: "0000702014"
+
+validateDigitalRiverOrderGermany:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "C1RK1-WW1762-L158"
+    qty: "1"
+    price: ""
+    soldToParty: "5108690115"
+    accountCSN: "5108690115"
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Mainz"
+    country: "Germany"
+    countryCode : "DE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "55129"
+    region: "RP"
+    currency: "EUR"
+
+validateDigitalRiverOrderFrance:
+    sku: "C1RK1-WW1762-L158"
+    qty: "1"
+    price: ""
+    soldToParty: "5108690115"
+    accountCSN: "5108690115"
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Pessac"
+    country: "France"
+    countryCode : "FR"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "33600"
+    region: "RP"
+    currency: "EUR"
+    campaignIdentifier: "ADSKEREN"
+
+validateDigitalRiverOrderIreland:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "C1RK1-WW1762-L158"
+    qty: "1"
+    price: ""
+    soldToParty: "5108690115"
+    accountCSN: "5108690115"
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Monasterevin"
+    country: "Ireland"
+    countryCode : "IE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "W34"
+    region: "N8"
+    currency: "EUR"
+
+validateDigitalRiverMediaKitOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "657G1-G151T1-L001"
+    qty: "1"
+    dataSets: "US"
+    price: ""
+    accountCSN: "5150375079"
+
+validateDigitalRiverNCEOrder:
+    endpointurl: "https://enterprise-api-int.autodesk.com/v2/orderservice/submitorder"
+    sku: "569M1-WW6307-L939"
+    qty: "1"
+    price: ""
+    accountCSN: "5150375079"
+    
+changeCM :
+   agreement : "110003838528"
+
+changeSC :
+   agreement : "110003838528"
+
+changeReseller :
+   agreement : "110003838528"
+   
+SAPS4ManageSubscriptionOrders:
+    applicationName: "Manage Subscription Orders"   
+    criterion: "Transaction ID"
+    criterionOperator: "is" 
+    
+createPOSAOrderMesh:
+   activatePinURL: "https://customer-int.autodesk.com/cep/#pin-activate"
+   streetAddress: "9 Pier"
+   addressCity: "San Francisco"
+   country: "United States"
+   stateProvinceStore: "Colorado"
+   pinCode: "94111"
+   sku: "128L1-WWN881-L782" #Apart from IC SKU we can give any SKU
+   qty: "1"

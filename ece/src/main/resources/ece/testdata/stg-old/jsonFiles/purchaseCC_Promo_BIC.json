@@ -1,0 +1,93 @@
+	{
+	"purchase": {
+		"currency": "{{currency}}",
+		"origin": "ESTORE",
+		"language": "en-US",
+		"storeExternalKey": "{{storeExternalKey}}",
+		"taxRate": "10.20",
+		"offers": [
+			{
+				"type": "SUBSCRIPTION",
+				"quantity": "1",
+				"taxAmount": "24.60",
+				"promotion": {
+                    "id": "3537"
+                },
+				"taxes": [
+					{
+						"type": "STATE",
+						"amount": "15.00",
+						"totalTax": "15.00"
+					},
+					{
+						"type": "CITY",
+						"amount": "3.00",
+						"totalTax": "3.00"
+					},
+					{
+						"type": "SPECIAL",
+						"amount": "2.40",
+						"totalTax": "2.40"
+					},
+					{
+						"type": "COUNTY",
+						"amount": "4.20",
+						"totalTax": "4.20"
+					}
+				],
+				"amount": "240.00",
+				"unitPriceAfterDiscount": "420.00",
+				"unitPrice": "240.00",
+				"discount": "0.00",
+				"taxCode": "DC020500",
+				"skuId": "2151818",
+				"id": "24131",
+				"description": "Maya LT with Advanced Support",
+				"signature": "pJ1qF1kv7v6TgNxOLvo2zipEoNMOeX0bQ6lwEWlk5W0=",
+				"subtotal": "240.00",
+				"subtotalAfterPromotions": "240.00",
+				"subtotalWithTax": null,
+				"subtotalAfterPromotionsWithTax": "264.60",
+				"productTotalTaxAmountAllQty": "24.60",
+				"productUnitPriceBeforeDiscountWithTax": "264.60",
+				"productUnitPriceAfterDiscountWithTax": "264.60"
+			}
+		],
+		"user": {
+			"email": "{{email}}",
+			"paymentProfile": {
+				"id": "1",
+				"paymentProcessor": "ADYEN",
+				"type": "CREDIT_CARD",
+				"paymentInfo": {
+					"paymentProcessor": "ADYEN",
+					"paymentReference": "1111",
+					"paymentMethod": "VISA",
+					"formattedPaymentMethod": "Visa",
+					"expMonth": "01",
+					"expYear": "2021"
+				},
+				"isVatExempt": false,
+				"billingInfo": {
+					"firstName": "{{firstName}}",
+					"lastName": "{{lastName}}",
+					"companyName": "{{companyName}}",
+					"streetAddress": "{{streetAddress}}",
+					"city": "{{city}}",
+					"country": "{{country}}",
+					"stateProvince": "{{stateProvince}}",
+					"postalCode": "{{postalCode}}",
+					"phoneNumber": "{{phoneNumber}}",
+					"lastUsed": "2017-05-17T12:49:13.000Z"
+				},
+				"ipCountry": "{{country}}"
+			},
+			"ip": "132.188.64.219"
+		},
+		"isDelayedPurchase": null,
+		"webInfo": {
+			"userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
+			"remoteHost": "cart.bicstg.autodesk.com"
+		}
+	}
+}

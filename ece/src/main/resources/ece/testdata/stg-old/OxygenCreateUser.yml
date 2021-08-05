@@ -1,0 +1,17 @@
+#Test data for Customer Portal
+---
+default:
+    cepURL: "https://customer-stg.autodesk.com/"
+    macCSN: "5124003324"
+    macHeaderCSN: "123456789"
+    macResponseType: "application/xml"
+    macTranscoding: "UTF-8"
+    macSALEREPRESENT: "s9999"
+    macUser: "sysid_SFDC"
+    macPass: "Password1"
+    accessTokenURL: "https://enterprise-api-stg.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    matchAccountContactServiceEndPointURL: "https://enterprise-api-stg.autodesk.com/v2/matchaccountcontact"
+    consumerSecret: "7uEvzknwGleyd3Kv"
+    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+    callbackURL: "https://autodesk.com"
+    name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"

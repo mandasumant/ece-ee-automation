@@ -1,0 +1,1452 @@
+﻿#Test data for initial order
+---
+default:
+    soldToParty: "5131469533"
+    ratePlanPPU: "NO"
+    shipToParty: "5131469533"
+    supportingReseller: "5131469533"
+    conPerson: "50121569"
+    salesOrg: "3000"
+    division: "10"
+    sapOrderType: "GOR"
+    version: "Y"
+    distributionChannel: "02"
+    streetAddress: "116486 Falk Trail"  #"1550 Wewatta Street"
+    addressCity: "Northfield" #"Denver"
+    country: "United States"
+    countryCode : "US"
+    geo: "Amer"
+    currency: "USD"
+    language: "EN"
+    postalCode: "55057" #"80202"
+    region: "MN" #"Col"
+    timeZone: "CST"
+    contractStartDate: "No"
+    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+    consumerSecret: "7uEvzknwGleyd3Kv"
+    callbackURL: "https://autodesk.com"
+    csn: "123456789"
+    apigeeURL: "https://enterprise-api-stg.autodesk.com"
+    transcoding: "UTF-8"
+    responseType: "application/xml"
+    accessTokenURL: "https://enterprise-api-stg.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    macCSN: "5129772911"
+    macHeaderCSN: "123456789"
+    macResponseType: "application/xml"
+    macTranscoding: "UTF-8"
+    macSALEREPRESENT: "s9999"
+    macUser: "thubuser"
+    macPass: "Password1"
+    cepURL: "https://customer-stg.autodesk.com/"
+    getMyPriceURL: "http://tibappst-vip.autodesk.com:4139/Services/Price/SKUPriceService"
+    name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
+    matchAccountContactServiceEndPointURL: "https://enterprise-api-stg.autodesk.com/v2/matchaccountcontact"    
+    stack: "api-dev"
+    type: "new"
+    ordertype: "nonbicindirect"
+    versionN: "N"
+    #switchSkuDetails: "sku=02HI1-WW4C46-T131,qty=1,hgvlt="       #Obselete SKU (Do not use Term Bundle SKUs)
+    switchSkuDetails: "sku=02HI1-WW2C59-L841,qty=1,hgvlt="
+    partialSwitch: "NO"  
+    Maintenance: "No"
+    overrideContractDates: "No"
+    password: "Password1"
+    customerCSNGMP : "5131488572"
+    consumerKeyGMP : "gcyKXIXz2wsvNM0b8xdkGEp4B3oRybld"
+    consumerSecretGMP : "ogWy2UHJapMYWmvR"
+    callbackURLGMP : "www.deseqaautomation.com"
+    partnerAccount: "0000248038"
+    purchaseOrderType: null
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+    order: "undefined"
+
+#----------------------------------BOSS2 SKU--------------------------------
+
+#Initial    
+    skuBoss2SAPDesktopInitialOrder : &SAPDesktopInitialOrderQty5 "sku=128H1-WW6542-L618,qty=5,hgvlt="
+    skuBoss2SAPDesktopInitialOrder1 : &SAPDesktopInitialOrderQty1 "sku=128H1-WW6542-L618,qty=1,hgvlt="
+    skuBoss2SAPDesktopInitialOrder2 : &SAPDesktopInitialOrderQty2 "sku=128H1-WW6542-L618,qty=2,hgvlt="
+    skuBoss2SAPDesktopInitialOrder22 : &SAPDesktopInitialOrderQty22 "sku=128H1-WW6542-L618;128H1-WW6542-L618,qty=2;2,hgvlt="
+    skuBoss2SAPInitialOrder : &SAPInitialOrder "sku=128H1-WW6542-L618,qty=1,hgvlt="    
+    
+#Meta_SUS   
+    skuBoss2SAPMetaOrderSUS5 : &SAPMetaOrderSUSQty5 "sku=128H1-WW6542-L618,qty=5,hgvlt="  
+    skuBoss2SAPMetaOrderSUS1 : &SAPMetaOrderSUSQty1 "sku=128H1-WW6542-L618,qty=1,hgvlt=" 
+    skuBoss2SAPMetaOrderSUS2 : &SAPMetaOrderSUSQty2 "sku=128H1-WW6542-L618,qty=2,hgvlt="
+    
+#Meta_Network / MultiUser
+    skuBoss2SAPMetaOrderNetwork : &SAPMetaOrderNetwork "sku=02KI1-WWN618-L185,qty=1,hgvlt="
+    skuBoss2SAPMetaOrderNetwork1 : &SAPMetaOrderNetwork1 "sku=02KI1-WWN618-L185;02KI1-WWN618-L185,qty=2;2,hgvlt="
+#MUS_SUS    
+    skuBoss2SAPMUSSUS : &SAPMUSSUS "sku=128H1-WW6542-L618;02KI1-WWN618-L185,qty=1;1,hgvlt="
+    skuBoss2SAPMUSSUS1 : &SAPMUSSUS1 "sku=02KI1-WWN618-L185;02KI1-WWN618-L185,qty=5;5,hgvlt="
+    skuBoss2SAPMUSSUS2 : &SAPMUSSUS2 "sku=128H1-WW6542-L618;128H1-WW6542-L618,qty=5;5,hgvlt="
+    
+#IC Order
+    skuBoss2SAPICOrder : &SAPICOrder "sku=02KI1-WWN618-L185,qty=1,hgvlt="
+    skuBoss2SAPICOrder1 : &SAPICOrder1 "sku=02KI1-WWN618-L185;02KI1-WWN618-L185,qty=1;1,hgvlt="
+    skuBoss2SAPICOrder2 : &SAPICOrder2 "sku=02KI1-WW9596-L967,qty=1,hgvlt="
+    skuBoss2SAPICOrderOnly : &SAPICOrderOnly "02KI1-WW9596-L967"
+    
+#Sorrento   
+    skuBoss2SAPSorrentoOrder : &SAPSorrentoOrder "sku=C1RK1-WW1762-T727,qty=1,hgvlt="
+    skuBoss2SAPSorrentOnly : &SAPSorrentOnly "C1RK1-WW1762-T727"
+    
+#EDU
+    skuBoss2SAPEDUOrder : &SAPEDUOrder "sku=208H1-WWN221-L461,qty=1,hgvlt="
+    
+#Perpetual
+    skuBoss2SAPPerpetualOrder :  &SAPPerpetualOrder "sku=128H1-00Z1C1-100N,qty=4,hgvlt="
+    
+#Maintenance
+    skuBoss2SAPMaintenanceOrder : &SAPMaintenanceOrder "sku=001H1-WWR111-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+    skuBoss2SAPMaintenanceOrder1 : &SAPMaintenanceOrder1 "sku= 001G1-WWR211-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+    skuBoss2SAPMaintenanceOrder2 : &SAPMaintenanceOrder2 "sku=001K1-WWR211-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+    skuBoss2SAPMaintenanceOrder3 : &SAPMaintenanceOrder3 "sku=001H1-WWR111-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+    skuBoss2SAPMaintenanceOrder4 : &SAPMaintenanceOrder4 "sku=001K1-WWR211-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+    skuBoss2SAPMaintenanceOrder5 : &SAPMaintenanceOrder5 "sku=001G1-WWR211-1001;00100-000000-9860,qty=4;4,hgvlt=10;"
+    skuBoss2SAPMaintenanceOrder6 : &SAPMaintenanceOrder6 "sku=001G1-WWR211-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+    
+#M2S
+    skuBoss2SAPM2SOrder : &SAPM2SOrder "sku=C1RK1-WW6C32-L401,qty=1;1,hgvlt="
+    skuBoss2SAPM2SOrder1 : &SAPM2SOrder1 "sku=C1RK1-WW6C32-L401,qty=1,hgvlt="
+    skuBoss2SAPM2SOrder2 : &SAPM2SOrder2 "sku=C1RK1-WW6C32-L401,qty=1,hglt="
+    skuBoss2SAPM2SOrder3 : &SAPM2SOrder3 "sku=C1RK1-WWNC25-L491,qty=1,hglt="
+    skuBoss2SAPM2SOrder4 : &SAPM2SOrder4 "sku=C1RK1-WW6C32-L401,qty=1,hgvlt="
+    skuBoss2SAPM2SOrder5 : &SAPM2SOrder5 "sku=C1RK1-WW6C32-L401;C1RK1-WW6C32-L401,qty=2;2,hgvlt=" 
+    
+#MU M2S SKUs
+    skuBoss2SAPMUM2SOrder : &SAPMUM2SOrder "sku=057L1-WWNC25-L741,qty=1,hglt="
+    skuBoss2SAPMUM2SOrder2 : &SAPMUM2SOrder2 "sku=057L1-WWNC25-L741,qty=2,hglt="
+    
+#BicIndirect_Meta    
+    skuBoss2SAPMetaBicIndirect : &SAPMetaBicIndirect "sku=128H1-WW6542-L618,qty=1,hgvlt="
+    skuBoss2SAPMetaBicIndirect1 : &SAPMetaBicIndirect1 "128H1-WW6542-L618"
+    
+#Switch_SKU   
+    skuBoss2SAPSwitchOrderBicIndirect : &SAPSwitchOrderBicIndirect "sku=128H1-WW6542-L618,qty=1,hgvlt="
+    skuBoss2SAPSwitchOrderBicIndirect2 : &SAPSwitchOrderBicIndirect2 "sku=128H1-WW6542-L618,qty=2,hgvlt="
+    skuBoss2SAPSwitchOrder : &SAPSwitchOrder "sku=02JI1-WW8C33-L552,qty=1,hgvlt="
+    skuBoss2SAPPartialSwitchOrder : &SAPPartialSwitchOrder "sku=128H1-WW6542-L618;128H1-WW6542-L618,qty=1;1,hgvlt="
+    
+#Tflex
+    skuBoss2SAPTflexInitialOrderOld : &SAPTflexInitialOrderOld "sku=535K1-000511-MTFX,qty=1,hgvlt="
+    skuBoss2SAPTflexInitialOrder : &SAPTflexInitialOrder "sku=535K1-000511-MTFX,qty=1,hgvlt="
+    skuBoss2SAPTflexTokenOrder : &SAPTflexTokenOrder "sku=53500-INITOK-TFLX,qty=1,hgvlt="
+    
+#User Pack
+    skuBoss2SAPUserPackOrder : &SAPUserPackOrder "sku=B33I1-NS1311-T483,qty=1,hgvlt="
+#Mix Order
+    skuBoss2SAPMixedOrder : &SAPMixedOrder "sku=128H1-WW6542-L618;02KI1-WWN618-L185,qty=1;1,hgvlt="
+    skuBoss2SAPMixedOrder1 : &SAPMixedOrder1 "sku=02KI1-WWN618-L185,qty=1,hgvlt="
+    skuBoss2SAPMixedOrder2 : &SAPMixedOrder2 "sku=02KI1-WWN618-L185,qty=2,hgvlt="
+    skuBoss2DROnlyMixedOrder3 : &DROnlyMixedOrder "128H1-WW6542-L618;02KI1-WWN618-L185"
+#MYR
+    skuBoss2SAPMYROrder : &SAPMYROrder "sku=C1RK1-WW1525-L657,qty=2,hgvlt="
+    skuBoss2SAPMYROrder1 : &SAPMYROrder1 "sku=C1RK1-WW1525-L657,qty=1,hgvlt="
+    skuBoss2SAPMYROrder2 : &SAPMYROrder2 "sku=C1RK1-WW1525-L657;C1RK1-WW1525-L657,qty=1;1,hgvlt="
+    MYRAddProduct : &MYRAddProduct "sku=C1RK1-WW1525-L657,qty=1,hglv="
+    MYRRenewalOrder : &MYRRenewalOrder "sku=02KI1-WW9596-L967,qty=2,hgvlt="
+    MYRAddCreditsOrder : &MYRAddCreditsOrder "sku=88100-000000-5401,qty=1,hgvlt="
+    
+#PremiumSubs
+    skuBoss2SAPPremiumSubscription : &SAPPremiumSubscription "sku=C3JL1-NS5025-V662,qty=1,hgvlt="
+    skuBoss2SAPPremiumSubscriptionInitialOrder : &SAPPremiumSubscriptionInitialOrder "sku=128H1-WW6542-L618,qty=1,hgvlt="
+    
+#NFR
+    skuBoss2SAPNFROrder : &SAPNFROrder "sku=128K1-WW6276-T507,qty=1,hgvlt="
+#CRDR
+    skuBoss2SAPCRDROrder : &SAPCRDROrder "sku=02KI1-WWN618-L185,qty=5,hgvlt="
+    skuBoss2SAPCRDROrderOnly : &SAPCRDROrderOnly "02KI1-WWN618-L185"
+#Extension 
+    skuBoss2SAPExtensionOrder : &SAPExtensionOrder "sku=02KI1-005947-L614,qty=1,hgvlt="
+#MU2SU
+    skuBoss2SAPMU2SUOrder : &SAPMU2SUOrder "sku=657L1-WW9C45-L383,qty=1,hglt="
+    skuBoss2SAPMU2SUOrder1 : &SAPMU2SUOrder1 "sku=657L1-WW4C96-L745,qty=1,hglt="
+    skuBoss2SAPMU2SUOrder2 : &SAPMU2SUOrder2 "sku=657L1-WW3C39-L874,qty=1,hglt="
+    skuBoss2SAPMU2SUOrder3 : &SAPMU2SUOrder3 "sku=657L1-WW7C24-L335,qty=1,hglt="
+#PPU
+    skuBoss2PSAPPPUOrder : &skuBoss2PSAPPPUOrder "sku=C21L1-WW8500-L937;85933-157571-5723,qty=1;130,hgvlt="
+    skuBoss2SAPPPUOrder : &SAPPPUOrder "sku=C21L1-WW8500-L937,qty=1,hgvlt="
+    
+#DR   
+    DROrder : &DROrder "128L1-WW5383-L868"
+    DRICOrder : &DRICOrder "02KI1-WW6872-T134"
+    DRBICIndirect : &DRBICIndirect "057L1-WW7678-T517"
+    DRSorrentoOrder : &DRSorrentoOrder "C1RK1-WWN887-T546"
+    DRUpdateOrder : &DRUpdateOrder "128L1-WW5383-L868"
+    DRRecurringOrder : &DRRecurringOrder  "02JI1-WW3606-L987"
+    #"128L1-WW5383-L868"
+    DRCancelOrder : &DRCancelOrder "128L1-WW5383-L868"
+   
+    
+#-------------------------------------------------------------------------------------------------------------------
+        
+validatateInitialOrderNewUser:
+    #skuDetails: *SAPDesktopInitialOrderQty5
+    sku: "128H1-WW6542-L618"   
+    
+validatateInitialOrderSUSNewUser:
+    skuDetails: *SAPMetaOrderSUSQty5    
+    
+validatateInitialOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty1
+    soldToParty: "5131469756"
+    shipToParty: "5131469756"
+    supportingReseller: "5131469756"
+    enduserCSN: "5129895855"
+    emailid: "thub1565352109@letscheck.pw"
+    type: "existing"
+
+validatateMusSusOrderExistingUser:
+    skuDetails: *SAPMUSSUS
+    soldToParty: "5131469820"
+    shipToParty: "5131469820"
+    supportingReseller: "5131469820"
+    type: "existing"
+    
+validatateICOrderNewUser:
+    skuDetails: *SAPICOrder
+    soldToParty: "5131469826"
+    shipToParty: "5131469826"
+    supportingReseller: "5131469826"
+       
+validatateICOrderExistingUser:
+    skuDetails: *SAPICOrder
+    soldToParty: "5131469831"
+    shipToParty: "5131469831"
+    supportingReseller: "5131469831"
+    enduserCSN:  "5129983964"
+    emailid: "thub1567750415@letscheck.pw"
+    type: "existing"
+    
+validatateSorrentoOrderExistingUser:
+    skuDetails: *SAPSorrentoOrder
+    soldToParty: "5131469836"
+    shipToParty: "5131469836"
+    supportingReseller: "5131469836"
+    type: "existing"
+
+validatateEDUOrder:
+    skuDetails: *SAPEDUOrder
+    soldToParty: "5131469841"
+    shipToParty: "5131469841"
+    supportingReseller: "5131469841"
+ 
+validatateEDUOrderExistingUser:
+    skuDetails: *SAPEDUOrder
+    soldToParty: "5131469846"
+    shipToParty: "5131469846"
+    supportingReseller: "5131469846"
+    enduserCSN:  "5129986264"
+    emailid: "thub1567871896@letscheck.pw"
+    type: "existing"
+      
+validatatePerpetualOrderNewUser:    
+    skuDetails: *SAPPerpetualOrder
+    soldToParty: "5131469859"
+    shipToParty: "5131469859"
+    supportingReseller: "5131469859" 
+    version: ""
+    Maintenance: "Yes"
+
+validatatePerpetualOrderExistingUser:
+    skuDetails: *SAPPerpetualOrder #"sku=128H1-00Z1C1-100N,qty=1,hgvlt="
+    soldToParty: "5131469756"
+    shipToParty: "5131469756"
+    supportingReseller: "5131469756"
+    enduserCSN:  "5129992099"
+    emailid: "thub1568036561@letscheck.pw"
+    version: ""
+    type: "existing"
+    Maintenance: "Yes"
+        
+validatateMaintenanceOrderNewUser:
+    skuDetails: *SAPMaintenanceOrder
+    soldToParty: "5131469820"
+    shipToParty: "5131469820"
+    supportingReseller: "5131469820"
+    Maintenance: "Yes"
+
+validatateMaintenanceOrderExitingUser:
+    skuDetails: *SAPMaintenanceOrder
+    soldToParty: "5131469826"
+    shipToParty: "5131469826"
+    supportingReseller: "5131469826"
+    enduserCSN: "5129992099"
+    emailid: "thub1568444537@letscheck.pw"
+    type: "existing"
+    Maintenance: "Yes"
+    
+validatateM2SOrder:
+    skuDetails: *SAPMaintenanceOrder
+    skuDetailsM2S: *SAPM2SOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+     
+validatateM2SOrderExisting:
+    skuDetails: *SAPMaintenanceOrder
+    skuDetailsM2S: *SAPM2SOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    enduserCSN: "5129992099"
+    emailid: "thub1568444537@letscheck.pw"
+    type: "existing"
+    Maintenance: "Yes"
+        
+validatateBicIndirectMetaOrder:
+    skuDetails: *SAPMetaBicIndirect
+    soldToParty: "5131469515"
+    shipToParty: "5131469515"
+    supportingReseller: "5131469515"
+    dataSets: "US"
+    ordertype: "bicindirect"
+
+validatateBicIndirectMetaOrderExistingUser:
+    skuDetails: *SAPMetaBicIndirect
+    soldToParty: "5131469887"
+    shipToParty: "5131469887"
+    supportingReseller: "5131469887"
+    enduserCSN: "5130562933"
+    emailid: "thub1574859253@letscheck.pw"
+    dataSets: "US"
+    type: "existing"
+    ordertype: "bicindirect"
+        
+validatateBicIndirectICOrder:
+    #skuDetails: *SAPICOrder
+    skuDetails: *SAPICOrder2
+    soldToParty: "5131469904"
+    shipToParty: "5131469904"
+    supportingReseller: "5131469904"
+    dataSets: "US"
+    ordertype: "bicindirect"
+
+validatateBicIndirectICOrderExistingUser:
+    #skuDetails: *SAPICOrder
+    skuDetails: *SAPICOrder2
+    soldToParty: "5131469515"
+    shipToParty: "5131469515"
+    supportingReseller: "5131469515"
+    enduserCSN: "5130562525"
+    emailid: "thub1574853292@letscheck.pw"
+    dataSets: "US"
+    type: "existing"
+    ordertype: "bicindirect"
+
+validatateBicIndirectAddSeatOrderExistingUser:
+    skuDetails: *SAPMetaBicIndirect
+    soldToParty: "5131469887"
+    shipToParty: "5131469887"
+    supportingReseller: "5131469887"
+    enduserCSN: "5130562933"
+    emailid: "thub1574859253@letscheck.pw"
+    dataSets: "US"
+    type: "existing"
+    ordertype: "bicindirect"
+
+validatateBicIndirectAddProductOrderExistingUser:
+    skuDetails: *SAPMetaBicIndirect
+    addProductSkuDetails: *SAPSwitchOrderBicIndirect
+    soldToParty: "5131469904"
+    shipToParty: "5131469904"
+    supportingReseller: "5131469904"
+    enduserCSN: "5130562933"
+    emailid: "thub1574859253@letscheck.pw"
+    dataSets: "US"
+    type: "existing"
+    ordertype: "bicindirect"
+        
+validatateTflexEstoreOrder:
+    #skuDetails: *SAPTflexInitialOrderOld
+    skuDetails: *SAPTflexInitialOrder
+    skuDetailsToken: *SAPTflexTokenOrder
+    orderReason: "Z81"
+
+validatateTflexOrderExistingUser:
+    skuDetails: *SAPTflexInitialOrderOld
+    orderReason: "Z81"
+    soldToParty: "5131469864"
+    shipToParty: "5131469864"
+    enduserForFTrade: "5131469864"
+    contMgrSoftCoord: "5130145970"
+    supportingReseller: "5130105007"
+    emailid: "thub1569933418@letscheck.pw"
+    conPerson: "39020988"
+    type: "existing" 
+
+validatateUserpacksOrder:
+    skuDetails: *SAPUserPackOrder
+    soldToParty: "5131469859"
+    shipToParty: "5131469859"
+    enduserForFTrade: "5130929605"
+    enterSiteDataForCaseCreation: "Yes"
+    customerType_SiteData: "N"
+    siteName_SiteData: "Test1"
+    siteAdminEmail_SiteData: "TestUPSiteDataa@gmail.com"
+    siteDataCenter_SiteData: "US"
+    siteURL_SiteData: "testURL.com"
+    
+validatateMixOrderNewUser:
+    skuDetails: *SAPMixedOrder
+    soldToParty: "5131469846"
+    shipToParty: "5131469846"
+    enduserForFTrade: "5131469846"
+        
+validateMYROrderNewUser:
+    skuDetails: *SAPMYROrder
+
+validatePPUOrderNewUser:
+    skuDetails: *SAPPPUOrder
+
+validatePremiumSubsOrderNewUser:
+    skuDetails: *SAPPremiumSubscription
+    
+validateNFROrderNewUser:    
+    skuDetails: *SAPNFROrder
+
+validatateAddSeatOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty1
+    soldToParty: "5131469841"
+    shipToParty: "5130929605"
+#    enduserForFTrade: "5130929605"
+    enduserCSN: "5130586148"
+    emailid: "thub1567750415@letscheck.pw"
+    type: "existing"
+      
+validatateAddProductOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty1
+    soldToParty: "5131469836"
+    shipToParty: "5131469836"
+#    enduserForFTrade: "5130929605"
+    enduserCSN: "5129895856"
+    emailid: "thub1565352170@letscheck.pw"
+    type: "existing"
+    
+validatateReturnOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty1
+    soldToParty: "5131469836"
+    shipToParty: "5131469836"
+    enduserCSN: "5129895856"
+    supportingReseller: "5131469836"
+    emailid: "thub1565352170@letscheck.pw"
+    reason: "ZTO"
+    type: "existing"
+    
+validatateInitialAndSwitchOrderBicIndirectExistingUser:
+    skuDetails: *SAPSwitchOrderBicIndirect
+    soldToParty: "5131469831"
+    shipToParty: "5131469831"
+#    enduserForFTrade: "5130929605"
+    enduserCSN:  "5130562525"
+    emailid: "thub1574853292@letscheck.pw"
+    dataSets: "US"
+    type: "existing"
+    ordertype: "bicindirect"
+
+validatateInitialAndSwitchOrderExistingUser:
+    skuDetails: *SAPInitialOrder
+    switchSkuDetails: *SAPSwitchOrder
+    soldToParty: "5131469826"
+    shipToParty: "5131469826"
+#    enduserForFTrade: "5130929605"
+    enduserCSN:  "5129540536"
+    emailid: "thub1565354450@letscheck.pw"
+    type: "existing"
+    
+validatateCROrderExistingUser:
+    skuDetails: *SAPCRDROrder
+    soldToParty: "5130929605"
+    shipToParty: "5130929605"
+    enduserForFTrade: "5130929605"
+    cardValidity: "12/20"
+    cardNo: "4444 3333 2222 1111"
+    cardType: "VISA" 
+    orderReason: "102"
+    enduserCSN:  "5129540536"
+    emailid: "thub1565354450@letscheck.pw"
+    type: "existing"
+    
+validatateSAPDRDebitMemoExistingUser:
+    skuDetails: *SAPCRDROrder
+    soldToParty: "5127835378"
+    shipToParty: "5127835378"
+    enduserForFTrade: "5130929605"
+    cardValidity: "03/30"
+    cardNo: "4400 0000 0000 0008"
+    cardType: "VISA" 
+    cvv: "737"
+    orderReason: "ZTO"
+    enduserCSN:  "5129540536"
+    emailid: "thub1565354450@letscheck.pw"
+    type: "existing"
+    
+validatateExtensionOrderExistingUser:
+    skuDetails: *SAPMixedOrder1
+    extensionSku: *SAPExtensionOrder
+    soldToParty: "5131469826"
+    shipToParty: "5131469826"
+#    enduserForFTrade: "5130929605"
+    enduserCSN:  "5129540536"
+    emailid: "thub1565354450@letscheck.pw"
+    type: "existing"
+    
+validateMaintenancetoMU2SUOrder:
+    skuDetails: *SAPMaintenanceOrder1 
+    skuDetailsMu2Su: *SAPMU2SUOrder
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    opportunityType: "MT"
+    oldSerialNumberRowSelected: "1"
+    Maintenance: "Yes"
+
+validateMaintenanceorderwithOppty:
+    skuDetails: *SAPMaintenanceOrder1 
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    contMgrSoftCoord: "5129895604"
+    Maintenance: "Yes"  
+
+validateExistingNetworkM2SswitchtoMU2SU:
+    skuDetails: *SAPMaintenanceOrder2 
+    skuDetailsM2S: *SAPMUM2SOrder
+    skuDetailsMu2Su: *SAPMU2SUOrder1
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    opportunityType: "M"
+    oldSerialNumberRowSelected: "1"
+    Maintenance: "Yes"
+    NonMaintenance: "No"
+    overrideContractDates: "Yes"
+    
+validateMetaNetworkSubstoMU2SU:
+    skuDetails: *SAPMetaOrderNetwork
+    skuDetailsMu2Su: *SAPMU2SUOrder2
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    opportunityType: "MUS"
+    oldSerialNumberRowSelected: "1" 
+
+validateNetworkSubsorderwithOppty:
+    skuDetails: *SAPMetaOrderNetwork
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    Maintenance: "Yes"
+    
+validateMY4toMU2SU:
+    skuDetails: *SAPMaintenanceOrder2
+    skuDetailsM2S: *SAPMUM2SOrder
+    skuDetailsMu2Su: *SAPMU2SUOrder3
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    ## contactId: "38605794"
+    opportunityType: "M"
+    oldSerialNumberRowSelected: "1"  
+    Maintenance: "Yes"
+    
+validateMaintenanceNetworktoMY4MU:
+    skuDetails: *SAPMaintenanceOrder2
+    skuDetailsMu2Su: *SAPMU2SUOrder
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    opportunityType: "MT"
+    oldSerialNumberRowSelected: "1"
+    Maintenance: "Yes"
+
+partialSwitchOrderExistingUser:
+    skuDetails: *SAPPartialSwitchOrder
+    soldToParty: "5131469831"
+    shipToParty: "5131469831"
+#    enduserForFTrade: "5130929605"
+    enduserCSN:  "5129540536"
+    emailid: "thub1565354450@letscheck.pw"
+    
+partialSwitchM2SOrderSU:
+    skuDetails: *SAPMaintenanceOrder3
+    skuDetailsM2S: *SAPM2SOrder1
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    Maintenance: "Yes"
+    
+partialSwitchM2SOrderMU:
+    skuDetails: *SAPMaintenanceOrder4
+    skuDetailsM2S: *SAPMUM2SOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M" 
+    Maintenance: "Yes"
+     
+validatateInitialOrderWithUserCreation:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    streetAddress: "17300 Brandywine"
+    addressCity: "Bend"
+    country: "US"
+    language: "EN"
+    postalCode: "97701-9137"
+    region: "OR"
+    soldToParty: "5131469826"
+    shipToParty: "5131469826"
+    supportingReseller: "5131469826"
+
+validatateBicindirectOrderWithUserCreation:
+    skuDetails: *SAPSwitchOrderBicIndirect2
+    streetAddress: "17300 Brandywine"
+    addressCity: "Bend"
+    country: "US"
+    language: "EN"
+    postalCode: "97701-9137"
+    region: "OR"
+    soldToParty: "5131469887"
+    shipToParty: "5131469887"
+    supportingReseller: "5131469887"
+    
+validatateBoss2OrderWithUserCreation:
+    skuDetails: "sku=02KI1-WW9596-L967,qty=2,hgvlt="
+    streetAddress: "17300 Brandywine"
+    addressCity: "Bend"
+    country: "US"
+    language: "EN"
+    postalCode: "97701-9137"
+    region: "OR"
+    soldToParty: "5131469859"
+    shipToParty: "5131469859"
+    supportingReseller: "5131469859"
+
+validatatePartialReturnOrderExistingUser:
+    skuDetails: *SAPICOrder1
+    soldToParty: "5131469846"
+    shipToParty: "5131469846"
+    supportingReseller: "5131469846"
+    enduserCSN: "5129896147"
+    emailid: "thub1565365444@letscheck.pw"
+    reason: "120"
+    type: "existing"
+
+MU2SUReturnOrder:
+    skuDetails: *SAPMaintenanceOrder2
+    skuDetailsMu2Su: *SAPMU2SUOrder
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    opportunityType: "MT"
+    oldSerialNumberRowSelected: "1"
+    reason: "ZTO" 
+ 
+validatateReturnOrderExistingUser:
+    skuDetails: *SAPDesktopInitialOrderQty1
+    soldToParty: "5131469841"
+    shipToParty: "5131469841"
+    supportingReseller: "5131469841"
+    enduserCSN: "5129896132"
+    emailid: "thub1565364195@letscheck.pw"
+    reason: "ZTO"
+    type: "existing"
+
+validatateMUSMultiProductMultiQtytNewUser:
+    skuDetails: *SAPMUSSUS1
+    
+validatateSUSMultiProductMultiQtytNewUser:
+    skuDetails: *SAPMUSSUS2
+
+validatateZeroDollerBicIndOrderNewUser:
+    skuDetails: "sku=128H1-WW6542-L618,qty=1,hgvlt="
+    zeroDollarOrder: "yes"
+    ordertype: "bicindirect"
+    dataSets: "US"
+    
+validatateZeroDollerMUSOrderNewUser:
+    skuDetails: "sku=966N1-WWN805-L413,qty=1,hgvlt="
+    zeroDollarOrder: "yes"    
+   
+validateZeroDollarInitialAndSwitchOrder:   
+    skuDetails: *SAPInitialOrder
+    switchSkuDetails: *SAPSwitchOrder
+    zeroDollarOrder: "yes"
+    type: "existing"
+    
+createACDISTBoss2Order:
+    skuDetails: "sku=C1RK1-WWN305-L810,qty=1,hgvlt="
+    enduserCSN: "5129896132"
+    emailid: "thub1565364195@letscheck.pw"
+    
+createBIM360Boss2Order:
+    skuDetails: "sku=C1EJ1-NS2266-V383,qty=1,hgvlt="
+    enduserCSN: "5129896132"
+    emailid: "thub1565364195@letscheck.pw"
+  
+validateMediaKitOrderNewUser:
+    skuDetails: "sku=657G1-G151T1-L001,qty=1,hgvlt="
+    version: ""
+             
+#===================================== Testdata creation and validation =========================
+
+validateNewUserDynamo:
+    vaidationType: "no"
+    type: "new"
+    
+#======================================== DR=================================================== 
+validateDigitalRiverOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DROrder
+    qty: "1"
+    price: "" #"1393.20"
+    accountCSN: "5130522094"
+    
+validateDigitalRiverOrderMUS:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WWN390-L178"
+    #*SAPCRDROrderOnly
+    qty: "1"
+    price: ""
+    accountCSN: "5130522094"
+    
+validateDigitalRiverICOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRICOrder
+    qty: "1"
+    dataSets: "US"
+    price: ""
+    accountCSN: "5130522094"
+    
+validateDigitalRiverSorrentoOrder:  
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRSorrentoOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5141384435"
+    
+validateDigitalRiverUpdateOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRUpdateOrder
+    qty: "1"
+    accountCSN: "5141384435"
+    price: ""
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"  
+
+validateDigitalRiverRecurringUpdateOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRRecurringOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5141384435"
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+
+DigitalRiverBicIndirectE2EOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRBICIndirect
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5130105013"
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+    cancelEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitcancelsubscription"
+    ordertype: "bicindirect"
+    
+validateDigitalRiverCancelOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DROrder
+    qty: "1"
+    price: ""
+    accountCSN: "5130522094"
+    cancelEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitcancelsubscription"
+    
+validateDigitalRiverRecurringCancelOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *DRCancelOrder
+    qty: "1"
+    price: ""
+    accountCSN: "5130522094"
+    cancelEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitcancelsubscription"
+    
+validateDigitalRiverBicIndirectOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    #sku: "057L1-WW7678-T517"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5130522094"
+    ordertype: "bicindirect"
+    
+validateDRBicIndirectSorrentoOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPSorrentOnly
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5130522094"
+    ordertype: "bicindirect"
+
+validateDRBicIndirectICOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPICOrderOnly
+    qty: "1"
+    price: ""
+    accountCSN: "5130522094"
+    dataSets: "US"
+    ordertype: "bicindirect"
+    region: ""
+    
+validateDigitalRiverBicIndirectUpdateOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    #sku: "057L1-WW7678-T517"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5130522094"
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+    ordertype: "bicindirect"
+
+validateDigitalRiverAddCloudCredit:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    addProductSku: "88100-000000-5401"
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5130522094"
+    updateEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitupdateorder"
+    ordertype: "bicindirect"
+    
+validateDigitalRiverBicIndirectCancelOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: *SAPMetaBicIndirect1
+    qty: "1"
+    price: ""
+    dataSets: "US"
+    accountCSN: "5130522094"
+    cancelEndpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitcancelsubscription"
+    ordertype: "bicindirect"
+
+validateDigitalRiverOrderDenmark:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02KI1-WW9596-L967"
+    qty: "1"
+    price: ""
+    accountCSN: "5108690115"
+    streetAddress: "Business Center Havnegade APS"
+    addressCity: "Northfield" #"Denver"
+    country: "Denmark"
+    countryCode : "DK"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "1058" 
+    region: "NE" 
+    currency: "DKK"
+
+validateDigitalRiverOrderNorway:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02KI1-WW9596-L967"
+    qty: "1"
+    price: ""
+    accountCSN: "5108690115"
+    streetAddress: "Postboks 447 Sentrum"
+    emailid: "norwaycontnew01@letscheck.pw"
+    addressCity: "OSLO"
+    country: "Norway"
+    countryCode : "NO"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "0104" 
+    region: ""
+    currency: "NOK"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderSweden:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5108690115"
+    streetAddress: "Moelndalsvaegen 24"
+    emailid: "swedencontnew02@letscheck.pw"
+    addressCity: "Göteborg"
+    country: "Sweden"
+    countryCode : "SE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "400 20" 
+    region: "" 
+    currency: "SEK"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderSwitzerland:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5108690115"
+    streetAddress: "Worbstrasse 223"
+    emailid: "switzercontnew01@letscheck.pw"
+    addressCity: "Gümligen"
+    country: "Switzerland"
+    countryCode : "CH"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "3073" 
+    region: "" 
+    currency: "CHF"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderPoland:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5108690115"
+    streetAddress: "ul. Odlewnicza 68"
+    emailid: "polandcontnew01@letscheck.pw"
+    addressCity: "Kraków"
+    country: "Poland"
+    countryCode : "PL"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "30-142" 
+    region: "" 
+    currency: "PLN"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderChezRepublic:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "966N1-WW7407-L592"
+    qty: "1"
+    price: ""
+    accountCSN: "5108690115"
+    streetAddress: "Karolinska 650/1 5 Th Floor"
+    emailid: "ChezRepubliccontnew01@letscheck.pw"
+    addressCity: "Praha 8"
+    country: "Czech Republic"
+    countryCode : "CZ"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "186 00" 
+    region: "" 
+    currency: "CZK"
+    partnerAccount: "0000248038"
+
+validateDigitalRiverOrderAustralia:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5110108873"
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Kilsyth"
+    country: "Austrailia"
+    countryCode : "AU"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "3137" 
+    region: "" 
+    currency: "AUD"
+    partnerAccount: "0000702014"
+
+validateDigitalRiverOrderGermany:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5110108873"
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Mainz"
+    country: "Germany"
+    countryCode : "DE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "55129"
+    region: "RP"
+    currency: "EUR"
+    partnerAccount: "0000702014"
+
+validateDigitalRiverOrderFrance:
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5110108873"
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Pessac"
+    country: "France"
+    countryCode : "FR"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "33600"
+    region: "RP"
+    currency: "EUR"
+    campaignIdentifier: "ADSKEREN"
+
+validateDigitalRiverOrderIreland:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "02JI1-WW1782-L958"
+    qty: "1"
+    price: ""
+    accountCSN: "5110108873"
+    streetAddress: "259-261 Colchester Road"
+    emailid: "testautstrailiacont02@letscheck.pw"
+    addressCity: "Monasterevin"
+    country: "Ireland"
+    countryCode : "IE"
+    geo: "EMEA"
+    language: "EN"
+    postalCode: "W34"
+    region: "N8"
+    currency: "EUR"
+    partnerAccount: "0000702014"
+    
+validateDigitalRiverMixedOrder:
+   endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+   sku: *DROnlyMixedOrder
+   qty: "1;1"
+   price: ""
+   accountCSN: "5130522094"
+   dataSets: "US"
+   ordertype: "mixed"
+   region: ""
+   
+validateDigitalRiverMediaKitOrder:
+   endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+   sku: "657G1-G151T1-L001"
+   qty: "1"
+   dataSets: "US"
+   price: ""
+   accountCSN: "5130522094"
+
+validateDigitalRiverNCEOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    sku: "569M1-WW6307-L939"
+    qty: "1"
+    price: ""
+    accountCSN: "5130522094"
+
+#------ DR Quarry--------------------------------------
+createDRInitialOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    accountCSN: "5130522094"
+    
+createDRICOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    accountCSN: "5130522094"
+    
+createDRSorrentoOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    accountCSN: "5130522094"
+    
+createDRBicindIrectOrder:
+    endpointurl: "https://enterprise-api-stg.autodesk.com/v2/orderservice/submitorder"
+    accountCSN: "5130522094"
+                    
+#===================================== Renewal =========================================================
+
+createInitialAndRenewOrderWithExistinguser:
+    skuDetails: *SAPMixedOrder1
+    soldToParty: "5131469820"
+    shipToParty: "5131469820"
+    supportingReseller: "5131469820"
+#    enduserForFTrade: "5130058484"
+    contMgrSoftCoord: "5130058484"
+    conPerson: "38892959"
+    emailid: "qaperf_sqg14121522473201@ssttest.net"
+    type: "existing"
+
+createInitialBicIndirectAndRenewOrderWithExistinguser:
+    skuDetails: *SAPMetaBicIndirect
+    soldToParty: "5131469904"
+    shipToParty: "5131469904"
+    supportingReseller: "5131469904"
+    enduserForFTrade: "5130586041"
+    contMgrSoftCoord: "5130586041"
+    conPerson: "41415591"
+    emailid: "thub1574859253@letscheck.pw"    
+    type: "existing"
+    ordertype: "bicindirect"
+
+createInitialPremiumSubsAndRenewOrderWithExistinguser:
+    skuDetails:  *SAPPremiumSubscription
+    soldToParty: "5130929645"
+    shipToParty: "5130929645"
+    supportingReseller: "5130929645"
+    enduserForFTrade: "5130586041"
+    contMgrSoftCoord: "5130586041"
+    conPerson: "41415591"
+    emailid: "thub1574859253@letscheck.pw"    
+    type: "existing"    
+   
+#  soldto should be a partner dealer else it will not show up in AOE   
+createInitialAndAOERenewOrderWithExistinguser:
+    url: "https://partner-stg.autodesk.com"     
+    skuDetails: *SAPDesktopInitialOrderQty1
+    soldToParty: "5131469036"
+    shipToParty: "5131469036"
+    supportingReseller: "5131469036"
+    enduserForFTrade: "5131469036"
+    contMgrSoftCoord: "5131469036"
+    emailid: "thub1561559540@letscheck.pw"
+    conPerson: "50121257"
+    enduserCSN: "5131469036"
+    email: "thuboct12partneruser01@letscheck.pw"
+    username: " thuboct12partneruser01" 
+    password: "Password1"     
+    dealer: "5131469036"
+    type: "existing"
+    
+#===================================== MYR =========================================================   
+
+validatateMYRReturnOrderExistingUser:
+    skuDetails: *SAPMYROrder1
+    soldToParty: "5131469533"
+    shipToParty: "5131469533"
+    supportingReseller: "5131469533"
+    enduserCSN: "5129896147"
+    emailid: "thub1565365444@letscheck.pw"
+    reason: "120"
+    type: "existing"
+    
+validatateMYRPartialReturnOrderExistingUser:
+    skuDetails: *SAPMYROrder2
+    soldToParty: "5131469756"
+    shipToParty: "5131469756"
+    supportingReseller: "5131469756"
+    enduserCSN: "5129896147"
+    emailid: "thub1565365444@letscheck.pw"
+    reason: "120"
+    type: "existing"
+    
+validatateMYRAddProductOrderExistingUser:
+    skuDetails: *SAPMYROrder1
+    addproductSKUDetails: *MYRAddProduct
+    soldToParty: "5131469820"
+    shipToParty: "5131469820"
+    supportingReseller: "5131469820"
+    enduserCSN: "5129896147"
+    emailid: "thub1565365444@letscheck.pw"
+    type: "existing"  
+    
+createInitialAndMYRRenewOrderWithExistinguser:
+    skuDetails: *MYRRenewalOrder
+    soldToParty: "5131469826"
+    shipToParty: "5131469826"
+    supportingReseller: "5131469826"
+    enduserCSN: "5129540536"
+    emailid: "mesh09010159@letscheck.pw"
+    type: "existing"
+
+validatateMYRAddCreditsOrderExistingUser:
+    skuDetails: *SAPMixedOrder1
+    addCreditSkuDetails: *MYRAddCreditsOrder
+    soldToParty: "5131469831"
+    shipToParty: "5131469831"
+    supportingReseller: "5131469831"
+    enduserCSN: "5129946619"
+    emailid: "thub1566997328@letscheck.pw"
+    type: "existing"
+#=================================== SAP HANA Fiori ===========================================================   
+
+validatateSAPHanaLogin:
+    tcode: "/nas01"
+    assetClassHANA: "HARDWARE"
+    companyCodeHANA: "1200"
+    costCenterTimeDependentHana: "1200200004"
+    plantTimeDependentHana: "1200"
+    locationTimeDependentHana: "BOURKE ST"
+    type: "no"
+
+validatateSAPFioriLoginTest:
+    GLAccountLine1: "612015"
+    DebitLine1: "10.00"
+    GLAccountLine2: "214017"
+    CreditLine2: "10.00"
+    TaxCode1: "ZZ"
+    TaxJurisdiction1: "0100100000"
+    costCenter1: "3000120001"
+    TaxCode2: "ZZ"
+    TaxJurisdiction2: "0100100000"
+    type: "no"
+    
+FinmartCompareRevmart:
+    nullTest: ""
+    
+FinmartM2S:
+    nullTest: ""
+    
+FinmartOrderNumber:
+    nullTest: ""
+        
+SAPS4APAnalyst:
+    GLAccountLine1: "612015"
+    DebitLine1: "10.00"
+    GLAccountLine2: "214017"
+    CreditLine2: "10.00"
+    TaxCode1: "ZZ"
+    TaxJurisdiction1: "0100100000"
+    costCenter1: "3000120001"
+    TaxCode2: "ZZ"
+    TaxJurisdiction2: "0100100000" 
+    
+SAPS4ManageSubscriptionOrders:
+    applicationName: "Manage Subscription Orders"   
+    criterion: "Transaction ID"
+    criterionOperator: "is"   
+    
+#====================================== Asset Transactions ========================================================     
+
+validateModifyCloudCredits:
+    modifyCloudCredit: "10"
+    skuDetails: *SAPMixedOrder2
+    soldToParty: "5131469836"
+    shipToParty: "5131469836"
+    supportingReseller: "5131469836"
+    enduserCSN:  "5129946619"
+    emailid: "thub1566997328@letscheck.pw"
+
+validateModifyCloudCreditsSUS:
+    modifyCloudCredit: "50"
+    
+validateContractTransfer:
+    skuDetails: *SAPDesktopInitialOrderQty5 
+    accountCSN: "5130105006"
+    
+validateAssetMove: 
+    test: ""
+    
+validateAssetMoveSUS:
+    test: ""    
+    
+validateContractMerge:
+    skuDetails: *SAPDesktopInitialOrderQty2
+    enduserCSN:  "5129895853"
+    emailid: "thub1565352048@letscheck.pw"
+#=============================================================================================
+
+    
+ 
+##---------------------------------- 
+## https://wiki.autodesk.com/pages/viewpage.action?spaceKey=SPGE&title=Testing+Hub+Enhancements 
+##---------------------------------- 
+##RAS
+validatatePartialM2StoMU2SUOrder:
+    skuDetailsM: *SAPMaintenanceOrder5
+    skuDetailsM2S: *SAPMUM2SOrder2
+    opportunityTypeM2S: "M"    
+    skuDetailsMu2Su: *SAPMU2SUOrder1 
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    opportunityTypeMu2Su: "MUS"
+    parialSwitch: "YES"  
+    rowSelectInterval: "1"
+    Maintenance: "Yes"
+    NonMaintenance: "No"
+    overrideContractDates: "Yes"
+
+##RAS2
+validatePartialMaintenancetoMU2SUOrder:
+    skuDetails: *SAPMaintenanceOrder6
+    skuDetailsMu2Su: *SAPMU2SUOrder
+    enduserCSN: "5129895604"
+    emailid: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"    
+    opportunityType: "MT"
+    Maintenance: "Yes"
+    NonMaintenance: "No"
+    
+##RAS3
+validatePartialMetatoMU2SU:
+    skuDetails: *SAPMetaOrderNetwork1
+    skuDetailsMu2Su: *SAPMU2SUOrder2    
+    opportunityType: "MUS"    
+    NonMaintenance: "No"
+
+    
+executeApigeeMergeAPI :
+    skuDetails: *SAPDesktopInitialOrderQty22 
+    
+executeApigeeMergeAPISUS:
+    test: "" 
+    
+##RAS4
+validatePPUAddTokenOrderNewUser:
+    skuDetails: *skuBoss2PSAPPPUOrder
+
+##RAS5
+validatatePremiumSubsBicIndirectExistingUser:
+    skuDetails: *SAPPremiumSubscriptionInitialOrder
+    addProductSkuDetails:  *SAPPremiumSubscription
+    soldToParty: "5130929570"
+    shipToParty: "5130929570"    
+    type: "existing"
+    dataSets: "US"
+    ordertype: "bicindirect"
+    
+##RAS6
+executeApigeeSplitAPI :
+   skuDetails: *SAPDesktopInitialOrderQty2 
+ 
+executeApigeeSplitAPISUS:
+    test: ""
+     
+##RAS7 
+executeApigeeMergeContractAPI :
+    skuDetails: *SAPDesktopInitialOrderQty1 
+ 
+executeApigeeMergeContractAPISUS :
+    skuDetails: *SAPMetaOrderSUSQty1
+         
+##Akarsh
+executeApigeeSplitAPINonSubs :
+   skuDetails: *SAPPerpetualOrder
+   version: ""
+   Maintenance: "Yes"
+
+executeApigeeSplitAPINonSubsSUS :
+   test: "" 
+     
+executeContractTransfer :
+   skuDetails: *SAPDesktopInitialOrderQty2
+   
+executeContractTransferSUS :   
+   skuDetails: *SAPMetaOrderSUSQty2
+   
+changeCM :
+   agreement : "110003838528"
+
+changeSC :
+   agreement : "110003838528"
+ 
+changeReseller :
+   agreement : "110003838528"
+
+#Initial# 
+# skuBFRSAPDesktopInitialOrder : &SAPDesktopInitialOrderQty5 "sku=128K1-WWN500-T427,qty=5,hgvlt="
+# skuBFRSAPDesktopInitialOrder1 : &SAPDesktopInitialOrderQty1 "sku=128K1-WWN500-T427,qty=1,hgvlt="
+# skuBFRSAPDesktopInitialOrder2 : &SAPDesktopInitialOrderQty2 "sku=128K1-WWN500-T427,qty=2,hgvlt="
+# skuBFRSAPDesktopInitialOrder22 : &SAPDesktopInitialOrderQty22 "sku=128K1-WWN500-T427;128K1-WWN500-T427,qty=2;2,hgvlt="
+# skuBFRSAPInitialOrder : &SAPInitialOrder "sku=001I1-WW8695-T548,qty=1,hgvlt="# 
+# 
+#Meta_SUS   
+# skuBFRSAPMetaOrderSUS5 : &SAPMetaOrderSUSQty5 "sku=001H1-WW2859-T981,qty=5,hgvlt="  
+# skuBFRSAPMetaOrderSUS1 : &SAPMetaOrderSUSQty1 "sku=001H1-WW2859-T981,qty=1,hgvlt=" 
+# skuBFRSAPMetaOrderSUS2 : &SAPMetaOrderSUSQty2 "sku=001H1-WW2859-T981,qty=2,hgvlt="
+# 
+#Meta_Network / MultiUser
+# skuBFRSAPMetaOrderNetwork : &SAPMetaOrderNetwork "sku=001I1-WWN855-T368,qty=1,hgvlt="
+# skuBFRSAPMetaOrderNetwork1 : &SAPMetaOrderNetwork1 "sku=001I1-WWN855-T368;001I1-WWN855-T368,qty=2;2,hgvlt="
+#MUS_SUS# 
+# skuBFRSAPMUSSUS : &SAPMUSSUS "sku=128H1-WW6919-T229;128H1-WWN500-T427,qty=1;1,hgvlt="
+# skuBFRSAPMUSSUS1 : &SAPMUSSUS1 "sku=128H1-WWN500-T427;128H1-WWN500-T427,qty=5;5,hgvlt="
+# skuBFRSAPMUSSUS2 : &SAPMUSSUS2 "sku=128H1-WW2859-T981;128H1-WW2859-T981,qty=5;5,hgvlt="
+# 
+#IC Order
+# skuBFRSAPICOrder : &SAPICOrder "sku=02JI1-WWN480-T460,qty=1,hgvlt="
+# skuBFRSAPICOrder1 : &SAPICOrder1 "sku=02JI1-WWN480-T460;02HI1-WWN480-T460,qty=1;1,hgvlt="
+# skuBFRSAPICOrder2 : &SAPICOrder2 "sku=02JI1-WW3839-T813,qty=1,hgvlt="
+# skuBFRSAPICOrderOnly : &SAPICOrderOnly "02JI1-WW3839-T813"
+# 
+#Sorrento   
+# skuBFRSAPSorrentoOrder : &SAPSorrentoOrder "sku=C1RK1-WW1762-T727,qty=1,hgvlt="
+# skuBFRSAPSorrentOnly : &SAPSorrentOnly "C1RK1-WW1762-T727"
+# 
+#EDU
+# skuBFRSAPEDUOrder : &SAPEDUOrder "sku=128G1-WWR121-1001;128C1-000120-S001,qty=1;1,hgvlt=10"
+# 
+#Perpetual
+# skuBFRSAPPerpetualOrder :  &SAPPerpetualOrder "sku=128H1-00Z1C1-100N,qty=4,hgvlt="
+# 
+#Maintenance
+# skuBFRSAPMaintenanceOrder : &SAPMaintenanceOrder "sku=001H1-WWR111-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+# skuBFRSAPMaintenanceOrder1 : &SAPMaintenanceOrder1 "sku= 001G1-WWR211-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+# skuBFRSAPMaintenanceOrder2 : &SAPMaintenanceOrder2 "sku=001K1-WWR211-1001;00100-000000-9860,qty=1;1,hgvlt=10"
+# skuBFRSAPMaintenanceOrder3 : &SAPMaintenanceOrder3 "sku=001H1-WWR111-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+# skuBFRSAPMaintenanceOrder4 : &SAPMaintenanceOrder4 "sku=001K1-WWR211-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+# skuBFRSAPMaintenanceOrder5 : &SAPMaintenanceOrder5 "sku=001G1-WWR211-1001;00100-000000-9860,qty=4;4,hgvlt=10;"
+# skuBFRSAPMaintenanceOrder6 : &SAPMaintenanceOrder6 "sku=001G1-WWR211-1001;00100-000000-9860,qty=2;2,hgvlt=10;"
+# 
+#M2S
+# skuBFRSAPM2SOrder : &SAPM2SOrder "sku=C1RK1-WW4C40-T271,qty=1;1,hgvlt="
+# skuBFRSAPM2SOrder1 : &SAPM2SOrder1 "sku=C1RK1-WW4C40-T271,qty=1,hgvlt="
+# skuBFRSAPM2SOrder2 : &SAPM2SOrder2 "sku=237J1-WWNC37-T571,qty=1,hglt="
+# skuBFRSAPM2SOrder3 : &SAPM2SOrder3 "sku=02HJ1-WWNC82-T261,qty=1,hglt="
+# skuBFRSAPM2SOrder4 : &SAPM2SOrder4 "sku=001K1-WWNC37-T571,qty=1,hgvlt="
+# skuBFRSAPM2SOrder5 : &SAPM2SOrder5 "sku=057J1-WWNC37-T571;057J1-WWNC37-T571,qty=2;2,hgvlt=" 
+# 
+#BicIndirect_Meta# 
+# skuBFRSAPMetaBicIndirect : &SAPMetaBicIndirect "sku=A9EI1-WW2859-T981,qty=1,hgvlt="
+# skuBFRSAPMetaBicIndirect1 : &SAPMetaBicIndirect1 "A9EI1-WW2859-T981"
+# 
+#Switch_SKU   
+# skuBFRSAPSwitchOrderBicIndirect : &SAPSwitchOrderBicIndirect "sku=128K1-WW2859-T981,qty=1,hgvlt="
+# skuBFRSAPSwitchOrderBicIndirect2 : &SAPSwitchOrderBicIndirect2 "sku=128K1-WW2859-T981,qty=2,hgvlt="
+# skuBFRSAPSwitchOrder : &SAPSwitchOrder "sku=02HI1-WW4C46-T131,qty=1,hgvlt="
+# skuBFRSAPPartialSwitchOrder : &SAPPartialSwitchOrder "sku=001I1-WW8695-T548;001I1-WW8695-T548,qty=1;1,hgvlt="
+# 
+#Tflex
+# skuBFRSAPTflexInitialOrderOld : &SAPTflexInitialOrderOld "sku=535H1-000211-TFLX,qty=1,hgvlt="
+# skuBFRSAPTflexInitialOrder : &SAPTflexInitialOrder "sku=535K1-000511-MTFX,qty=1,hgvlt="
+# skuBFRSAPTflexTokenOrder : &SAPTflexTokenOrder "sku=53500-INITOK-TFLX,qty=1,hgvlt="
+# 
+#User Pack
+# skuBFRSAPUserPackOrder : &SAPUserPackOrder "sku=B33I1-NS1311-T483,qty=1,hgvlt="
+#Mix Order
+# skuBFRSAPMixedOrder : &SAPMixedOrder "sku=A9EI1-WW2859-T981;001I1-WW4127-T897,qty=1;1,hgvlt="
+# skuBFRSAPMixedOrder1 : &SAPMixedOrder1 "sku=001I1-WW4127-T897,qty=1,hgvlt="
+# skuBFRSAPMixedOrder2 : &SAPMixedOrder2 "sku=001I1-WW4127-T897,qty=2,hgvlt="
+#MYR
+# skuBFRSAPMYROrder : &SAPMYROrder "sku=C0RI1-WW6927-T615,qty=2,hgvlt="
+# skuBFRSAPMYROrder1 : &SAPMYROrder1 "sku=C0RI1-WW6927-T615,qty=1,hgvlt="
+# skuBFRSAPMYROrder2 : &SAPMYROrder2 "sku=C0RI1-WW6927-T615;C0RI1-WW6927-T615,qty=1;1,hgvlt="
+# MYRAddProduct : &MYRAddProduct "sku=057J1-WW7304-T464,qty=1,hglv="
+# MYRRenewalOrder : &MYRRenewalOrder "sku=02HI1-WW3839-T813,qty=2,hgvlt="
+# MYRAddCreditsOrder : &MYRAddCreditsOrder "sku=88100-000000-5401,qty=1,hgvlt="
+# 
+#PremiumSubs
+# skuBFRSAPPremiumSubscription : &SAPPremiumSubscription "sku=C3JM1-NS805M-T776,qty=1,hgvlt="
+# skuBFRSAPPremiumSubscriptionInitialOrder : &SAPPremiumSubscriptionInitialOrder "sku=498K1-WW9613-T408,qty=1,hgvlt="
+# 
+#NFR
+# skuBFRSAPNFROrder : &SAPNFROrder "sku=128K1-WW6276-T507,qty=1,hgvlt="
+#CRDR
+# skuBFRSAPCRDROrder : &SAPCRDROrder "sku=02HI1-WWN480-T460,qty=5,hgvlt="
+# skuBFRSAPCRDROrderOnly : &SAPCRDROrderOnly "02HI1-WWN480-T460"
+#Extension 
+# skuBFRSAPExtensionOrder : &SAPExtensionOrder "sku=001I1-009773-T314,qty=1,hgvlt="
+#MU2SU
+# skuBFRSAPMU2SUOrder : &SAPMU2SUOrder "sku=657L1-WW7C38-T523,qty=1,hglt="
+# skuBFRSAPMU2SUOrder1 : &SAPMU2SUOrder1 "sku=657L1-WW9C29-T102,qty=1,hglt="
+# skuBFRSAPMU2SUOrder2 : &SAPMU2SUOrder2 "sku=02HJ1-WW2C70-T907,qty=1,hglt="
+# skuBFRSAPMU2SUOrder3 : &SAPMU2SUOrder3 "sku=02HJ1-WW2C43-T765,qty=1,hglt="
+#PPU
+# skuBFRPSAPPPUOrder : &skuBFRPSAPPPUOrder "sku=C21L1-WW8500-L937;85933-157571-5723,qty=1;130,hgvlt="
+# skuBFRSAPPPUOrder : &SAPPPUOrder "sku=C21L1-WW3839-T813,qty=1,hgvlt="
+#DR   
+# DROrder : &DROrder "225H1-WW7929-T210"
+# DRICOrder : &DRICOrder "02KI1-WW6872-T134"
+# DRBICIndirect : &DRBICIndirect "057L1-WW7678-T517"
+# DRSorrentoOrder : &DRSorrentoOrder "C1RK1-WWN887-T546"
+# DRUpdateOrder : &DRUpdateOrder "657I1-WW1949-T426"
+# DRRecurringOrder : &DRRecurringOrder  "001I1-WW9623-T280"
+# DRCancelOrder : &DRCancelOrder "657I1-WW1949-T426"
+
+createPOSAOrderMesh:
+   activatePinURL: "https://customer-stg.autodesk.com/cep/#pin-activate"
+   streetAddress: "9 Pier"
+   addressCity: "San Francisco"
+   country: "United States"
+   stateProvinceStore: "Colorado"
+   pinCode: "94111"
+   sku: "128H1-WW6542-L618" #Apart from IC SKU we can give any SKU
+   qty: "1"

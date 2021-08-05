@@ -1,0 +1,443 @@
+#Test data for initial order
+---
+default:
+    enduserCSN: "5131488572"
+    resellerCSN: "5131488572"
+    ratePlanPPU: "NO"
+    language: "EN"
+    endCustomerAddressLine1: "69645 Brandywine Ahumada"
+    endCustomerAddressLine2: "Apartment 931064691"
+    endCustomerAddressLine3: "Floor 580"
+    endCustomerCity: "Bend"
+    endCustomerCountryCode: "US"
+    endCustomerPostalCode: "97701-9137"
+    endCustomerState: "CA"
+    timeZone: "CST"
+  #  pwsConsumerKey: "U4SQaGJx8qYOMtwSbtdJt8hG6bh0mfu9"         #Not to be used
+  #  pwsConsumerSecret: "9Fgf2Id8ZLxMpA72"                      #Not to be used
+  #  pwsCallbackURL: "www.autodesk.com"                         #Not to be used
+   # pwsConsumerKey: "gcyKXIXz2wsvNM0b8xdkGEp4B3oRybld" 
+   # pwsConsumerSecret: "ogWy2UHJapMYWmvR" 
+   # pwsCallbackURL: "www.deseqaautomation.com"
+    callbackURL: "https://autodesk.com"
+    csn: "123456789"
+    apigeeURL: "https://enterprise-api-stg.autodesk.com"
+    transcoding: "UTF-8"
+    responseType: "application/xml"
+    accessTokenURL: "https://enterprise-api-stg.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    macCSN: "0070176510"
+    macHeaderCSN: "123456789"
+    macResponseType: "application/xml"
+    macTranscoding: "UTF-8"
+    macSALEREPRESENT: "s9999"
+    macUser: "sysid_SFDC"
+    macPass: "Password1"
+    cepURL: "https://customer-stg.autodesk.com/"
+    name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
+    matchAccountContactServiceEndPointURL: "https://enterprise-api-stg.autodesk.com/v2/matchaccountcontact"
+    soldToParty: "5130874065"
+    shipToParty: "5130874065"
+    supportingReseller: "5130874065"
+    conPerson: "37207680"
+    salesOrg: "3000"
+    division: "10"
+    version: "Y"
+    distributionChannel: "02"
+    streetAddress: "1550 Wewatta Street"
+    addressCity: "Denver"
+    country: "US"
+    postalCode: "80202"
+    type: "new"   
+    ordertype: "nonbicindirect"
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/" 
+    opportunityNumber: ""
+    agreementNumber: ""
+    oldSerialNumber: ""
+    overrideContractDates: "No"
+    #getMyPriceCSN : "5131488572"
+    Maintenance: "No"
+    sapOrderType: "GOR"
+    password: "Password1"
+    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+    consumerSecret: "7uEvzknwGleyd3Kv"    
+    termswitchendpointURL: "https://api.spartan-stg.autodesk.com/update-subscriptions"
+    api_host: "enterprise-api-stg.autodesk.com"     
+    consumerKeyInvoice: "F9wavEkpAtM90DKq5a1opVp05HWOtQcG"
+    consumerSecretInvoice: "0ZIGA4JrjukdiAQo"
+    callbackURLInvoice: "www.example.com"
+    invoiceApiURL:  "https://API_HOST/v1/invoices?customer_number=SOLDTOPARTY"
+     
+    
+    skuBoss2PWSBICIndirectOrder : &BicIndirectOrderPWSSKU "128H1-WW6542-L618"
+   # skuBoss2PWSInitialOrderV1 : &PWSInitialOrderV1 "057J1-WW505P-T455"
+    skuBoss2PWSInitialOrderV2 : &PWSInitialOrderV2 "569H1-WWN881-L782"
+    skuBoss2PWSAustraliaInitialOrderV2 : &PWSAustraliaInitialOrderV2 "657H1-WW9613-T408"
+    skuBoss2PWSSingaporeInitialOrderV2 : &PWSSingaporeInitialOrderV2 "057J1-WW8695-T548"
+    skuBoss2PWSMaintenanceMUSOrder : &PWSMaintenanceMUSOrder "001G1-WWR211-1001;00100-000000-9860"
+    skuBoss2PWSMaintenanceSUSOrder : &PWSMaintenanceSUSOrder "001H1-WWR111-1001;00100-000000-9860"
+    skuBoss2PWSSU2IniitalOrder : &PWSSU2InitalOrder "128J1-WWN881-L782"
+    skuBoss2PWSM2SSUSOrder : &PWSM2SSUSOrder "128J1-WW9C68-L232"
+    skuBoss2PWSM2SMUSOrder : &PWSM2SMUSOrder "057J1-WWNC25-L741"
+    skuBoss2PWSSU1MU2SUOrder : &PWSSU1MU2SUOrder "657L1-WW4C52-L462"
+    skuBoss2PWSSU2MU2SUOrder : &PWSSU2MU2SUOrder "657L1-WW3C39-L874"
+    skuBoss2PWSSU3Mu2SUOrder : &PWSSU3MU2SUOrder "657L1-WW4C96-L745"
+    skuBoss2PWSSU4MU2SUOrder : &PWSSU4MU2SUOrder "657L1-WW9C45-L383"
+    skuBoss2PWSSU9MU2SUOrder : &PWSSU9MU2SUOrder "657L1-WW1C94-L596"
+    skuBoss2PWSSU2AddProduct : &PWSSU2AddProduct "128L1-WW6542-L618"
+    skuBoss2PWSPremiumSubscription : &PWSPremiumSubscription "C3JL1-NS5025-V662"
+    skuBoss2PWSRenewalSku : &PWSRenewalSku "128H1-00N313-L881"
+    skuBoss2PWSRenewalInitialSku : &PWSInitialRenewalSku "128I1-WWN443-L816"
+    skuBoss2PWSExtensionSku : &ExtensionPWSKU "02HI1-00N128-L937"
+    skuBoss2PWSExtensionInitialSku : &ExtensionInitialPWSKU "02HI1-WWN390-L178"
+    skuBoss2InitialSkuIC3Year : &InitialSkuIC3Year "128H1-WW1321-L920" #"02HI1-WW9596-L967"
+    
+
+ 
+
+placePWSBICIndirectOrder:
+    sku: *BicIndirectOrderPWSSKU
+    qty: "1"
+    #csn: "5131488572"
+    #pwsConsumerKey: "U4SQaGJx8qYOMtwSbtdJt8hG6bh0mfu9"
+    #pwsConsumerSecret: "9Fgf2Id8ZLxMpA72"
+    #pwsCallbackURL: "www.example.com"
+    #pwsConsumerKey1: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    #pwsConsumerSecret1: "08CdAI0J96IgZ6xO"
+    #pwsCallbackURL1: "www.autodesk.com"
+    
+    #countryCode: "CL"
+    #primary_account_name: "PWS Peacock Restaurant 272331064"
+    #endCustomerAddressLine11: "69645 Paseo Ahumada"
+    #endCustomerAddressLine12: "Apartment 931064691"
+    #endCustomerCity: "Auquinco"
+    #endCustomerPostalCode: "3120000"
+    #endCustomerAddressLine1: "69645 Paseo Ahumada"
+    #endCustomerAddressLine2: "Apartment 931064691"
+    #endCustomerAddressLine3: "Floor 580"
+    #endCustomerCity: "Auquinco"
+    #endCustomerCountryCode: "CL"
+    #endCustomerPostalCode: "3120000"    
+    dataSets: "BICIndirect"
+    ordertype: "bicindirect"
+
+placePWSV2EDIOrder:
+    sku: *PWSInitialOrderV2
+    qty: "1"
+    price: ""
+
+placePWSV2InitialOrderExistingUser: 
+    sku: *PWSInitialOrderV2
+    qty: "1"
+    price: ""
+    type: "existing"
+
+ 
+placePWSV2addseatOrder:
+    sku: *PWSInitialOrderV2
+    qty: "1"
+    price: ""
+    type: "existing"
+    
+placePWSV2AUSInitialOrder:
+    sku: *PWSAustraliaInitialOrderV2
+    qty: "1"
+    price: ""
+    salesOrg: "1200"
+    csn: "5118751926"
+    resellerCSN: "5118751926"
+    getMyPriceCSN: "5118751926"
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    pwsConsumerKey: "AYYmihESaaIpjlVL8OOfBd7Rz4bNAPHo"
+    pwsConsumerSecret: "UzdkyOvg7mExMbk5"
+    pwsCallbackURL: "www.example.com"
+    endCustomerCountryCode: "US"
+    primary_account_name: "PwsAustralia"
+    endCustomerAddressLine1: "17657 Rollins Rd"
+    endCustomerAddressLine2: "Apartment 106388023"
+    endCustomerCity: "BMillbraeend"
+    endCustomerState: "CA"
+    endCustomerPostalCode: "94030" 
+    
+    
+pwsSU4OrderCreation:
+    skuDetails: *PWSMaintenanceMUSOrder
+    ratioOfSKUToSwitch: "1"
+ #  contMgrSoftCoord: "5129895604"
+    opportunityType: "MT"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU4MU2SUOrder
+    Maintenance: "Yes"
+    csn: "5131488572"
+    #pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    #pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    #pwsCallbackURL: "www.autodesk.com"
+    
+pwsSU2OrderCreation:
+    skuDetails: *PWSSU2InitalOrder 
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "MUS"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU2MU2SUOrder
+    qty: "1"
+    #pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    #pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    #pwsCallbackURL: "www.autodesk.com"
+    Maintenance: "No"
+    csn: "5131488572"
+     
+pwsSU1OrderCreation:
+    skuDetails: *PWSMaintenanceMUSOrder
+    skuDetailsM2S: *PWSM2SMUSOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU1MU2SUOrder
+    price: ""
+    #pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    #pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    #pwsCallbackURL: "www.example.com"
+    Maintenance: "Yes"
+    type: "existing"
+    m2sSwitchYearDate : "5/5/2020"
+    m2sSwitchYear : "FY20"
+    overrideContractDates: "Yes"
+    
+pwsSU3OrderCreation:
+    skuDetails: *PWSMaintenanceMUSOrder
+    skuDetailsM2S: *PWSM2SMUSOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU3MU2SUOrder
+    qty: "1"
+    price: ""
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    csn: "5131488572"
+    #pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    #pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    #pwsCallbackURL: "www.autodesk.com"
+    m2sSwitchYearDate : "5/11/2020"
+    m2sSwitchYear : "May 2020+"
+  
+pwsSU2AddProductOrderCreation:
+    skuDetails: *PWSSU2InitalOrder
+    macCSN: "5129895604"
+    emailIdCEP: "thub1565336823@letscheck.pw"
+    ratioOfSKUToSwitch: "1"
+    contMgrSoftCoord: "5129895604"
+    opportunityType: "MUS"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU2MU2SUOrder
+    qty: "1"
+    price: ""
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    skuAddProduct: *PWSSU2AddProduct
+    qtyAddProduct: "2"
+    priceAddProduct: "1393.20"
+    #pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    #pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    #pwsCallbackURL: "www.autodesk.com"
+    csn: "5131488572"
+    
+placePWSPremiumSubsOrderExistingUser: 
+    sku: *PWSPremiumSubscription
+    #qty: "1"
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    #premiumSubscriptionCSN: "5130927354"
+    #premiumSubscriptionEmailID: "premiummvppws@autodesk.pw"
+    #premiumSubscriptionFN: "Premium"
+    #premiumSubscriptionLN: "Pws"
+    type: "existing"    
+    
+createPWSV2Order:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    type: "existing"
+ 
+    
+createPWSBicIndirectOrder:
+    #csn: "0070176510"
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    #pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    #pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    #pwsCallbackURL: "www.autodesk.com"
+
+createPWSBicIndirectICOrder:
+    #csn: "5131488572" 
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    #pwsConsumerKey: "Ik7nqQwbQY6JNCdFTvZPoMOpWlbnwGHo"
+    #pwsConsumerSecret: "SmTrVxZJRSWfTAX0"
+    #pwsCallbackURL: "https://autodesk.com"
+
+createPWSSorrentoOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+
+createPWSPremiumSubsOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    premiumSubscriptionCSN: "5130927354"    
+    
+createPWSGOVOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+        
+createPWSNCEOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+
+createPWSAddProductOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/" 
+
+createPWSAddSeatOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"     
+    
+createPWSMixedSkuOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+
+createPWSM2STOMU2SUOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/" 
+    Maintenance: "Yes"
+    m2sSwitchYearDate : "5/5/2020"
+    m2sSwitchYear : "FY20"
+    overrideContractDates: "Yes"
+  
+createPWSNetworkToMU2SUOrder:
+    opportunityType: "MUS"
+    Maintenance: "Yes"    
+           
+pwsSU9OrderCreation:
+    skuDetails: *PWSMaintenanceMUSOrder
+    skuDetailsM2S: *PWSM2SMUSOrder
+    ratioOfSKUToSwitch: "1"
+    opportunityType: "M"
+    oldSerialNumberRowSelected: "1"
+    skuDetailsMu2Su: *PWSSU9MU2SUOrder
+    qty: "1"
+    price: ""
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    soldToParty: "5131488572"
+    shipToParty: "5130874065"
+    supportingReseller: "5131488572"
+    conPerson: "37207680"
+    csn: "5131488572"
+    m2sSwitchYearDate : "5/5/2019"
+    m2sSwitchYear : "FY19"
+    
+createPWSSU9Order:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/" 
+    overrideContractDates: "Yes"
+    Maintenance: "Yes"
+    m2sSwitchYearDate : "5/5/2019"
+    m2sSwitchYear : "FY19"
+    
+createPWSM2SOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/" 
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    
+createPWSMaintToMu2SuOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/" 
+    Maintenance: "Yes"
+    overrideContractDates: "Yes"
+    
+placePWSV2addProductOrder:
+    sku: *PWSInitialOrderV2
+    addProductSku : "02KI1-WWN760-L231"
+    type: "existing"
+    
+placePWSMixedSkuOrderExistingUser:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    sku: *PWSInitialOrderV2
+    bicIndirectSku: *BicIndirectOrderPWSSKU
+    type: "existing"
+    
+pwsRenewalOrderCreation:
+    skuDetails: *PWSInitialRenewalSku 
+    ratioOfSKUToSwitch: "1"
+    oldSerialNumberRowSelected: "1"
+    renewalSku: *PWSRenewalSku
+    qty: "1"
+    Maintenance: "No"
+    csn: "5131488572"
+    
+createPWSMY4ToMU2SUOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/" 
+    Maintenance: "Yes"
+    m2sSwitchYearDate : "5/11/2020"
+    m2sSwitchYear : "May 2020+"
+    overrideContractDates: "Yes"
+    
+createPWSRenewalOrder:
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/" 
+    overrideContractDates: "Yes"
+    
+placePWSsubscriptionExtOrder:
+    sku: *ExtensionInitialPWSKU
+    extensionSku: *ExtensionPWSKU
+    qty: "1"
+    price: ""
+    
+createPWSSubsExetnsionOrder :
+    endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+    orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orderstatus/"
+    overrideContractDates: "Yes"
+
+placeTermSwitchAnnualTo3Year:
+    sku: *BicIndirectOrderPWSSKU
+    pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    pwsCallbackURL: "www.autodesk.com"
+    endpointURL : "https://enterprise-api-stg.autodesk.com/v1/subscriptions"
+    qty: "1" 
+    type: "existing"
+   
+placeTermSwitch3YearToAnnual:
+    sku: *InitialSkuIC3Year
+    pwsConsumerKey: "wDZQUGwMIZACR4GUTNr882o9eJ0Cey0y"
+    pwsConsumerSecret: "08CdAI0J96IgZ6xO"
+    pwsCallbackURL: "www.autodesk.com"
+    endpointURL : "https://enterprise-api-stg.autodesk.com/v1/subscriptions"
+    qty: "1"
+    type: "existing"
+   
+createPWSUserPacksOrder:    
+     endpointURL: "https://enterprise-api-stg.autodesk.com/v2/orders/fulfillment"
+     orderStatusURL: "https://enterprise-api-stg.autodesk.com/v2/orders/status/" 
+
+getInvoiceList:
+   invoiceApiURL:  "https://API_HOST/v1/invoices?customer_number=SOLDTOPARTY" 
+
+createPWSMU2SUOrderSU9:
+   m2sSwitchYearDate : "2019-05-07"
+   m2sSwitchYear : "FY19"
+
+createPWSMU2SUOrderSU3:
+   m2sSwitchYearDate : "2020-05-07"
+   m2sSwitchYear : "May 2020+"
+
+createPWSMU2SUOrderSU1:
+   m2sSwitchYearDate : "2020-05-07" ## before this 
+   m2sSwitchYear : "FY20"

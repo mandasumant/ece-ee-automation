@@ -1,46 +1,56 @@
 package com.autodesk.ece.testbase;
 
-import java.util.HashMap;
-import java.util.Set;
-
+import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.testinghub.core.base.GlobalTestBase;
+import com.autodesk.testinghub.core.common.listeners.TestingHubAPIClient;
+import com.autodesk.testinghub.core.database.DBValidations;
+import com.autodesk.testinghub.core.sap.SAPDriverFiori;
+import com.autodesk.testinghub.core.testbase.*;
+import com.autodesk.testinghub.core.utils.Util;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterTest;
-
-import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.base.GlobalTestBase;
-import com.autodesk.testinghub.core.common.listeners.TestingHubAPIClient;
-import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.core.testbase.ApigeeTestBase;
-import com.autodesk.testinghub.core.testbase.BICTestBase;
-import com.autodesk.testinghub.core.testbase.DynamoDBValidation;
-import com.autodesk.testinghub.core.testbase.PelicanTestBase;
-import com.autodesk.testinghub.core.testbase.PortalTestBase;
-import com.autodesk.testinghub.core.utils.Util;
+import java.util.*;
 
 public class ECETestBase {
 
 	private WebDriver webdriver = null;
 	private GlobalTestBase testbase = null;
+	protected SFDCTestBase sfdctb = null;
+	private AoeTestBase aoetb = null;
+	protected static SAPTestBase saptb = null;
+	protected TIBCOServiceTestBase tibcotb = null;
+	protected static DBValidations dbValtb = null;
+	private SiebelTestBase siebeltb = null;
+	protected SOAPTestBase soaptb = null;
 	private BICTestBase bictb = null;
 	protected PortalTestBase portaltb = null;
+	private PWSTestBase pwstb = null;
+	protected SAPDriverFiori sapfioritb = null;
 	protected DynamoDBValidation dynamotb = null;
+	private RegonceTestBase regoncetb = null;
 	protected ApigeeTestBase resttb = null;
 	protected PelicanTestBase pelicantb = null;
+	protected HerokuTestBase herokutb = null;
+	protected LemTestBase lemtb = null;
 
 	public ECETestBase() {
 		System.out.println("into the testing hub. core changes");
 		testbase = new GlobalTestBase("ece", "ece", GlobalConstants.BROWSER);
 		webdriver = testbase.getdriver();
-		resttb = new ApigeeTestBase();
-		pelicantb = new PelicanTestBase();
+		tibcotb = new TIBCOServiceTestBase();
+		dbValtb = new DBValidations();
+		sfdctb = new SFDCTestBase(webdriver);
+		saptb = new SAPTestBase();
+		soaptb = new SOAPTestBase();	
 		portaltb = new PortalTestBase(testbase);
-		
-		// Example to create the page object
-		Page_ cartpage = testbase.createPage("PAGE_BICCART");
-
-		cartpage.populateField("autodeskId", "sudarsan");
+		resttb = new ApigeeTestBase();
+		sapfioritb = new SAPDriverFiori(GlobalConstants.getTESTDATADIR(), webdriver);
+		dynamotb = new DynamoDBValidation();
+		pelicantb = new PelicanTestBase();
+		herokutb = new HerokuTestBase();
+		lemtb = new LemTestBase();
 		
 	}
 
@@ -52,6 +62,27 @@ public class ECETestBase {
 		return testbase.getdriver();
 	}
 
+	public SiebelTestBase getSiebelTestBase() {
+		if (siebeltb == null) {
+			siebeltb = new SiebelTestBase();
+		}
+		return siebeltb;
+	}
+
+	public SFDCTestBase getSFDCTestBase() {
+		return new SFDCTestBase(webdriver);
+	}
+
+	public AoeTestBase getAOETestBase() {
+		if (aoetb == null) {
+			aoetb = new AoeTestBase(webdriver);
+		}
+		return aoetb;
+	}
+
+	public SAPTestBase getSAPTestBase() {
+		return new SAPTestBase();
+	}
 
 	public PortalTestBase getPortalTestBase() {
 		return new PortalTestBase(testbase);
@@ -64,7 +95,24 @@ public class ECETestBase {
 		return bictb;
 	}
 
+	public SAPDriverFiori getSAPFioriTestBase() {
+		return new SAPDriverFiori("appBaseDir", webdriver);
+	}
 
+	public RegonceTestBase getRegonceTestBase() {
+		if (regoncetb == null) {
+			regoncetb = new RegonceTestBase(webdriver);
+		}
+		return regoncetb;
+		// return new RegonceTestBase(webdriver);
+	}
+
+	public PWSTestBase getPWSTestBase() {
+		if (pwstb == null) {
+			pwstb = new PWSTestBase();
+		}
+		return pwstb;
+	}
 
 	public static void updateTestingHub(HashMap<String, String> results) {
 		Set<String> keySet = results.keySet();
@@ -83,9 +131,16 @@ public class ECETestBase {
 		try {
 			Util.printInfo("Closing Webdriver after the end of the test");
 			testbase.closeBrowser();
+			tibcotb.tibcoConnectionClose();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		} finally {
+			if (saptb.loginSAPStatus == true) {
+				Util.printInfo("Closing SAPDriver after the end of the test");
+				saptb.logoffSAP();
+				saptb.closeSAP();
+			}
+		}
 	}
 
 

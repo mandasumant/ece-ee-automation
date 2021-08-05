@@ -1,0 +1,31 @@
+{
+	"user": {
+		"currency": "USD",
+		"email": "PASSTOKEN1",
+		"paymentProfile": {
+			"billingInfo": {
+				"city": "Los Angeles",
+				"country": "US",
+				"firstName": "PASSTOKEN2",
+				"lastName": "PASSTOKEN3",
+                "companyName": "Holla PASSTOKEN3",
+				"phoneNumber": "(310) 341-3502",
+				"postalCode": "90017",
+				"stateProvince": "CA",
+				"streetAddress": "3125  Doctors Drive"
+			},
+			"isVatExempt": false,
+			"paymentInfo": {
+				"encryptedCardNumber": "test_4646464646464644",
+                                "encryptedCVV": "test_737",
+                                "expMonth": "test_03",
+                                "expYear": "test_2030",
+				"paymentMethod": "VISA",
+				"formattedPaymentMethod": "visa"
+			},
+			"paymentProcessor": "ADYEN",
+			"type": "CREDIT_CARD"
+		},
+		"origin": "ESTORE"
+	}
+}	
