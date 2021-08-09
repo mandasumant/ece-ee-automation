@@ -1,7 +1,6 @@
 package com.autodesk.ece.testbase;
 
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.listeners.TestingHubAPIClient;
 import com.autodesk.testinghub.core.database.DBValidations;
 import com.autodesk.testinghub.core.sap.SAPDriverFiori;
