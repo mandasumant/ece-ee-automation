@@ -1,5 +1,6 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.testinghub.core.base.GlobalTestBase;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -33,7 +34,7 @@ public class BICTestBase {
 	public BICTestBase(WebDriver driver, GlobalTestBase testbase) {
 		Util.PrintInfo("BICTestBase from core");
 		this.driver = driver;
-		bicPage = testbase.createCommonPage("PAGE_BIC_CART");
+		bicPage = testbase.createPage("PAGE_BIC_CART");
 	}
 
 	@Step("Open BIC Url")

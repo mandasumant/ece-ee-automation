@@ -1,5 +1,6 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.testinghub.core.base.GlobalTestBase;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -78,8 +79,8 @@ public class PortalTestBase {
 
     public PortalTestBase(GlobalTestBase testbase) {
         driver = testbase.getdriver();
-        portalPage = testbase.createCommonPage("PAGE_PORTAL");
-        studentPage = testbase.createCommonPage("PAGE_STUDENT");
+        portalPage = testbase.createPage("PAGE_PORTAL");
+        studentPage = testbase.createPage("PAGE_STUDENT");
         new BICTestBase(driver, testbase);
     }
 
