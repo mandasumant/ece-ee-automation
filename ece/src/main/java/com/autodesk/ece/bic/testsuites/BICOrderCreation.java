@@ -79,7 +79,7 @@ public class BICOrderCreation extends ECETestBase {
 		testDataForEachMethod.put("paymentType", paymentType);
 
 		portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
-		
+
 		if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
 		portaltb.portalLogin(emailID, cepSSAP);
 		}
