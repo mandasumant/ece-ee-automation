@@ -79,8 +79,8 @@ public class PortalTestBase {
 
     public PortalTestBase(GlobalTestBase testbase) {
         driver = testbase.getdriver();
-        portalPage = testbase.createPage("PAGE_PORTAL");
-        studentPage = testbase.createPage("PAGE_STUDENT");
+        portalPage = testbase.createCommonPage("PAGE_PORTAL");
+        studentPage = testbase.createCommonPage("PAGE_STUDENT");
         new BICTestBase(driver, testbase);
     }
 
