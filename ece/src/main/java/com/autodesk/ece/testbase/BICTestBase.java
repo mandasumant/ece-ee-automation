@@ -1693,4 +1693,113 @@ public class BICTestBase {
 		results.put(BICConstants.orderNumber, orderNumber);
 		return results;
 	}
+
+	@SuppressWarnings({"static-access", "unused"})
+	@Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
+	public HashMap<String, String> createGUACBic_Orders_US(LinkedHashMap<String, String> data) {
+		String orderNumber = null;
+		String emailID = null;
+		HashMap<String, String> results = new HashMap<>();
+		String guacBaseURL = data.get("guacBaseURL");
+		String productID = "";
+		String quantity = "";
+		String guacResourceURL = data.get("guacResourceURL");
+		String userType = data.get("userType");
+		// String addressUS = data.get("Cart_Address_US");
+		String region = data.get("languageStore");
+		String password = data.get("password");
+		String paymentMethod = System.getProperty("payment");
+
+		if (System.getProperty("sku").contains("default")) {
+			productID = data.get("productID");
+		} else {
+			String sku = System.getProperty("sku");
+			productID = sku.split(":")[0];
+			quantity = sku.split(":")[1];
+		}
+
+		if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
+			emailID = System.getProperty("email");
+			String O2ID = getO2ID(data, emailID);
+			// New user to be created
+			if ((Strings.isNullOrEmpty(O2ID))) {
+				orderNumber = getBICOrder(data, emailID, guacBaseURL, productID, guacResourceURL, region, password, paymentMethod);
+			}
+		} else {
+			String timeStamp = new RandomStringUtils().random(12, true, false);
+			emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp, "thub", "letscheck.pw");
+			orderNumber = getBICOrder(data, emailID, guacBaseURL, productID, guacResourceURL, region, password, paymentMethod);
+		}
+
+		results.put(BICConstants.emailid, emailID);
+		results.put(BICConstants.orderNumber, orderNumber);
+		return results;
+	}
+
+	@Step("Get BIC order")
+	private String getBICOrder(LinkedHashMap<String, String> data, String emailID, String guacBaseURL, String productID,
+							   String guacResourceURL, String region, String password, String paymentMethod)
+	{
+		String orderNumber;
+		String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
+		System.out.println("constructGuacURL " + constructGuacURL);
+		String firstName = null, lastName = null;
+		Map<String, String> address = null;
+
+		getUrl(constructGuacURL);
+		disableChatSession();
+		checkCartDetailsError();
+		firstName = null;
+		lastName = null;
+		String randomString = RandomStringUtils.random(6, true, false);
+
+		region = region.replace("/", "").replace("-", "");
+		address = getBillingAddress(region);
+		String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
+
+		acceptCookiesAndUSSiteLink();
+
+		firstName = "FN" + randomString;
+		Util.printInfo("firstName :: " + firstName);
+		lastName = "LN" + randomString;
+		Util.printInfo("lastName :: " + lastName);
+		createBICAccount(firstName, lastName, emailID, password);
+
+		data.put("firstname", firstName);
+		data.put("lastname", lastName);
+
+		debugHTMLPage("Entire Payment details");
+		// Get Payment details
+		selectPaymentProfile(data, paymentCardDetails);
+
+
+		// Entire billing details
+		debugHTMLPage("Entire billing details");
+
+		populateBillingAddress(address, data);
+		debugHTMLPage("After entering billing details");
+
+		try {
+			if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+				Util.printInfo(" Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
+				Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+
+				JavascriptExecutor js = (JavascriptExecutor) driver;
+				js.executeScript("document.getElementById('mandate-agreement').click()");
+
+				Util.printInfo(" Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
+				Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		orderNumber = submitGetOrderNumber();
+
+		// Check to see if EXPORT COMPLIANCE or Null
+		validateBicOrderNumber(orderNumber);
+		printConsole(constructGuacURL, orderNumber, emailID, address, firstName, lastName, paymentMethod);
+
+		return orderNumber;
+	}
 }
