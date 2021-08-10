@@ -12,6 +12,9 @@ default:
     cepURL: "https://customer-stg.autodesk.com/"
     url: "https://cart.bicstg.autodesk.com/r?storeKey=@@@@@@&productIds=******"
     guacBaseURL: "https://checkout-pt.autodesk.com/"
+    guacDotComBaseURL: "https://www-pt.autodesk.com/products/"
+    productName: "3ds-max"
+    guacOverviewTermResource: "/overview"
     US: "en-US/"
     CANADA_FRENCH: "fr-CA/"
     CANADA_US: "en-CA/"
@@ -28,10 +31,10 @@ default:
     NETHERLANDS_DUTCH: "nl-NL/"
     PORTUGAL_PORTUGUESE: "pt-PT/"
     guacResourceURL: "checkout?priceIds="
-    soldToParty: "5151245242"
-    shipToParty: "5151245129"
-    supportingReseller: "5151245242"
-    conPerson: "32406836"
+    soldToParty: "5130105006"
+    shipToParty: "5130105006"
+    supportingReseller: "5130105006"
+    conPerson: "37207680"
     salesOrg: "3000"
     division: "10"
     version: "Y"
@@ -234,7 +237,7 @@ createGUACBic_Orders_US:
     productID: *NativeOrderPriceID
     bicNativePriceID: *bicNativePriceID
 
-validatateBicNativeOrder:
+validateBicNativeOrder:
     productID: *NativeOrderPriceID
     bicNativePriceID: *bicNativePriceID
 
@@ -379,9 +382,9 @@ BicNativeOrderAUS:
 
 #Akarsh Missing Price ID - Search in Pelican
 promocodeBicOrder:
-   nullTest: "1"
-   productID: "27125"
-   languageStore: "en-US/"
-   
+    nullTest: "1"
+    productID: "27125"
+    languageStore: "en-US/"
+
 bictrialsorder:
     nullTest: "1"

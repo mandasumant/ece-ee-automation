@@ -1,6 +1,5 @@
 package com.autodesk.ece.testbase;
 
-import com.autodesk.testinghub.core.base.GlobalTestBase;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -16,6 +15,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.services.OxygenService;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -73,7 +73,7 @@ public class BICTestBase {
 
 	}
 
-	@Step("Get billing address")
+	@Step("get billing address")
 	public Map<String, String> getBillingAddress(String region) {
 
 		String address = null;
@@ -81,21 +81,21 @@ public class BICTestBase {
 
 		switch (region.toUpperCase()) {
 
-		case "ENAU":
-			address = "AutodeskAU@259-261 Colchester Road@Kilsyth@3137@397202088@Australia@Victoria";
-			break;
+			case "ENAU":
+				address = "AutodeskAU@259-261 Colchester Road@Kilsyth@3137@397202088@Australia@Victoria";
+				break;
 
-		case "ENUS":
-			address = getAmericaAddress();
-			break;
-		case "CA":
-			address = "Autodesk@75 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec";
-			break;
-		case "EMEA":
-			address = "Autodesk@Talbot Way@Birmingham@B10 0HJ@9916800100@United Kingdom";
-			break;
-		default:
-			Util.printError("Check the region selected");
+			case "ENUS":
+				address = getAmericaAddress();
+				break;
+			case "CA":
+				address = "Autodesk@75 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec";
+				break;
+			case "EMEA":
+				address = "Autodesk@Talbot Way@Birmingham@B10 0HJ@9916800100@United Kingdom";
+				break;
+			default:
+				Util.printError("Check the region selected");
 		}
 
 		String[] billingAddress = address.split("@");
@@ -118,38 +118,38 @@ public class BICTestBase {
 
 		switch (getRandomIntString()) {
 
-		case "0": {
-			address = "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO";
-			break;
-		}
+			case "0": {
+				address = "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO";
+				break;
+			}
 
-		case "1": {
-			address = "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO";
-			break;
-		}
+			case "1": {
+				address = "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO";
+				break;
+			}
 
-		case "2": {
-			address = "Thub@Novel Coworking Hooper Building@Cincinnati@45207@9916800100@United States@OH";
-			break;
-		}
+			case "2": {
+				address = "Thub@Novel Coworking Hooper Building@Cincinnati@45207@9916800100@United States@OH";
+				break;
+			}
 
-		case "3": {
-			address = "Thub@1550 Wewatta Street@Denver@80202@9916800100@United States@CO";
-			break;
-		}
+			case "3": {
+				address = "Thub@1550 Wewatta Street@Denver@80202@9916800100@United States@CO";
+				break;
+			}
 
-		case "7": {
-			address = "Thub@26200 Town Center Drive@Novi@48375@9916800100@United States@MI";
-			break;
-		}
+			case "7": {
+				address = "Thub@26200 Town Center Drive@Novi@48375@9916800100@United States@MI";
+				break;
+			}
 
-		case "8": {
-			address = "Thub@15800 Pines Blvd, Suite 338@Pittsburgh@15206@9916800100@United States@PA";
-			break;
-		}
+			case "8": {
+				address = "Thub@15800 Pines Blvd, Suite 338@Pittsburgh@15206@9916800100@United States@PA";
+				break;
+			}
 
-		default:
-			address = "Thub@9 Pier@San Francisco@94111@9916800100@United States@CA";
+			default:
+				address = "Thub@9 Pier@San Francisco@94111@9916800100@United States@CA";
 		}
 
 		return address;
@@ -222,7 +222,7 @@ public class BICTestBase {
 			status = bicPage.isFieldPresent("getStartedSkipLink")
 //					|| bicPage.isFieldPresent("getStartedSkipLink")
 //					|| bicPage.isFieldPresent("getStartedSkipLink")
-					|| bicPage.checkIfElementExistsInPage("getStartedSkipLink", 60);
+				|| bicPage.checkIfElementExistsInPage("getStartedSkipLink", 60);
 		} catch (MetadataException e) {
 		}
 
@@ -296,7 +296,7 @@ public class BICTestBase {
 		bicPage.waitForPageToLoad();
 		Util.sleep(5000);
 		boolean status = bicPage.isFieldPresent("getStartedSkipLink") || bicPage.isFieldPresent("getStartedSkipLink")
-				|| bicPage.isFieldPresent("getStartedSkipLink");
+			|| bicPage.isFieldPresent("getStartedSkipLink");
 
 		if (status)
 			bicPage.click("getStartedSkipLink");
@@ -337,7 +337,7 @@ public class BICTestBase {
 		bicPage.waitForPageToLoad();
 
 		boolean status = bicPage.isFieldPresent("getStartedSkipLink") || bicPage.isFieldPresent("getStartedSkipLink")
-				|| bicPage.isFieldPresent("getStartedSkipLink");
+			|| bicPage.isFieldPresent("getStartedSkipLink");
 
 		if (status)
 			bicPage.click("getStartedSkipLink");
@@ -418,10 +418,10 @@ public class BICTestBase {
 
 	private void debugHTMLPage(String Message) {
 		Util.printInfo("-------------"+Message+"----------------"+
-				"\n" + " URL :            " + 	driver.getCurrentUrl() + "\n" +
-				"\n" + " Page Title :     " + 	driver.getTitle() + "\n" // +
+			"\n" + " URL :            " + 	driver.getCurrentUrl() + "\n" +
+			"\n" + " Page Title :     " + 	driver.getTitle() + "\n" // +
 //				"\n" + " Page source  :   " + 	driver.getPageSource()
-				+ "\n"+"-----------------------------");
+			+ "\n"+"-----------------------------");
 	}
 
 	public void clickOnContinueBtn(String paymentType) {
@@ -431,7 +431,7 @@ public class BICTestBase {
 			List<WebElement> eles = bicPage.getMultipleWebElementsfromField("continueButton");
 
 			if (paymentType.equalsIgnoreCase(BICConstants.paymentTypePayPal)
-					|| paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard))
+				|| paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard))
 				eles.get(1).click();
 			else
 				eles.get(0).click();
@@ -453,36 +453,36 @@ public class BICTestBase {
 			JavascriptExecutor js = (JavascriptExecutor) driver;
 			js.executeScript("document.getElementById('checkout--liveagent--close-button').click();");
 			String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
-					stateXpath = "";
+				stateXpath = "";
 			switch (paymentType.toUpperCase()) {
 
-			case BICConstants.paymentTypePayPal:
-				orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name").replace("<PAYMENTPROFILE>", "paypal");
-				fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address").replace("<PAYMENTPROFILE>", "paypal");
-				cityXpath = bicPage.getFirstFieldLocator("City").replace("<PAYMENTPROFILE>", "paypal");
-				zipXpath = bicPage.getFirstFieldLocator("Zipcode").replace("<PAYMENTPROFILE>", "paypal");
-				phoneXpath = bicPage.getFirstFieldLocator("Phone_Number").replace("<PAYMENTPROFILE>", "paypal");
-				countryXpath = bicPage.getFirstFieldLocator("Country").replace("<PAYMENTPROFILE>", "paypal");
-				stateXpath = bicPage.getFirstFieldLocator("State_Province").replace("<PAYMENTPROFILE>", "paypal");
-				break;
-			case BICConstants.paymentTypeDebitCard:
-				orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name").replace("<PAYMENTPROFILE>", "ach");
-				fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address").replace("<PAYMENTPROFILE>", "ach");
-				cityXpath = bicPage.getFirstFieldLocator("City").replace("<PAYMENTPROFILE>", "ach");
-				zipXpath = bicPage.getFirstFieldLocator("Zipcode").replace("<PAYMENTPROFILE>", "ach");
-				phoneXpath = bicPage.getFirstFieldLocator("Phone_Number").replace("<PAYMENTPROFILE>", "ach");
-				countryXpath = bicPage.getFirstFieldLocator("Country").replace("<PAYMENTPROFILE>", "ach");
-				stateXpath = bicPage.getFirstFieldLocator("State_Province").replace("<PAYMENTPROFILE>", "ach");
-				break;
-			default:
-				orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name").replace("<PAYMENTPROFILE>", "credit-card");
-				fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address").replace("<PAYMENTPROFILE>", "credit-card");
-				cityXpath = bicPage.getFirstFieldLocator("City").replace("<PAYMENTPROFILE>", "credit-card");
-				zipXpath = bicPage.getFirstFieldLocator("Zipcode").replace("<PAYMENTPROFILE>", "credit-card");
-				phoneXpath = bicPage.getFirstFieldLocator("Phone_Number").replace("<PAYMENTPROFILE>", "credit-card");
-				countryXpath = bicPage.getFirstFieldLocator("Country").replace("<PAYMENTPROFILE>", "credit-card");
-				stateXpath = bicPage.getFirstFieldLocator("State_Province").replace("<PAYMENTPROFILE>", "credit-card");
-				break;
+				case BICConstants.paymentTypePayPal:
+					orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name").replace("<PAYMENTPROFILE>", "paypal");
+					fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address").replace("<PAYMENTPROFILE>", "paypal");
+					cityXpath = bicPage.getFirstFieldLocator("City").replace("<PAYMENTPROFILE>", "paypal");
+					zipXpath = bicPage.getFirstFieldLocator("Zipcode").replace("<PAYMENTPROFILE>", "paypal");
+					phoneXpath = bicPage.getFirstFieldLocator("Phone_Number").replace("<PAYMENTPROFILE>", "paypal");
+					countryXpath = bicPage.getFirstFieldLocator("Country").replace("<PAYMENTPROFILE>", "paypal");
+					stateXpath = bicPage.getFirstFieldLocator("State_Province").replace("<PAYMENTPROFILE>", "paypal");
+					break;
+				case BICConstants.paymentTypeDebitCard:
+					orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name").replace("<PAYMENTPROFILE>", "ach");
+					fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address").replace("<PAYMENTPROFILE>", "ach");
+					cityXpath = bicPage.getFirstFieldLocator("City").replace("<PAYMENTPROFILE>", "ach");
+					zipXpath = bicPage.getFirstFieldLocator("Zipcode").replace("<PAYMENTPROFILE>", "ach");
+					phoneXpath = bicPage.getFirstFieldLocator("Phone_Number").replace("<PAYMENTPROFILE>", "ach");
+					countryXpath = bicPage.getFirstFieldLocator("Country").replace("<PAYMENTPROFILE>", "ach");
+					stateXpath = bicPage.getFirstFieldLocator("State_Province").replace("<PAYMENTPROFILE>", "ach");
+					break;
+				default:
+					orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name").replace("<PAYMENTPROFILE>", "credit-card");
+					fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address").replace("<PAYMENTPROFILE>", "credit-card");
+					cityXpath = bicPage.getFirstFieldLocator("City").replace("<PAYMENTPROFILE>", "credit-card");
+					zipXpath = bicPage.getFirstFieldLocator("Zipcode").replace("<PAYMENTPROFILE>", "credit-card");
+					phoneXpath = bicPage.getFirstFieldLocator("Phone_Number").replace("<PAYMENTPROFILE>", "credit-card");
+					countryXpath = bicPage.getFirstFieldLocator("Country").replace("<PAYMENTPROFILE>", "credit-card");
+					stateXpath = bicPage.getFirstFieldLocator("State_Province").replace("<PAYMENTPROFILE>", "credit-card");
+					break;
 			}
 
 			Util.sleep(1000);
@@ -496,7 +496,7 @@ public class BICTestBase {
 			driver.findElement(By.xpath(orgNameXpath)).click();
 			Util.sleep(1000);
 			driver.findElement(By.xpath(orgNameXpath))
-					.sendKeys(new RandomStringUtils().random(5, true, true) + address.get("Organization_Name"));
+				.sendKeys(new RandomStringUtils().random(5, true, true) + address.get("Organization_Name"));
 
 			driver.findElement(By.xpath(orgNameXpath)).click();
 			Util.sleep(1000);
@@ -537,7 +537,7 @@ public class BICTestBase {
 		boolean status = false;
 		try {
 			status = bicPage.waitForElementVisible(
-					bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0), 60000);
+				bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0), 60000);
 		} catch (MetadataException e) {
 			AssertUtils.fail("Organization_NameEMEA is not displayed on page...");
 		}
@@ -573,31 +573,31 @@ public class BICTestBase {
 
 		switch (paymentMethod.toUpperCase()) {
 
-		case "VISA":
-			paymentDetails = "4000020000000000@03 - Mar@30@737";
-			break;
+			case "VISA":
+				paymentDetails = "4000020000000000@03 - Mar@30@737";
+				break;
 
-		case "MASTERCARD":
-			paymentDetails = "2222400010000008@03 - Mar@30@737";
-			break;
+			case "MASTERCARD":
+				paymentDetails = "2222400010000008@03 - Mar@30@737";
+				break;
 
-		case "AMEX":
-			paymentDetails = "374251018720018@03 - Mar@30@7373";
-			break;
+			case "AMEX":
+				paymentDetails = "374251018720018@03 - Mar@30@7373";
+				break;
 
-		case "DISCOVER":
-			paymentDetails = "6011601160116611@03 - Mar@30@737";
-			break;
+			case "DISCOVER":
+				paymentDetails = "6011601160116611@03 - Mar@30@737";
+				break;
 
-		case "JCB":
-			paymentDetails = "3569990010095841@03 - Mar@30@737";
-			break;
-		case "ACH":
-			paymentDetails = "123456789@011000138@ACH";
-			break;
+			case "JCB":
+				paymentDetails = "3569990010095841@03 - Mar@30@737";
+				break;
+			case "ACH":
+				paymentDetails = "123456789@011000138@ACH";
+				break;
 
-		default:
-			paymentDetails = "4000020000000000@03 - Mar@30@737";
+			default:
+				paymentDetails = "4000020000000000@03 - Mar@30@737";
 		}
 		return paymentDetails;
 	}
@@ -714,7 +714,7 @@ public class BICTestBase {
 
 			Util.printInfo("Selecting paypal payment option " + data.get("paypalPaymentType"));
 			String paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption").replace("<PAYMENTOPTION>",
-					data.get("paypalPaymentType"));
+				data.get("paypalPaymentType"));
 			driver.findElement(By.xpath(paymentTypeXpath)).click();
 
 			bicPage.executeJavascript("window.scrollBy(0,1000);");
@@ -742,15 +742,15 @@ public class BICTestBase {
 		try {
 			Util.printInfo("Selecting payment profile : " + data.get("paymentType"));
 			switch (data.get("paymentType").toUpperCase()) {
-			case BICConstants.paymentTypePayPal:
-				populatePaymentDetails(data);
-				break;
-			case BICConstants.paymentTypeDebitCard:
-				populateACHPaymentDetails(paymentCardDetails);
-				break;
-			default:
-				populatePaymentDetails(paymentCardDetails);
-				break;
+				case BICConstants.paymentTypePayPal:
+					populatePaymentDetails(data);
+					break;
+				case BICConstants.paymentTypeDebitCard:
+					populateACHPaymentDetails(paymentCardDetails);
+					break;
+				default:
+					populatePaymentDetails(paymentCardDetails);
+					break;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -830,7 +830,7 @@ public class BICTestBase {
 
 		try {
 			if (driver.findElement(By.xpath("//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
-					.isDisplayed())
+				.isDisplayed())
 				Util.printInfo("Export compliance issue is present");
 			AssertUtils.fail("Unable to place BIC order : " + "Export compliance issue is present");
 		} catch (Exception e) {
@@ -851,7 +851,7 @@ public class BICTestBase {
 				orderNumber = driver.findElement(By.xpath("//h5[.='Order Number:']/..//p")).getText();
 			} catch (Exception e) {
 				debugHTMLPage(" Step 5 Check order Number is Null");
-							}
+			}
 		}
 
 		if (orderNumber == null) {
@@ -880,7 +880,7 @@ public class BICTestBase {
 	}
 
 	public void printConsole(String Url, String OrderNumber, String emailID, Map<String, String> address,
-			String firstName, String lastName, String paymentMethod) {
+		String firstName, String lastName, String paymentMethod) {
 		Util.printInfo("*************************************************************" + "\n");
 		Util.printAssertingMessage("Url to place order       :: " + Url);
 		Util.printAssertingMessage("Email Id for the account :: " + emailID);
@@ -915,34 +915,34 @@ public class BICTestBase {
 
 		switch (userType) {
 
-		case "newUser":
-			// Generate random New Email
-			String timeStamp = randomString;
-			emailID = generateUniqueEmailID(storeKey, timeStamp, sourceName, emailDomain);
-			// Based on region get address
-			Map<String, String> address = getBillingAddress(region);
+			case "newUser":
+				// Generate random New Email
+				String timeStamp = randomString;
+				emailID = generateUniqueEmailID(storeKey, timeStamp, sourceName, emailDomain);
+				// Based on region get address
+				Map<String, String> address = getBillingAddress(region);
 
-			firstName = "QAauto" + randomString;
-			Util.printInfo("firstName :: " + firstName);
+				firstName = "QAauto" + randomString;
+				Util.printInfo("firstName :: " + firstName);
 
-			lastName = "last" + randomString;
-			Util.printInfo("lastName :: " + lastName);
+				lastName = "last" + randomString;
+				Util.printInfo("lastName :: " + lastName);
 
-			createBICAccount(firstName, lastName, emailID, password);
+				createBICAccount(firstName, lastName, emailID, password);
 
-			String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-			selectPaymentProfile(data, paymentCardDetails);
+				String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
+				selectPaymentProfile(data, paymentCardDetails);
 
-			// Entire address
-			populateBillingAddress(address, data);
-			orderNumber = submitGetOrderNumber();
+				// Entire address
+				populateBillingAddress(address, data);
+				orderNumber = submitGetOrderNumber();
 
-			Util.printInfo(orderNumber);
-			orderNumber = orderNumber.split(":")[1].replace("Order Number:", "");
-			System.out.println(orderNumber);
-			// printConsole(url, orderNumber, emailID, address, firstName, lastName,
-			// paymentMethod);
-			break;
+				Util.printInfo(orderNumber);
+				orderNumber = orderNumber.split(":")[1].replace("Order Number:", "");
+				System.out.println(orderNumber);
+				// printConsole(url, orderNumber, emailID, address, firstName, lastName,
+				// paymentMethod);
+				break;
 		}
 
 		results.put(BICConstants.emailid, emailID);
@@ -1011,21 +1011,13 @@ public class BICTestBase {
 		String password = data.get("password");
 		String paymentMethod = System.getProperty("payment");
 
-	/*	if (System.getProperty("sku").contains("default")) {
-			productID = data.get("productID");
-		} else {
-			String sku = System.getProperty("sku");
-			productID = sku.split(":")[0];
-			quantity = sku.split(":")[1];
-		}*/
-
 		if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
 			emailID = System.getProperty("email");
 			String O2ID = getO2ID(data, emailID);
 			// New user to be created
 			if ((Strings.isNullOrEmpty(O2ID))) {
 				orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL, guacOverviewResourceURL, productName, term, region, quantity,  password, paymentMethod);
- 			}
+			}
 		}
 		else {
 			String timeStamp = new RandomStringUtils().random(12, true, false);
@@ -1105,7 +1097,7 @@ public class BICTestBase {
 	public void disableChatSession() {
 		try {
 			JavascriptExecutor js = (JavascriptExecutor) driver;
-			 js.executeScript(String.format("window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");"));
+			js.executeScript(String.format("window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");"));
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -1115,7 +1107,7 @@ public class BICTestBase {
 
 
 	private String createBICOrder(LinkedHashMap<String, String> data, String emailID, String guacBaseURL, String productID, String quantity,
-								  String guacResourceURL, String region, String password, String paymentMethod)
+		String guacResourceURL, String region, String password, String paymentMethod)
 
 	{
 		String orderNumber;
@@ -1150,8 +1142,6 @@ public class BICTestBase {
 		debugHTMLPage("Entire Payment details");
 		// Get Payment details
 		selectPaymentProfile(data, paymentCardDetails);
-
-
 		// Entire billing details
 		debugHTMLPage("Entire billing details");
 
@@ -1182,9 +1172,8 @@ public class BICTestBase {
 		return orderNumber;
 	}
 
-
 	private String createBICOrderDotCom(LinkedHashMap<String, String> data, String emailID,  String guacDotComBaseURL, String guacOverviewResourceURL, String productName, String term, String region, String quantity,
-	   String password, String paymentMethod)
+		String password, String paymentMethod)
 	{
 		String orderNumber;
 		String constructGuacDotComURL = guacDotComBaseURL + productName + guacOverviewResourceURL;
@@ -1218,8 +1207,6 @@ public class BICTestBase {
 		debugHTMLPage("Entire Payment details");
 		// Get Payment details
 		selectPaymentProfile(data, paymentCardDetails);
-
-
 		// Entire billing details
 		debugHTMLPage("Entire billing details");
 
@@ -1251,7 +1238,7 @@ public class BICTestBase {
 	}
 
 	private String getBICOrderPromoCode(LinkedHashMap<String, String> data, String emailID, String guacBaseURL, String productID,
-			String guacResourceURL, String region, String password, String paymentMethod, String promocode)
+		String guacResourceURL, String region, String password, String paymentMethod, String promocode)
 	{
 		String orderNumber;
 		String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
@@ -1350,8 +1337,8 @@ public class BICTestBase {
 		} finally {
 			if (priceAfterPromo.equalsIgnoreCase(priceBeforePromo)) {
 				AssertUtils.fail("Even after applying the PromoCode, there is not change in the Pricing" + "\n"
-											+ "priceBeforePromo :  " + priceBeforePromo + "\n"
-											+	"priceAfterPromo : " + priceAfterPromo);
+					+ "priceBeforePromo :  " + priceBeforePromo + "\n"
+					+	"priceAfterPromo : " + priceAfterPromo);
 			}else {
 				data.put("priceBeforePromo", priceBeforePromo);
 				data.put("priceAfterPromo", priceAfterPromo);
@@ -1511,7 +1498,7 @@ public class BICTestBase {
 				retryLoadingURL(URL);
 				bicPage.waitForPageToLoad();
 			} catch (Exception e1) {
-				AssertUtils.fail("Failed to load and get url : " + URL);
+				AssertUtils.fail("Failed to load and get url :: " + URL);
 			}
 		}
 	}
@@ -1526,7 +1513,7 @@ public class BICTestBase {
 				break;
 			}
 		} while (!(new WebDriverWait(driver, 20).until(webDriver -> ((JavascriptExecutor) webDriver)
-				.executeScript("return document.readyState").equals("complete"))));
+			.executeScript("return document.readyState").equals("complete"))));
 	}
 
 	public void execKillProcess() {
