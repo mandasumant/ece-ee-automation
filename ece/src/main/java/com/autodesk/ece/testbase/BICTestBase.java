@@ -41,11 +41,11 @@ public class BICTestBase {
 	public String openBICUrl(String storeKey, String productID, String url) {
 
 		url = url.replace("@@@@@@", storeKey).replace("******", productID);
-		Util.printInfo("URL :: " + url);
+		Util.printInfo("URL : " + url);
 		getUrl(url);
 		Util.sleep(5000);
 		if (bicPage.isFieldVisible("viewOnLocalSite")) {
-			bicPage.click("canclePopUp");
+			bicPage.click("cancelPopUp");
 			Util.sleep(2000);
 			Util.PrintInfo("Getting Popup and clicked on it.");
 
@@ -73,7 +73,7 @@ public class BICTestBase {
 
 	}
 
-	@Step("get billing address")
+	@Step("Get billing address")
 	public Map<String, String> getBillingAddress(String region) {
 
 		String address = null;
@@ -1511,7 +1511,7 @@ public class BICTestBase {
 				retryLoadingURL(URL);
 				bicPage.waitForPageToLoad();
 			} catch (Exception e1) {
-				AssertUtils.fail("Failed to load and get url :: " + URL);
+				AssertUtils.fail("Failed to load and get url : " + URL);
 			}
 		}
 	}
