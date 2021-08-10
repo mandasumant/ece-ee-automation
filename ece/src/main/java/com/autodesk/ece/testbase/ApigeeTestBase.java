@@ -302,7 +302,7 @@ public class ApigeeTestBase {
 				String txStatus = json.get("transactionStatus").toString();
 				Util.PrintInfo("Status is : " + txStatus);
 			} else
-				AssertUtils.fail("Response is null after performing Merge opration");
+				AssertUtils.fail("Response is null after performing Merge operation");
 		} catch (Exception e) {
 			e.printStackTrace();
 			Util.printInfo(ErrorEnum.ASSET_MERGE_APIGEE.geterr());
