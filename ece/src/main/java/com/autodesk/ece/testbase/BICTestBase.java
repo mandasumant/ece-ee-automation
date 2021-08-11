@@ -1694,7 +1694,7 @@ public class BICTestBase {
 		return results;
 	}
 
-	@SuppressWarnings({"static-access", "unused"})
+	@SuppressWarnings({ "static-access", "unused" })
 	@Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
 	public HashMap<String, String> createGUACBic_Orders_US(LinkedHashMap<String, String> data) {
 		String orderNumber = null;
@@ -1702,7 +1702,7 @@ public class BICTestBase {
 		HashMap<String, String> results = new HashMap<>();
 		String guacBaseURL = data.get("guacBaseURL");
 		String productID = "";
-		String quantity = "";
+		String quantity="";
 		String guacResourceURL = data.get("guacResourceURL");
 		String userType = data.get("userType");
 		// String addressUS = data.get("Cart_Address_US");
@@ -1723,12 +1723,13 @@ public class BICTestBase {
 			String O2ID = getO2ID(data, emailID);
 			// New user to be created
 			if ((Strings.isNullOrEmpty(O2ID))) {
-				orderNumber = getBICOrder(data, emailID, guacBaseURL, productID, guacResourceURL, region, password, paymentMethod);
+				orderNumber = getBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL, region, password, paymentMethod);
 			}
-		} else {
+		}
+		else {
 			String timeStamp = new RandomStringUtils().random(12, true, false);
 			emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp, "thub", "letscheck.pw");
-			orderNumber = getBICOrder(data, emailID, guacBaseURL, productID, guacResourceURL, region, password, paymentMethod);
+			orderNumber = getBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL, region, password, paymentMethod);
 		}
 
 		results.put(BICConstants.emailid, emailID);
@@ -1737,11 +1738,11 @@ public class BICTestBase {
 	}
 
 	@Step("Get BIC order")
-	private String getBICOrder(LinkedHashMap<String, String> data, String emailID, String guacBaseURL, String productID,
+	private String getBICOrder(LinkedHashMap<String, String> data, String emailID, String guacBaseURL, String productID, String quantity,
 							   String guacResourceURL, String region, String password, String paymentMethod)
 	{
 		String orderNumber;
-		String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
+		String constructGuacURL = guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
 		System.out.println("constructGuacURL " + constructGuacURL);
 		String firstName = null, lastName = null;
 		Map<String, String> address = null;

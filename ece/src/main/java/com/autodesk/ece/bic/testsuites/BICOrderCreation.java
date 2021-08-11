@@ -3,6 +3,7 @@ package com.autodesk.ece.bic.testsuites;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
@@ -194,8 +195,67 @@ public class BICOrderCreation extends ECETestBase {
 		} catch (Exception e) {
 			Util.printTestFailedMessage("Failed to update results to Testinghub");
 		}
+		updateTestingHub(testResults);
+	}
 
+	@Test(groups = {"bic-reduceseats-native-US"}, description = "Validation of BIC Reduce Seats")
+	public void validateBicReduceSeats() throws MetadataException {
+		testDataForEachMethod.put("productID", testDataForEachMethod.get("nativeproductID"));
+		HashMap<String, String> testResults = new HashMap<String, String>();
+		startTime = System.nanoTime();
+		HashMap<String, String> results = getBicTestBase().createGUACBic_Orders_US(testDataForEachMethod);
+		Util.sleep(180000);
+		results.putAll(testDataForEachMethod);
 
+		testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+		testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+		updateTestingHub(testResults);
+
+		// Getting a PurchaseOrder details from pelican
+		String baseUrl = results.get("getPurchaseOrderDetails");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+		//Initial order validation in Portal
+		portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid), "Password1", results.get("getPOReponse_subscriptionId"));
+		updateTestingHub(testResults);
+
+		//Reduce seats in Portal
+		results.putAll(portaltb.reduceSeatsInPortalAndValidate());
+		testResults.put("reducedSeatQty", results.get("reducedSeatQty"));
+		updateTestingHub(testResults);
+
+		// Get find Subscription ById
+		baseUrl = results.get("getSubscriptionById");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(pelicantb.getSubscriptionById(results));
+
+		// Verify that a seat was reduced
+		AssertUtils.assertEquals("Subscription was reduced by 1 seat", results.get("response_quantityToReduce"), "1");
+
+		try {
+			testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+			testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+			testResults.put("orderState", results.get("getPOReponse_orderState"));
+			testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
+			testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
+			testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
+			testResults.put("subscriptionPeriodStartDate", results.get("getPOReponse_subscriptionPeriodStartDate"));
+			testResults.put("subscriptionPeriodEndDate", results.get("getPOReponse_subscriptionPeriodEndDate"));
+			testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
+			testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+			testResults.put("quantityToReduce", results.get("response_quantityToReduce"));
+		} catch (Exception e) {
+			Util.printTestFailedMessage("Failed to update results to Testing Hub");
+		}
+		updateTestingHub(testResults);
+		Util.sleep(60000);
+
+		stopTime = System.nanoTime();
+		executionTime = ((stopTime - startTime) / 60000000000L);
+		testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
 		updateTestingHub(testResults);
 	}
 }
