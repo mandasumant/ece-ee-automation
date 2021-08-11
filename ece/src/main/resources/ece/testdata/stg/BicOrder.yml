@@ -260,7 +260,7 @@ validatateBicMetaOrder:
 
 validateTrialDownloadUI:
     nullTest: "1"
-    companyName: "AutoDesk Inc"
+    companyName: "Autodesk Inc"
     postalCode: "94105"
     phoneNumber: "1888938000"
 
