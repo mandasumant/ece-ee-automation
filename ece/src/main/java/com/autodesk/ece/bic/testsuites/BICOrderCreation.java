@@ -147,4 +147,55 @@ public class BICOrderCreation extends ECETestBase {
 
 	}
 
+	@Test(groups = {"bic-guac-addseats"}, description = "Validation Add Seats in GAUC with existing user")
+	public void validateBicAddSeats() {
+		HashMap<String, String> testResults = new HashMap<String, String>();
+
+		Util.printInfo("Placing initial order");
+
+		HashMap<String, String> results = getBicTestBase().createGUACBic_Orders_US(testDataForEachMethod);
+
+		results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
+		results.remove(BICConstants.orderNumber);
+		testDataForEachMethod.putAll(results);
+		getBicTestBase().driver.quit();
+
+		ECETestBase tb = new ECETestBase();
+		testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get("productID"));
+		Util.printInfo("Placing second order for the returning user");
+
+		results = tb.getBicTestBase().createBic_ReturningUserAddSeat(testDataForEachMethod);
+		results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
+		results.putAll(testDataForEachMethod);
+
+		// Getting a PurchaseOrder details from pelican
+		String baseUrl = results.get("getPurchaseOrderDetails");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+		// Get find Subscription ById
+		baseUrl = results.get("getSubscriptionById");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(pelicantb.getSubscriptionById(results));
+
+		// Verify that a seat was added
+		AssertUtils.assertEquals("Subscription should have 2 seats", results.get("response_subscriptionQuantity"), "2");
+
+		try {
+			testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+			testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+			testResults.put("orderState", results.get("getPOReponse_orderState"));
+			testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
+			testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
+			testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
+			testResults.put("subscriptionQuantity", results.get("response_subscriptionQuantity"));
+		} catch (Exception e) {
+			Util.printTestFailedMessage("Failed to update results to Testinghub");
+		}
+
+
+		updateTestingHub(testResults);
+	}
 }
