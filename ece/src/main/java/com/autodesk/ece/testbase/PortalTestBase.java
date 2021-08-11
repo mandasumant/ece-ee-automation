@@ -2771,6 +2771,9 @@ public class PortalTestBase {
         orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
 
         Util.printInfo("Reducing seats.");
+        if (portalPage.checkIfElementExistsInPage ("portalSubscriptionTermPopup",10)) {
+            portalPage.clickUsingLowLevelActions("portalCloseButton");
+        }
         portalPage.clickUsingLowLevelActions("portalReduceSeatsButton");
         portalPage.checkIfElementExistsInPage("portalReduceSeatsPanel", 10);
         portalPage.clickUsingLowLevelActions("portalMinusButton");
@@ -2787,7 +2790,7 @@ public class PortalTestBase {
     }
 
     public void validateReducedSeats(HashMap<String, String> data) throws MetadataException {
-        portalPage.checkIfElementExistsInPage("portalEditReduceSeatsButton", 10);
+        portalPage.checkIfElementExistsInPage("portalReduceSeatsButton", 10);
         String newSeatsTotal = data.get("reducedSeatQty");
         String initialOrderQty = data.get("initialOrderQty");
         if (!newSeatsTotal.equals(initialOrderQty))

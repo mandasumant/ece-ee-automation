@@ -153,6 +153,7 @@ public class PelicanTestBase {
 			results.put("response_priceID", Integer.toString(js.get("data.lastBillingInfo.purchaseOrderId")));
 			results.put("response_nextBillingDate", js.get("data.nextBillingDate"));
 			results.put("response_subscriptionQuantity", Integer.toString(js.get("data.quantity")));
+			results.put("response_quantityToReduce", Integer.toString(js.get("data.quantityToReduce")));
 
 		} catch (Exception e) {
 
