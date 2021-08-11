@@ -94,6 +94,7 @@ default:
     bicCloudCreditsPriceId: &bicCloudCreditsPriceId "11043"
     order: "undefined"
     createTrailsAPI :  "https://api.pelicanstg.autodesk.com/subscriptions/v3"
+    trialDownloadUrl : "https://www-pt.autodesk.com/products/autocad/overview?us_oa=dotcom-us&us_si=7dbc5a13-abd9-4ec9-9aff-4f4bf480bae7&us_st=AutoCAD&us_pt=ACD"
 
 STORE-AUS:
     currencyStore: "AUD"
@@ -256,6 +257,12 @@ validatateBicHybridOrder:
 validatateBicMetaOrder:
     productID: *bicMetaPriceID
     bicNativePriceID: *bicMetaPriceID
+
+validateTrialDownloadUI:
+    nullTest: "1"
+    companyName: "AutoDesk Inc"
+    postalCode: "94105"
+    phoneNumber: "1888938000"
 
 quarryBicNativeOrder:
     bicNativePriceID: *bicNativePriceID
