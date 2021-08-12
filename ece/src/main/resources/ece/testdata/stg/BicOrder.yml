@@ -255,7 +255,7 @@ validatateBicHybridOrder:
     metaproductID: *bicMetaPriceID
     productID: *NativeOrderPriceID
 
-validatateBicMetaOrder:
+validateBicMetaOrder:
     productID: *bicMetaPriceID
     bicNativePriceID: *bicMetaPriceID
 

@@ -1497,9 +1497,8 @@ public class BICTestBase {
 
 	@Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
 	public HashMap<String, String> getPurchaseOrderDetails(String purchaseOrderAPIresponse) {
-		HashMap<String, String> results = new HashMap<String, String>();
+		HashMap<String, String> results = new HashMap<>();
 		try {
-
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			StringBuilder xmlStringBuilder = new StringBuilder();
@@ -1521,7 +1520,7 @@ public class BICTestBase {
 				subscriptionId = doc.getElementsByTagName("offeringResponse").item(0).getAttributes()
 					.getNamedItem("subscriptionId").getTextContent();
 				System.out.println("subscriptionId :" + subscriptionId);
-			}catch(Exception e){
+			} catch(Exception e){
 				//Add seat order response
 				try {
 					subscriptionId = doc.getElementsByTagName("subscriptionQuantityRequest").item(0).getAttributes()
