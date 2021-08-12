@@ -1,5 +1,6 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.ece.constants.BICECEConstants;
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.*;
@@ -1803,4 +1804,67 @@ public class BICTestBase {
 
 		return orderNumber;
 	}
+
+	@Step("Guac: Test Trail Download  " + GlobalConstants.TAG_TESTINGHUB)
+	public  HashMap<String, String> testCjtTrialDownloadUI(LinkedHashMap<String,String> data) {
+		HashMap<String, String> results = new HashMap<String, String>();
+
+		try {
+			System.out.println("Entering -> testCjtTrialDownloadUI ");
+			getUrl(data.get("trialDownloadUrl"));
+
+			bicPage.clickUsingLowLevelActions("downloadFreeTrialLink");
+			bicPage.waitForFieldPresent("downloadFreeTrialPopupNext1",1000);
+
+ 			bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext1");
+			bicPage.waitForFieldPresent("downloadFreeTrialPopupNext2",1000);
+
+			bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext2");
+ 			bicPage.waitForFieldPresent("downloadFreeTrailBusinessUserOption",1000);
+
+			bicPage.clickUsingLowLevelActions("downloadFreeTrailBusinessUserOption");
+			bicPage.waitForFieldPresent("downloadFreeTrialPopupNext3",1000);
+
+			bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext3");
+			bicPage.waitForFieldPresent("downloadFreeTrialLoginFrame",1000);
+
+			//Checking if download  is prompting for user sign in
+			if (bicPage.isFieldVisible("downloadFreeTrialLoginFrame")) {
+				bicPage.selectFrame("downloadFreeTrialLoginFrame");
+
+				bicPage.waitForFieldPresent("downloadFreeTrialUserName",1000);
+				bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialUserName",
+				System.getProperty(BICECEConstants.EMAIL));
+
+				bicPage.waitForFieldPresent("downloadFreeTrialVerifyUserButtonClick",1000);
+				bicPage.clickUsingLowLevelActions("downloadFreeTrialVerifyUserButtonClick");
+
+				bicPage.waitForFieldPresent("downloadFreeTrialPassword",1000);
+				bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialPassword",
+				System.getProperty(BICECEConstants.PASSWORD));
+
+				bicPage.waitForFieldPresent("downloadFreeTrialSignInButtonClick",1000);
+				bicPage.clickUsingLowLevelActions("downloadFreeTrialSignInButtonClick");
+ 			}
+
+		  bicPage.waitForFieldPresent("downloadFreeTrialCompanyName",1000);
+			bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialCompanyName", data.get("companyName"));
+			bicPage.clickUsingLowLevelActions("downloadFreeTrialState");
+			bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialPostalCode", data.get("postalCode"));
+			bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialPhoneNo", data.get("phoneNumber"));
+			bicPage.clickUsingLowLevelActions("downloadFreeTrialBeginDownloadLink");
+
+			bicPage.waitForFieldPresent("downloadFreeTrialStarted",5000);
+			boolean downloadStarted = bicPage.isFieldVisible("downloadFreeTrialStarted");
+			Util.sleep(2000);
+			AssertUtils.assertEquals(downloadStarted, true, "SUCCESSFULLY STARTED DOWNLOAD");
+			results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Util.printInfo("Error " + e.getMessage());
+			AssertUtils.fail("Unable to test trial Download");
+		}
+		return results;
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -258,4 +259,26 @@ public class BICOrderCreation extends ECETestBase {
 		testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
 		updateTestingHub(testResults);
 	}
+
+	@Test(groups = { "trialDownload-UI" }, description = "Testing Download Trial version")
+	public void validateTrialDownloadUI() {
+		HashMap<String, String> testResults = new HashMap<String, String> ();
+
+		try {
+			testResults.put(BICConstants.emailid,System.getProperty("email"));
+			testResults = getBicTestBase().testCjtTrialDownloadUI(testDataForEachMethod);
+			updateTestingHub(testResults);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Util.printInfo("Error " + e.getMessage());
+			AssertUtils.fail("Unable to test trial downloads");
+			testResults.put(BICECEConstants.DOWNLOAD_STATUS,"Failed");
+			updateTestingHub(testResults);
+		}
+		finally {
+			updateTestingHub(testResults);
+		}
+	}
+
 }
