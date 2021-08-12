@@ -31,6 +31,7 @@ default:
     NETHERLANDS_DUTCH: "nl-NL/"
     PORTUGAL_PORTUGUESE: "pt-PT/"
     guacResourceURL: "checkout?priceIds="
+    guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
     soldToParty: "5130105006"
     shipToParty: "5130105006"
     supportingReseller: "5130105006"
@@ -379,6 +380,15 @@ validateBICChangePaymentProfile:
     getPaymentDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"
     nativeproductID: *bicNativePriceID
     userType: "existing"
+    productID: *NativeOrderPriceID
+    bicNativePriceID: *bicNativePriceID
+
+createBicOrderMoe:
+    userType: "newUser"
+    productID: *NativeOrderPriceID
+    bicNativePriceID: *bicNativePriceID
+
+validateBicNativeOrderMoe:
     productID: *NativeOrderPriceID
     bicNativePriceID: *bicNativePriceID
 

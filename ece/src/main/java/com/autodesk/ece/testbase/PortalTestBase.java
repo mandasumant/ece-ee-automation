@@ -3285,4 +3285,46 @@ public class PortalTestBase {
 
         return results;
     }
+
+    @Step("Portal : Validate subscription" + GlobalConstants.TAG_TESTINGHUB)
+    public boolean isSubscriptionDisplayedinPS(String subscriptionID) {
+        boolean status = false;
+        String productXpath = null;
+        try {
+            productXpath = portalPage.createFieldWithParsedFieldLocatorsTokens("subscriptionIDInPS", subscriptionID);
+        }
+        catch (Exception e) {
+            AssertUtils.fail("Verify subscription/agreeement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
+        }
+
+        Util.printInfo("test");
+        status = isPortalElementPresent(productXpath);
+
+        if (!status)
+            AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In P&S page");
+
+        return status;
+    }
+
+    @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
+    public boolean validateBICOrderProductinCEP(String cepURL, String portalUserName, String portalPassword, String subscriptionID) {
+        boolean status = false;
+        openPortalBICLaunch(cepURL);
+        if (isPortalLoginPageVisible())
+            portalLogin(portalUserName, portalPassword);
+
+        if (isPortalTabsVisible()) {
+            try {
+                clickALLPSLink();
+                status = isSubscriptionDisplayedinPS(subscriptionID);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (!status)
+            AssertUtils.fail("Product is displayed in portal" + " :: false");
+
+        return status;
+    }
 }

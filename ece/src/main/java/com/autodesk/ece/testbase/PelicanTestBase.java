@@ -30,6 +30,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.autodesk.testinghub.core.common.CommonConstants;
+import com.google.common.base.Strings;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -1550,6 +1551,79 @@ public class PelicanTestBase {
 	public static Response postMethod(String baseUrl, String inputPayload, Map<String, String> authHeaders) {
 		RestAssured.baseURI = baseUrl;
 		return given().headers(authHeaders).body(inputPayload).when().post();
+	}
+
+	@Step("Subscription : MOE subs Validation" + GlobalConstants.TAG_TESTINGHUB)
+	public HashMap<String, String> getPurchaseOrderDetailsMoe(String purchaseOrderAPIresponse) {
+		HashMap<String, String> results = new HashMap<String, String>();
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			StringBuilder xmlStringBuilder = new StringBuilder();
+			xmlStringBuilder.append(purchaseOrderAPIresponse);
+			ByteArrayInputStream input = new ByteArrayInputStream(xmlStringBuilder.toString().getBytes("UTF-8"));
+			Document doc = builder.parse(input);
+			Element root = doc.getDocumentElement();
+			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			String origin = root.getAttribute("origin");
+			System.out.println("origin : " + origin);
+			System.out.println("storeExternalKey : " + root.getAttribute("storeExternalKey"));
+
+			String orderState = doc.getElementsByTagName("orderState").item(0).getTextContent();
+			System.out.println("orderState :" + orderState);
+
+			String subscriptionId = null;
+			try {
+				// Native order response
+				subscriptionId = doc.getElementsByTagName("offeringResponse").item(0).getAttributes()
+						.getNamedItem("subscriptionId").getTextContent();
+				System.out.println("subscriptionId :" + subscriptionId);
+			} catch (Exception e){
+				// Add seat order response
+				try {
+					subscriptionId = doc.getElementsByTagName("subscriptionQuantityRequest").item(0).getAttributes()
+							.getNamedItem("subscriptionId").getTextContent();
+					System.out.println("subscriptionId :" + subscriptionId);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			if (Strings.isNullOrEmpty(subscriptionId)) {
+				AssertUtils.fail("SubscriptionID is not available the Pelican response : " + subscriptionId);
+			}
+
+			String subscriptionPeriodStartDate = doc.getElementsByTagName("subscription").item(0).getAttributes()
+					.getNamedItem("subscriptionPeriodStartDate").getTextContent();
+			System.out.println("subscriptionPeriodStartDate :" + subscriptionPeriodStartDate);
+
+			String subscriptionPeriodEndDate = doc.getElementsByTagName("subscription").item(0).getAttributes()
+					.getNamedItem("subscriptionPeriodEndDate").getTextContent();
+			System.out.println("subscriptionPeriodEndDate :" + subscriptionPeriodEndDate);
+
+			String fulfillmentDate = doc.getElementsByTagName("subscription").item(0).getAttributes()
+					.getNamedItem("fulfillmentDate").getTextContent();
+			System.out.println("fulfillmentDate :" + fulfillmentDate);
+
+			String storedPaymentProfileId = doc.getElementsByTagName("storedPaymentProfileId").item(0).getTextContent();
+			System.out.println("storedPaymentProfileId :" + storedPaymentProfileId);
+
+			String fulfillmentStatus = root.getAttribute("fulfillmentStatus");
+			System.out.println("fulfillmentStatus : " + root.getAttribute("fulfillmentStatus"));
+			results.put("getPOReponse_orderState", orderState);
+			results.put("getPOReponse_subscriptionId", subscriptionId);
+			results.put("getPOReponse_storedPaymentProfileId", storedPaymentProfileId);
+			results.put("getPOReponse_fulfillmentStatus", fulfillmentStatus);
+			results.put("getPOReponse_subscriptionPeriodStartDate", subscriptionPeriodStartDate);
+			results.put("getPOReponse_subscriptionPeriodEndDate",subscriptionPeriodEndDate );
+			results.put("getPOReponse_fulfillmentDate", fulfillmentDate);
+
+		} catch (Exception e) {
+			Util.printTestFailedMessage("Unable to get Purchase Order Details");
+			e.printStackTrace();
+		}
+
+		return results;
 	}
 
 }

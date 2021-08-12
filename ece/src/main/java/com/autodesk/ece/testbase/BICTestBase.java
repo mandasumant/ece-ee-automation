@@ -1867,4 +1867,177 @@ public class BICTestBase {
 		return results;
 	}
 
+	@SuppressWarnings({ "static-access", "unused" })
+	@Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
+	public HashMap<String, String> createBicOrderMoe(LinkedHashMap<String, String> data) {
+		String orderNumber = null;
+		String emailID = null;
+		HashMap<String, String> results = new HashMap<>();
+		String guacBaseURL = data.get("guacBaseURL");
+		String productID = "";
+		String quantity = "";
+		String guacResourceURL = data.get("guacResourceURL");
+		String guacMoeResourceURL = data.get("guacMoeResourceURL");
+		String cepURL = data.get("cepURL");
+		String userType = data.get("userType");
+		String region = data.get("languageStore");
+		String password = data.get("password");
+		String paymentMethod = System.getProperty("payment");
+
+		if (System.getProperty("sku").contains("default")) {
+			productID = data.get("productID");
+		} else {
+			String sku = System.getProperty("sku");
+			productID = sku.split(":")[0];
+			quantity = "[qty:" + sku.split(":")[1] + "]";
+		}
+
+		if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
+			emailID = System.getProperty("email");
+			String O2ID = getO2ID(data, emailID);
+			// New user to be created
+			if ((Strings.isNullOrEmpty(O2ID))) {
+				orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, productID, quantity, guacResourceURL, guacMoeResourceURL, region, password, paymentMethod, cepURL);
+			}
+		} else {
+			String timeStamp = new RandomStringUtils().random(12, true, false);
+			emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp, "thub", "letscheck.pw");
+			orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, productID, quantity, guacResourceURL, guacMoeResourceURL, region, password, paymentMethod, cepURL);
+		}
+
+		results.put(BICConstants.emailid, emailID);
+		results.put(BICConstants.orderNumber, orderNumber);
+		return results;
+	}
+
+	private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID, String guacBaseURL, String productID, String quantity,
+								  String guacResourceURL, String guacMoeResourceURL, String region, String password, String paymentMethod, String cepURL)
+	{
+		String orderNumber;
+		String constructGuacURL = guacBaseURL + region + guacResourceURL + productID + quantity;
+		System.out.println("constructGuacURL " + constructGuacURL);
+		String constructGuacMoeURL = guacBaseURL + region + guacMoeResourceURL;
+		System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
+		String constructPortalUrl = cepURL;
+		String firstName = null, lastName = null;
+		Map<String, String> address = null;
+
+		getUrl(constructGuacURL);
+		disableChatSession();
+		checkCartDetailsError();
+
+		firstName = null;
+		lastName = null;
+		String randomString = RandomStringUtils.random(6, true, false);
+
+		region = region.replace("/", "").replace("-", "");
+		address = getBillingAddress(region);
+		String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
+
+		acceptCookiesAndUSSiteLink();
+
+		firstName = "FN" + randomString;
+		Util.printInfo("firstName :: " + firstName);
+		lastName = "LN" + randomString;
+		Util.printInfo("lastName :: " + lastName);
+		createBICAccount(firstName, lastName, emailID, password);
+
+		data.put("firstname", firstName);
+		data.put("lastname", lastName);
+
+		debugHTMLPage("Entire Payment details");
+
+		// Get Payment details
+		selectPaymentProfile(data, paymentCardDetails);
+
+		// Entire billing details
+		debugHTMLPage("Entire billing details");
+
+		populateBillingAddress(address, data);
+		debugHTMLPage("After entering billing details");
+
+		getUrl(constructGuacMoeURL);
+		loginToMoe();
+		emulateUser(emailID);
+		agreeToMoeTerm();
+
+		orderNumber = submitGetOrderNumber();
+
+		// Check to see if EXPORT COMPLIANCE or Null
+		validateBicOrderNumber(orderNumber);
+		printConsole(constructGuacMoeURL, orderNumber, emailID, address, firstName, lastName, paymentMethod);
+
+		// Navigate to Portal, logout from service account session and log back in with user account
+		getUrl(constructPortalUrl);
+		loginToOxygen(emailID, password);
+
+		return orderNumber;
+	}
+
+	private void loginToMoe() {
+		Util.printInfo("MOE - Re-Login");
+		if (bicPage.isFieldVisible("moeReLoginLink")) {
+			try {
+				bicPage.clickUsingLowLevelActions("moeReLoginLink");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		bicPage.waitForField("moeLoginUsernameField", true, 30000);
+		bicPage.click("moeLoginUsernameField");
+		bicPage.populateField("moeLoginUsernameField", "svc_s_guac@autodesk.com");
+		bicPage.click("moeLoginButton");
+		bicPage.waitForField("moeLoginPasswordField", true, 30000);
+		bicPage.click("moeLoginPasswordField");
+		bicPage.populateField("moeLoginPasswordField", "K16PF6LCtnsf99");
+		bicPage.click("moeLoginButton");
+		bicPage.waitForPageToLoad();
+		Util.printInfo("Successfully logged into MOE");
+	}
+
+	private void emulateUser(String emailID) {
+		Util.printInfo("MOE - Emulate User");
+		bicPage.click("moeAccountLookupEmail");
+		bicPage.populateField("moeAccountLookupEmail", emailID);
+		bicPage.click("moeAccountLookupBtn");
+		bicPage.waitForPageToLoad();
+		bicPage.click("moeContinueBtn");
+		bicPage.waitForPageToLoad();
+		Util.printInfo("Successfully emulated user");
+	}
+
+	private void agreeToMoeTerm() {
+		try {
+			JavascriptExecutor js = (JavascriptExecutor) driver;
+			js.executeScript("document.getElementById('order-agreement').click()");
+		} catch (Exception e) {
+			AssertUtils.fail("Application Loading issue : Unable to click on 'order-agreement' checkbox");
+		}
+	}
+
+	private void loginToOxygen(String emailID, String password) {
+		bicPage.waitForPageToLoad();
+		try {
+			JavascriptExecutor js = (JavascriptExecutor) driver;
+			js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");
+			bicPage.waitForPageToLoad();
+			js.executeScript("document.getElementById('meMenu-signOut').click()");
+			bicPage.waitForPageToLoad();
+		} catch (Exception e) {
+			AssertUtils.fail("Application Loading issue : Unable to logout");
+		}
+		bicPage.waitForField("autodeskId", true, 30000);
+		bicPage.populateField("autodeskId", emailID);
+		bicPage.click("userNameNextButton");
+		bicPage.waitForField("loginPassword", true, 5000);
+		bicPage.click("loginPassword");
+		bicPage.populateField("loginPassword", password);
+		bicPage.clickToSubmit("loginButton", 10000);
+		bicPage.waitForPageToLoad();
+
+		if (bicPage.isFieldPresent("getStartedSkipLink"))
+			bicPage.click("getStartedSkipLink");
+
+		Util.printInfo("Successfully logged in");
+	}
 }
