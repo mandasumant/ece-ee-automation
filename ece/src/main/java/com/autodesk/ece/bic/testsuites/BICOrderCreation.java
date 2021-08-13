@@ -343,4 +343,79 @@ public class BICOrderCreation extends ECETestBase {
 		testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
 		updateTestingHub(testResults);
 	}
+
+	@Test(groups = { "bic-metaorder-US" }, description = "Validation of Create BIC Meta Order")
+	public void validateBicMetaOrder() {
+		HashMap<String, String> testResults = new HashMap<String, String> ();
+		startTime = System.nanoTime();
+
+		HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+		updateTestingHub(results);
+		results.putAll(testDataForEachMethod);
+
+		String bicOrderO2ID = getPortalTestBase().getOxygenId(results).trim();
+		results.put(BICConstants.oxid, bicOrderO2ID);
+		Util.sleep(180000);
+		results.putAll(testDataForEachMethod);
+
+		testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+		testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+		updateTestingHub(testResults);
+
+		// Getting a PurchaseOrder details from pelican
+		String baseUrl = results.get("getPurchaseOrderDetails");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+		// Get find Subscription ById
+		baseUrl = results.get("getSubscriptionById");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(pelicantb.getSubscriptionById(results));
+
+		// trigger Invoice join
+		baseUrl = results.get("postInvoicePelicanAPI");
+		results.put("pelican_BaseUrl", baseUrl);
+		pelicantb.postInvoicePelicanAPI(results);
+		
+		Util.sleep(180000);
+
+		try {
+			testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+			testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+			testResults.put("orderState", results.get("getPOReponse_orderState"));
+			testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
+			testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
+			testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
+			testResults.put("subscriptionPeriodStartDate", results.get("getPOReponse_subscriptionPeriodStartDate"));
+			testResults.put("subscriptionPeriodEndDate", results.get("getPOReponse_subscriptionPeriodEndDate"));
+			testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
+			testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+		}
+		catch (Exception e) {
+			Util.printTestFailedMessage("Failed to update results to Testing hub.");
+		}
+		updateTestingHub(testResults);
+
+		// trigger Invoice join
+		baseUrl = results.get("postInvoicePelicanAPI");
+		results.put("pelican_BaseUrl", baseUrl);
+		pelicantb.postInvoicePelicanAPI(results);
+
+		//Validate Submit Order
+		tibcotb.validateSubmitOrder(results.get(BICConstants.orderNumber));
+		updateTestingHub(testResults);
+
+		//portal
+		portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),	results.get(BICConstants.emailid), "Password1", results.get("getPOReponse_subscriptionId"));
+		updateTestingHub(testResults);
+
+		//Validate Create Order
+		tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber), "CreateOrder");
+		stopTime = System.nanoTime();
+		executionTime =((stopTime - startTime)/60000000000L);
+		testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+		updateTestingHub(testResults);
+	}
 }
