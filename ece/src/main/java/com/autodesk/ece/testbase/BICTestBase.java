@@ -835,7 +835,6 @@ public class BICTestBase {
 		}
 
 		try {
-			Util.sleep(200000);
 			if (driver.findElement(By.xpath("//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
 				.isDisplayed())
 				Util.printInfo("Export compliance issue is present");
