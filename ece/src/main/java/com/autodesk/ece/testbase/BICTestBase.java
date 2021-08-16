@@ -835,6 +835,7 @@ public class BICTestBase {
 		}
 
 		try {
+			Util.sleep(200000);
 			if (driver.findElement(By.xpath("//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
 				.isDisplayed())
 				Util.printInfo("Export compliance issue is present");
@@ -1495,7 +1496,7 @@ public class BICTestBase {
 	}
 
 
-	@Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
+	@Step("Subscription : Subscription Validation" + GlobalConstants.TAG_TESTINGHUB)
 	public HashMap<String, String> getPurchaseOrderDetails(String purchaseOrderAPIresponse) {
 		HashMap<String, String> results = new HashMap<>();
 		try {

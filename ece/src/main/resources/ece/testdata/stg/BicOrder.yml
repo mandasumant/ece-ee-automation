@@ -367,7 +367,7 @@ validateBicAddSeats:
 ccPurchaseBICOrder:
     nullTest: "1"
 
-validateBicAddSeatNativeOrder:
+validateBicReduceSeats:
     metaproductID: *bicMetaPriceID
     nativeproductID: *bicNativePriceID
     addSeatQty: "2"
