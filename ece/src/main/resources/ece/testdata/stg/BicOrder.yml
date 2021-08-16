@@ -243,6 +243,7 @@ validateBicNativeOrder:
     productID: *NativeOrderPriceID
     bicNativePriceID: *bicNativePriceID
 
+
 validatateBicFlexOrder:
     productID: *FlexOrderPriceID
     bicFlexPriceID: *FlexOrderPriceID
@@ -366,6 +367,11 @@ validateBicAddSeats:
 
 ccPurchaseBICOrder:
     nullTest: "1"
+
+validateBicAddSeatNativeOrder:
+    metaproductID: *bicMetaPriceID
+    nativeproductID: *bicNativePriceID
+    addSeatQty: "2"
 
 validateBicReduceSeats:
     metaproductID: *bicMetaPriceID

@@ -4,6 +4,7 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
@@ -148,6 +149,84 @@ public class BICOrderCreation extends ECETestBase {
 		portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),	results.get(BICConstants.emailid), "Password1", results.get("getPOReponse_subscriptionId"));
 		updateTestingHub(testResults);
 
+	}
+
+	@Test(groups = { "bic-addseat-native-US" }, description = "Validation of BIC Add Seat Order")
+	public void validateBicAddSeatNativeOrder() {
+		System.out.println("Version 20th April 2021");
+		testDataForEachMethod.put("productID", testDataForEachMethod.get("nativeproductID"));
+		HashMap<String, String> testResults = new HashMap<String, String>();
+		startTime = System.nanoTime();
+		HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+		results.putAll(testDataForEachMethod);
+
+		// trigger Invoice join
+		String baseUrl = results.get("postInvoicePelicanAPI");
+		results.put("pelican_BaseUrl", baseUrl);
+		pelicantb.postInvoicePelicanAPI(results);
+
+		Util.sleep(180000);
+
+		testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+		testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+		updateTestingHub(testResults);
+
+		// Getting a PurchaseOrder details from pelican
+		baseUrl = results.get("getPurchaseOrderDetails");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+		//Initial order validation in Portal
+		portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),results.get(BICConstants.emailid), "Password1", results.get("getPOReponse_subscriptionId"));
+		updateTestingHub(testResults);
+
+		//Place add Seat order in Portal
+		results.putAll(portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get("addSeatQty"),testDataForEachMethod));
+		testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
+		//	testResults.put("addSeatPerSeatGrossAmount", results.get("perSeatGrossAmount"));
+		testResults.put("addSeatQty", results.get("addSeatQty"));
+		updateTestingHub(testResults);
+
+		// Getting a PurchaseOrder details from pelican
+		baseUrl = results.get("getPurchaseOrderDetails");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, testResults.get(TestingHubConstants.addSeatOrderNumber));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+		// Get find Subscription ById
+		baseUrl = results.get("getSubscriptionById");
+		baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+		results.put("pelican_BaseUrl", baseUrl);
+		results.putAll(pelicantb.getSubscriptionById(results));
+
+		// trigger Invoice join
+		baseUrl = results.get("postInvoicePelicanAPI");
+		results.put("pelican_BaseUrl", baseUrl);
+		pelicantb.postInvoicePelicanAPI(results);
+		Util.sleep(180000);
+
+ 		try {
+			testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+			testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+ 			testResults.put("orderState", results.get("getPOReponse_orderState"));
+			testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
+			testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
+			testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
+			testResults.put("subscriptionPeriodStartDate", results.get("getPOReponse_subscriptionPeriodStartDate"));
+			testResults.put("subscriptionPeriodEndDate", results.get("getPOReponse_subscriptionPeriodEndDate"));
+			testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
+			testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+		} catch (Exception e) {
+			Util.printTestFailedMessage("Failed to update results to Testinghub");
+		}
+		updateTestingHub(testResults);
+		Util.sleep(60000);
+
+		stopTime = System.nanoTime();
+		executionTime = ((stopTime - startTime) / 60000000000L);
+		testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+		updateTestingHub(testResults);
 	}
 
 	@Test(groups = {"bic-guac-addseats"}, description = "Validation Add Seats in GAUC with existing user")
@@ -378,7 +457,7 @@ public class BICOrderCreation extends ECETestBase {
 		baseUrl = results.get("postInvoicePelicanAPI");
 		results.put("pelican_BaseUrl", baseUrl);
 		pelicantb.postInvoicePelicanAPI(results);
-		
+
 		Util.sleep(180000);
 
 		try {
