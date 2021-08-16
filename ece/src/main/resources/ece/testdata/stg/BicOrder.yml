@@ -242,7 +242,7 @@ createGUACBic_Orders_US:
 validateBicNativeOrder:
     productID: *NativeOrderPriceID
     bicNativePriceID: *bicNativePriceID
-
+    quantity: "2"
 
 validatateBicFlexOrder:
     productID: *FlexOrderPriceID
@@ -374,13 +374,8 @@ validateBicAddSeatNativeOrder:
     addSeatQty: "2"
 
 validateBicReduceSeats:
-    metaproductID: *bicMetaPriceID
     nativeproductID: *bicNativePriceID
     addSeatQty: "2"
-
-validateBicNativeOrder:
-    nativeproductID: *bicNativePriceID
-    quantity: "2"
 
 validateBICChangePaymentProfile:
     getPaymentDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"
