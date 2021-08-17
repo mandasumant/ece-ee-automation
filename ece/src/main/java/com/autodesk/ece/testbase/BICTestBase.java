@@ -1495,7 +1495,7 @@ public class BICTestBase {
 	}
 
 
-	@Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
+	@Step("Subscription : Subscription Validation" + GlobalConstants.TAG_TESTINGHUB)
 	public HashMap<String, String> getPurchaseOrderDetails(String purchaseOrderAPIresponse) {
 		HashMap<String, String> results = new HashMap<>();
 		try {
