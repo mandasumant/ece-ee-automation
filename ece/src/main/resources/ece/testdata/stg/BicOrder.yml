@@ -349,6 +349,9 @@ portalAccess_BicHybridOrder:
     billingStreet: ""       #1419WLakeSt
     billingAddress: ""      #Chicago, IL 60607-1409
 
+validateBicPayportRefundOrder:
+    nullTest: "1"
+
 apiBicNativeOrder:
     nullTest: "1"
 
