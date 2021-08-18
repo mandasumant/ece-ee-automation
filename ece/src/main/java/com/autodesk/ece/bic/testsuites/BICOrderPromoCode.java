@@ -1,4 +1,3 @@
-
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.testbase.ECETestBase;
