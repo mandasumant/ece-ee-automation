@@ -497,4 +497,39 @@ public class BICOrderCreation extends ECETestBase {
 		testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
 		updateTestingHub(testResults);
 	}
+
+	@Test(groups = { "bic-indirectorder-JP" }, description = "Validation of Create BIC Indirect Order")
+	public void validateBicIndirectOrder() {
+		HashMap<String, String> testResults = new HashMap<String, String> ();
+		startTime = System.nanoTime();
+		HashMap<String, String> results = getBicTestBase().createGUACBICIndirectOrderJP(testDataForEachMethod);
+		Util.sleep(60000);
+		results.putAll(testDataForEachMethod);
+
+		testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+		testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+		updateTestingHub(testResults);
+
+		try {
+			testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+			testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+			testResults.put("orderState", results.get("getPOReponse_orderState"));
+			testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
+			testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
+			testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
+			testResults.put("subscriptionPeriodStartDate", results.get("getPOReponse_subscriptionPeriodStartDate"));
+			testResults.put("subscriptionPeriodEndDate", results.get("getPOReponse_subscriptionPeriodEndDate"));
+			testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
+			testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+		} catch (Exception e) {
+			Util.printTestFailedMessage("Failed to update results to Testinghub");
+		}
+		updateTestingHub(testResults);
+		Util.sleep(60000);
+
+		stopTime = System.nanoTime();
+		executionTime = ((stopTime - startTime) / 60000000000L);
+		testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+		updateTestingHub(testResults);
+	}
 }
