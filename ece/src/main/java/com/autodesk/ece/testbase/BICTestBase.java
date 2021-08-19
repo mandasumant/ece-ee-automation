@@ -2094,7 +2094,8 @@ public class BICTestBase {
 		return results;
 	}
 
-	@SuppressWarnings({ "static-access", "unused" })
+
+	@SuppressWarnings({"static-access", "unused"})
 	@Step("Guac: Place DR Order " + GlobalConstants.TAG_TESTINGHUB)
 	public HashMap<String, String> createGUACBICIndirectOrderJP(LinkedHashMap<String, String> data) {
 		String orderNumber = null;
@@ -2122,13 +2123,13 @@ public class BICTestBase {
 			String O2ID = getO2ID(data, emailID);
 			// New user to be created
 			if ((Strings.isNullOrEmpty(O2ID))) {
-				orderNumber = createBICIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity, guacDRResourceURL,
+				orderNumber = createBicIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity, guacDRResourceURL,
 						region, password, paymentMethod);
 			}
 		} else {
 			String timeStamp = new RandomStringUtils().random(12, true, false);
 			emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp, "thub", "letscheck.pw");
-			orderNumber = createBICIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity, guacDRResourceURL, region,
+			orderNumber = createBicIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity, guacDRResourceURL, region,
 					password, paymentMethod);
 		}
 
@@ -2137,7 +2138,7 @@ public class BICTestBase {
 		return results;
 	}
 
-	private String createBICIndirectOrder(LinkedHashMap<String, String> data, String emailID, String guacDRBaseURL,
+	private String createBicIndirectOrder(LinkedHashMap<String, String> data, String emailID, String guacDRBaseURL,
 			String productID, String quantity, String guacDRResourceURL, String region, String password, String paymentMethod)
 	{
 		String orderNumber;
@@ -2167,13 +2168,12 @@ public class BICTestBase {
 		data.put("firstname", firstName);
 		data.put("lastname", lastName);
 
-		debugHTMLPage("Enter Payment details");
 		// Get Payment details
+		debugHTMLPage("Enter Payment details");
 		selectPaymentProfileDR(data, paymentCardDetails);
 
 		// Enter billing details
 		debugHTMLPage("Enter billing details");
-
 		populateBillingAddressDR(address, data);
 		debugHTMLPage("After entering billing details");
 
@@ -2247,22 +2247,23 @@ public class BICTestBase {
 			bicPage.waitForField("cardNumberDR", true, 10000);
 			bicPage.click("cardNumberDR");
 			bicPage.executeJavascript("document.getElementById('ccNum').value='" + paymentCardDetails[0] + "'");
-			Util.sleep(2000);
+			Util.sleep(1000);
 
 			WebElement monthEle = driver.findElement(By.xpath(expirationMonthDRXpath));
 			Select selMonth = new Select(monthEle);
 			selMonth.selectByVisibleText(paymentCardDetails[1]);
-			Util.sleep(2000);
+			Util.sleep(1000);
 
 			WebElement yearEle = driver.findElement(By.xpath(expirationYearDRXpath));
 			Select selYear = new Select(yearEle);
 			selYear.selectByVisibleText(paymentCardDetails[2]);
-			Util.sleep(2000);
+			Util.sleep(1000);
 
 			Util.printInfo("Entering security code : " + paymentCardDetails[3]);
 			bicPage.click("cardSecurityCodeDR");
-			sendKeysAction("cardSecurityCodeDR", paymentCardDetails[3]);
-			Util.sleep(2000);
+			bicPage.executeJavascript("document.getElementById('cardSecurityCode').value='" + paymentCardDetails[3] + "'");
+			Util.sleep(1000);
+
 			driver.switchTo().defaultContent();
 		} catch (MetadataException e) {
 			e.printStackTrace();
@@ -2272,8 +2273,8 @@ public class BICTestBase {
 
 	@Step("Populate DR billing address")
 	public boolean populateBillingAddressDR(Map<String, String> address, HashMap<String, String> data) {
-
 		boolean status = false;
+
 		try {
 			WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField("creditCardFrameDR").get(0);
 			driver.switchTo().frame(creditCardFrameDR);
@@ -2281,8 +2282,6 @@ public class BICTestBase {
 			String paymentType = System.getProperty("payment");
 			String firstNameXpath = "";
 			String lastNameXpath = "";
-
-			Util.sleep(2000);
 
 			firstNameXpath = bicPage.getFirstFieldLocator("firstNameDR");
 			lastNameXpath = bicPage.getFirstFieldLocator("lastNameDR");
@@ -2306,6 +2305,7 @@ public class BICTestBase {
 	@SuppressWarnings("static-access")
 	public boolean populateBillingDetailsDR(Map<String, String> address, String paymentType) {
 		boolean status = false;
+
 		try {
 			WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField("creditCardFrameDR").get(0);
 			driver.switchTo().frame(creditCardFrameDR);
@@ -2324,7 +2324,6 @@ public class BICTestBase {
 					break;
 			}
 
-			Util.sleep(1000);
 			WebDriverWait wait = new WebDriverWait(driver, 60);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
 			status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
@@ -2336,9 +2335,6 @@ public class BICTestBase {
 			Util.sleep(1000);
 			driver.findElement(By.xpath(orgNameXpath))
 					.sendKeys(new RandomStringUtils().random(5, true, true) + address.get("companyNameDR"));
-
-			driver.findElement(By.xpath(orgNameXpath)).click();
-			Util.sleep(1000);
 
 			driver.findElement(By.xpath(fullAddrXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
 			Util.sleep(1000);
@@ -2382,10 +2378,11 @@ public class BICTestBase {
 		try {
 			Util.printInfo("Clicking on DR test order link...");
 			driver.findElement(By.linkText("Make this a test order")).click();
+			Util.sleep(2000);
 		} catch (Exception e) {
 			AssertUtils.fail("Failed to click on 'Make this a test order' link");
 		}
-		Util.sleep(2000);
+
 		try {
 			String alertMessage = "";
 			driver.switchTo().alert();
