@@ -1408,13 +1408,11 @@ public class PelicanTestBase {
 
 	@Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
 	public HashMap<String, String> getPurchaseOrderDetails(String purchaseOrderAPIresponse) {
-		HashMap<String, String> results = new HashMap<String, String>();
+		HashMap<String, String> results = new HashMap<>();
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			StringBuilder xmlStringBuilder = new StringBuilder();
-			xmlStringBuilder.append(purchaseOrderAPIresponse);
-			ByteArrayInputStream input = new ByteArrayInputStream(xmlStringBuilder.toString().getBytes("UTF-8"));
+			ByteArrayInputStream input = new ByteArrayInputStream(purchaseOrderAPIresponse.getBytes(StandardCharsets.UTF_8));
 			Document doc = builder.parse(input);
 			Element root = doc.getDocumentElement();
 			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
@@ -1461,7 +1459,6 @@ public class PelicanTestBase {
 		}
 
 		return results;
-
 	}
 
 	@SuppressWarnings("deprecation")
