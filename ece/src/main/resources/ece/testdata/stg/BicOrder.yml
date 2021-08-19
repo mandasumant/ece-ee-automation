@@ -12,7 +12,11 @@ default:
     cepURL: "https://customer-stg.autodesk.com/"
     url: "https://cart.bicstg.autodesk.com/r?storeKey=@@@@@@&productIds=******"
     guacBaseURL: "https://checkout-pt.autodesk.com/"
+    guacDRBaseURL: "https://commerce-stg.autodesk.com/"
     guacDotComBaseURL: "https://www-pt.autodesk.com/products/"
+    guacResourceURL: "checkout?priceIds="
+    guacDRResourceURL: "checkout?plc="
+    guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
     productName: "3ds-max"
     guacOverviewTermResource: "/overview"
     US: "en-US/"
@@ -30,8 +34,6 @@ default:
     HUNGARY_HUNGARIAN: "hu-HU/"
     NETHERLANDS_DUTCH: "nl-NL/"
     PORTUGAL_PORTUGUESE: "pt-PT/"
-    guacResourceURL: "checkout?priceIds="
-    guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
     soldToParty: "5130105006"
     shipToParty: "5130105006"
     supportingReseller: "5130105006"
@@ -73,6 +75,7 @@ default:
     ratePlanPPU: "NO"
     payportAddPaymentURL: "https://payport.bicsg.autodesk.com/services/v1/user/INTTESTING/paymentProfiles?syncUCM=1"
     languageStore: "en-US/"
+    languageStoreDR: "ja-JP/"
     priceIDStore: "108261"      # need to check which price ID is this
     billingProcessor: "adyen" ##adyen   bluesnap
     paypalUser: "Paypal-buyer-namer@ssttest.net"
@@ -409,3 +412,10 @@ promocodeBicOrder:
 
 bictrialsorder:
     nullTest: "1"
+
+createGUACBICIndirectOrderJP:
+    userType: "newUser"
+    productID: "maya"
+
+validateBicIndirectOrder:
+    productID: "maya"
