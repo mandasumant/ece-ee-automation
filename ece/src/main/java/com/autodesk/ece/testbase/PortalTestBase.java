@@ -1,6 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import com.autodesk.testinghub.core.base.GlobalTestBase;
+import com.autodesk.testinghub.core.exception.GUIException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,6 +42,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -79,7 +81,7 @@ public class PortalTestBase {
 
     public PortalTestBase(GlobalTestBase testbase) {
         driver = testbase.getdriver();
-        portalPage = testbase.createCommonPage("PAGE_PORTAL");
+        portalPage = testbase.createPage("PAGE_PORTAL");
         studentPage = testbase.createCommonPage("PAGE_STUDENT");
         new BICTestBase(driver, testbase);
     }
@@ -903,7 +905,7 @@ public class PortalTestBase {
     @Step("isPortalElementPresent in GUI load wait")
     public boolean isPortalElementPresent(String Field) {
         boolean status = false;
-        portalPage.waitForField(Field, true, 15000);
+
         try {
             status = portalPage.isFieldVisible(Field) || portalPage.checkFieldExistence(Field) || portalPage.isFieldPresent(Field) || portalPage.checkIfElementExistsInPage(Field, 60);
         } catch (MetadataException e) {
@@ -911,6 +913,24 @@ public class PortalTestBase {
 
         if (!status)
             Util.printError("isPortalElementPresent :: " + Field + "" + status);
+
+        return status;
+    }
+    @Step("isPortalElementPresent in GUI load wait")
+    public boolean isPortalElementPresentWithXpath(String xPath) {
+        boolean status = false;
+
+        try {
+           WebElement element = driver.findElement(By.xpath(xPath)) ;
+           if(element != null){
+               status = true;
+           }
+
+        } catch (ElementNotVisibleException e) {
+        }
+
+        if (!status)
+            Util.printError("isPortalElementPresentWithXpath :: " + xPath + "" + status);
 
         return status;
     }
@@ -945,16 +965,16 @@ public class PortalTestBase {
     @Step("Portal : Validate subscription" + GlobalConstants.TAG_TESTINGHUB)
     public boolean isSubscriptionDisplayedInPS(String subscriptionID) {
 //      clickALLPSLink();
+
         boolean status = false;
         String productXpath = null;
         try {
-            productXpath = portalPage.createFieldWithParsedFieldLocatorsTokens("subscriptionIDInPS", subscriptionID);
+            productXpath = portalPage.getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1",subscriptionID);
         } catch (Exception e) {
-            AssertUtils.fail("Verify subscription/agreeement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
+            AssertUtils.fail("Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
         }
 
-        Util.printInfo("test");
-        status = isPortalElementPresent(productXpath);
+        status = isPortalElementPresentWithXpath(productXpath);
 
         if (!status)
             AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In P&S page");
@@ -3294,7 +3314,7 @@ public class PortalTestBase {
             productXpath = portalPage.createFieldWithParsedFieldLocatorsTokens("subscriptionIDInPS", subscriptionID);
         }
         catch (Exception e) {
-            AssertUtils.fail("Verify subscription/agreeement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
+            AssertUtils.fail("Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
         }
 
         Util.printInfo("test");
