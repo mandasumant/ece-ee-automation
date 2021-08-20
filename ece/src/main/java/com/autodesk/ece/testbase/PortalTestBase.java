@@ -1,34 +1,32 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
-import com.autodesk.testinghub.core.exception.GUIException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.security.SecureRandom;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.TimeZone;
+import com.autodesk.testinghub.core.common.CommonConstants;
+import com.autodesk.testinghub.core.common.services.ApigeeAuthenticationService;
+import com.autodesk.testinghub.core.common.services.OxygenService;
+import com.autodesk.testinghub.core.common.tools.web.Page_;
+import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.constants.TestingHubConstants;
+import com.autodesk.testinghub.core.exception.MetadataException;
+import com.autodesk.testinghub.core.soapclient.SOAPService;
+import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.CustomSoftAssert;
+import com.autodesk.testinghub.core.utils.ErrorEnum;
+import com.autodesk.testinghub.core.utils.Util;
+import io.qameta.allure.Attachment;
+import io.qameta.allure.Step;
+import org.apache.commons.lang.RandomStringUtils;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 import javax.xml.parsers.DocumentBuilder;
@@ -39,38 +37,15 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.lang.RandomStringUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.common.CommonConstants;
-import com.autodesk.testinghub.core.common.services.ApigeeAuthenticationService;
-import com.autodesk.testinghub.core.common.services.OxygenService;
-import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.core.exception.MetadataException;
-import com.autodesk.testinghub.core.soapclient.SOAPService;
-import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.CustomSoftAssert;
-import com.autodesk.testinghub.core.utils.ErrorEnum;
-import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
-
-import io.qameta.allure.Attachment;
-import io.qameta.allure.Step;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class PortalTestBase {
     private static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -98,13 +73,21 @@ public class PortalTestBase {
         return sb.toString();
     }
 
+    public static String timestamp() {
+        String strDate = null;
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        strDate = dateFormat.format(date).replace(" ", "").replace("-", "").replace(":", "");
+        return strDate;
+    }
+
     @Step("Create new Account and Contact" + GlobalConstants.TAG_TESTINGHUB)
     public LinkedHashMap<String, String> createNewAccount(LinkedHashMap<String, String> data) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         openPortal(data.get("cepURL"));
         String emailID = generateUniqueEmailID("thub", generateRandomTimeStamp(), "letscheck.pw");
-        data.put(TestingHubConstants.firstname, "THub" + generateRandom(5).toString());
-        data.put(TestingHubConstants.lastname, generateRandom(4).toString());
+        data.put(TestingHubConstants.firstname, "THub" + generateRandom(5));
+        data.put(TestingHubConstants.lastname, generateRandom(4));
         data.put(TestingHubConstants.emailid, emailID);
         data.put(TestingHubConstants.passCEP, data.get("password"));
 
@@ -159,7 +142,7 @@ public class PortalTestBase {
             data.put("createdTime", timestamp + "");
 
             feynamnLayoutLoaded();
-            data.put(TestingHubConstants.oxygenid, getOxygenId(data).toString().trim());
+            data.put(TestingHubConstants.oxygenid, getOxygenId(data).trim());
 
             String streetAddress, addressCity, country, postalCode, region;
 
@@ -380,14 +363,6 @@ public class PortalTestBase {
         createAccount("", inputData, "Contact", GlobalConstants.getENV(), data);
     }
 
-    public static String timestamp() {
-        String strDate = null;
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
-        strDate = dateFormat.format(date).replace(" ", "").replace("-", "").replace(":", "");
-        return strDate;
-    }
-
     @Step("Create End-User Account - {1}")
     private String createAccount(String msg, String[] inputData, String userCategory, String env, HashMap<String, String> data) {
         String xml = null;
@@ -491,7 +466,7 @@ public class PortalTestBase {
             if (userCategory.equalsIgnoreCase("Account")) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 soapResponse.writeTo(out);
-                String strMsg = new String(out.toByteArray());
+                String strMsg = out.toString();
                 String actualADSKAccountCSN = parseXML(strMsg, "ns0:CSN");
                 Util.PrintInfo("Account CSN - " + actualADSKAccountCSN);
                 data.put(TestingHubConstants.enduserCSN, actualADSKAccountCSN);
@@ -705,7 +680,7 @@ public class PortalTestBase {
 
     public Message[] createGmailConnection(String connectionMail, String connectionPass, String mailFolder, String welcomeKitSearch, String emailCopeSearch, String orderEmailID) {
         Properties props = getGmailConnectionProperties();
-        Message message[] = null;
+        Message[] message = null;
         Map<String, String> email = new HashMap<String, String>();
 
         try {
@@ -916,15 +891,16 @@ public class PortalTestBase {
 
         return status;
     }
+
     @Step("isPortalElementPresent in GUI load wait")
     public boolean isPortalElementPresentWithXpath(String xPath) {
         boolean status = false;
 
         try {
-           WebElement element = driver.findElement(By.xpath(xPath)) ;
-           if(element != null){
-               status = true;
-           }
+            WebElement element = driver.findElement(By.xpath(xPath));
+            if (element != null) {
+                status = true;
+            }
 
         } catch (ElementNotVisibleException e) {
         }
@@ -969,7 +945,7 @@ public class PortalTestBase {
         boolean status = false;
         String productXpath = null;
         try {
-            productXpath = portalPage.getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1",subscriptionID);
+            productXpath = portalPage.getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
         } catch (Exception e) {
             AssertUtils.fail("Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
         }
@@ -1001,10 +977,7 @@ public class PortalTestBase {
             //AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID  + " , In B&O page");
             errorMsg = ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In B&O page";
 
-        if (errorMsg.isEmpty())
-            status = true;
-        else
-            status = false;
+        status = errorMsg.isEmpty();
 
         return status;
     }
@@ -1171,8 +1144,8 @@ public class PortalTestBase {
         //openPortal( CommonConstants.oxygenUserCreationURL);
         String errorMsg = "";
         driver.get(CommonConstants.oxygenUserCreationURL);
-        data.put(TestingHubConstants.firstname, "AOFNTH" + generateRandom(5).toString());
-        data.put(TestingHubConstants.lastname, "AOLNTH" + generateRandom(5).toString());
+        data.put(TestingHubConstants.firstname, "AOFNTH" + generateRandom(5));
+        data.put(TestingHubConstants.lastname, "AOLNTH" + generateRandom(5));
         data.put(TestingHubConstants.passCEP, data.get("password"));
 
         try {
@@ -1211,7 +1184,7 @@ public class PortalTestBase {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 data.put("createdTime", timestamp + "");
                 feynamnLayoutLoaded();
-                data.put(TestingHubConstants.oxid, getOxygenId(data).toString().trim());
+                data.put(TestingHubConstants.oxid, getOxygenId(data).trim());
             }
         } catch (Exception e) {
             //  AssertUtils.fail("Error while creating new contact with : " + data.get(TestingHubConstants.emailid));
@@ -1240,8 +1213,8 @@ public class PortalTestBase {
         if ((emailIdCEP == null) || (emailIdCEP.equals("null")))
             emailIdCEP = generateUniqueEmailID("testinghub", generateRandomTimeStamp(), "letscheck.pw");
 
-        createdData.put("firstNameCEP", "TestingHub" + generateRandom(5).toString());
-        createdData.put("lastNameCEP", generateRandom(5).toString());
+        createdData.put("firstNameCEP", "TestingHub" + generateRandom(5));
+        createdData.put("lastNameCEP", generateRandom(5));
         createdData.put("emailIdCEP", emailIdCEP);
 
         String cepPass = data.get("password");
@@ -1483,8 +1456,8 @@ public class PortalTestBase {
     public LinkedHashMap<String, String> gotoAUMByUserPageInviteUser() {
         LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
         String errorMsg = "";
-        String fn = "Fn" + generateRandom(6).toString();
-        String ln = "Ln" + generateRandom(4).toString();
+        String fn = "Fn" + generateRandom(6);
+        String ln = "Ln" + generateRandom(4);
         String email = fn + "." + ln + "@letscheck.pw";
         result.put("email", email);
 
@@ -1690,7 +1663,7 @@ public class PortalTestBase {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = new Date();
-        long gmtMilliSeconds = (long) date.getTime();
+        long gmtMilliSeconds = date.getTime();
         return Long.toString(gmtMilliSeconds / 1000).trim();
     }
 
@@ -1699,7 +1672,7 @@ public class PortalTestBase {
         LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
         String errorMsg = "";
         String fn = "Fn";
-        String ln = "Ln" + generateRandom(4).toString();
+        String ln = "Ln" + generateRandom(4);
         String email = "order" + "." + getTimeStamp() + "@letscheck.pw";
         result.put("email", email);
 
@@ -1814,12 +1787,12 @@ public class PortalTestBase {
             Util.sleep(10000);
 
             if (portalPage.checkIfElementExistsInPage(umRemoveInviteUserXpath, 20)) {
-                //AssertUtils.fail(ErrorEnum.DELETE_USER_ACTION.geterr());
+                // AssertUtils.fail(ErrorEnum.DELETE_USER_ACTION.geterr());
                 errorMsg = ErrorEnum.DELETE_USER_ACTION.geterr();
                 return errorMsg;
             }
         } catch (Exception e) {
-            //AssertUtils.fail(ErrorEnum.DELETE_USER_ACTION.geterr());
+            // AssertUtils.fail(ErrorEnum.DELETE_USER_ACTION.geterr());
             {
                 errorMsg = ErrorEnum.DELETE_USER_ACTION.geterr();
                 return errorMsg;
@@ -2547,7 +2520,7 @@ public class PortalTestBase {
 
                 String currentUrl = driver.getCurrentUrl();
 
-                boolean status = currentUrl.toLowerCase().contains("trials") ? true : false;
+                boolean status = currentUrl.toLowerCase().contains("trials");
 
                 if (status) {
                     Util.printInfo("Hardcoding the redirect to subscriptions-contracts page");
@@ -2556,7 +2529,7 @@ public class PortalTestBase {
                     Util.sleep(30000);
                     debugPageUrl("Final attempt");
                     currentUrl = driver.getCurrentUrl();
-                    status = currentUrl.toLowerCase().contains("trials") ? true : false;
+                    status = currentUrl.toLowerCase().contains("trials");
                     if (status) {
                         AssertUtils.fail("Unable to redirect to subscriptions payment details page");
                     }
@@ -2627,7 +2600,7 @@ public class PortalTestBase {
             currentURL = driver.getCurrentUrl();
             Util.printInfo("currentURL2 : " + currentURL);
 
-            boolean status = currentURL.contains("add-seats") ? true : false;
+            boolean status = currentURL.contains("add-seats");
 
             while (!status) {
 
@@ -2636,7 +2609,7 @@ public class PortalTestBase {
                 clickCheckBox(portalAddSeatButton);
                 Util.sleep(15000);
 
-                status = currentURL.contains("add-seats") ? true : false;
+                status = currentURL.contains("add-seats");
 
                 if (!status) {
                     Util.printInfo("Attempt2 to redirect with hardcoded URL " + currentURL);
@@ -2649,7 +2622,7 @@ public class PortalTestBase {
                     break;
                 }
 
-                status = currentURL.contains("add-seats") ? true : false;
+                status = currentURL.contains("add-seats");
 
                 if (!status) {
                     debugHTMLPage();
@@ -2791,7 +2764,7 @@ public class PortalTestBase {
         orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
 
         Util.printInfo("Reducing seats.");
-        if (portalPage.checkIfElementExistsInPage ("portalSubscriptionTermPopup",10)) {
+        if (portalPage.checkIfElementExistsInPage("portalSubscriptionTermPopup", 10)) {
             portalPage.clickUsingLowLevelActions("portalCloseButton");
         }
         portalPage.clickUsingLowLevelActions("portalReduceSeatsButton");
@@ -2954,7 +2927,7 @@ public class PortalTestBase {
             Util.printInfo("Waiting for Direct Debit ACH Header...");
             BICTestBase.bicPage.waitForElementVisible(BICTestBase.bicPage.getMultipleWebElementsfromField("directDebitHead").get(0), 10);
 
-            //TODO Replace this with condition where we are reading from test class API whether credit card is avaialble or not
+            // TODO Replace this with condition where we are reading from test class API whether credit card is available or not
             if (portalPage.checkIfElementExistsInPage("portalDebitCardAddLink", 10))
                 portalPage.clickUsingLowLevelActions("portalDebitCardAddLink");
 
@@ -2978,7 +2951,7 @@ public class PortalTestBase {
         Util.waitForElement(paymentMethod, "Credit card tab");
         driver.findElement(By.xpath(paymentMethod)).click();
         try {
-//          TODO Replace this with condition where we are reading from test class API whether credit card is avaialble or not
+            // TODO Replace this with condition where we are reading from test class API whether credit card is available or not
             if (portalPage.checkIfElementExistsInPage("portalCreditCardAddLink", 10))
                 portalPage.clickUsingLowLevelActions("portalCreditCardAddLink");
 
@@ -3164,8 +3137,8 @@ public class PortalTestBase {
             Util.waitforPresenceOfElement("//input[@id='firstname_str']");
 
             String emailID = generateUniqueEmailID("thub", generateRandomTimeStamp(), "letscheck.pw");
-            results.put(TestingHubConstants.firstname, "THub" + generateRandom(6).toString());
-            results.put(TestingHubConstants.lastname, generateRandom(6).toString());
+            results.put(TestingHubConstants.firstname, "THub" + generateRandom(6));
+            results.put(TestingHubConstants.lastname, generateRandom(6));
             results.put(TestingHubConstants.emailid, emailID);
             data.put(TestingHubConstants.passCEP, data.get("password"));
 
@@ -3312,8 +3285,7 @@ public class PortalTestBase {
         String productXpath = null;
         try {
             productXpath = portalPage.createFieldWithParsedFieldLocatorsTokens("subscriptionIDInPS", subscriptionID);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             AssertUtils.fail("Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
         }
 
@@ -3337,8 +3309,7 @@ public class PortalTestBase {
             try {
                 clickALLPSLink();
                 status = isSubscriptionDisplayedinPS(subscriptionID);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

@@ -1,52 +1,52 @@
 {
-	"Czech Republic": {
-		"streetAddress" :"Karolinska 650/1 5 Th Floor",
-		"addressCity" : "Praha 8",
-	    "country" : "Czech Republic",
-	    "countryCode " : "CR",
-	    "geo" : "EMEA",
-	    "language" : "EN",
-	    "postalCode" : "186 00",
-	    "region" : ""
-		},
-	"Denmark": {
-		"streetAddress" :"Business Center Havnegade APS",
-		"addressCity" : "Copenhagen",
-	    "country" : "Denmark",
-	    "countryCode " : "DN",
-	    "geo" : "EMEA",
-	    "language" : "EN",
-	    "postalCode" : "1058",
-	    "region" : ""
-		},
-	"Poland": {
-		"streetAddress" :"ul. Odlewnicza 68",
-		"addressCity" : "Kraków",
-	    "country" : "Poland",
-	    "countryCode " : "",
-	    "geo" : "EMEA",
-	    "language" : "EN",
-	    "postalCode" : "30-142",
-	    "region" : ""
-		},
-	"Norway": {
-		"streetAddress" :"Postboks 447 Sentrum",
-		"addressCity" : "OSLO",
-	    "country" : "Norway",
-	    "countryCode " : "",
-	    "geo" : "EMEA",
-	    "language" : "EN",
-	    "postalCode" : "0104",
-	    "region" : ""
-		},
-	"Sweden": {
-		"streetAddress" :"11F/24F/25F, HARUMI ISLAND TRITON",
-		"addressCity" : "TOKYO",
-	    "country" : "Japan",
-	    "countryCode " : "JP",
-	    "geo" : "EMEA",
-	    "language" : "EN",
-	    "postalCode" : "104-6024",
-	    "region" : "MN"
-		}
+    "Czech Republic": {
+        "streetAddress": "Karolinska 650/1 5 Th Floor",
+        "addressCity": "Praha 8",
+        "country": "Czech Republic",
+        "countryCode ": "CR",
+        "geo": "EMEA",
+        "language": "EN",
+        "postalCode": "186 00",
+        "region": ""
+    },
+    "Denmark": {
+        "streetAddress": "Business Center Havnegade APS",
+        "addressCity": "Copenhagen",
+        "country": "Denmark",
+        "countryCode ": "DN",
+        "geo": "EMEA",
+        "language": "EN",
+        "postalCode": "1058",
+        "region": ""
+    },
+    "Poland": {
+        "streetAddress": "ul. Odlewnicza 68",
+        "addressCity": "KrakÃ³w",
+        "country": "Poland",
+        "countryCode ": "",
+        "geo": "EMEA",
+        "language": "EN",
+        "postalCode": "30-142",
+        "region": ""
+    },
+    "Norway": {
+        "streetAddress": "Postboks 447 Sentrum",
+        "addressCity": "OSLO",
+        "country": "Norway",
+        "countryCode ": "",
+        "geo": "EMEA",
+        "language": "EN",
+        "postalCode": "0104",
+        "region": ""
+    },
+    "Sweden": {
+        "streetAddress": "11F/24F/25F, HARUMI ISLAND TRITON",
+        "addressCity": "TOKYO",
+        "country": "Japan",
+        "countryCode ": "JP",
+        "geo": "EMEA",
+        "language": "EN",
+        "postalCode": "104-6024",
+        "region": "MN"
+    }
 }
