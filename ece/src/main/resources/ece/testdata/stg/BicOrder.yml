@@ -247,7 +247,7 @@ validateBicNativeOrder:
     bicNativePriceID: *bicNativePriceID
     quantity: "2"
 
-validatateBicFlexOrder:
+validateBicFlexOrder:
     productID: *FlexOrderPriceID
     bicFlexPriceID: *FlexOrderPriceID
 
