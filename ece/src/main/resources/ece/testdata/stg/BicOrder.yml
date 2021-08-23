@@ -1,421 +1,421 @@
 ﻿#Test data for BIC order
 ---
 default:
-    storeKey: "STORE-NAMER"
-    region: "US"
-    userType: "newUser"
-    sourceName: "cart"
-    paymentMethod: "VISA"
-    emailDomain: "ssttest.net"
-    Cart_Address_US: "Autodesk@9 Pier@San Francisco@94111@9916800100@United States@CA"
-    password: "Password1"
-    cepURL: "https://customer-stg.autodesk.com/"
-    url: "https://cart.bicstg.autodesk.com/r?storeKey=@@@@@@&productIds=******"
-    guacBaseURL: "https://checkout-pt.autodesk.com/"
-    guacDRBaseURL: "https://commerce-stg.autodesk.com/"
-    guacDotComBaseURL: "https://www-pt.autodesk.com/products/"
-    guacResourceURL: "checkout?priceIds="
-    guacDRResourceURL: "checkout?plc="
-    guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
-    productName: "3ds-max"
-    guacOverviewTermResource: "/overview"
-    US: "en-US/"
-    CANADA_FRENCH: "fr-CA/"
-    CANADA_US: "en-CA/"
-    EUROPE_EN: "en-NL/"
-    FRANCE: "fr-FR/"
-    GERMANY: "de-DE/"
-    ITALY: "it-IT/"
-    SPAIN: "es-ES/"
-    UNITED_KINGDOM: "en-GB/"
-    BELGIUM_DUTCH: "nl-BE/"
-    BELGIUM_FRENCH: "fr-BE/"
-    FINLAND_FINNISH: "fi-FI/"
-    HUNGARY_HUNGARIAN: "hu-HU/"
-    NETHERLANDS_DUTCH: "nl-NL/"
-    PORTUGAL_PORTUGUESE: "pt-PT/"
-    soldToParty: "5130105006"
-    shipToParty: "5130105006"
-    supportingReseller: "5130105006"
-    conPerson: "37207680"
-    salesOrg: "3000"
-    division: "10"
-    version: "Y"
-    distributionChannel: "02"
-    streetAddress: "1550 Wewatta Street"
-    addressCity: "Denver"
-    country: "US"
-    language: "EN"
-    postalCode: "80202"
-    region: "Col"
-    timeZone: "CST"
-    contractStartDate: "No"
-    consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
-    consumerSecret: "7uEvzknwGleyd3Kv"
-    callbackURL: "https://autodesk.com"
-    csn: "123456789"
-    apigeeURL: "https://enterprise-api-stg.autodesk.com"
-    transcoding: "UTF-8"
-    responseType: "application/xml"
-    accessTokenURL: "https://enterprise-api-stg.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
-    macCSN: "5129772911"            # need to check which CSN is this
-    macHeaderCSN: "123456789"
-    macResponseType: "application/xml"
-    macTranscoding: "UTF-8"
-    macSALEREPRESENT: "s9999"
-    macUser: "testmeshuser"
-    macPass: "Password1"
-    cepURL: "https://customer-stg.autodesk.com/"
-    getMyPriceURL: "http://tibappst-vip.autodesk.com:4139/Services/Price/SKUPriceService"
-    name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
-    matchAccountContactServiceEndPointURL: "https://enterprise-api-stg.autodesk.com/v2/matchaccountcontact"
-    stack: "api-dev"
-    type: "new"
-    ordertype: "nonbicindirect"
-    ratePlanPPU: "NO"
-    payportAddPaymentURL: "https://payport.bicsg.autodesk.com/services/v1/user/INTTESTING/paymentProfiles?syncUCM=1"
-    languageStore: "en-US/"
-    languageStoreDR: "ja-JP/"
-    priceIDStore: "108261"      # need to check which price ID is this
-    billingProcessor: "adyen" ##adyen   bluesnap
-    paypalUser: "Paypal-buyer-namer@ssttest.net"
-    paypalSsap: "Password1"
-    paypalPaymentType: "CREDIT UNION 1"
-    getPriceByPriceID: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/price/"
-    getPurchaseOrderDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/purchaseOrder/passtoken?id=passtoken"
-    putPelicanRefundOrder: "https://api.pelicanstg.autodesk.com/orders/v3/passtoken"
-    getSubscriptionById: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
-    postInvoicePelicanAPI: "https://api.pelicanstg.autodesk.com/orders/v3/job/invoice"
-    getPriceDetails_X_E2_PartnerId: "$sfdcactor"
-    getPriceDetails_X_E2_AppFamilyId: "9999"
-    getPriceDetails_terceS_ssap: "Autodesk1"
+  storeKey: "STORE-NAMER"
+  region: "US"
+  userType: "newUser"
+  sourceName: "cart"
+  paymentMethod: "VISA"
+  emailDomain: "ssttest.net"
+  Cart_Address_US: "Autodesk@9 Pier@San Francisco@94111@9916800100@United States@CA"
+  password: "Password1"
+  cepURL: "https://customer-stg.autodesk.com/"
+  url: "https://cart.bicstg.autodesk.com/r?storeKey=@@@@@@&productIds=******"
+  guacBaseURL: "https://checkout-pt.autodesk.com/"
+  guacDRBaseURL: "https://commerce-stg.autodesk.com/"
+  guacDotComBaseURL: "https://www-pt.autodesk.com/products/"
+  guacResourceURL: "checkout?priceIds="
+  guacDRResourceURL: "checkout?plc="
+  guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
+  productName: "3ds-max"
+  guacOverviewTermResource: "/overview"
+  US: "en-US/"
+  CANADA_FRENCH: "fr-CA/"
+  CANADA_US: "en-CA/"
+  EUROPE_EN: "en-NL/"
+  FRANCE: "fr-FR/"
+  GERMANY: "de-DE/"
+  ITALY: "it-IT/"
+  SPAIN: "es-ES/"
+  UNITED_KINGDOM: "en-GB/"
+  BELGIUM_DUTCH: "nl-BE/"
+  BELGIUM_FRENCH: "fr-BE/"
+  FINLAND_FINNISH: "fi-FI/"
+  HUNGARY_HUNGARIAN: "hu-HU/"
+  NETHERLANDS_DUTCH: "nl-NL/"
+  PORTUGAL_PORTUGUESE: "pt-PT/"
+  soldToParty: "5130105006"
+  shipToParty: "5130105006"
+  supportingReseller: "5130105006"
+  conPerson: "37207680"
+  salesOrg: "3000"
+  division: "10"
+  version: "Y"
+  distributionChannel: "02"
+  streetAddress: "1550 Wewatta Street"
+  addressCity: "Denver"
+  country: "US"
+  language: "EN"
+  postalCode: "80202"
+  region: "Col"
+  timeZone: "CST"
+  contractStartDate: "No"
+  consumerKey: "4RLtok1qTv5qstZfrF1nBHqGPQz7COVz"
+  consumerSecret: "7uEvzknwGleyd3Kv"
+  callbackURL: "https://autodesk.com"
+  csn: "123456789"
+  apigeeURL: "https://enterprise-api-stg.autodesk.com"
+  transcoding: "UTF-8"
+  responseType: "application/xml"
+  accessTokenURL: "https://enterprise-api-stg.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+  macCSN: "5129772911"            # need to check which CSN is this
+  macHeaderCSN: "123456789"
+  macResponseType: "application/xml"
+  macTranscoding: "UTF-8"
+  macSALEREPRESENT: "s9999"
+  macUser: "testmeshuser"
+  macPass: "Password1"
+  cepURL: "https://customer-stg.autodesk.com/"
+  getMyPriceURL: "http://tibappst-vip.autodesk.com:4139/Services/Price/SKUPriceService"
+  name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
+  matchAccountContactServiceEndPointURL: "https://enterprise-api-stg.autodesk.com/v2/matchaccountcontact"
+  stack: "api-dev"
+  type: "new"
+  ordertype: "nonbicindirect"
+  ratePlanPPU: "NO"
+  payportAddPaymentURL: "https://payport.bicsg.autodesk.com/services/v1/user/INTTESTING/paymentProfiles?syncUCM=1"
+  languageStore: "en-US/"
+  languageStoreDR: "ja-JP/"
+  priceIDStore: "108261"      # need to check which price ID is this
+  billingProcessor: "adyen" ##adyen   bluesnap
+  paypalUser: "Paypal-buyer-namer@ssttest.net"
+  paypalSsap: "Password1"
+  paypalPaymentType: "CREDIT UNION 1"
+  getPriceByPriceID: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/price/"
+  getPurchaseOrderDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/purchaseOrder/passtoken?id=passtoken"
+  putPelicanRefundOrder: "https://api.pelicanstg.autodesk.com/orders/v3/passtoken"
+  getSubscriptionById: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
+  postInvoicePelicanAPI: "https://api.pelicanstg.autodesk.com/orders/v3/job/invoice"
+  getPriceDetails_X_E2_PartnerId: "$sfdcactor"
+  getPriceDetails_X_E2_AppFamilyId: "9999"
+  getPriceDetails_terceS_ssap: "Autodesk1"
 
-    priceIDNativeOrder : &NativeOrderPriceID "1573"
-    priceIDFlexOrder : &FlexOrderPriceID "31498"
-    priceIDAUSNativeOrder : &AUSNativeOrderPriceID "27085"
-    bicNativePriceID : &bicNativePriceID "27239"
-    bicMetaPriceID: &bicMetaPriceID "27209"
-    bicCloudCreditsPriceId: &bicCloudCreditsPriceId "11043"
-    order: "undefined"
-    createTrailsAPI :  "https://api.pelicanstg.autodesk.com/subscriptions/v3"
-    trialDownloadUrl : "https://www-pt.autodesk.com/products/autocad/overview?us_oa=dotcom-us&us_si=7dbc5a13-abd9-4ec9-9aff-4f4bf480bae7&us_st=AutoCAD&us_pt=ACD"
+  priceIDNativeOrder: &NativeOrderPriceID "1573"
+  priceIDFlexOrder: &FlexOrderPriceID "31498"
+  priceIDAUSNativeOrder: &AUSNativeOrderPriceID "27085"
+  bicNativePriceID: &bicNativePriceID "27239"
+  bicMetaPriceID: &bicMetaPriceID "27209"
+  bicCloudCreditsPriceId: &bicCloudCreditsPriceId "11043"
+  order: "undefined"
+  createTrailsAPI: "https://api.pelicanstg.autodesk.com/subscriptions/v3"
+  trialDownloadUrl: "https://www-pt.autodesk.com/products/autocad/overview?us_oa=dotcom-us&us_si=7dbc5a13-abd9-4ec9-9aff-4f4bf480bae7&us_st=AutoCAD&us_pt=ACD"
 
 STORE-AUS:
-    currencyStore: "AUD"
-    streetAddressStore: "259-261 Colchester Rd"
-    cityStore: "Kilsyth"
-    countryStore: "AU"
-    stateProvinceStore: "VIC"
-    postalCodeStore: "3137"
-    languageStore: "en-AU"
-    priceIDStore: "27085"
+  currencyStore: "AUD"
+  streetAddressStore: "259-261 Colchester Rd"
+  cityStore: "Kilsyth"
+  countryStore: "AU"
+  stateProvinceStore: "VIC"
+  postalCodeStore: "3137"
+  languageStore: "en-AU"
+  priceIDStore: "27085"
 
 STORE-NAMER:
-    currencyStore: "USD"
-    streetAddressStore: "9 Pier"
-    cityStore: "San Francisco"
-    countryStore: "US"
-    stateProvinceStore: "CA"
-    postalCodeStore: "94111"
-    priceIDStore: "27209"
+  currencyStore: "USD"
+  streetAddressStore: "9 Pier"
+  cityStore: "San Francisco"
+  countryStore: "US"
+  stateProvinceStore: "CA"
+  postalCodeStore: "94111"
+  priceIDStore: "27209"
 
 #This is recurring SKU
 STORE-CA:
-    currencyStore: "CAD"
-    streetAddressStore: "661 University Avenue"
-    cityStore: "Toronto"
-    countryStore: "CA"
-    stateProvinceStore: "ON"
-    postalCodeStore: "66777"
-    priceIDStore: "28525"
-    languageStore: "en-CA"
+  currencyStore: "CAD"
+  streetAddressStore: "661 University Avenue"
+  cityStore: "Toronto"
+  countryStore: "CA"
+  stateProvinceStore: "ON"
+  postalCodeStore: "66777"
+  priceIDStore: "28525"
+  languageStore: "en-CA"
 
 STORE-IT:
-    currencyStore: "EUR"
-    streetAddressStore: "Via Tortona 37/41"
-    cityStore: "Tortona"
-    countryStore: "IT"
-    stateProvinceStore: "ML"
-    postalCodeStore: "20144"
-    priceIDStore: "28058"
+  currencyStore: "EUR"
+  streetAddressStore: "Via Tortona 37/41"
+  cityStore: "Tortona"
+  countryStore: "IT"
+  stateProvinceStore: "ML"
+  postalCodeStore: "20144"
+  priceIDStore: "28058"
 
 STORE-FR:
-    currencyStore: "EUR"
-    streetAddressStore: "2-22 Place des Vins de France"
-    cityStore: "Alpes"
-    countryStore: "FR"
-    stateProvinceStore: "PR"
-    postalCodeStore: "75012"
-    priceIDStore: "28057"
+  currencyStore: "EUR"
+  streetAddressStore: "2-22 Place des Vins de France"
+  cityStore: "Alpes"
+  countryStore: "FR"
+  stateProvinceStore: "PR"
+  postalCodeStore: "75012"
+  priceIDStore: "28057"
 
 STORE-ES:
-    currencyStore: "EUR"
-    streetAddressStore: "Carrer de Josep Pla"
-    cityStore: "Barcelona"
-    countryStore: "SP"
-    stateProvinceStore: "CT"
-    postalCodeStore: "75012"
-    priceIDStore: "28050"
+  currencyStore: "EUR"
+  streetAddressStore: "Carrer de Josep Pla"
+  cityStore: "Barcelona"
+  countryStore: "SP"
+  stateProvinceStore: "CT"
+  postalCodeStore: "75012"
+  priceIDStore: "28050"
 
 #This is recurring SKU
 STORE-DE:
-    currencyStore: "EUR"
-    streetAddressStore: "Hindenburgstrasse 46"
-    cityStore: "Ludwigsburg"
-    countryStore: "GE"
-    stateProvinceStore: "BD"
-    postalCodeStore: "71638"
-    priceIDStore: "28054"
+  currencyStore: "EUR"
+  streetAddressStore: "Hindenburgstrasse 46"
+  cityStore: "Ludwigsburg"
+  countryStore: "GE"
+  stateProvinceStore: "BD"
+  postalCodeStore: "71638"
+  priceIDStore: "28054"
 
 #This is recurring SKU
 STORE-UK:
-    currencyStore: "EUR"
-    streetAddressStore: "One Discovery Place"
-    cityStore: "Farnborough"
-    countryStore: "UK"
-    stateProvinceStore: "HM"
-    postalCodeStore: "03038"
-    priceIDStore: "27426"
+  currencyStore: "EUR"
+  streetAddressStore: "One Discovery Place"
+  cityStore: "Farnborough"
+  countryStore: "UK"
+  stateProvinceStore: "HM"
+  postalCodeStore: "03038"
+  priceIDStore: "27426"
 
 #This is recurring SKU
 STORE-CH:
-    currencyStore: "CHF"
-    streetAddressStore: "Worbstrasse 223"
-    cityStore: "Guemligen"
-    countryStore: "CH"
-    stateProvinceStore: "MU"
-    postalCodeStore: "3074"
-    priceIDStore: "30736"
+  currencyStore: "CHF"
+  streetAddressStore: "Worbstrasse 223"
+  cityStore: "Guemligen"
+  countryStore: "CH"
+  stateProvinceStore: "MU"
+  postalCodeStore: "3074"
+  priceIDStore: "30736"
 
 #This is recurring SKU
 STORE-CZ:
-    currencyStore: "CZK"
-    streetAddressStore: "Danube House"
-    cityStore: "Karolinska"
-    countryStore: "CZ"
-    stateProvinceStore: "PR"
-    postalCodeStore: "3074"
-    priceIDStore: "31349"
+  currencyStore: "CZK"
+  streetAddressStore: "Danube House"
+  cityStore: "Karolinska"
+  countryStore: "CZ"
+  stateProvinceStore: "PR"
+  postalCodeStore: "3074"
+  priceIDStore: "31349"
 
 #This is recurring SKU
 STORE-DK:
-    currencyStore: "DKK"
-    streetAddressStore: "Strandalléen 40"
-    cityStore: "Harpelunde"
-    countryStore: "DE"
-    stateProvinceStore: "RE"
-    postalCodeStore: "4912"
-    priceIDStore: "30738"
+  currencyStore: "DKK"
+  streetAddressStore: "Strandalléen 40"
+  cityStore: "Harpelunde"
+  countryStore: "DE"
+  stateProvinceStore: "RE"
+  postalCodeStore: "4912"
+  priceIDStore: "30738"
 
 #This is recurring SKU
 STORE-PL:
-    currencyStore: "DKK"
-    streetAddressStore: "UI. Odlewnicza 68"
-    cityStore: "Krakow"
-    countryStore: "PL"
-    stateProvinceStore: "KR"
-    postalCodeStore: "30 142"
-    priceIDStore: "30739"
+  currencyStore: "DKK"
+  streetAddressStore: "UI. Odlewnicza 68"
+  cityStore: "Krakow"
+  countryStore: "PL"
+  stateProvinceStore: "KR"
+  postalCodeStore: "30 142"
+  priceIDStore: "30739"
 
 #This is recurring SKU
 STORE-NO:
-    currencyStore: "NOK"
-    streetAddressStore: "Apeltunlien 163"
-    cityStore: "Arendal"
-    countryStore: "NR"
-    stateProvinceStore: "AG"
-    postalCodeStore: "4815"
-    priceIDStore: "30741"
+  currencyStore: "NOK"
+  streetAddressStore: "Apeltunlien 163"
+  cityStore: "Arendal"
+  countryStore: "NR"
+  stateProvinceStore: "AG"
+  postalCodeStore: "4815"
+  priceIDStore: "30741"
 
 #This is recurring SKU
 STORE-SE:
-    currencyStore: "SEK"
-    streetAddressStore: "Moelndalsvaegen 24"
-    cityStore: "Gothenburg"
-    countryStore: "SW"
-    stateProvinceStore: "VA"
-    postalCodeStore: "400 20"
-    priceIDStore: "30740"
+  currencyStore: "SEK"
+  streetAddressStore: "Moelndalsvaegen 24"
+  cityStore: "Gothenburg"
+  countryStore: "SW"
+  stateProvinceStore: "VA"
+  postalCodeStore: "400 20"
+  priceIDStore: "30740"
 
 createGUACBic_Orders_US:
-    userType: "newUser"
-    productID: *NativeOrderPriceID
-    bicNativePriceID: *bicNativePriceID
+  userType: "newUser"
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
 
 validateBicNativeOrder:
-    productID: *NativeOrderPriceID
-    bicNativePriceID: *bicNativePriceID
-    quantity: "2"
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "2"
 
 validateBicFlexOrder:
-    productID: *FlexOrderPriceID
-    bicFlexPriceID: *FlexOrderPriceID
+  productID: *FlexOrderPriceID
+  bicFlexPriceID: *FlexOrderPriceID
 
 validatateBicCloudCreditOrder:
-    productID: *bicCloudCreditsPriceId
-    bicCloudCreditsPriceID: *bicCloudCreditsPriceId
+  productID: *bicCloudCreditsPriceId
+  bicCloudCreditsPriceID: *bicCloudCreditsPriceId
 
 validatateBicHybridOrder:
-    metaproductID: *bicMetaPriceID
-    productID: *NativeOrderPriceID
+  metaproductID: *bicMetaPriceID
+  productID: *NativeOrderPriceID
 
 validateBicMetaOrder:
-    productID: *bicMetaPriceID
-    bicNativePriceID: *bicMetaPriceID
+  productID: *bicMetaPriceID
+  bicNativePriceID: *bicMetaPriceID
 
 validateTrialDownloadUI:
-    nullTest: "1"
-    companyName: "Autodesk Inc"
-    postalCode: "94105"
-    phoneNumber: "1888938000"
+  nullTest: "1"
+  companyName: "Autodesk Inc"
+  postalCode: "94105"
+  phoneNumber: "1888938000"
 
 quarryBicNativeOrder:
-    bicNativePriceID: *bicNativePriceID
-    quantity: "1"
+  bicNativePriceID: *bicNativePriceID
+  quantity: "1"
 
 quarryBicNativeAPIOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 quarryBicMetaAPIOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 quarryBicUserPacksAPIOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 quarryBicDailySubsOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 quarryBicMetaOrder:
-    bicMetaPriceID: *bicMetaPriceID
-    quantity: "1"
+  bicMetaPriceID: *bicMetaPriceID
+  quantity: "1"
 
 #Akarsh : Need email
 portalAccess_BicNativeOrder:
-    nativeEmail: ""         #thub1564433746@letscheck.pw
-    nativePass: "Password1"
-    purchaseOrderID: "9280607"
-    sku: "2691:1"
-    subscriptionID: "56562164123162"
-    creditCard: "AMEX - 1015"
-    billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-    billingStreet: ""       #1419WLakeSt
-    billingAddress: ""      #Chicago, IL 60607-1409
+  nativeEmail: ""         #thub1564433746@letscheck.pw
+  nativePass: "Password1"
+  purchaseOrderID: "9280607"
+  sku: "2691:1"
+  subscriptionID: "56562164123162"
+  creditCard: "AMEX - 1015"
+  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
+  billingStreet: ""       #1419WLakeSt
+  billingAddress: ""      #Chicago, IL 60607-1409
 
 #Akarsh : Need email --> take from regression sheet
 portalAccess_BicIndirectICOrder:
-    BIC_Indirect_Meta_Email: ""   #thub1564433746@letscheck.pw
-    BIC_Indirect_IC_Pass: "Password1"
-    subscriptionID: "110003313585"
-    creditCard: "AMEX - 1015"
-    billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-    billingStreet: ""       #1419WLakeSt
-    billingAddress: ""      #Chicago, IL 60607-1409
+  BIC_Indirect_Meta_Email: ""   #thub1564433746@letscheck.pw
+  BIC_Indirect_IC_Pass: "Password1"
+  subscriptionID: "110003313585"
+  creditCard: "AMEX - 1015"
+  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
+  billingStreet: ""       #1419WLakeSt
+  billingAddress: ""      #Chicago, IL 60607-1409
 
 #Akarsh : Need email
 portalAccess_BicIndirectMetaOrder:
-    BIC_Indirect_Meta_Email: ""   #thub1564433746@letscheck.pw
-    BIC_Indirect_Meta_Pass: "Password1"
-    subscriptionID: "110003313582"
-    creditCard: "AMEX - 1015"
-    billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-    billingStreet: ""       #1419WLakeSt
-    billingAddress: ""      #Chicago, IL 60607-1409
+  BIC_Indirect_Meta_Email: ""   #thub1564433746@letscheck.pw
+  BIC_Indirect_Meta_Pass: "Password1"
+  subscriptionID: "110003313582"
+  creditCard: "AMEX - 1015"
+  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
+  billingStreet: ""       #1419WLakeSt
+  billingAddress: ""      #Chicago, IL 60607-1409
 
 #Akarsh : Need email
 portalAccess_LegacyICOrder:
-    Legacy_IC_Email: ""         #thub1564433390@letscheck.pw
-    Legacy_IC_Pass: "Password1"
-    subscriptionID: "110003313577"
-    creditCard: "AMEX - 1015"
-    billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-    billingStreet: ""       #1419WLakeSt
-    billingAddress: ""      #Chicago, IL 60607-1409
+  Legacy_IC_Email: ""         #thub1564433390@letscheck.pw
+  Legacy_IC_Pass: "Password1"
+  subscriptionID: "110003313577"
+  creditCard: "AMEX - 1015"
+  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
+  billingStreet: ""       #1419WLakeSt
+  billingAddress: ""      #Chicago, IL 60607-1409
 
 #Akarsh : Need email
 portalAccess_LegacyMetaOrder:
-    Legacy_META_Email: ""      #thub1564434037@letscheck.pw
-    Legacy_META_Pass: "Password1"
-    subscriptionID: "110003313588"
-    creditCard: "AMEX - 1015"
-    billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-    billingStreet: ""       #1419WLakeSt
-    billingAddress: ""      #Chicago, IL 60607-1409
+  Legacy_META_Email: ""      #thub1564434037@letscheck.pw
+  Legacy_META_Pass: "Password1"
+  subscriptionID: "110003313588"
+  creditCard: "AMEX - 1015"
+  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
+  billingStreet: ""       #1419WLakeSt
+  billingAddress: ""      #Chicago, IL 60607-1409
 
 #Akarsh : Need email
 portalAccess_BicHybridOrder:
-    nativeEmail: ""      #thub1564429616@letscheck.pw
-    nativePass: "Password1"
-    nativeSubscriptionID: "56624873727414"
-    metaSubscriptionID: "56624908719856:110003313501"
-    creditCard: "AMEX - 1015"
-    billingName: ""         #sfqFNTHUB sfqLNTHUB
-    billingStreet: ""       #1419WLakeSt
-    billingAddress: ""      #Chicago, IL 60607-1409
+  nativeEmail: ""      #thub1564429616@letscheck.pw
+  nativePass: "Password1"
+  nativeSubscriptionID: "56624873727414"
+  metaSubscriptionID: "56624908719856:110003313501"
+  creditCard: "AMEX - 1015"
+  billingName: ""         #sfqFNTHUB sfqLNTHUB
+  billingStreet: ""       #1419WLakeSt
+  billingAddress: ""      #Chicago, IL 60607-1409
 
 validateBicPayportRefundOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 apiBicNativeOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 apiBicHybridOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 quarryBicICAPIOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 validateBicReturningUser:
-    metaproductID: *bicMetaPriceID
-    productID: *NativeOrderPriceID
+  metaproductID: *bicMetaPriceID
+  productID: *NativeOrderPriceID
 
 validateBicAddSeats:
-    productID: *NativeOrderPriceID
+  productID: *NativeOrderPriceID
 
 ccPurchaseBICOrder:
-    nullTest: "1"
+  nullTest: "1"
 
 validateBicAddSeatNativeOrder:
-    metaproductID: *bicMetaPriceID
-    nativeproductID: *bicNativePriceID
-    addSeatQty: "2"
+  metaproductID: *bicMetaPriceID
+  nativeproductID: *bicNativePriceID
+  addSeatQty: "2"
 
 validateBicReduceSeats:
-    nativeproductID: *bicNativePriceID
-    addSeatQty: "2"
+  nativeproductID: *bicNativePriceID
+  addSeatQty: "2"
 
 validateBICChangePaymentProfile:
-    getPaymentDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"
-    nativeproductID: *bicNativePriceID
-    userType: "existing"
-    productID: *NativeOrderPriceID
-    bicNativePriceID: *bicNativePriceID
+  getPaymentDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"
+  nativeproductID: *bicNativePriceID
+  userType: "existing"
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
 
 createBicOrderMoe:
-    userType: "newUser"
-    productID: *NativeOrderPriceID
-    bicNativePriceID: *bicNativePriceID
+  userType: "newUser"
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
 
 validateBicNativeOrderMoe:
-    productID: *NativeOrderPriceID
-    bicNativePriceID: *bicNativePriceID
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
 
 BicNativeOrderAUS:
-    productID: *AUSNativeOrderPriceID
-    bicNativePriceID: *AUSNativeOrderPriceID
-    languageStore: "en-AU/"
+  productID: *AUSNativeOrderPriceID
+  bicNativePriceID: *AUSNativeOrderPriceID
+  languageStore: "en-AU/"
 
 #Akarsh Missing Price ID - Search in Pelican
 promocodeBicOrder:
-    nullTest: "1"
-    productID: "27125"
-    languageStore: "en-US/"
+  nullTest: "1"
+  productID: "27125"
+  languageStore: "en-US/"
 
 bictrialsorder:
-    nullTest: "1"
+  nullTest: "1"
 
 createGUACBICIndirectOrderJP:
-    userType: "newUser"
-    productID: "maya"
+  userType: "newUser"
+  productID: "maya"
 
 validateBicIndirectOrder:
-    productID: "maya"
+  productID: "maya"
