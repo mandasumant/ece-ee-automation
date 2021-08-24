@@ -8,20 +8,19 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.google.common.base.Strings;
 import io.qameta.allure.Step;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class BICOrderPromoCode extends ECETestBase {
 
@@ -105,7 +104,9 @@ public class BICOrderPromoCode extends ECETestBase {
         }
         updateTestingHub(testResults);
 
-        portaltb.validateBICOrderProductinCEP(results.get(TestingHubConstants.cepURL), results.get(TestingHubConstants.emailid), "Password1", results.get("getPOReponse_subscriptionId"));
+        portaltb.validateBICOrderProductInCEP(results.get(TestingHubConstants.cepURL),
+            results.get(TestingHubConstants.emailid), "Password1",
+            results.get("getPOReponse_subscriptionId"));
         updateTestingHub(testResults);
 
         // Validate Create Order

@@ -16,17 +16,32 @@ import com.autodesk.testinghub.core.utils.ErrorEnum;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
-import org.apache.commons.lang.RandomStringUtils;
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.mail.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
+import java.util.TimeZone;
+import javax.mail.Address;
+import javax.mail.BodyPart;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 import javax.xml.parsers.DocumentBuilder;
@@ -37,15 +52,20 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.security.SecureRandom;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import org.apache.commons.lang.RandomStringUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class PortalTestBase {
     private static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -940,24 +960,28 @@ public class PortalTestBase {
 
     @Step("Portal : Validate subscription" + GlobalConstants.TAG_TESTINGHUB)
     public boolean isSubscriptionDisplayedInPS(String subscriptionID) {
-//      clickALLPSLink();
-
         boolean status = false;
         String productXpath = null;
         try {
-            productXpath = portalPage.getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
+            productXpath = portalPage
+                .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
         } catch (Exception e) {
-            AssertUtils.fail("Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
+            AssertUtils.fail(
+                "Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue "
+                    + e.getMessage());
         }
 
+        Util.printInfo("Check if element with subscriptionId exists on the page.");
         status = isPortalElementPresentWithXpath(productXpath);
 
-        if (!status)
-            AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In P&S page");
+        if (!status) {
+            AssertUtils.fail(
+                ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
+                    + " , In P&S page");
+        }
 
         return status;
     }
-
 
     //@Step("Verify subscription/agreeement is displayed in Subscription page" + GlobalConstants.TAG_TESTINGHUB)
     public boolean isSubscriptionDisplayedInBO(String subscriptionID) {
@@ -1080,11 +1104,13 @@ public class PortalTestBase {
     }
 
     @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
-    public boolean validateBICOrderProductInCEP(String cepURL, String portalUserName, String portalPassword, String subscriptionID) {
+    public boolean validateBICOrderProductInCEP(String cepURL, String portalUserName,
+        String portalPassword, String subscriptionID) {
         boolean status = false, statusPS, statusBO, statusBOC, statusBOS, portalLogin, portalLoad = false;
         openPortalBICLaunch(cepURL);
-        if (isPortalLoginPageVisible())
+        if (isPortalLoginPageVisible()) {
             portalLogin(portalUserName, portalPassword);
+        }
 
         if (isPortalTabsVisible()) {
             try {
@@ -3277,45 +3303,5 @@ public class PortalTestBase {
         }
 
         return results;
-    }
-
-    @Step("Portal : Validate subscription" + GlobalConstants.TAG_TESTINGHUB)
-    public boolean isSubscriptionDisplayedinPS(String subscriptionID) {
-        boolean status = false;
-        String productXpath = null;
-        try {
-            productXpath = portalPage.createFieldWithParsedFieldLocatorsTokens("subscriptionIDInPS", subscriptionID);
-        } catch (Exception e) {
-            AssertUtils.fail("Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue " + e.getMessage());
-        }
-
-        Util.printInfo("test");
-        status = isPortalElementPresent(productXpath);
-
-        if (!status)
-            AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In P&S page");
-
-        return status;
-    }
-
-    @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
-    public boolean validateBICOrderProductinCEP(String cepURL, String portalUserName, String portalPassword, String subscriptionID) {
-        boolean status = false;
-        openPortalBICLaunch(cepURL);
-        if (isPortalLoginPageVisible())
-            portalLogin(portalUserName, portalPassword);
-
-        if (isPortalTabsVisible()) {
-            try {
-                clickALLPSLink();
-                status = isSubscriptionDisplayedinPS(subscriptionID);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if (!status)
-            AssertUtils.fail("Product is displayed in portal" + " :: false");
-
-        return status;
     }
 }
