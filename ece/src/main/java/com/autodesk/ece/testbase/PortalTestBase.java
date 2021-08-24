@@ -964,8 +964,7 @@ public class PortalTestBase {
         String productXpath = null;
         try {
             productXpath = portalPage
-                .createFieldWithParsedFieldLocatorsTokens("subscriptionIDInPS", subscriptionID,
-                    true);
+                .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
         } catch (Exception e) {
             AssertUtils.fail(
                 "Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue "
@@ -973,7 +972,7 @@ public class PortalTestBase {
         }
 
         Util.printInfo("test");
-        status = isPortalElementPresent(productXpath);
+        status = isPortalElementPresentWithXpath(productXpath);
 
         if (!status) {
             AssertUtils.fail(
