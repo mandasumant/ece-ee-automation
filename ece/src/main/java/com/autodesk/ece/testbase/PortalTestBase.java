@@ -971,7 +971,8 @@ public class PortalTestBase {
                     + e.getMessage());
         }
 
-        Util.printInfo("test");
+        Util.printInfo("Check if element with subscriptionId exists on the page.");
+        Util.sleep(60000);
         status = isPortalElementPresentWithXpath(productXpath);
 
         if (!status) {
