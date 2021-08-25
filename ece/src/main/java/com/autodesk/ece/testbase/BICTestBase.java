@@ -11,21 +11,31 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.google.common.base.Strings;
 import io.qameta.allure.Step;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang.RandomStringUtils;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.util.*;
 
 public class BICTestBase {
 
@@ -644,33 +654,33 @@ public class BICTestBase {
     bicPage.waitForField("creditCardNumberFrame", true, 30000);
 
     try {
-      WebElement creditCardNumberFrame = bicPage
-          .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
-      WebElement expiryDateFrame = bicPage.getMultipleWebElementsfromField("expiryDateFrame")
-          .get(0);
-      WebElement securityCodeFrame = bicPage.getMultipleWebElementsfromField("securityCodeFrame")
-          .get(0);
+        WebElement creditCardNumberFrame = bicPage
+            .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
+        WebElement expiryDateFrame = bicPage.getMultipleWebElementsfromField("expiryDateFrame")
+            .get(0);
+        WebElement securityCodeFrame = bicPage.getMultipleWebElementsfromField("securityCodeFrame")
+            .get(0);
 
-      driver.switchTo().frame(creditCardNumberFrame);
-      Util.printInfo("Entering card number : " + paymentCardDetails[0]);
-      Util.sleep(2000);
-      sendKeysAction("CardNumber", paymentCardDetails[0]);
-      driver.switchTo().defaultContent();
-      Util.sleep(2000);
+        driver.switchTo().frame(creditCardNumberFrame);
+        Util.printInfo("Entering card number : " + paymentCardDetails[0]);
+        Util.sleep(2000);
+        bicPage.populateField("CardNumber", paymentCardDetails[0]);
+        driver.switchTo().defaultContent();
+        Util.sleep(2000);
 
-      driver.switchTo().frame(expiryDateFrame);
-      Util.printInfo(
-          "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
-      Util.sleep(2000);
-      sendKeysAction("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
-      driver.switchTo().defaultContent();
-      Util.sleep(2000);
+        driver.switchTo().frame(expiryDateFrame);
+        Util.printInfo(
+            "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
+        Util.sleep(2000);
+        bicPage.populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
+        driver.switchTo().defaultContent();
+        Util.sleep(2000);
 
-      driver.switchTo().frame(securityCodeFrame);
-      Util.printInfo("Entering security code : " + paymentCardDetails[3]);
-      Util.sleep(2000);
-      sendKeysAction("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
-      driver.switchTo().defaultContent();
+        driver.switchTo().frame(securityCodeFrame);
+        Util.printInfo("Entering security code : " + paymentCardDetails[3]);
+        Util.sleep(2000);
+        bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
+        driver.switchTo().defaultContent();
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter Card details to make payment");
@@ -901,11 +911,14 @@ public class BICTestBase {
     debugHTMLPage(" Step 4a Check order Number is Null");
 
     if (orderNumber == null) {
-      try {
-        orderNumber = driver.findElement(By.xpath("//h5[.='Order Number:']/..//p")).getText();
-      } catch (Exception e) {
-        debugHTMLPage(" Step 5 Check order Number is Null");
-      }
+
+        bicPage.waitForPageToLoad();
+
+        try {
+            orderNumber = driver.findElement(By.xpath("//h5[.='Order Number:']/..//p")).getText();
+        } catch (Exception e) {
+            debugHTMLPage(" Step 5 Check order Number is Null");
+        }
     }
 
     if (orderNumber == null) {
