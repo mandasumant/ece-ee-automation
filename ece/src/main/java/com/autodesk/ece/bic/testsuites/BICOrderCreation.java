@@ -730,4 +730,95 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
+
+  /**
+   * Test the align billing functionality in portal. Place two orders for the same product without
+   * adding seats to create two separate subscriptions. Since the subscriptions are placed
+   * sequentially, they will expire on the same day and you wouldn't be able to align them. After
+   * the orders are placed, we use pelican's patch api to advance the renewal date of the second
+   * subscription so that the 2 subscriptions are unaligned. Next, we automate portal's UI to
+   * realign the billing dates and assert that the dates match.
+   */
+  @Test(groups = {"bic-align-billing"}, description = "Validation of align billing")
+  public void validateAlignBilling() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    Util.printInfo("Placing initial order");
+
+    // Place the first order
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBic_Orders_US(testDataForEachMethod);
+
+    results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
+    testDataForEachMethod.putAll(results);
+    getBicTestBase().driver.manage().deleteAllCookies();
+
+    // Get the subscription id for the first order
+    String basePelicanOrderUrl = testDataForEachMethod.get("getPurchaseOrderDetails");
+    String pelicanOrderUrl = pelicantb
+        .addTokenInResourceUrl(basePelicanOrderUrl, results.get(BICConstants.orderNumber));
+    testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
+    results.putAll(getBicTestBase()
+        .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
+    results.put("sub1ID", results.get("getPOReponse_subscriptionId"));
+
+    // Get the original billing date for the first subscription
+    String basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
+    String pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
+        results.get("getPOReponse_subscriptionId"));
+    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
+    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
+    results.put("sub1NextBillingDate", results.get("response_nextBillingDate"));
+
+    Util.printInfo("Placing second order for the returning user");
+
+    // Placing the second order for the second subscription
+    results.putAll(getBicTestBase().createBICReturningUserLoggedIn(testDataForEachMethod));
+    results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
+
+    // Get the subscription id for the second subscription
+    pelicanOrderUrl = pelicantb
+        .addTokenInResourceUrl(basePelicanOrderUrl, results.get(BICConstants.orderNumber));
+    testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
+    results.putAll(getBicTestBase()
+        .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
+    results.put("sub2ID", results.get("getPOReponse_subscriptionId"));
+
+    // Forcefully update the second subscription's billing date to make it unaligned from the first subscription
+    pelicanOrderUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
+        results.get("getPOReponse_subscriptionId"));
+    testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
+    testDataForEachMethod
+        .put("desiredBillingDate", Util.customDate("MM/dd/yyyy", 0, 180, 0) + " 20:13:28 UTC");
+    pelicantb.patchNextBillSubscriptionById(testDataForEachMethod);
+
+    // Open up portal UI and align billing between the 2 subscriptions
+    portaltb.alignBillingInPortal(testDataForEachMethod.get(TestingHubConstants.cepURL),
+        results.get(TestingHubConstants.emailid), "Password1", results.get("sub1ID"),
+        results.get("sub2ID"));
+
+    // Get the billing date of the aligned subscription
+    pelicanSubscriptionUrl = pelicantb
+        .addTokenInResourceUrl(basePelicanSubscriptionUrl, results.get("sub2ID"));
+    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
+    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
+    results.put("sub2NextBillingDate", results.get("response_nextBillingDate"));
+
+    AssertUtils.assertEquals("Billing Dates should be aligned",
+        results.get("sub1NextBillingDate").split("\\s")[0],
+        results.get("sub2NextBillingDate").split("\\s")[0]);
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put("sub1ID", results.get("sub1ID"));
+      testResults.put("sub2ID", results.get("sub2ID"));
+      testResults.put("sub1NextBillingDate", results.get("sub1NextBillingDate"));
+      testResults.put("sub2NextBillingDate", results.get("sub2NextBillingDate"));
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testinghub");
+    }
+    updateTestingHub(testResults);
+  }
+
 }

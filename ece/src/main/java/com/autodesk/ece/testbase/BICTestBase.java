@@ -326,6 +326,17 @@ public class BICTestBase {
 
     Util.sleep(20000);
 
+    skipAddSeats();
+
+    Util.printInfo("Successfully logged into Bic");
+
+  }
+
+  /**
+   * Skip the adding of seats in the "Adds Seats" modal
+   */
+  @Step("Skip add seats modal")
+  public void skipAddSeats() {
     try {
       int count = 0;
       while (driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
@@ -349,8 +360,6 @@ public class BICTestBase {
 
     } catch (Exception e) {
     }
-
-    Util.printInfo("Successfully logged into Bic");
   }
 
   @Step("Login to an existing BIC account")
@@ -654,33 +663,33 @@ public class BICTestBase {
     bicPage.waitForField("creditCardNumberFrame", true, 30000);
 
     try {
-        WebElement creditCardNumberFrame = bicPage
-            .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
-        WebElement expiryDateFrame = bicPage.getMultipleWebElementsfromField("expiryDateFrame")
-            .get(0);
-        WebElement securityCodeFrame = bicPage.getMultipleWebElementsfromField("securityCodeFrame")
-            .get(0);
+      WebElement creditCardNumberFrame = bicPage
+          .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
+      WebElement expiryDateFrame = bicPage.getMultipleWebElementsfromField("expiryDateFrame")
+          .get(0);
+      WebElement securityCodeFrame = bicPage.getMultipleWebElementsfromField("securityCodeFrame")
+          .get(0);
 
-        driver.switchTo().frame(creditCardNumberFrame);
-        Util.printInfo("Entering card number : " + paymentCardDetails[0]);
-        Util.sleep(2000);
-        bicPage.populateField("CardNumber", paymentCardDetails[0]);
-        driver.switchTo().defaultContent();
-        Util.sleep(2000);
+      driver.switchTo().frame(creditCardNumberFrame);
+      Util.printInfo("Entering card number : " + paymentCardDetails[0]);
+      Util.sleep(2000);
+      bicPage.populateField("CardNumber", paymentCardDetails[0]);
+      driver.switchTo().defaultContent();
+      Util.sleep(2000);
 
-        driver.switchTo().frame(expiryDateFrame);
-        Util.printInfo(
-            "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
-        Util.sleep(2000);
-        bicPage.populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
-        driver.switchTo().defaultContent();
-        Util.sleep(2000);
+      driver.switchTo().frame(expiryDateFrame);
+      Util.printInfo(
+          "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
+      Util.sleep(2000);
+      bicPage.populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
+      driver.switchTo().defaultContent();
+      Util.sleep(2000);
 
-        driver.switchTo().frame(securityCodeFrame);
-        Util.printInfo("Entering security code : " + paymentCardDetails[3]);
-        Util.sleep(2000);
-        bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
-        driver.switchTo().defaultContent();
+      driver.switchTo().frame(securityCodeFrame);
+      Util.printInfo("Entering security code : " + paymentCardDetails[3]);
+      Util.sleep(2000);
+      bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
+      driver.switchTo().defaultContent();
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter Card details to make payment");
@@ -912,13 +921,13 @@ public class BICTestBase {
 
     if (orderNumber == null) {
 
-        bicPage.waitForPageToLoad();
+      bicPage.waitForPageToLoad();
 
-        try {
-            orderNumber = driver.findElement(By.xpath("//h5[.='Order Number:']/..//p")).getText();
-        } catch (Exception e) {
-            debugHTMLPage(" Step 5 Check order Number is Null");
-        }
+      try {
+        orderNumber = driver.findElement(By.xpath("//h5[.='Order Number:']/..//p")).getText();
+      } catch (Exception e) {
+        debugHTMLPage(" Step 5 Check order Number is Null");
+      }
     }
 
     if (orderNumber == null) {
@@ -1568,6 +1577,39 @@ public class BICTestBase {
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
+    orderNumber = submitGetOrderNumber();
+    validateBicOrderNumber(orderNumber);
+    Util.printInfo("OrderNumber  :: " + orderNumber);
+
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
+  /**
+   * Place an order in guac with a driver instance that is already logged into an account
+   *
+   * @param data - Testing data
+   * @return - results data
+   */
+  @Step("Create BIC Order for logged in user" + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createBICReturningUserLoggedIn(
+      LinkedHashMap<String, String> data) {
+    String orderNumber;
+    HashMap<String, String> results = new HashMap<>();
+    String guacBaseURL = data.get("guacBaseURL");
+    String region = data.get("US");
+    String guacResourceURL = data.get("guacResourceURL");
+    String productID = data.get("bicNativePriceID");
+    String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
+    System.out.println("constructGuacURL " + constructGuacURL);
+
+    getUrl(constructGuacURL);
+    disableChatSession();
+    acceptCookiesAndUSSiteLink();
+
+    skipAddSeats();
+
     orderNumber = submitGetOrderNumber();
     validateBicOrderNumber(orderNumber);
     Util.printInfo("OrderNumber  :: " + orderNumber);

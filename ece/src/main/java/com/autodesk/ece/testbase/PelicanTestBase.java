@@ -1,11 +1,21 @@
 package com.autodesk.ece.testbase;
 
+import static io.restassured.RestAssured.given;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.bicapiModel.*;
+import com.autodesk.testinghub.core.bicapiModel.PayloadAddPaymentProfile;
+import com.autodesk.testinghub.core.bicapiModel.PayloadCartPriceID;
+import com.autodesk.testinghub.core.bicapiModel.PayloadPriceQuoteTax;
+import com.autodesk.testinghub.core.bicapiModel.PayloadPurchaseCall;
+import com.autodesk.testinghub.core.bicapiModel.PayloadSpocAUTHToken;
+import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.common.CommonConstants;
 import com.autodesk.testinghub.core.common.services.ApigeeAuthenticationService;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
-import com.autodesk.testinghub.core.utils.*;
+import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ErrorEnum;
+import com.autodesk.testinghub.core.utils.LoadJsonWithValue;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
+import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import io.qameta.allure.Step;
@@ -15,6 +25,31 @@ import io.restassured.config.SSLConfig;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -23,18 +58,6 @@ import org.jsoup.parser.Parser;
 import org.testng.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static io.restassured.RestAssured.given;
 
 public class PelicanTestBase {
 
@@ -78,10 +101,10 @@ public class PelicanTestBase {
       response = given().headers(header).when().get();
       String result = response.getBody().asString();
       Util.printInfo("results from the url-" + result);
-        if (response.getStatusCode() != 200) {
-            Assert.assertTrue(false,
-                "Response code must be 200 but the API return " + response.getStatusCode());
-        }
+      if (response.getStatusCode() != 200) {
+        Assert.assertTrue(false,
+            "Response code must be 200 but the API return " + response.getStatusCode());
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -227,7 +250,12 @@ public class PelicanTestBase {
     header.put("Content-Type", Content_Type);
     header.put("accept", accept);
 
-    String contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 20:13:28 UTC";
+    String contractStartDate;
+    if (data.containsKey("desiredBillingDate")) {
+      contractStartDate = data.get("desiredBillingDate");
+    } else {
+      contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 20:13:28 UTC";
+    }
     String path = Util.getCorePayloadPath() + "BIC_Update_NextBilling.json";
     File rawPayload = new File(path);
     UpdateNextBilling nextBilingJson;
@@ -240,7 +268,7 @@ public class PelicanTestBase {
       Util.PrintInfo("Payload Auth:: " + inputPayload + "\n");
     } catch (IOException e1) {
       e1.printStackTrace();
-      AssertUtils.fail("Failed to generate SPOC  Authorization Token" + e1.getMessage());
+      AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
     }
     return patchRestResponse(baseURL, header, inputPayload);
   }
@@ -256,10 +284,10 @@ public class PelicanTestBase {
 
       int responseStatusCode = response.getStatusCode();
       System.out.println("Response code : " + responseStatusCode);
-        if (responseStatusCode != 200) {
-            AssertUtils.assertTrue(false,
-                "Response code must be 200 but the API return " + responseStatusCode);
-        }
+      if (responseStatusCode != 200) {
+        AssertUtils.assertTrue(false,
+            "Response code must be 200 but the API return " + responseStatusCode);
+      }
 
       String result = response.getBody().asString();
       System.out.println("" + result);
@@ -436,7 +464,7 @@ public class PelicanTestBase {
       Util.PrintInfo("Payload Auth:: " + inputPayload + "\n");
     } catch (IOException e1) {
       e1.printStackTrace();
-      AssertUtils.fail("Failed to generate SPOC  Authorization Token" + e1.getMessage());
+      AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
     }
 
     Response response = given().headers(authHeaders).body(inputPayload).when().post();
@@ -515,10 +543,10 @@ public class PelicanTestBase {
       if (access_token == null) {
         Util.printTestFailedMessage("Access Token was null with RestAssured");
         // access_token=createAuthRequestHeader().trim();
-          if (access_token == null) {
-              AssertUtils
-                  .fail("Unable to generate Token for StudentAPI > access_token : " + access_token);
-          }
+        if (access_token == null) {
+          AssertUtils
+              .fail("Unable to generate Token for StudentAPI > access_token : " + access_token);
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();

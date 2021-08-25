@@ -419,3 +419,6 @@ createGUACBICIndirectOrderJP:
 
 validateBicIndirectOrder:
   productID: "maya"
+
+validateAlignBilling:
+    productID: *NativeOrderPriceID

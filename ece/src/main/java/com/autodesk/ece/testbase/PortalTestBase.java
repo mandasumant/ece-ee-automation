@@ -1125,6 +1125,26 @@ public class PortalTestBase {
     return status;
   }
 
+  /**
+   * Navigate to the "Upcoming Payments" section of portal
+   */
+  @Step("Click on Upcoming Payments Link")
+  public void navigateToUpcomingPaymentsLink() {
+    try {
+      if (GlobalConstants.getENV().equalsIgnoreCase("stg")) {
+        openPortalURL("https://stg-manage.autodesk.com/cep/#orders/invoices");
+      } else if (GlobalConstants.getENV().equalsIgnoreCase("int")) {
+        openPortalURL("https://int-manage.autodesk.com/cep/#orders/invoices");
+      }
+      portalPage.waitForPageToLoad();
+      checkEmailVerificationPopupAndClick();
+    } catch (Exception e) {
+      e.printStackTrace();
+      CustomSoftAssert.s_assert.fail("Unable to open upcoming payments section");
+    }
+    portalPage.waitForPageToLoad();
+  }
+
   public void checkEmailVerificationPopupAndClick() {
     Util.printInfo("Checking email popup...");
     Util.sleep(5000);
@@ -1324,8 +1344,7 @@ public class PortalTestBase {
     String emailIdCEP = data.get(TestingHubConstants.emailid);
 
     if ((emailIdCEP == null) || (emailIdCEP.equals("null"))) {
-      emailIdCEP = generateUniqueEmailID("testinghub", generateRandomTimeStamp(),
-          "letscheck.pw");
+      emailIdCEP = generateUniqueEmailID("testinghub", generateRandomTimeStamp(), "letscheck.pw");
     }
 
     createdData.put("firstNameCEP", "TestingHub" + generateRandom(5));
@@ -1970,60 +1989,6 @@ public class PortalTestBase {
       //AssertUtils.fail(ErrorEnum.GENERIC_EXPECTION_ACTION.geterr() + " and validate View_My_Support_Case Link in CEP");
       errorMsg = ErrorEnum.GENERIC_EXPECTION_ACTION.geterr()
           + " and validate View_My_Support_Case Link in CEP";
-    }
-    return errorMsg;
-  }
-
-  //Commenting this method as its not working in EC2 instance , lets check again
-  //@Step("My Profile Link validation " + GlobalConstants.TAG_TESTINGHUB)
-  public String verifyMyProfileLinkDisplayed() {
-    String errorMsg = "";
-    try {
-      if (!portalPage.checkIfElementExistsInPage("avatarImg", 20)) {
-        //AssertUtils.fail(ErrorEnum.MYPROFILE_LINK_CEP.geterr());
-        errorMsg = ErrorEnum.MYPROFILE_LINK_CEP.geterr();
-        return errorMsg;
-      }
-      portalPage.clickUsingLowLevelActions("avatarImg");
-      Util.printInfo("avatarImg clicked");
-      Util.sleep(5000);
-
-      if (!portalPage.checkIfElementExistsInPage("myProfileLink", 20)) {
-        //AssertUtils.fail(ErrorEnum.MYPROFILE_LINK_CEP.geterr());
-        errorMsg = ErrorEnum.MYPROFILE_LINK_CEP.geterr();
-        return errorMsg;
-      }
-
-//          portalPage.clickUsingLowLevelActions("myProfileLink");
-//          Util.printInfo("myProfileLink clicked");
-//          Util.sleep(5000);
-
-      if (!portalPage.checkIfElementExistsInPage("securitySettinglink", 20)) {
-        //AssertUtils.fail(ErrorEnum.SECURITY_SETTING_CEP.geterr());
-        errorMsg = ErrorEnum.SECURITY_SETTING_CEP.geterr();
-        return errorMsg;
-      }
-//          portalPage.clickUsingLowLevelActions("securitySettinglink");
-//          Util.printInfo("securitySettinglink clicked");
-//          Util.sleep(5000);
-////
-//          if (!portalPage.checkIfElementExistsInPage("Accountdelete", 20)) {
-//              //AssertUtils.fail(ErrorEnum.ACCOUNT_DELETE_GDPR.geterr());
-//               errorMsg=ErrorEnum.ACCOUNT_DELETE_GDPR.geterr();
-//               return errorMsg;
-//          }
-//          Util.printInfo("Accountdelete if exists");
-//          Util.sleep(7000);
-//
-//          // Redirect to All Product and Services Page
-//          if (portalPage.checkIfElementExistsInPage("manageProdDownloads", 20)) {
-//               portalPage.clickUsingLowLevelActions("manageProdDownloads");
-//               return errorMsg;
-//          }
-//          Util.printInfo("manageProdDownloads clicked");
-//          Util.sleep(5000);
-    } catch (Exception e) {
-      errorMsg = ErrorEnum.GENERIC_EXPECTION_ACTION.geterr();
     }
     return errorMsg;
   }
@@ -3540,5 +3505,68 @@ public class PortalTestBase {
     }
 
     return results;
+  }
+
+  /**
+   * Login to portal and align the billing between two subscriptions
+   *
+   * @param cepURL          - Portal URL
+   * @param portalUserName  - Portal user username
+   * @param portalPassword  - Portal user password
+   * @param subscriptionID1 - First subscription
+   * @param subscriptionID2 - Seconds subscription
+   */
+  @Step("Align subscription billing in portal " + GlobalConstants.TAG_TESTINGHUB)
+  public void alignBillingInPortal(String cepURL, String portalUserName, String portalPassword,
+      String subscriptionID1, String subscriptionID2) {
+    openPortalBICLaunch(cepURL);
+
+    if (isPortalLoginPageVisible()) {
+      portalLogin(portalUserName, portalPassword);
+    }
+
+    try {
+      navigateToUpcomingPaymentsLink();
+
+      // Click on "align billing"
+      portalPage.clickUsingLowLevelActions("alignBillingButton");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // Click on the checkboxes for the two subscriptions
+    checkPortalCheckbox("//input[@value='" + subscriptionID1 + "']");
+    checkPortalCheckbox("//input[@value='" + subscriptionID2 + "']");
+
+    try {
+      // Click through the flow to align the billing of the two subscriptions
+      portalPage.clickUsingLowLevelActions("alignBillingConfirm");
+      portalPage.waitForPageToLoad();
+      WebElement creditCardNumberFrame = portalPage
+          .getMultipleWebElementsfromField("alignBillingFrame").get(0);
+      driver.switchTo().frame(creditCardNumberFrame);
+      portalPage.clickUsingLowLevelActions("alignBillingContinue");
+      checkPortalCheckbox("//input[@id='customCheckboxTerms']");
+      portalPage.clickUsingLowLevelActions("alignBillingSubmit");
+      portalPage.waitForPageToLoad();
+      portalPage.clickUsingLowLevelActions("alignBillingClose");
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
+
+    driver.switchTo().defaultContent();
+    portalPage.waitForPageToLoad();
+  }
+
+  /**
+   * Click on a hidden (display: none;) checkbox that selenium is unable to click on.
+   *
+   * @param xpath - Checkbox to click
+   */
+  @Step("Clicking on hidden checkbox " + GlobalConstants.TAG_TESTINGHUB)
+  public void checkPortalCheckbox(String xpath) {
+    WebElement ele = driver.findElement(By.xpath(xpath));
+    JavascriptExecutor executor = (JavascriptExecutor) driver;
+    executor.executeScript("arguments[0].click();", ele);
   }
 }
