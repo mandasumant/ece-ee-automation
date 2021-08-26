@@ -442,7 +442,7 @@ public class PortalTestBase {
     try {
       Util.sleep(2000);
       portalPage.getMultipleWebElementsfromField("usernameCEP").get(0).sendKeys(portalUserName);
-      portalPage.getMultipleWebElementsfromField("verfyUserCEPBtn").get(0).click();
+      portalPage.getMultipleWebElementsfromField("verifyUserCEPBtn").get(0).click();
       Util.sleep(2000);
       portalPage.getMultipleWebElementsfromField("passCEP").get(0).click();
       portalPage.getMultipleWebElementsfromField("passCEP").get(0).sendKeys(portalPassword);

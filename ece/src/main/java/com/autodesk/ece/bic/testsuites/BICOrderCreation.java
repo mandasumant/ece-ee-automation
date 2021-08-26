@@ -673,7 +673,7 @@ public class BICOrderCreation extends ECETestBase {
 
     results.putAll(testDataForEachMethod);
 
-    // trigger Invoice join
+    // Trigger Invoice join
     String baseUrl = results.get("postInvoicePelicanAPI");
     results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
