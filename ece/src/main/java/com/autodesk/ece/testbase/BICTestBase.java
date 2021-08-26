@@ -42,31 +42,6 @@ public class BICTestBase {
     bicPage = testbase.createPage("PAGE_BIC_CART");
   }
 
-  @Step("Open BIC Url")
-  public String openBICUrl(String storeKey, String productID, String url) {
-
-    url = url.replace("@@@@@@", storeKey).replace("******", productID);
-    Util.printInfo("URL : " + url);
-    getUrl(url);
-    Util.sleep(5000);
-    if (bicPage.isFieldVisible("viewOnLocalSite")) {
-      bicPage.click("cancelPopUp");
-      Util.sleep(2000);
-      Util.PrintInfo("Getting Popup and clicked on it.");
-
-    }
-    Util.PrintInfo("Opened: " + "\n" + "<<<<<<<<<<<<<<<<<<<<<<<" + "\n" + url + "\n"
-        + ">>>>>>>>>>>>>>>>>>>>>>");
-    if (bicPage.isFieldVisible("otherLangAbs")) {
-      try {
-        bicPage.clickUsingLowLevelActions("otherLangAbs");
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    return url;
-  }
-
   @Step("Generate email id")
   public String generateUniqueEmailID(String storeKey, String timeStamp, String sourceName,
       String emailDomain) {
@@ -263,7 +238,6 @@ public class BICTestBase {
 
   @Step("Login BIC account")
   public void loginBICAccount(HashMap<String, String> data) {
-    // switchtoiFrame("//iframe[contains(@class,'login-iframe')]");
     System.out.println(bicPage.isFieldPresent("autodeskId"));
     bicPage.click("autodeskId");
     bicPage.waitForField("autodeskId", true, 30000);
@@ -274,7 +248,6 @@ public class BICTestBase {
     bicPage.waitForField("loginPassword", true, 30000);
     bicPage.populateField("loginPassword", data.get("password"));
     bicPage.clickToSubmit("loginButton", 10000);
-    // bicPage.click("loginButton");
     bicPage.waitForPageToLoad();
     Util.sleep(5000);
     boolean status =
