@@ -117,7 +117,7 @@ public class BICOrderCreation extends ECETestBase {
     String baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
     baseUrl = results.get("getSubscriptionById");
@@ -182,7 +182,7 @@ public class BICOrderCreation extends ECETestBase {
     baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
@@ -205,7 +205,7 @@ public class BICOrderCreation extends ECETestBase {
     baseUrl = pelicantb
         .addTokenInResourceUrl(baseUrl, testResults.get(TestingHubConstants.addSeatOrderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
     baseUrl = results.get("getSubscriptionById");
@@ -271,7 +271,7 @@ public class BICOrderCreation extends ECETestBase {
     String baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
     baseUrl = results.get("getSubscriptionById");
@@ -315,7 +315,7 @@ public class BICOrderCreation extends ECETestBase {
     String baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
@@ -380,7 +380,7 @@ public class BICOrderCreation extends ECETestBase {
     String baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
     baseUrl = results.get("getSubscriptionById");
@@ -467,7 +467,7 @@ public class BICOrderCreation extends ECETestBase {
     String baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(pelicantb.getPurchaseOrderDetailsMoe(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
     baseUrl = results.get("getSubscriptionById");
@@ -539,7 +539,7 @@ public class BICOrderCreation extends ECETestBase {
     String baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
     baseUrl = results.get("getSubscriptionById");
@@ -689,8 +689,7 @@ public class BICOrderCreation extends ECETestBase {
     baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
-    results.putAll(
-        getBicTestBase().getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
     baseUrl = results.get("getSubscriptionById");
