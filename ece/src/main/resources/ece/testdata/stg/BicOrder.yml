@@ -255,10 +255,6 @@ validatateBicCloudCreditOrder:
   productID: *bicCloudCreditsPriceId
   bicCloudCreditsPriceID: *bicCloudCreditsPriceId
 
-validatateBicHybridOrder:
-  metaproductID: *bicMetaPriceID
-  productID: *NativeOrderPriceID
-
 validateBicMetaOrder:
   productID: *bicMetaPriceID
   bicNativePriceID: *bicMetaPriceID
@@ -269,110 +265,12 @@ validateTrialDownloadUI:
   postalCode: "94105"
   phoneNumber: "1888938000"
 
-quarryBicNativeOrder:
-  bicNativePriceID: *bicNativePriceID
-  quantity: "1"
-
-quarryBicNativeAPIOrder:
-  nullTest: "1"
-
-quarryBicMetaAPIOrder:
-  nullTest: "1"
-
-quarryBicUserPacksAPIOrder:
-  nullTest: "1"
-
-quarryBicDailySubsOrder:
-  nullTest: "1"
-
-quarryBicMetaOrder:
-  bicMetaPriceID: *bicMetaPriceID
-  quantity: "1"
-
-#Akarsh : Need email
-portalAccess_BicNativeOrder:
-  nativeEmail: ""         #thub1564433746@letscheck.pw
-  nativePass: "Password1"
-  purchaseOrderID: "9280607"
-  sku: "2691:1"
-  subscriptionID: "56562164123162"
-  creditCard: "AMEX - 1015"
-  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-  billingStreet: ""       #1419WLakeSt
-  billingAddress: ""      #Chicago, IL 60607-1409
-
-#Akarsh : Need email --> take from regression sheet
-portalAccess_BicIndirectICOrder:
-  BIC_Indirect_Meta_Email: ""   #thub1564433746@letscheck.pw
-  BIC_Indirect_IC_Pass: "Password1"
-  subscriptionID: "110003313585"
-  creditCard: "AMEX - 1015"
-  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-  billingStreet: ""       #1419WLakeSt
-  billingAddress: ""      #Chicago, IL 60607-1409
-
-#Akarsh : Need email
-portalAccess_BicIndirectMetaOrder:
-  BIC_Indirect_Meta_Email: ""   #thub1564433746@letscheck.pw
-  BIC_Indirect_Meta_Pass: "Password1"
-  subscriptionID: "110003313582"
-  creditCard: "AMEX - 1015"
-  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-  billingStreet: ""       #1419WLakeSt
-  billingAddress: ""      #Chicago, IL 60607-1409
-
-#Akarsh : Need email
-portalAccess_LegacyICOrder:
-  Legacy_IC_Email: ""         #thub1564433390@letscheck.pw
-  Legacy_IC_Pass: "Password1"
-  subscriptionID: "110003313577"
-  creditCard: "AMEX - 1015"
-  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-  billingStreet: ""       #1419WLakeSt
-  billingAddress: ""      #Chicago, IL 60607-1409
-
-#Akarsh : Need email
-portalAccess_LegacyMetaOrder:
-  Legacy_META_Email: ""      #thub1564434037@letscheck.pw
-  Legacy_META_Pass: "Password1"
-  subscriptionID: "110003313588"
-  creditCard: "AMEX - 1015"
-  billingName: ""         #hbmqwFNTHUB hbmqwLNTHUB
-  billingStreet: ""       #1419WLakeSt
-  billingAddress: ""      #Chicago, IL 60607-1409
-
-#Akarsh : Need email
-portalAccess_BicHybridOrder:
-  nativeEmail: ""      #thub1564429616@letscheck.pw
-  nativePass: "Password1"
-  nativeSubscriptionID: "56624873727414"
-  metaSubscriptionID: "56624908719856:110003313501"
-  creditCard: "AMEX - 1015"
-  billingName: ""         #sfqFNTHUB sfqLNTHUB
-  billingStreet: ""       #1419WLakeSt
-  billingAddress: ""      #Chicago, IL 60607-1409
-
-validateBicPayportRefundOrder:
-  nullTest: "1"
-
-apiBicNativeOrder:
-  nullTest: "1"
-
-apiBicHybridOrder:
-  nullTest: "1"
-
-quarryBicICAPIOrder:
-  nullTest: "1"
-
 validateBicReturningUser:
   metaproductID: *bicMetaPriceID
   productID: *NativeOrderPriceID
 
 validateBicAddSeats:
   productID: *NativeOrderPriceID
-
-ccPurchaseBICOrder:
-  nullTest: "1"
 
 validateBicAddSeatNativeOrder:
   metaproductID: *bicMetaPriceID
@@ -398,20 +296,6 @@ createBicOrderMoe:
 validateBicNativeOrderMoe:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
-
-BicNativeOrderAUS:
-  productID: *AUSNativeOrderPriceID
-  bicNativePriceID: *AUSNativeOrderPriceID
-  languageStore: "en-AU/"
-
-#Akarsh Missing Price ID - Search in Pelican
-promocodeBicOrder:
-  nullTest: "1"
-  productID: "27125"
-  languageStore: "en-US/"
-
-bictrialsorder:
-  nullTest: "1"
 
 createGUACBICIndirectOrderJP:
   userType: "newUser"
