@@ -757,7 +757,7 @@ public class BICOrderCreation extends ECETestBase {
     String pelicanOrderUrl = pelicantb
         .addTokenInResourceUrl(basePelicanOrderUrl, results.get(BICConstants.orderNumber));
     testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
-    results.putAll(getBicTestBase()
+    results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
     results.put("sub1ID", results.get("getPOReponse_subscriptionId"));
 
@@ -779,7 +779,7 @@ public class BICOrderCreation extends ECETestBase {
     pelicanOrderUrl = pelicantb
         .addTokenInResourceUrl(basePelicanOrderUrl, results.get(BICConstants.orderNumber));
     testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
-    results.putAll(getBicTestBase()
+    results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
     results.put("sub2ID", results.get("getPOReponse_subscriptionId"));
 
