@@ -1048,7 +1048,7 @@ public class PortalTestBase {
     return status;
   }
 
-  //@Step("Verify subscription/agreeement is displayed in Subscription page" + GlobalConstants.TAG_TESTINGHUB)
+  //@Step("Verify subscription/agreement is displayed in Subscription page" + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionDisplayedInBO(String subscriptionID) {
     clickSubscriptionsLink(subscriptionID);
     boolean status = false;
@@ -1056,7 +1056,7 @@ public class PortalTestBase {
     String productXpath = null;
     try {
       productXpath = portalPage
-          .createFieldWithParsedFieldLocatorsTokens("subscriptionIDInBO", subscriptionID);
+          .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
     } catch (Exception e) {
       //AssertUtils.fail("Verify product is displayed in Subscription page step couldn't be completed due to technical issue " + e.getMessage());
       errorMsg =
@@ -3568,5 +3568,77 @@ public class PortalTestBase {
     WebElement ele = driver.findElement(By.xpath(xpath));
     JavascriptExecutor executor = (JavascriptExecutor) driver;
     executor.executeScript("arguments[0].click();", ele);
+  }
+
+  @Step("CEP : META Order capture " + GlobalConstants.TAG_TESTINGHUB)
+  public boolean validateMetaOrderProductInCEP(String cepURL, String portalUserName,
+      String portalPassword, String subscriptionID) {
+    boolean status = false, statusBOC, statusBOS;
+    openPortalBICLaunch(cepURL);
+    if (isPortalLoginPageVisible()) {
+      portalLogin(portalUserName, portalPassword);
+    }
+
+    if (isPortalTabsVisible()) {
+      try {
+        clickContractsLink();
+        statusBOC = isSubscriptionDisplayedInBO(subscriptionID);
+        clickSubscriptionLink();
+        statusBOS = isSubscriptionDisplayedInBO(subscriptionID);
+        status = statusBOC || statusBOS;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    if (!status) {
+      AssertUtils.fail("Product is displayed in portal" + " :: false");
+    }
+
+    return status;
+  }
+
+  @Step("Click on Contracts link in BO")
+  public boolean clickContractsLink() {
+    /*
+     * try { if(portalPage.checkIfElementExistsInPage("portalBOContractLink", 30)) {
+     * portalPage.clickUsingLowLevelActions("portalBOContractLink");
+     * Util.sleep(5000); //
+     * openPortalURL("https://stg-manage.autodesk.com/cep/#orders/contracts"); }
+     * String actualURL = driver.getCurrentUrl().trim(); String expectedURL =
+     * "https://stg-manage.autodesk.com/cep/#orders/contracts";
+     * Util.printInfo("actualURL   : "+actualURL);
+     * Util.printInfo("expectedURL : "+expectedURL); boolean status =
+     * actualURL.equalsIgnoreCase(expectedURL); if(!status) AssertUtils.fail(
+     * ErrorEnum.GENERIC_EXPECTION_ACTION.geterr() +
+     * " / navigate to Contracts Tab under Billing and Orders Section");
+     *
+     * } catch (MetadataException e) { e.printStackTrace(); }
+     */
+
+    openPortalURL("https://stg-manage.autodesk.com/cep/#orders/contracts");
+    return feynamnLayoutLoaded();
+  }
+
+  @Step("Click on Contracts link in BO")
+  public boolean clickSubscriptionLink() {
+    try {
+      if (portalPage.checkIfElementExistsInPage("portalBOSubscriptionLink", 30)) {
+        portalPage.clickUsingLowLevelActions("portalBOSubscriptionLink");
+        feynamnLayoutLoaded();
+      }
+
+      String actualURL = driver.getCurrentUrl().trim();
+      String expectedURL = TestingHubConstants.objSubscriptionLink;
+      Util.printInfo("actualURL   : " + actualURL);
+      Util.printInfo("expectedURL : " + expectedURL);
+      boolean status = actualURL.equalsIgnoreCase(expectedURL);
+      if (!status) {
+        AssertUtils.fail(ErrorEnum.GENERIC_EXPECTION_ACTION.geterr()
+            + " / navigate to Subscriptions Tab under Billing and Orders Section");
+      }
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
+    return feynamnLayoutLoaded();
   }
 }
