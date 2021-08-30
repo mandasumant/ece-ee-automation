@@ -3581,11 +3581,8 @@ public class PortalTestBase {
 
     if (isPortalTabsVisible()) {
       try {
-        clickContractsLink();
-        statusBOC = isSubscriptionDisplayedInBO(subscriptionID);
-        clickSubscriptionLink();
-        statusBOS = isSubscriptionDisplayedInBO(subscriptionID);
-        status = statusBOC || statusBOS;
+        openSubscriptionsContractsLink();
+        status = isSubscriptionDisplayedInBO(subscriptionID);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -3593,33 +3590,16 @@ public class PortalTestBase {
     if (!status) {
       AssertUtils.fail("Product is displayed in portal" + " :: false");
     }
-
     return status;
   }
 
-  @Step("Click on Contracts link in BO")
-  public boolean clickContractsLink() {
-    /*
-     * try { if(portalPage.checkIfElementExistsInPage("portalBOContractLink", 30)) {
-     * portalPage.clickUsingLowLevelActions("portalBOContractLink");
-     * Util.sleep(5000); //
-     * openPortalURL("https://stg-manage.autodesk.com/cep/#orders/contracts"); }
-     * String actualURL = driver.getCurrentUrl().trim(); String expectedURL =
-     * "https://stg-manage.autodesk.com/cep/#orders/contracts";
-     * Util.printInfo("actualURL   : "+actualURL);
-     * Util.printInfo("expectedURL : "+expectedURL); boolean status =
-     * actualURL.equalsIgnoreCase(expectedURL); if(!status) AssertUtils.fail(
-     * ErrorEnum.GENERIC_EXPECTION_ACTION.geterr() +
-     * " / navigate to Contracts Tab under Billing and Orders Section");
-     *
-     * } catch (MetadataException e) { e.printStackTrace(); }
-     */
-
-    openPortalURL("https://stg-manage.autodesk.com/cep/#orders/contracts");
+  @Step("Open Subscriptions and Contracts link in Portal")
+  public boolean openSubscriptionsContractsLink() {
+    openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
     return feynamnLayoutLoaded();
   }
 
-  @Step("Click on Contracts link in BO")
+  /*@Step("Click on Subscription link in BO")
   public boolean clickSubscriptionLink() {
     try {
       if (portalPage.checkIfElementExistsInPage("portalBOSubscriptionLink", 30)) {
@@ -3641,4 +3621,5 @@ public class PortalTestBase {
     }
     return feynamnLayoutLoaded();
   }
+  */
 }
