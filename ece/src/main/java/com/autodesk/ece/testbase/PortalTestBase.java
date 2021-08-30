@@ -3581,7 +3581,6 @@ public class PortalTestBase {
 
     if (isPortalTabsVisible()) {
       try {
-        openSubscriptionsContractsLink();
         status = isSubscriptionDisplayedInBO(subscriptionID);
       } catch (Exception e) {
         e.printStackTrace();
@@ -3591,11 +3590,5 @@ public class PortalTestBase {
       AssertUtils.fail("Product is displayed in portal" + " :: false");
     }
     return status;
-  }
-
-  @Step("Open Subscriptions and Contracts link in Portal")
-  public boolean openSubscriptionsContractsLink() {
-    openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
-    return feynamnLayoutLoaded();
   }
 }
