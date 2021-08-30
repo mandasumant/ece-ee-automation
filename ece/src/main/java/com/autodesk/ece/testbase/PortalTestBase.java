@@ -1064,7 +1064,7 @@ public class PortalTestBase {
               + e.getMessage();
     }
 
-    status = isPortalElementPresent(productXpath);
+    status = isPortalElementPresentWithXpath(productXpath);
     if (!status)
     //AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID  + " , In B&O page");
     {
