@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.config.SSLConfig;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.ByteArrayInputStream;
