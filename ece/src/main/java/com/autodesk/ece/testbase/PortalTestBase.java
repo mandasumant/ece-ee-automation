@@ -3598,28 +3598,4 @@ public class PortalTestBase {
     openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
     return feynamnLayoutLoaded();
   }
-
-  /*@Step("Click on Subscription link in BO")
-  public boolean clickSubscriptionLink() {
-    try {
-      if (portalPage.checkIfElementExistsInPage("portalBOSubscriptionLink", 30)) {
-        portalPage.clickUsingLowLevelActions("portalBOSubscriptionLink");
-        feynamnLayoutLoaded();
-      }
-
-      String actualURL = driver.getCurrentUrl().trim();
-      String expectedURL = TestingHubConstants.objSubscriptionLink;
-      Util.printInfo("actualURL   : " + actualURL);
-      Util.printInfo("expectedURL : " + expectedURL);
-      boolean status = actualURL.equalsIgnoreCase(expectedURL);
-      if (!status) {
-        AssertUtils.fail(ErrorEnum.GENERIC_EXPECTION_ACTION.geterr()
-            + " / navigate to Subscriptions Tab under Billing and Orders Section");
-      }
-    } catch (MetadataException e) {
-      e.printStackTrace();
-    }
-    return feynamnLayoutLoaded();
-  }
-  */
 }
