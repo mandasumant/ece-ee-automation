@@ -553,15 +553,16 @@ public class PortalTestBase {
     return status;
   }
 
-  //@Step("Verify subscription/agreement is displayed in Subscription page" + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Verify subscription/agreement is displayed on Subscriptions page"
+      + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionDisplayedInBO(String subscriptionID) {
-    clickSubscriptionsLink(subscriptionID);
-    boolean status = false;
+    openSubscriptionsLink();
+    boolean status;
     String errorMsg = "";
     String productXpath = null;
     try {
       productXpath = portalPage
-          .createFieldWithParsedFieldLocatorsTokens("subscriptionIDInBO", subscriptionID);
+          .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
     } catch (Exception e) {
       //AssertUtils.fail("Verify product is displayed in Subscription page step couldn't be completed due to technical issue " + e.getMessage());
       errorMsg =
@@ -569,9 +570,8 @@ public class PortalTestBase {
               + e.getMessage();
     }
 
-    status = isPortalElementPresent(productXpath);
+    status = isPortalElementPresentWithXpath(productXpath);
     if (!status)
-    //AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID  + " , In B&O page");
     {
       errorMsg =
           ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
@@ -583,10 +583,9 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("Click on Contracts link in BO")
-  public void clickSubscriptionsLink(String agreement) {
-    //clickSubscriptionLink();
-    //openPortalURL("https://stg-manage.autodesk.com/cep/#orders/subscriptions/" + agreement);
+
+  @Step("Open Subscriptions and Contracts link in Portal")
+  public void openSubscriptionsLink() {
     openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
   }
 
@@ -1494,5 +1493,27 @@ public class PortalTestBase {
     WebElement ele = driver.findElement(By.xpath(xpath));
     JavascriptExecutor executor = (JavascriptExecutor) driver;
     executor.executeScript("arguments[0].click();", ele);
+  }
+
+  @Step("CEP : META Order capture " + GlobalConstants.TAG_TESTINGHUB)
+  public boolean validateMetaOrderProductInCEP(String cepURL, String portalUserName,
+      String portalPassword, String subscriptionID) {
+    boolean status = false;
+    openPortalBICLaunch(cepURL);
+    if (isPortalLoginPageVisible()) {
+      portalLogin(portalUserName, portalPassword);
+    }
+
+    if (isPortalTabsVisible()) {
+      try {
+        status = isSubscriptionDisplayedInBO(subscriptionID);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    if (!status) {
+      AssertUtils.fail("Product is displayed in portal" + " :: false");
+    }
+    return status;
   }
 }
