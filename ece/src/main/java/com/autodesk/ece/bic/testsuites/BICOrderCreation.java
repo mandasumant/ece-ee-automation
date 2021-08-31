@@ -534,8 +534,14 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
+    // Trigger Invoice join
+    String baseUrl = results.get("postInvoicePelicanAPI");
+    results.put("pelican_BaseUrl", baseUrl);
+    pelicantb.postInvoicePelicanAPI(results);
+    Util.sleep(300000);
+
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
+    baseUrl = results.get("getPurchaseOrderDetails");
     baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
@@ -581,7 +587,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Portal
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+    portaltb.validateMetaOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
         "Password1", results.get("getPOReponse_subscriptionId"));
     updateTestingHub(testResults);
