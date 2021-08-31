@@ -722,46 +722,6 @@ public class PortalTestBase {
         + "\n" + "-----------------------------");
   }
 
-  @Step("Click Profile Name Field")
-  public String clickProfileName() {
-    String value = "";
-    try {
-      boolean status = driver.findElement(By.xpath("//p[text()='Name']/..//p[2]/span"))
-          .isDisplayed();
-      if (status) {
-        value = driver.findElement(By.xpath("//p[text()='Name']/..//p[2]/span")).getText()
-            .trim();
-        driver.findElement(By.xpath("//p[text()='Name']/..//p[2]/span")).click();
-      } else {
-        AssertUtils.fail("Unable to click on Name field ");
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      AssertUtils.fail("Unable to click on Name field ");
-    }
-    return value;
-  }
-
-  @Step("Update Profile First & Last Name ")
-  public String updateName(String updateFN, String updateLN) {
-    String value = "";
-    try {
-      driver.findElement(By.xpath("//label[text()='First Name']/..//input"))
-          .sendKeys(Keys.chord(Keys.CONTROL, "a"));
-      driver.findElement(By.xpath("//label[text()='First Name']/..//input")).sendKeys(updateFN);
-      driver.findElement(By.xpath("//label[text()='Last Name']/..//input"))
-          .sendKeys(Keys.chord(Keys.CONTROL, "a"));
-      driver.findElement(By.xpath("//label[text()='Last Name']/..//input")).sendKeys(updateLN);
-      driver.findElement(By.xpath("//span[text()='Save']")).click();
-      Util.sleep(5000);
-      value = driver.findElement(By.xpath("//p[text()='Name']/..//p[2]/span")).getText().trim();
-    } catch (Exception e) {
-      e.printStackTrace();
-      AssertUtils.fail("Unable to update Name field ");
-    }
-    return value;
-  }
-
   @Step("Adding seat from portal for BIC orders")
   public HashMap<String, String> createAndValidateAddSeatOrderInPortal(String addSeatQty,
       LinkedHashMap<String, String> testDataForEachMethod) {
