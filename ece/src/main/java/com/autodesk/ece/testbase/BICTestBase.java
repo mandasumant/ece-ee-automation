@@ -164,16 +164,16 @@ public class BICTestBase {
 
     try {
 
-      Util.printInfo(" Checked bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
-      Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("bic_Agree"));
+      Util.printInfo("Checked bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
+      Util.printInfo("Checked box status for bic_Agree - " + bicPage.isChecked("bic_Agree"));
 
       if (!bicPage.isFieldVisible("bic_Agree")) {
         Util.sleep(20000);
-        Util.printInfo(" Checkbox bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
+        Util.printInfo("Checkbox bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
         Util.printWarning(
-          " Checkbox bic_Agree is present - " + bicPage.isFieldPresent("bic_Agree"));
+            "Checkbox bic_Agree is present - " + bicPage.isFieldPresent("bic_Agree"));
         Util.printWarning(
-          " Checkbox bic_Agree is FieldExist - " + bicPage.checkFieldExistence("bic_Agree"));
+            "Checkbox bic_Agree field exists - " + bicPage.checkFieldExistence("bic_Agree"));
       }
 
       checkboxTickJS();
@@ -781,8 +781,9 @@ public class BICTestBase {
     try {
       if (System.getProperty("payment").equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
         if (!achAgreeElement.isEnabled()) {
@@ -790,8 +791,9 @@ public class BICTestBase {
           js.executeScript("document.getElementById('mandate-agreement').click()");
         }
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1133,16 +1135,18 @@ public class BICTestBase {
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('mandate-agreement').click()");
         WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
 
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1204,17 +1208,19 @@ public class BICTestBase {
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
         Util.printInfo(
-          " Checked box status for achCheckBoxHeader - " + bicPage.isChecked("achCheckBox"));
+            "Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('mandate-agreement').click()");
         WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
 
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1279,16 +1285,18 @@ public class BICTestBase {
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('mandate-agreement').click()");
         WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
 
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1747,16 +1755,18 @@ public class BICTestBase {
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('mandate-agreement').click()");
         WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
 
         Util.printInfo(
-          " Checked achCheckBoxHeader is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
