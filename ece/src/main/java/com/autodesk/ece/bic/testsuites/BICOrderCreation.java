@@ -493,8 +493,7 @@ public class BICOrderCreation extends ECETestBase {
       testResults.put("subscriptionPeriodEndDate",
           results.get("getPOReponse_subscriptionPeriodEndDate"));
       testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
-      testResults
-          .put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
     } catch (Exception e) {
       Util.printTestFailedMessage("Failed to update results to Testinghub");
     }
@@ -646,8 +645,7 @@ public class BICOrderCreation extends ECETestBase {
     testDataForEachMethod.put("productID", testDataForEachMethod.get("productID"));
     Util.printInfo("Placing initial order.");
 
-    HashMap<String, String> results = getBicTestBase()
-        .createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     updateTestingHub(testResults);
@@ -674,15 +672,14 @@ public class BICOrderCreation extends ECETestBase {
     String bicOrderO2ID = "";
     OxygenService os = new OxygenService();
     try {
-      bicOrderO2ID = os
-          .getOxygenID(results.get(BICConstants.emailid), results.get("password"));
+      bicOrderO2ID = os.getOxygenID(results.get(BICConstants.emailid), results.get("password"));
       results.put(BICConstants.oxid, bicOrderO2ID);
     } catch (Exception e1) {
     }
 
     results.putAll(testDataForEachMethod);
 
-    // trigger Invoice join
+    // Trigger Invoice join
     String baseUrl = results.get("postInvoicePelicanAPI");
     results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
@@ -699,8 +696,7 @@ public class BICOrderCreation extends ECETestBase {
 
     // Get find Subscription ById
     baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb
-        .addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
     results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
@@ -716,8 +712,7 @@ public class BICOrderCreation extends ECETestBase {
       testResults.put("subscriptionPeriodEndDate",
           results.get("getPOReponse_subscriptionPeriodEndDate"));
       testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
-      testResults
-          .put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
     } catch (Exception e) {
       Util.printTestFailedMessage("Failed to update results to Testing hub.");
     }
@@ -726,8 +721,7 @@ public class BICOrderCreation extends ECETestBase {
 
     // Initial order validation in Portal
     tb.getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid), "Password1",
-        results.get("getPOReponse_subscriptionId"));
+        results.get(BICConstants.emailid), "Password1", results.get("getPOReponse_subscriptionId"));
     updateTestingHub(testResults);
 
     stopTime = System.nanoTime();

@@ -305,4 +305,9 @@ validateBicIndirectOrder:
   productID: "maya"
 
 validateAlignBilling:
-    productID: *NativeOrderPriceID
+  productID: *NativeOrderPriceID
+
+promocodeBicOrder:
+  nullTest: "1"
+  productID: "27125"
+  languageStore: "en-US/"

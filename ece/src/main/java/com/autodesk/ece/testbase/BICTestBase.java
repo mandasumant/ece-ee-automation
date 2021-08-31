@@ -37,34 +37,9 @@ public class BICTestBase {
   public WebDriver driver = null;
 
   public BICTestBase(WebDriver driver, GlobalTestBase testbase) {
-    Util.PrintInfo("BICTestBase from core");
+    Util.PrintInfo("BICTestBase from ece");
     this.driver = driver;
     bicPage = testbase.createPage("PAGE_BIC_CART");
-  }
-
-  @Step("Open BIC Url")
-  public String openBICUrl(String storeKey, String productID, String url) {
-
-    url = url.replace("@@@@@@", storeKey).replace("******", productID);
-    Util.printInfo("URL : " + url);
-    getUrl(url);
-    Util.sleep(5000);
-    if (bicPage.isFieldVisible("viewOnLocalSite")) {
-      bicPage.click("cancelPopUp");
-      Util.sleep(2000);
-      Util.PrintInfo("Getting Popup and clicked on it.");
-
-    }
-    Util.PrintInfo("Opened: " + "\n" + "<<<<<<<<<<<<<<<<<<<<<<<" + "\n" + url + "\n"
-        + ">>>>>>>>>>>>>>>>>>>>>>");
-    if (bicPage.isFieldVisible("otherLangAbs")) {
-      try {
-        bicPage.clickUsingLowLevelActions("otherLangAbs");
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    return url;
   }
 
   @Step("Generate email id")
@@ -210,39 +185,6 @@ public class BICTestBase {
     driver.switchTo().defaultContent();
   }
 
-  @Step("Create BIC account")
-  public void createBICAccountWithOutPaymentProfile(String emailID, String password) {
-
-    switchToBICCartLoginPage();
-    Util.printInfo("Url is loaded and we were able to switch to iFrame");
-    // clickLinkRetry("createNewUserGUAC");
-
-    bicPage.click("userIDField");
-
-    bicPage.waitForField("userIDField", true, 30000);
-    bicPage.populateField("userIDField", emailID);
-    bicPage.click("userIDNextButton");
-
-    bicPage.waitForField("userPassField", true, 30000);
-    bicPage.populateField("userPassField", password);
-    bicPage.click("passIDSignInButton");
-
-    boolean status = false;
-    try {
-      status = bicPage.isFieldPresent("getStartedSkipLink")
-//					|| bicPage.isFieldPresent("getStartedSkipLink")
-//					|| bicPage.isFieldPresent("getStartedSkipLink")
-          || bicPage.checkIfElementExistsInPage("getStartedSkipLink", 60);
-    } catch (MetadataException e) {
-    }
-
-    if (status) {
-      bicPage.click("getStartedSkipLink");
-    }
-
-    driver.switchTo().defaultContent();
-  }
-
   private void checkboxTickJS() {
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -296,7 +238,6 @@ public class BICTestBase {
 
   @Step("Login BIC account")
   public void loginBICAccount(HashMap<String, String> data) {
-    // switchtoiFrame("//iframe[contains(@class,'login-iframe')]");
     System.out.println(bicPage.isFieldPresent("autodeskId"));
     bicPage.click("autodeskId");
     bicPage.waitForField("autodeskId", true, 30000);
@@ -307,7 +248,6 @@ public class BICTestBase {
     bicPage.waitForField("loginPassword", true, 30000);
     bicPage.populateField("loginPassword", data.get("password"));
     bicPage.clickToSubmit("loginButton", 10000);
-    // bicPage.click("loginButton");
     bicPage.waitForPageToLoad();
     Util.sleep(5000);
     boolean status =
@@ -395,11 +335,6 @@ public class BICTestBase {
     bicPage.waitForField("guacAddToCart", true, 3000);
     bicPage.clickToSubmit("guacAddToCart", 3000);
     bicPage.waitForPageToLoad();
-  }
-
-  public void switchtoiFrame(String iFrame) {
-    WebElement element = driver.findElement(By.className(iFrame));
-    driver.switchTo().frame(element);
   }
 
   @Step("Populate billing address")
@@ -701,9 +636,8 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("directDebitACHTab");
 
       Util.printInfo("Waiting for Direct Debit ACH Header...");
-      bicPage
-          .waitForElementVisible(bicPage.getMultipleWebElementsfromField("directDebitHead").get(0),
-              10);
+      bicPage.waitForElementVisible(
+          bicPage.getMultipleWebElementsfromField("directDebitHead").get(0), 10);
 
       Util.printInfo("Entering Direct Debit ACH Account Number : " + paymentCardDetails[0]);
       bicPage.populateField("achAccNumber", paymentCardDetails[0]);
@@ -878,8 +812,7 @@ public class BICTestBase {
     bicPage.waitForPageToLoad();
 
     try {
-      if (driver.findElement(By.xpath("//*[(text()='Order Processing Problem')]"))
-          .isDisplayed()) {
+      if (driver.findElement(By.xpath("//*[(text()='Order Processing Problem')]")).isDisplayed()) {
         Util.printInfo("Order Processing Problem");
       }
       AssertUtils.fail("Unable to place BIC order : " + "Order Processing Problem");
@@ -889,7 +822,7 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-          "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
         Util.printInfo("Export compliance issue is present");
       }
@@ -972,61 +905,6 @@ public class BICTestBase {
     Util.printInfo("*************************************************************");
   }
 
-  @SuppressWarnings("static-access")
-  @Step("Create BIC Order via Cart " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createBICOrder(LinkedHashMap<String, String> data) {
-    HashMap<String, String> results = new HashMap<>();
-    String storeKey = data.get("storeKey");
-    String productID = data.get("productID");
-    String url = data.get("url");
-    String userType = data.get("userType");
-    String emailDomain = data.get("emailDomain");
-    String sourceName = data.get("sourceName");
-//		String addressUS = data.get("Cart_Address_US");
-    String region = data.get("region");
-    String password = data.get("password");
-    String paymentMethod = data.get("paymentMethod");
-
-    openBICUrl(storeKey, productID, url);
-
-    String emailID = null, firstName = null, lastName = null, orderNumber = null;
-    String randomString = new RandomStringUtils().random(6, true, false);
-
-    switch (userType) {
-      case "newUser":
-        // Generate random New Email
-        String timeStamp = randomString;
-        emailID = generateUniqueEmailID(storeKey, timeStamp, sourceName, emailDomain);
-        // Based on region get address
-        Map<String, String> address = getBillingAddress(region);
-
-        firstName = "QAauto" + randomString;
-        Util.printInfo("firstName :: " + firstName);
-
-        lastName = "last" + randomString;
-        Util.printInfo("lastName :: " + lastName);
-
-        createBICAccount(firstName, lastName, emailID, password);
-
-        String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-        selectPaymentProfile(data, paymentCardDetails);
-
-        // Entire address
-        populateBillingAddress(address, data);
-        orderNumber = submitGetOrderNumber();
-
-        Util.printInfo(orderNumber);
-        orderNumber = orderNumber.split(":")[1].replace("Order Number:", "");
-        System.out.println(orderNumber);
-        break;
-    }
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
-  }
-
   @SuppressWarnings({"static-access", "unused"})
   @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createGUACBICOrderUS(LinkedHashMap<String, String> data) {
@@ -1038,7 +916,7 @@ public class BICTestBase {
     String quantity = "";
     String guacResourceURL = data.get("guacResourceURL");
     String userType = data.get("userType");
-//		String addressUS = data.get("Cart_Address_US");
+//    String addressUS = data.get("Cart_Address_US");
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
@@ -1086,7 +964,7 @@ public class BICTestBase {
     String guacOverviewResourceURL = data.get("guacOverviewTermResource");
 
     String userType = data.get("userType");
-//		String addressUS = data.get("Cart_Address_US");
+//    String addressUS = data.get("Cart_Address_US");
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
@@ -1126,7 +1004,7 @@ public class BICTestBase {
     String quantity = "";
     String guacResourceURL = data.get("guacResourceURL");
     String userType = data.get("userType");
-//		String addressUS = data.get("Cart_Address_US");
+//    String addressUS = data.get("Cart_Address_US");
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
@@ -1172,7 +1050,8 @@ public class BICTestBase {
       emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
           "thub", "letscheck.pw");
       orderNumber = getBICOrderPromoCode(data, emailID, guacBaseURL, productID, guacResourceURL,
-          region, password, paymentMethod, promocode);
+          region, password,
+          paymentMethod, promocode);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1336,9 +1215,8 @@ public class BICTestBase {
   }
 
   private String getBICOrderPromoCode(LinkedHashMap<String, String> data, String emailID,
-      String guacBaseURL, String productID,
-      String guacResourceURL, String region, String password, String paymentMethod,
-      String promocode) {
+      String guacBaseURL, String productID, String guacResourceURL, String region, String password,
+      String paymentMethod, String promocode) {
     String orderNumber;
     String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
     System.out.println("constructGuacURL " + constructGuacURL);
@@ -1538,14 +1416,14 @@ public class BICTestBase {
       }
     }
 
-//		region = region.replace("/", "").replace("-", "");
-//		Map<String, String> address = billingAddress(region);
-//		populateBillingAddress(address, data);
+//     region = region.replace("/", "").replace("-", "");
+//     Map<String, String> address = billingAddress(region);
+//     populateBillingAddress(address, data);
     orderNumber = submitGetOrderNumber();
     validateBicOrderNumber(orderNumber);
     Util.printInfo("OrderNumber  :: " + orderNumber);
 
-//		printConsole(constructGuacURL, orderNumber, "", null, "", "", paymentMethod);
+//    printConsole(constructGuacURL, orderNumber, "", null, "", "", paymentMethod);
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
@@ -1672,15 +1550,6 @@ public class BICTestBase {
             .equals("complete"))));
   }
 
-  public void execKillProcess() {
-    try {
-      Runtime.getRuntime().exec("TASKKILL -F -IM CHROMEDRIVER.EXE");
-      System.exit(0);
-    } catch (Exception e) {
-      Util.printInfo("Kill process error " + e.getMessage());
-    }
-  }
-
   public String getRandomMobileNumber() {
     Random rnd = new Random();
     long number = rnd.nextInt(999999999);
@@ -1782,7 +1651,7 @@ public class BICTestBase {
     String quantity = "";
     String guacResourceURL = data.get("guacResourceURL");
     String userType = data.get("userType");
-//		String addressUS = data.get("Cart_Address_US");
+//    String addressUS = data.get("Cart_Address_US");
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
@@ -2196,7 +2065,6 @@ public class BICTestBase {
 
     return results;
   }
-
 
   @SuppressWarnings({"static-access", "unused"})
   @Step("Guac: Place DR Order " + GlobalConstants.TAG_TESTINGHUB)

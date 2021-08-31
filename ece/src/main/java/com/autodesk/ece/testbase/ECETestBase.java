@@ -7,13 +7,12 @@ import com.autodesk.testinghub.core.database.DBValidations;
 import com.autodesk.testinghub.core.sap.SAPDriverFiori;
 import com.autodesk.testinghub.core.testbase.*;
 import com.autodesk.testinghub.core.utils.Util;
+import java.util.HashMap;
+import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterTest;
-
-import java.util.HashMap;
-import java.util.Set;
 
 public class ECETestBase {
 
@@ -53,7 +52,6 @@ public class ECETestBase {
     pelicantb = new PelicanTestBase();
     herokutb = new HerokuTestBase();
     lemtb = new LemTestBase();
-
   }
 
   public static void updateTestingHub(HashMap<String, String> results) {
@@ -76,28 +74,6 @@ public class ECETestBase {
     return testbase.getdriver();
   }
 
-  public SiebelTestBase getSiebelTestBase() {
-    if (siebeltb == null) {
-      siebeltb = new SiebelTestBase();
-    }
-    return siebeltb;
-  }
-
-  public SFDCTestBase getSFDCTestBase() {
-    return new SFDCTestBase(webdriver);
-  }
-
-  public AoeTestBase getAOETestBase() {
-    if (aoetb == null) {
-      aoetb = new AoeTestBase(webdriver);
-    }
-    return aoetb;
-  }
-
-  public SAPTestBase getSAPTestBase() {
-    return new SAPTestBase();
-  }
-
   public PortalTestBase getPortalTestBase() {
     return new PortalTestBase(testbase);
   }
@@ -107,24 +83,6 @@ public class ECETestBase {
       bictb = new BICTestBase(webdriver, testbase);
     }
     return bictb;
-  }
-
-  public SAPDriverFiori getSAPFioriTestBase() {
-    return new SAPDriverFiori("appBaseDir", webdriver);
-  }
-
-  public RegonceTestBase getRegonceTestBase() {
-    if (regoncetb == null) {
-      regoncetb = new RegonceTestBase(webdriver);
-    }
-    return regoncetb;
-  }
-
-  public PWSTestBase getPWSTestBase() {
-    if (pwstb == null) {
-      pwstb = new PWSTestBase();
-    }
-    return pwstb;
   }
 
   @AfterTest(alwaysRun = true)
@@ -144,4 +102,3 @@ public class ECETestBase {
     }
   }
 }
-
