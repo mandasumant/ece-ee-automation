@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -571,8 +572,7 @@ public class PortalTestBase {
     }
 
     status = isPortalElementPresentWithXpath(productXpath);
-    if (!status)
-    {
+    if (!status) {
       errorMsg =
           ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
               + " , In B&O page";
@@ -1013,9 +1013,7 @@ public class PortalTestBase {
     orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
 
     Util.printInfo("Reducing seats.");
-    if (portalPage.checkIfElementExistsInPage("portalSubscriptionTermPopup", 10)) {
-      portalPage.clickUsingLowLevelActions("portalCloseButton");
-    }
+    closeSubscriptionTermPopup();
     portalPage.clickUsingLowLevelActions("portalReduceSeatsButton");
     portalPage.checkIfElementExistsInPage("portalReduceSeatsPanel", 10);
     portalPage.clickUsingLowLevelActions("portalMinusButton");
@@ -1515,5 +1513,44 @@ public class PortalTestBase {
       AssertUtils.fail("Product is displayed in portal" + " :: false");
     }
     return status;
+  }
+
+  @Step("Portal : Cancel subscription")
+  public void cancelSubscription(String portalUserName, String portalPassword)
+      throws MetadataException {
+    if (isPortalLoginPageVisible()) {
+      portalLogin(portalUserName, portalPassword);
+    }
+    openSubscriptionsLink();
+    Util.waitforPresenceOfElement(
+        portalPage.getFirstFieldLocator("subscriptionRowInSubscription"));
+    Util.printInfo("Clicking on subscription row...");
+    portalPage.clickUsingLowLevelActions("subscriptionRowInSubscription");
+    portalPage.waitForPageToLoad();
+    checkEmailVerificationPopupAndClick();
+    closeSubscriptionTermPopup();
+
+    Util.printInfo("Going through cancel flow");
+    portalPage.clickUsingLowLevelActions("autoRenewOffButton");
+    portalPage.clickUsingLowLevelActions("autoRenewOffContinue");
+    radioButtonClick("autoRenewOffRadioButton", 6);
+    portalPage.clickUsingLowLevelActions("autoRenewOffComments");
+    portalPage.populateField("Test cancellation.");
+    portalPage.clickUsingLowLevelActions("autoRenewTurnOffButton");
+    portalPage.clickUsingLowLevelActions("autoRenewDone");
+  }
+
+  @Step("Close Subscription Term Popup")
+  public void closeSubscriptionTermPopup() throws MetadataException {
+    if (portalPage.checkIfElementExistsInPage("portalSubscriptionTermPopup", 10)) {
+      portalPage.clickUsingLowLevelActions("portalCloseButton");
+    }
+  }
+
+  @Step("Click on a radio button")
+  public void radioButtonClick(String fieldName, int indexOfElement) throws MetadataException {
+    portalPage.checkIfElementExistsInPage(fieldName, 10);
+    List<WebElement> listEle = portalPage.getMultipleWebElementsfromField(fieldName);
+    listEle.get(indexOfElement).click();
   }
 }
