@@ -53,6 +53,10 @@
     <option name="RELEASE_STYLE" value="IVAR" />
     <option name="TYPE_QUALIFIERS_PLACEMENT" value="BEFORE" />
   </Objective-C-extensions>
+  <Properties>
+    <option name="SPACES_AROUND_KEY_VALUE_DELIMITER" value="true" />
+    <option name="KEEP_BLANK_LINES" value="true" />
+  </Properties>
   <Python>
     <option name="USE_CONTINUATION_INDENT_FOR_ARGUMENTS" value="true" />
   </Python>
@@ -171,6 +175,9 @@
     </indentOptions>
     <option name="RIGHT_MARGIN" value="80" />
   </codeStyleSettings>
+  <codeStyleSettings language="Properties"> 
+    <option name="ALIGN_GROUP_FIELD_DECLARATIONS" value="true" /> 
+  </codeStyleSettings> 
   <codeStyleSettings language="Python">
     <indentOptions>
       <option name="INDENT_SIZE" value="2" />
