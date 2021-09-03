@@ -42,9 +42,19 @@ public class BICTestBase {
     bicPage = testbase.createPage("PAGE_BIC_CART");
   }
 
+  public static void clearTextInputValue(WebElement element) {
+    String inputText = element.getAttribute("value");
+    if (inputText != null) {
+      for (int i = 0; i < inputText.length(); i++) {
+        element.sendKeys(Keys.BACK_SPACE);
+      }
+    }
+
+  }
+
   @Step("Generate email id")
   public String generateUniqueEmailID(String storeKey, String timeStamp, String sourceName,
-      String emailDomain) {
+    String emailDomain) {
     String strDate = null;
     String stk = storeKey.replace("-", "");
     if (storeKey.contains("NAMER")) {
@@ -154,16 +164,16 @@ public class BICTestBase {
 
     try {
 
-      Util.printInfo(" Checked bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
-      Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("bic_Agree"));
+      Util.printInfo("Checked bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
+      Util.printInfo("Checked box status for bic_Agree - " + bicPage.isChecked("bic_Agree"));
 
       if (!bicPage.isFieldVisible("bic_Agree")) {
         Util.sleep(20000);
-        Util.printInfo(" Checkbox bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
+        Util.printInfo("Checkbox bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
         Util.printWarning(
-            " Checkbox bic_Agree is present - " + bicPage.isFieldPresent("bic_Agree"));
+            "Checkbox bic_Agree is present - " + bicPage.isFieldPresent("bic_Agree"));
         Util.printWarning(
-            " Checkbox bic_Agree is FieldExist - " + bicPage.checkFieldExistence("bic_Agree"));
+            "Checkbox bic_Agree field exists - " + bicPage.checkFieldExistence("bic_Agree"));
       }
 
       checkboxTickJS();
@@ -195,7 +205,7 @@ public class BICTestBase {
       Util.sleep(10000);
 
       if (driver.findElement(By.xpath("//label[@id='optin_checkbox']")).getAttribute("class")
-          .contains("checked")) {
+        .contains("checked")) {
         Util.printInfo("Option checkbox is already selected..");
       } else {
         js.executeScript("document.getElementById('optin_checkbox').click()");
@@ -223,7 +233,7 @@ public class BICTestBase {
 
         if (loop == 5) {
           System.out.println(
-              "Unable to click on link " + xpath + "xpath " + bicPage.getFieldLocators(xpath));
+            "Unable to click on link " + xpath + "xpath " + bicPage.getFieldLocators(xpath));
           break;
         }
         loop++;
@@ -232,7 +242,7 @@ public class BICTestBase {
     } catch (Exception e) {
       e.printStackTrace();
       Util.PrintInfo(
-          "Unable to click on link " + xpath + "xpath " + bicPage.getFieldLocators(xpath));
+        "Unable to click on link " + xpath + "xpath " + bicPage.getFieldLocators(xpath));
     }
   }
 
@@ -251,8 +261,8 @@ public class BICTestBase {
     bicPage.waitForPageToLoad();
     Util.sleep(5000);
     boolean status =
-        bicPage.isFieldPresent("getStartedSkipLink") || bicPage.isFieldPresent("getStartedSkipLink")
-            || bicPage.isFieldPresent("getStartedSkipLink");
+      bicPage.isFieldPresent("getStartedSkipLink") || bicPage.isFieldPresent("getStartedSkipLink")
+        || bicPage.isFieldPresent("getStartedSkipLink");
 
     if (status) {
       bicPage.click("getStartedSkipLink");
@@ -274,7 +284,7 @@ public class BICTestBase {
     try {
       int count = 0;
       while (driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
-          .isDisplayed()) {
+        .isDisplayed()) {
         driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]")).click();
         count++;
         Util.sleep(1000);
@@ -283,11 +293,11 @@ public class BICTestBase {
         }
         if (count == 2) {
           driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
-              .sendKeys(Keys.ESCAPE);
+            .sendKeys(Keys.ESCAPE);
         }
         if (count == 1) {
           driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
-              .sendKeys(Keys.PAGE_DOWN);
+            .sendKeys(Keys.PAGE_DOWN);
         }
         System.out.println("count : " + count);
       }
@@ -312,8 +322,8 @@ public class BICTestBase {
     bicPage.waitForPageToLoad();
 
     boolean status =
-        bicPage.isFieldPresent("getStartedSkipLink") || bicPage.isFieldPresent("getStartedSkipLink")
-            || bicPage.isFieldPresent("getStartedSkipLink");
+      bicPage.isFieldPresent("getStartedSkipLink") || bicPage.isFieldPresent("getStartedSkipLink")
+        || bicPage.isFieldPresent("getStartedSkipLink");
 
     if (status) {
       bicPage.click("getStartedSkipLink");
@@ -349,26 +359,26 @@ public class BICTestBase {
 
       if (data.get("paymentType").equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
         firstNameXpath = bicPage.getFirstFieldLocator("firstName")
-            .replace("<PAYMENTPROFILE>", "paypal");
+          .replace("<PAYMENTPROFILE>", "paypal");
         lastNameXpath = bicPage.getFirstFieldLocator("lastName")
-            .replace("<PAYMENTPROFILE>", "paypal");
+          .replace("<PAYMENTPROFILE>", "paypal");
       } else if (data.get("paymentType").equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         firstNameXpath = bicPage.getFirstFieldLocator("firstName")
-            .replace("<PAYMENTPROFILE>", "ach");
+          .replace("<PAYMENTPROFILE>", "ach");
         lastNameXpath = bicPage.getFirstFieldLocator("lastName").replace("<PAYMENTPROFILE>", "ach");
       } else {
         firstNameXpath = bicPage.getFirstFieldLocator("firstName")
-            .replace("<PAYMENTPROFILE>", "credit-card");
+          .replace("<PAYMENTPROFILE>", "credit-card");
         lastNameXpath = bicPage.getFirstFieldLocator("lastName")
-            .replace("<PAYMENTPROFILE>", "credit-card");
+          .replace("<PAYMENTPROFILE>", "credit-card");
       }
 
-      driver.findElement(By.xpath(firstNameXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
+      clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
       Util.sleep(1000);
       driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get("firstname"));
 
-      driver.findElement(By.xpath(lastNameXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-      Util.sleep(2000);
+      clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
+      Util.sleep(1000);
       driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get("lastname"));
 
       if (address.size() == 6) {
@@ -390,10 +400,10 @@ public class BICTestBase {
 
   private void debugHTMLPage(String Message) {
     Util.printInfo("-------------" + Message + "----------------" +
-        "\n" + " URL :            " + driver.getCurrentUrl() + "\n" +
-        "\n" + " Page Title :     " + driver.getTitle() + "\n" +
+      "\n" + " URL :            " + driver.getCurrentUrl() + "\n" +
+      "\n" + " Page Title :     " + driver.getTitle() + "\n" +
 //				"\n" + " Page source  :   " + 	driver.getPageSource() +
-        "\n" + "-----------------------------");
+      "\n" + "-----------------------------");
   }
 
   public void clickOnContinueBtn(String paymentType) {
@@ -403,7 +413,7 @@ public class BICTestBase {
       List<WebElement> eles = bicPage.getMultipleWebElementsfromField("continueButton");
 
       if (paymentType.equalsIgnoreCase(BICConstants.paymentTypePayPal)
-          || paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+        || paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         eles.get(1).click();
       } else {
         eles.get(0).click();
@@ -425,50 +435,50 @@ public class BICTestBase {
       JavascriptExecutor js = (JavascriptExecutor) driver;
       js.executeScript("document.getElementById('checkout--liveagent--close-button').click();");
       String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
-          stateXpath = "";
+        stateXpath = "";
       switch (paymentType.toUpperCase()) {
         case BICConstants.paymentTypePayPal:
           orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name")
-              .replace("<PAYMENTPROFILE>", "paypal");
+            .replace("<PAYMENTPROFILE>", "paypal");
           fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address")
-              .replace("<PAYMENTPROFILE>", "paypal");
+            .replace("<PAYMENTPROFILE>", "paypal");
           cityXpath = bicPage.getFirstFieldLocator("City").replace("<PAYMENTPROFILE>", "paypal");
           zipXpath = bicPage.getFirstFieldLocator("Zipcode").replace("<PAYMENTPROFILE>", "paypal");
           phoneXpath = bicPage.getFirstFieldLocator("Phone_Number")
-              .replace("<PAYMENTPROFILE>", "paypal");
+            .replace("<PAYMENTPROFILE>", "paypal");
           countryXpath = bicPage.getFirstFieldLocator("Country")
-              .replace("<PAYMENTPROFILE>", "paypal");
+            .replace("<PAYMENTPROFILE>", "paypal");
           stateXpath = bicPage.getFirstFieldLocator("State_Province")
-              .replace("<PAYMENTPROFILE>", "paypal");
+            .replace("<PAYMENTPROFILE>", "paypal");
           break;
         case BICConstants.paymentTypeDebitCard:
           orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name")
-              .replace("<PAYMENTPROFILE>", "ach");
+            .replace("<PAYMENTPROFILE>", "ach");
           fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address")
-              .replace("<PAYMENTPROFILE>", "ach");
+            .replace("<PAYMENTPROFILE>", "ach");
           cityXpath = bicPage.getFirstFieldLocator("City").replace("<PAYMENTPROFILE>", "ach");
           zipXpath = bicPage.getFirstFieldLocator("Zipcode").replace("<PAYMENTPROFILE>", "ach");
           phoneXpath = bicPage.getFirstFieldLocator("Phone_Number")
-              .replace("<PAYMENTPROFILE>", "ach");
+            .replace("<PAYMENTPROFILE>", "ach");
           countryXpath = bicPage.getFirstFieldLocator("Country").replace("<PAYMENTPROFILE>", "ach");
           stateXpath = bicPage.getFirstFieldLocator("State_Province")
-              .replace("<PAYMENTPROFILE>", "ach");
+            .replace("<PAYMENTPROFILE>", "ach");
           break;
         default:
           orgNameXpath = bicPage.getFirstFieldLocator("Organization_Name")
-              .replace("<PAYMENTPROFILE>", "credit-card");
+            .replace("<PAYMENTPROFILE>", "credit-card");
           fullAddrXpath = bicPage.getFirstFieldLocator("Full_Address")
-              .replace("<PAYMENTPROFILE>", "credit-card");
+            .replace("<PAYMENTPROFILE>", "credit-card");
           cityXpath = bicPage.getFirstFieldLocator("City")
-              .replace("<PAYMENTPROFILE>", "credit-card");
+            .replace("<PAYMENTPROFILE>", "credit-card");
           zipXpath = bicPage.getFirstFieldLocator("Zipcode")
-              .replace("<PAYMENTPROFILE>", "credit-card");
+            .replace("<PAYMENTPROFILE>", "credit-card");
           phoneXpath = bicPage.getFirstFieldLocator("Phone_Number")
-              .replace("<PAYMENTPROFILE>", "credit-card");
+            .replace("<PAYMENTPROFILE>", "credit-card");
           countryXpath = bicPage.getFirstFieldLocator("Country")
-              .replace("<PAYMENTPROFILE>", "credit-card");
+            .replace("<PAYMENTPROFILE>", "credit-card");
           stateXpath = bicPage.getFirstFieldLocator("State_Province")
-              .replace("<PAYMENTPROFILE>", "credit-card");
+            .replace("<PAYMENTPROFILE>", "credit-card");
           break;
       }
 
@@ -484,24 +494,25 @@ public class BICTestBase {
       driver.findElement(By.xpath(orgNameXpath)).click();
       Util.sleep(1000);
       driver.findElement(By.xpath(orgNameXpath))
-          .sendKeys(
-              new RandomStringUtils().random(5, true, true) + address.get("Organization_Name"));
+        .sendKeys(
+          new RandomStringUtils().random(5, true, true) + address.get("Organization_Name"));
 
       driver.findElement(By.xpath(orgNameXpath)).click();
       Util.sleep(1000);
-      driver.findElement(By.xpath(fullAddrXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
+
+      clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       Util.sleep(1000);
       driver.findElement(By.xpath(fullAddrXpath)).sendKeys(address.get("Full_Address"));
 
-      driver.findElement(By.xpath(cityXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
+      clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
       Util.sleep(1000);
       driver.findElement(By.xpath(cityXpath)).sendKeys(address.get("City"));
 
-      driver.findElement(By.xpath(zipXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
+      clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
       Util.sleep(1000);
       driver.findElement(By.xpath(zipXpath)).sendKeys(address.get("Zipcode"));
 
-      driver.findElement(By.xpath(phoneXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
+      clearTextInputValue(driver.findElement(By.xpath(phoneXpath)));
       Util.sleep(1000);
       driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
 
@@ -526,7 +537,7 @@ public class BICTestBase {
     boolean status = false;
     try {
       status = bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0), 60000);
+        bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0), 60000);
     } catch (MetadataException e) {
       AssertUtils.fail("Organization_NameEMEA is not displayed on page...");
     }
@@ -593,11 +604,11 @@ public class BICTestBase {
 
     try {
       WebElement creditCardNumberFrame = bicPage
-          .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
+        .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
       WebElement expiryDateFrame = bicPage.getMultipleWebElementsfromField("expiryDateFrame")
-          .get(0);
+        .get(0);
       WebElement securityCodeFrame = bicPage.getMultipleWebElementsfromField("securityCodeFrame")
-          .get(0);
+        .get(0);
 
       driver.switchTo().frame(creditCardNumberFrame);
       Util.printInfo("Entering card number : " + paymentCardDetails[0]);
@@ -608,7 +619,7 @@ public class BICTestBase {
 
       driver.switchTo().frame(expiryDateFrame);
       Util.printInfo(
-          "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
+        "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
       Util.sleep(2000);
       bicPage.populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
       driver.switchTo().defaultContent();
@@ -637,7 +648,7 @@ public class BICTestBase {
 
       Util.printInfo("Waiting for Direct Debit ACH Header...");
       bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("directDebitHead").get(0), 10);
+        bicPage.getMultipleWebElementsfromField("directDebitHead").get(0), 10);
 
       Util.printInfo("Entering Direct Debit ACH Account Number : " + paymentCardDetails[0]);
       bicPage.populateField("achAccNumber", paymentCardDetails[0]);
@@ -652,7 +663,7 @@ public class BICTestBase {
   }
 
   @Step("Add Paypal Payment Details")
-  public void populatePaymentDetails(HashMap<String, String> data) {
+  public void populatePaypalPaymentDetails(HashMap<String, String> data) {
     Util.printInfo("Switching to latest window...");
     String parentWindow = driver.getWindowHandle();
 
@@ -662,7 +673,7 @@ public class BICTestBase {
 
       Util.printInfo("Clicking on Paypal checkout tab...");
       bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("paypalPaymentHead").get(0), 10);
+        bicPage.getMultipleWebElementsfromField("paypalPaymentHead").get(0), 10);
       bicPage.selectFrame("paypalCheckoutOptionFrame");
       bicPage.clickUsingLowLevelActions("paypalCheckoutBtn");
 
@@ -677,7 +688,7 @@ public class BICTestBase {
 
       String title = driver.getTitle();
       AssertUtils.assertTrue(title.contains("PayPal"),
-          "Current title [" + title + "] does not contains keyword : PayPal");
+        "Current title [" + title + "] does not contains keyword : PayPal");
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
       if (bicPage.checkIfElementExistsInPage("paypalAcceptCookiesBtn", 10)) {
@@ -686,7 +697,7 @@ public class BICTestBase {
 
       Util.printInfo("Entering paypal user name [" + data.get("paypalUser") + "]...");
       bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
+        bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
       bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
 
       Util.printInfo("Entering paypal password...");
@@ -704,19 +715,20 @@ public class BICTestBase {
 
       Util.printInfo("Selecting paypal payment option " + data.get("paypalPaymentType"));
       String paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
-          .replace("<PAYMENTOPTION>",
-              data.get("paypalPaymentType"));
+        .replace("<PAYMENTOPTION>",
+          data.get("paypalPaymentType"));
       driver.findElement(By.xpath(paymentTypeXpath)).click();
 
       bicPage.executeJavascript("window.scrollBy(0,1000);");
       Util.printInfo("Clicking on agree and continue button...");
+      bicPage.waitForFieldPresent("paypalAgreeAndContBtn", 10000);
       bicPage.clickUsingLowLevelActions("paypalAgreeAndContBtn");
       Util.sleep(10000);
 
       driver.switchTo().window(parentWindow);
       Util.sleep(5000);
       Util.printInfo(
-          "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
+        "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
 
       if (bicPage.checkIfElementExistsInPage("paypalPaymentConfirmation", 10)) {
         Util.printInfo("Paypal Payment is successfully added...");
@@ -735,7 +747,7 @@ public class BICTestBase {
       Util.printInfo("Selecting payment profile : " + data.get("paymentType"));
       switch (data.get("paymentType").toUpperCase()) {
         case BICConstants.paymentTypePayPal:
-          populatePaymentDetails(data);
+          populatePaypalPaymentDetails(data);
           break;
         case BICConstants.paymentTypeDebitCard:
           populateACHPaymentDetails(paymentCardDetails);
@@ -769,15 +781,19 @@ public class BICTestBase {
     try {
       if (System.getProperty("payment").equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("document.getElementById('mandate-agreement').click()");
-
+        WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
+        if (!achAgreeElement.isEnabled()) {
+          JavascriptExecutor js = (JavascriptExecutor) driver;
+          js.executeScript("document.getElementById('mandate-agreement').click()");
+        }
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -822,8 +838,8 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
-          .isDisplayed()) {
+        "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+        .isDisplayed()) {
         Util.printInfo("Export compliance issue is present");
       }
       AssertUtils.fail("Unable to place BIC order : " + "Export compliance issue is present");
@@ -872,7 +888,7 @@ public class BICTestBase {
         debugHTMLPage(" Step 6 Assert order Number is Null");
 
         orderNumber = driver.findElement(By.xpath("//h2[text()='Order Processing Problem']"))
-            .getText();
+          .getText();
         debugHTMLPage("");
         AssertUtils.fail("Unable to place BIC order : " + orderNumber);
       } catch (Exception e) {
@@ -892,8 +908,8 @@ public class BICTestBase {
   }
 
   public void printConsole(String Url, String OrderNumber, String emailID,
-      Map<String, String> address,
-      String firstName, String lastName, String paymentMethod) {
+    Map<String, String> address,
+    String firstName, String lastName, String paymentMethod) {
     Util.printInfo("*************************************************************" + "\n");
     Util.printAssertingMessage("Url to place order       :: " + Url);
     Util.printAssertingMessage("Email Id for the account :: " + emailID);
@@ -935,14 +951,14 @@ public class BICTestBase {
       // New user to be created
       if ((Strings.isNullOrEmpty(O2ID))) {
         orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity,
-            guacResourceURL, region, password, paymentMethod);
+          guacResourceURL, region, password, paymentMethod);
       }
     } else {
       String timeStamp = new RandomStringUtils().random(12, true, false);
       emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-          "thub", "letscheck.pw");
+        "thub", "letscheck.pw");
       orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-          region, password, paymentMethod);
+        region, password, paymentMethod);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -975,16 +991,16 @@ public class BICTestBase {
       // New user to be created
       if ((Strings.isNullOrEmpty(O2ID))) {
         orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
-            guacOverviewResourceURL, productName, term,
-            region, quantity, password, paymentMethod);
+          guacOverviewResourceURL, productName, term,
+          region, quantity, password, paymentMethod);
       }
     } else {
       String timeStamp = new RandomStringUtils().random(12, true, false);
       emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-          "thub", "letscheck.pw");
+        "thub", "letscheck.pw");
       orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL, guacOverviewResourceURL,
-          productName, term,
-          region, quantity, password, paymentMethod);
+        productName, term,
+        region, quantity, password, paymentMethod);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1042,16 +1058,15 @@ public class BICTestBase {
       // New user to be created
       if ((Strings.isNullOrEmpty(O2ID))) {
         orderNumber = getBICOrderPromoCode(data, emailID, guacBaseURL, productID, guacResourceURL,
-            region, password,
-            paymentMethod, promocode);
+          region, password,
+          paymentMethod, promocode);
       }
     } else {
       String timeStamp = new RandomStringUtils().random(13, true, false);
       emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-          "thub", "letscheck.pw");
+        "thub", "letscheck.pw");
       orderNumber = getBICOrderPromoCode(data, emailID, guacBaseURL, productID, guacResourceURL,
-          region, password,
-          paymentMethod, promocode);
+        region, password, paymentMethod, promocode);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1066,7 +1081,7 @@ public class BICTestBase {
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
       js.executeScript(String.format(
-          "window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");"));
+        "window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");"));
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       e2.printStackTrace();
@@ -1075,12 +1090,12 @@ public class BICTestBase {
   }
 
   private String createBICOrder(LinkedHashMap<String, String> data, String emailID,
-      String guacBaseURL,
-      String productID, String quantity, String guacResourceURL, String region, String password,
-      String paymentMethod) {
+    String guacBaseURL,
+    String productID, String quantity, String guacResourceURL, String region, String password,
+    String paymentMethod) {
     String orderNumber;
     String constructGuacURL =
-        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
+      guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
     System.out.println("constructGuacURL " + constructGuacURL);
     String firstName = null, lastName = null;
     Map<String, String> address = null;
@@ -1120,15 +1135,18 @@ public class BICTestBase {
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('mandate-agreement').click()");
+        WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
 
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1139,16 +1157,16 @@ public class BICTestBase {
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
     printConsole(constructGuacURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
+      paymentMethod);
 
     return orderNumber;
   }
 
   private String createBICOrderDotCom(LinkedHashMap<String, String> data, String emailID,
-      String guacDotComBaseURL,
-      String guacOverviewResourceURL, String productName, String term, String region,
-      String quantity, String password,
-      String paymentMethod) {
+    String guacDotComBaseURL,
+    String guacOverviewResourceURL, String productName, String term, String region,
+    String quantity, String password,
+    String paymentMethod) {
     String orderNumber;
     String constructGuacDotComURL = guacDotComBaseURL + productName + guacOverviewResourceURL;
 
@@ -1190,15 +1208,19 @@ public class BICTestBase {
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo(
+            "Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('mandate-agreement').click()");
+        WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
 
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1209,14 +1231,14 @@ public class BICTestBase {
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
     printConsole(constructGuacDotComURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
+      paymentMethod);
 
     return orderNumber;
   }
 
   private String getBICOrderPromoCode(LinkedHashMap<String, String> data, String emailID,
-      String guacBaseURL, String productID, String guacResourceURL, String region, String password,
-      String paymentMethod, String promocode) {
+    String guacBaseURL, String productID, String guacResourceURL, String region, String password,
+    String paymentMethod, String promocode) {
     String orderNumber;
     String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
     System.out.println("constructGuacURL " + constructGuacURL);
@@ -1263,15 +1285,18 @@ public class BICTestBase {
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('mandate-agreement').click()");
+        WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
 
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1282,7 +1307,7 @@ public class BICTestBase {
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
     printConsole(constructGuacURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
+      paymentMethod);
 
     return orderNumber;
   }
@@ -1294,13 +1319,13 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath("//h2[contains(text(),\"just have a question\")]"))
-          .isDisplayed()) {
+        .isDisplayed()) {
         bicPage.clickUsingLowLevelActions("promocodePopUpThanksButton");
       }
 
       priceBeforePromo = bicPage.getValueFromGUI("promocodeBeforeDiscountPrice").trim();
       Util.printInfo("Step : Entering promocode " + promocode + "\n" + " priceBeforePromo : "
-          + priceBeforePromo);
+        + priceBeforePromo);
 
       bicPage.clickUsingLowLevelActions("promocodeLink");
       bicPage.clickUsingLowLevelActions("promocodeInput");
@@ -1311,19 +1336,19 @@ public class BICTestBase {
 
       Util.printInfo("----------------------------------------------------------------------");
       Util.printInfo(
-          "\n" + " priceBeforePromo :  " + priceBeforePromo + "\n" + " priceAfterPromo : "
-              + priceAfterPromo);
+        "\n" + " priceBeforePromo :  " + priceBeforePromo + "\n" + " priceAfterPromo : "
+          + priceAfterPromo);
       Util.printInfo("----------------------------------------------------------------------");
 
     } catch (Exception e) {
       Util.printTestFailedMessage(
-          "Unable to enter the Promocode : " + promocode + "\n" + e.getMessage());
+        "Unable to enter the Promocode : " + promocode + "\n" + e.getMessage());
     } finally {
       if (priceAfterPromo.equalsIgnoreCase(priceBeforePromo)) {
         AssertUtils
-            .fail("Even after applying the PromoCode, there is not change in the Pricing" + "\n"
-                + "priceBeforePromo :  " + priceBeforePromo + "\n"
-                + "priceAfterPromo : " + priceAfterPromo);
+          .fail("Even after applying the PromoCode, there is not change in the Pricing" + "\n"
+            + "priceBeforePromo :  " + priceBeforePromo + "\n"
+            + "priceAfterPromo : " + priceAfterPromo);
       } else {
         data.put("priceBeforePromo", priceBeforePromo);
         data.put("priceAfterPromo", priceAfterPromo);
@@ -1347,8 +1372,8 @@ public class BICTestBase {
   private String validateBicOrderNumber(String orderNumber) {
     Util.printInfo(orderNumber);
     if (!((orderNumber.equalsIgnoreCase("EXPORT COMPLIANCE")) || (orderNumber
-        .equalsIgnoreCase("輸出コンプライアンス")))
-        || (orderNumber.equalsIgnoreCase("null"))) {
+      .equalsIgnoreCase("輸出コンプライアンス")))
+      || (orderNumber.equalsIgnoreCase("null"))) {
       orderNumber = orderNumber.trim();
     } else {
       Util.printTestFailedMessage(" Cart order " + orderNumber);
@@ -1363,20 +1388,20 @@ public class BICTestBase {
       if (driver.findElement(By.xpath("//*[@id=\"register_link\"]")).isDisplayed()) {
         System.out.println("Page is loaded");
       } else if (driver
-          .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
-          .isDisplayed()) {
+        .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
+        .isDisplayed()) {
         Util.printTestFailedMessage("Error message is displayed while loading Checkout Cart");
         String errorMsg = driver
-            .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
-            .getText();
+          .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
+          .getText();
         AssertUtils.fail(errorMsg);
       } else if (driver
-          .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
-          .isDisplayed()) {
+        .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
+        .isDisplayed()) {
         Util.printTestFailedMessage("Error message is displayed while loading Commerce Cart");
         String errorMsg = driver
-            .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
-            .getText();
+          .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
+          .getText();
         AssertUtils.fail(errorMsg);
       }
     } catch (Exception e) {
@@ -1406,7 +1431,7 @@ public class BICTestBase {
     loginBICAccount(data);
 
     if (data.get("paymentType").equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
-      populatePaymentDetails(data);
+      populatePaypalPaymentDetails(data);
     } else if (data.get("paymentType").equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
       if (bicPage.isChecked("achCheckBox") == false) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -1416,14 +1441,10 @@ public class BICTestBase {
       }
     }
 
-//     region = region.replace("/", "").replace("-", "");
-//     Map<String, String> address = billingAddress(region);
-//     populateBillingAddress(address, data);
     orderNumber = submitGetOrderNumber();
     validateBicOrderNumber(orderNumber);
     Util.printInfo("OrderNumber  :: " + orderNumber);
 
-//    printConsole(constructGuacURL, orderNumber, "", null, "", "", paymentMethod);
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
@@ -1492,9 +1513,9 @@ public class BICTestBase {
   }
 
   @Step("Create BIC Existing User Order Creation via Cart and add seat"
-      + GlobalConstants.TAG_TESTINGHUB)
+    + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBic_ReturningUserAddSeat(
-      LinkedHashMap<String, String> data) {
+    LinkedHashMap<String, String> data) {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
@@ -1546,8 +1567,8 @@ public class BICTestBase {
         break;
       }
     } while (!(new WebDriverWait(driver, 20).until(
-        webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState")
-            .equals("complete"))));
+      webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState")
+        .equals("complete"))));
   }
 
   public String getRandomMobileNumber() {
@@ -1575,7 +1596,7 @@ public class BICTestBase {
   public void acceptCookiesAndUSSiteLink() {
     try {
       WebElement bicAcceptCookiesBtn = bicPage
-          .getMultipleWebElementsfromField("bicAcceptCookiesBtn").get(0);
+        .getMultipleWebElementsfromField("bicAcceptCookiesBtn").get(0);
       if (bicAcceptCookiesBtn.isDisplayed()) {
         bicAcceptCookiesBtn.click();
       }
@@ -1622,16 +1643,16 @@ public class BICTestBase {
       // New user to be created
       if ((Strings.isNullOrEmpty(O2ID))) {
         orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity,
-            guacResourceURL, region, password,
-            paymentMethod);
+          guacResourceURL, region, password,
+          paymentMethod);
       }
     } else {
       String timeStamp = new RandomStringUtils().random(12, true, false);
       emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-          "thub", "letscheck.pw");
+        "thub", "letscheck.pw");
       orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-          region, password,
-          paymentMethod);
+        region, password,
+        paymentMethod);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1642,11 +1663,11 @@ public class BICTestBase {
 
   @Step("Get BIC order")
   private String getBICOrder(LinkedHashMap<String, String> data, String emailID, String guacBaseURL,
-      String productID, String quantity,
-      String guacResourceURL, String region, String password, String paymentMethod) {
+    String productID, String quantity,
+    String guacResourceURL, String region, String password, String paymentMethod) {
     String orderNumber;
     String constructGuacURL =
-        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
+      guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
     System.out.println("constructGuacURL " + constructGuacURL);
     String firstName = null, lastName = null;
     Map<String, String> address = null;
@@ -1686,15 +1707,18 @@ public class BICTestBase {
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('mandate-agreement').click()");
+        WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
 
         Util.printInfo(
-            " Checked bic_Agree is visible - " + bicPage.isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo(" Checked box status for bic_Agree - " + bicPage.isChecked("achCheckBox"));
+            "Checked ACH Authorization Agreement is visible - " + bicPage
+                .isFieldVisible("achCheckBoxHeader"));
+        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1705,7 +1729,7 @@ public class BICTestBase {
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
     printConsole(constructGuacURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
+      paymentMethod);
 
     return orderNumber;
   }
@@ -1739,14 +1763,14 @@ public class BICTestBase {
 
         bicPage.waitForFieldPresent("downloadFreeTrialUserName", 1000);
         bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialUserName",
-            System.getProperty(BICECEConstants.EMAIL));
+          System.getProperty(BICECEConstants.EMAIL));
 
         bicPage.waitForFieldPresent("downloadFreeTrialVerifyUserButtonClick", 1000);
         bicPage.clickUsingLowLevelActions("downloadFreeTrialVerifyUserButtonClick");
 
         bicPage.waitForFieldPresent("downloadFreeTrialPassword", 1000);
         bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialPassword",
-            System.getProperty(BICECEConstants.PASSWORD));
+          System.getProperty(BICECEConstants.PASSWORD));
 
         bicPage.waitForFieldPresent("downloadFreeTrialSignInButtonClick", 1000);
         bicPage.clickUsingLowLevelActions("downloadFreeTrialSignInButtonClick");
@@ -1803,16 +1827,16 @@ public class BICTestBase {
       // New user to be created
       if ((Strings.isNullOrEmpty(O2ID))) {
         orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, productID, quantity,
-            guacResourceURL,
-            guacMoeResourceURL, region, password, paymentMethod, cepURL);
+          guacResourceURL,
+          guacMoeResourceURL, region, password, paymentMethod, cepURL);
       }
     } else {
       String timeStamp = new RandomStringUtils().random(12, true, false);
       emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-          "thub", "letscheck.pw");
+        "thub", "letscheck.pw");
       orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-          guacMoeResourceURL,
-          region, password, paymentMethod, cepURL);
+        guacMoeResourceURL,
+        region, password, paymentMethod, cepURL);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1822,9 +1846,9 @@ public class BICTestBase {
   }
 
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
-      String guacBaseURL, String productID, String quantity,
-      String guacResourceURL, String guacMoeResourceURL, String region, String password,
-      String paymentMethod, String cepURL) {
+    String guacBaseURL, String productID, String quantity,
+    String guacResourceURL, String guacMoeResourceURL, String region, String password,
+    String paymentMethod, String cepURL) {
     String orderNumber;
     String constructGuacURL = guacBaseURL + region + guacResourceURL + productID + quantity;
     System.out.println("constructGuacURL " + constructGuacURL);
@@ -1878,7 +1902,7 @@ public class BICTestBase {
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
     printConsole(constructGuacMoeURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
+      paymentMethod);
 
     // Navigate to Portal, logout from service account session and log back in with user account
     getUrl(constructPortalUrl);
@@ -1985,16 +2009,16 @@ public class BICTestBase {
       // New user to be created
       if ((Strings.isNullOrEmpty(O2ID))) {
         orderNumber = createBicIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity,
-            guacDRResourceURL,
-            region, password, paymentMethod);
+          guacDRResourceURL,
+          region, password, paymentMethod);
       }
     } else {
       String timeStamp = new RandomStringUtils().random(12, true, false);
       emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-          "thub", "letscheck.pw");
+        "thub", "letscheck.pw");
       orderNumber = createBicIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity,
-          guacDRResourceURL, region,
-          password, paymentMethod);
+        guacDRResourceURL, region,
+        password, paymentMethod);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -2004,9 +2028,9 @@ public class BICTestBase {
   }
 
   private String createBicIndirectOrder(LinkedHashMap<String, String> data, String emailID,
-      String guacDRBaseURL,
-      String productID, String quantity, String guacDRResourceURL, String region, String password,
-      String paymentMethod) {
+    String guacDRBaseURL,
+    String productID, String quantity, String guacDRResourceURL, String region, String password,
+    String paymentMethod) {
     String orderNumber;
     String constructGuacDRURL = guacDRBaseURL + region + guacDRResourceURL + productID + quantity;
     System.out.println("constructGuacDRURL " + constructGuacDRURL);
@@ -2051,7 +2075,7 @@ public class BICTestBase {
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
     printConsole(constructGuacDRURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
+      paymentMethod);
 
     clickOnViewInvoiceLink();
 
@@ -2101,7 +2125,7 @@ public class BICTestBase {
 
     try {
       WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField("creditCardFrameDR")
-          .get(0);
+        .get(0);
       driver.switchTo().frame(creditCardFrameDR);
       Util.sleep(2000);
 
@@ -2115,7 +2139,7 @@ public class BICTestBase {
       bicPage.waitForField("cardNumberDR", true, 10000);
       bicPage.click("cardNumberDR");
       bicPage.executeJavascript(
-          "document.getElementById('ccNum').value='" + paymentCardDetails[0] + "'");
+        "document.getElementById('ccNum').value='" + paymentCardDetails[0] + "'");
       Util.sleep(1000);
 
       WebElement monthEle = driver.findElement(By.xpath(expirationMonthDRXpath));
@@ -2131,7 +2155,7 @@ public class BICTestBase {
       Util.printInfo("Entering security code : " + paymentCardDetails[3]);
       bicPage.click("cardSecurityCodeDR");
       bicPage.executeJavascript(
-          "document.getElementById('cardSecurityCode').value='" + paymentCardDetails[3] + "'");
+        "document.getElementById('cardSecurityCode').value='" + paymentCardDetails[3] + "'");
       Util.sleep(1000);
 
       driver.switchTo().defaultContent();
@@ -2143,12 +2167,12 @@ public class BICTestBase {
 
   @Step("Populate DR billing address")
   public boolean populateBillingAddressDR(Map<String, String> address,
-      HashMap<String, String> data) {
+    HashMap<String, String> data) {
     boolean status = false;
 
     try {
       WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField("creditCardFrameDR")
-          .get(0);
+        .get(0);
       driver.switchTo().frame(creditCardFrameDR);
 
       String paymentType = System.getProperty("payment");
@@ -2180,7 +2204,7 @@ public class BICTestBase {
 
     try {
       WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField("creditCardFrameDR")
-          .get(0);
+        .get(0);
       driver.switchTo().frame(creditCardFrameDR);
 
       Util.printInfo("Adding DR billing details...");
@@ -2208,7 +2232,7 @@ public class BICTestBase {
       driver.findElement(By.xpath(orgNameXpath)).click();
       Util.sleep(1000);
       driver.findElement(By.xpath(orgNameXpath))
-          .sendKeys(new RandomStringUtils().random(5, true, true) + address.get("companyNameDR"));
+        .sendKeys(new RandomStringUtils().random(5, true, true) + address.get("companyNameDR"));
 
       driver.findElement(By.xpath(fullAddrXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
       Util.sleep(1000);
@@ -2288,7 +2312,7 @@ public class BICTestBase {
       driver.switchTo().window(tab.get(1));
 
       orderNumberInStore = driver.findElement(By.xpath("//*[@id='dr_orderNumber']//span"))
-          .getText();
+        .getText();
       Util.printInfo("Find DR order number from store: " + orderNumberInStore);
       AssertUtils.assertEquals(orderNumber, orderNumberInStore);
     } catch (Exception e) {
