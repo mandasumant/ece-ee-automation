@@ -870,10 +870,10 @@ public class BICOrderCreation extends ECETestBase {
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get("response_endDate"),
             results.get("response_nextBillingDate"));
+    Assert.assertEquals(results.get("response_autoRenewEnabled"), "false",
+        "Auto renew is off.");
     AssertUtils
         .assertEquals("Expiration date equals next billing date.",
             results.get("response_expirationDate"), results.get("response_nextBillingDate"));
-    Assert.assertEquals(results.get("response_autoRenewEnabled"), "false",
-        "Auto renew is off.");
   }
 }

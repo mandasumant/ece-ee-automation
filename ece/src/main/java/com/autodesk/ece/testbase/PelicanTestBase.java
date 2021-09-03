@@ -127,7 +127,7 @@ public class PelicanTestBase {
       results.put("response_subscriptionQuantity", Integer.toString(js.get("data.quantity")));
       results.put("response_quantityToReduce", Integer.toString(js.get("data.quantityToReduce")));
       results.put("response_endDate", js.get("data.endDate"));
-      results.put("response_autoRenewEnabled", String.valueOf(js.get("data.autoRenewEnabled")));
+      results.put("response_autoRenewEnabled", Boolean.toString(js.get("data.autoRenewEnabled")));
       results.put("response_expirationDate", js.get("data.expirationDate"));
 
     } catch (Exception e) {
