@@ -845,11 +845,6 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // The End date of the subscription should be null
-    String basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
-    String pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
-        results.get("getPOReponse_subscriptionId"));
-    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
-    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
     results.put("subscriptionEndDate", results.get("response_endDate"));
     Assert.assertNull(results.get("response_endDate"), "End date is null.");
 
@@ -858,8 +853,8 @@ public class BICOrderCreation extends ECETestBase {
         results.get(TestingHubConstants.emailid), "Password1");
 
     // The End Date of the subscription should be the same as the Next Billing Date
-    basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
-    pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
+    String basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
+    String pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
         results.get("getPOReponse_subscriptionId"));
     testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
     results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));

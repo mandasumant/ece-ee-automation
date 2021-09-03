@@ -1541,14 +1541,14 @@ public class PortalTestBase {
   }
 
   @Step("Close Subscription Term Popup")
-  public void closeSubscriptionTermPopup() throws MetadataException {
+  private void closeSubscriptionTermPopup() throws MetadataException {
     if (portalPage.checkIfElementExistsInPage("portalSubscriptionTermPopup", 10)) {
       portalPage.clickUsingLowLevelActions("portalCloseButton");
     }
   }
 
   @Step("Click on a radio button")
-  public void radioButtonClick(String fieldName, int indexOfElement) throws MetadataException {
+  private void radioButtonClick(String fieldName, int indexOfElement) throws MetadataException {
     portalPage.checkIfElementExistsInPage(fieldName, 10);
     List<WebElement> listEle = portalPage.getMultipleWebElementsfromField(fieldName);
     listEle.get(indexOfElement).click();
