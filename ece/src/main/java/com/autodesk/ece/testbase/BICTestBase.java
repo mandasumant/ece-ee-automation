@@ -1661,54 +1661,6 @@ public class BICTestBase {
     return results;
   }
 
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACBic_Orders_US(LinkedHashMap<String, String> data) {
-    String orderNumber = null;
-    String emailID = null;
-    HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
-    String productID = "";
-    String quantity = "";
-    String guacResourceURL = data.get("guacResourceURL");
-    String userType = data.get("userType");
-//    String addressUS = data.get("Cart_Address_US");
-    String region = data.get("languageStore");
-    String password = data.get("password");
-    String paymentMethod = System.getProperty("payment");
-
-    if (System.getProperty("sku").contains("default")) {
-      productID = data.get("productID");
-    } else {
-      String sku = System.getProperty("sku");
-      productID = sku.split(":")[0];
-      quantity = sku.split(":")[1];
-    }
-
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      emailID = System.getProperty("email");
-      String O2ID = getO2ID(data, emailID);
-      // New user to be created
-      if ((Strings.isNullOrEmpty(O2ID))) {
-        orderNumber = getBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-          region, password,
-          paymentMethod);
-      }
-    } else {
-      String timeStamp = new RandomStringUtils().random(12, true, false);
-      emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-        "thub", "letscheck.pw");
-      orderNumber = getBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-        region, password,
-        paymentMethod);
-    }
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
-  }
-
   @Step("Get BIC order")
   private String getBICOrder(LinkedHashMap<String, String> data, String emailID, String guacBaseURL,
     String productID, String quantity,
@@ -2026,68 +1978,6 @@ public class BICTestBase {
     }
 
     Util.printInfo("Successfully logged in");
-  }
-
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACBic_Orders_PromoCode(
-    LinkedHashMap<String, String> data) {
-    String orderNumber = null;
-    String emailID = null;
-    HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
-    String productID = "";
-    String quantity = "";
-    String guacResourceURL = data.get("guacResourceURL");
-    String userType = data.get("userType");
-    String region = data.get("languageStore");
-    String password = data.get("password");
-    String paymentMethod = System.getProperty("payment");
-    String promocode = System.getProperty("promocode");
-
-    if (System.getProperty("sku").contains("default")) {
-      productID = data.get("productID");
-    } else {
-      String sku = System.getProperty("sku");
-      productID = sku.split(":")[0];
-      quantity = sku.split(":")[1];
-    }
-
-    // While picking the default value we are also overriding the Price ID to match
-    // with the promo code
-
-    boolean promoAvailable = !(Strings.isNullOrEmpty(promocode));
-    boolean skuAvailable = !(System.getProperty("sku").contains("default"));
-
-    if (!(promoAvailable && skuAvailable)) {
-      promocode = "GUACPROMO";
-      productID = "27125";
-    }
-
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      emailID = System.getProperty("email");
-      String O2ID = getO2ID(data, emailID);
-      // New user to be created
-      if ((Strings.isNullOrEmpty(O2ID))) {
-        orderNumber = getBICOrderPromoCode(data, emailID, guacBaseURL, productID, guacResourceURL,
-          region, password,
-          paymentMethod, promocode);
-      }
-    } else {
-      String timeStamp = new RandomStringUtils().random(13, true, false);
-      emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-        "thub", "letscheck.pw");
-      orderNumber = getBICOrderPromoCode(data, emailID, guacBaseURL, productID, guacResourceURL,
-        region, password,
-        paymentMethod, promocode);
-    }
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-    results.put("priceBeforePromo", data.get("priceBeforePromo"));
-    results.put("priceAfterPromo", data.get("priceAfterPromo"));
-
-    return results;
   }
 
   @SuppressWarnings({"static-access", "unused"})
@@ -2429,5 +2319,4 @@ public class BICTestBase {
       AssertUtils.fail("Failed to validate order number from Store");
     }
   }
-
 }
