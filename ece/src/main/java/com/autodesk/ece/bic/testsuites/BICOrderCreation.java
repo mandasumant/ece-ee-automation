@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -335,7 +336,7 @@ public class BICOrderCreation extends ECETestBase {
     Util.printInfo("Placing initial order");
 
     HashMap<String, String> results = getBicTestBase()
-        .createGUACBic_Orders_US(testDataForEachMethod);
+        .createGUACBICOrderUS(testDataForEachMethod);
 
     results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
     results.remove(BICConstants.orderNumber);
@@ -386,7 +387,7 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
-        .createGUACBic_Orders_US(testDataForEachMethod);
+        .createGUACBICOrderUS(testDataForEachMethod);
     Util.sleep(180000);
     results.putAll(testDataForEachMethod);
 
@@ -829,7 +830,7 @@ public class BICOrderCreation extends ECETestBase {
 
     // Place the first order
     HashMap<String, String> results = getBicTestBase()
-        .createGUACBic_Orders_US(testDataForEachMethod);
+        .createGUACBICOrderUS(testDataForEachMethod);
 
     results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
     testDataForEachMethod.putAll(results);
@@ -903,4 +904,54 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  @Test(groups = {"bic-cancel-subscription"}, description = "Cancel subscription in Portal")
+  public void validateCancelSubscription() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    // Getting a PurchaseOrder details from pelican
+    String baseUrl = results.get("getPurchaseOrderDetails");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+    // Get find Subscription ById
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // The End date of the subscription should be null
+    results.put("subscriptionEndDate", results.get("response_endDate"));
+    Assert.assertNull(results.get("response_endDate"), "End date is null.");
+
+    // Cancel Subscription in Portal.
+    portaltb.cancelSubscription(
+        results.get(TestingHubConstants.emailid), "Password1");
+
+    // The End Date of the subscription should be the same as the Next Billing Date
+    String basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
+    String pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
+        results.get("getPOReponse_subscriptionId"));
+    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
+    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
+    results.put("subscriptionEndDate", results.get("response_endDate"));
+    results.put("nextBillingDate", results.get("response_nextBillingDate"));
+    results.put("autoRenewEnabled", results.get("response_autoRenewEnabled"));
+    results.put("expirationDate", results.get("response_expirationDate"));
+    AssertUtils
+        .assertEquals("End date should equal Next Billing Date.", results.get("response_endDate"),
+            results.get("response_nextBillingDate"));
+    Assert.assertEquals(results.get("response_autoRenewEnabled"), "false",
+        "Auto renew is off.");
+    AssertUtils
+        .assertEquals("Expiration date equals next billing date.",
+            results.get("response_expirationDate"), results.get("response_nextBillingDate"));
+  }
 }

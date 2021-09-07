@@ -237,7 +237,7 @@ STORE-SE:
   postalCodeStore: "400 20"
   priceIDStore: "30740"
 
-createGUACBic_Orders_US:
+createGUACBICOrderUS:
   userType: "newUser"
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
@@ -315,3 +315,8 @@ promocodeBicOrder:
   nullTest: "1"
   productID: "27125"
   languageStore: "en-US/"
+
+validateCancelSubscription:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "1"
