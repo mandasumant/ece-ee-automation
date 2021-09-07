@@ -158,6 +158,89 @@ public class BICOrderCreation extends ECETestBase {
 
   }
 
+  @Test(groups = {
+      "bic-nativeorder-switch-term-US"}, description = "Validation of Create BIC Hybrid Order")
+  public void validateBicNativeOrderSwitchTerm() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    // Getting a PurchaseOrder details from pelican
+    String baseUrl = results.get("getPurchaseOrderDetails");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+    // Get find Subscription ById
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // Trigger Invoice join
+    baseUrl = results.get("postInvoicePelicanAPI");
+    results.put("pelican_BaseUrl", baseUrl);
+    pelicantb.postInvoicePelicanAPI(results);
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumberSAP, results.get("orderNumberSAP"));
+      testResults.put(BICConstants.orderState, results.get("getPOReponse_orderState"));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get("getPOReponse_fulfillmentStatus"));
+      testResults.put(BICConstants.fulfillmentDate, results.get("getPOReponse_fulfillmentDate"));
+      testResults.put(BICConstants.subscriptionId, results.get("getPOReponse_subscriptionId"));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get("getPOReponse_subscriptionPeriodStartDate"));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get("getPOReponse_subscriptionPeriodEndDate"));
+      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get("getPOReponse_storedPaymentProfileId"));
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testinghub");
+    }
+    updateTestingHub(testResults);
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        "Password1", results.get("getPOReponse_subscriptionId"));
+    updateTestingHub(testResults);
+
+    portaltb.switchTermInUserPortal(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        "Password1", results.get("getPOReponse_subscriptionId"));
+    updateTestingHub(testResults);
+    Util.sleep(120000);
+
+    // Get find Subscription ById
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get("getPOReponse_subscriptionPeriodStartDate"));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get("getPOReponse_subscriptionPeriodEndDate"));
+      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testinghub");
+    }
+    updateTestingHub(testResults);
+
+  }
+
   @Test(groups = {"bic-addseat-native-US"}, description = "Validation of BIC Add Seat Order")
   public void validateBicAddSeatNativeOrder() {
     System.out.println("Version 20th April 2021");
