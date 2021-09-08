@@ -43,7 +43,7 @@ import org.w3c.dom.Element;
 public class PelicanTestBase {
 
   public PelicanTestBase() {
-    Util.PrintInfo("PelicanTestBase from core");
+    Util.PrintInfo("PelicanTestBase from ece");
   }
 
   @SuppressWarnings("unchecked")
