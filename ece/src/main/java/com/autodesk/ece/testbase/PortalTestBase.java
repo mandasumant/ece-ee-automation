@@ -710,9 +710,9 @@ public class PortalTestBase {
         clickALLPSLink();
         JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
         portalPage.waitForPageToLoad();
-        WebElement ele = driver
+        WebElement primaryEntitlements = driver
             .findElement(By.xpath("//*[@id='primary-entitlements']/div[2]/div"));
-        ele.click();
+        primaryEntitlements.click();
 
         clickWithJavaScriptExecutor(javascriptExecutor, "//a[@data-action='ManageRenewal']");
 

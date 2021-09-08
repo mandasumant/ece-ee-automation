@@ -227,6 +227,15 @@ public class BICOrderCreation extends ECETestBase {
     results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
+    Assert.assertNotNull(results.get("response_currentBillingPriceId"),
+        "Current Billing PriceId  should not be null");
+    Assert.assertNotNull(results.get("response_nextBillingPriceId"),
+        "Next Billing PriceId  should not be null");
+    Assert.assertNotNull(results.get("response_switchTermPriceId"),
+        "Switch Term Billing PriceId  should not be null");
+    Assert.assertNotEquals("Current and Next billing PriceIds  must be different",
+        results.get("response_currentBillingPriceId"), results.get("response_nextBillingPriceId"));
+
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
 
