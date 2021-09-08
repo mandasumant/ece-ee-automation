@@ -2,14 +2,10 @@
 
 > NOTE: Please complete every item before opening your pull request
 
--   [ ] First commit title content jira ticket number and short description (i.e.: ECEEPLT-XXX: Add
-    test for iDeal and Sofort)
+-   [ ] First commit title content jira ticket number and short description (i.e.: ECEEPLT-XXX: Add test for iDeal and Sofort)
 -   [ ] Branch builds correctly (`mvn clean install -DskipTests`)
--   [ ] Write end-to-end tests (strikethrough if not applicable)
--   [ ] Update [wiki](https://wiki.autodesk.com/display/EFDE/Automation+Command+Line) base on latest
-    update (strikethrough if not applicable)
--   [ ] Run new test or impacted one by the code change (strikethrough if not
-    applicable) [Wiki reference](https://wiki.autodesk.com/display/EFDE/Automation+Command+Line)
+-   [ ] Run regression. See [Wiki](https://wiki.autodesk.com/display/EFDE/Automation+Command+Line) for available command line. (strikethrough if not applicable)
+-   [ ] Review and update [Wiki](https://wiki.autodesk.com/display/EFDE/Automation+Command+Line) as needed (strikethrough if not applicable)
 
 **Summary**
 
