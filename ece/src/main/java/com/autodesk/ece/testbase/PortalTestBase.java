@@ -1522,11 +1522,7 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
     openSubscriptionsLink();
-    Util.waitforPresenceOfElement(
-        portalPage.getFirstFieldLocator("subscriptionRowInSubscription"));
-    Util.printInfo("Clicking on subscription row...");
-    portalPage.clickUsingLowLevelActions("subscriptionRowInSubscription");
-    portalPage.waitForPageToLoad();
+    clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
     closeSubscriptionTermPopup();
 
@@ -1552,5 +1548,33 @@ public class PortalTestBase {
     portalPage.checkIfElementExistsInPage(fieldName, 10);
     List<WebElement> listEle = portalPage.getMultipleWebElementsfromField(fieldName);
     listEle.get(indexOfElement).click();
+  }
+
+  @Step("Portal : Turn On Auto Renew")
+  public void restartSubscription(String portalUserName, String portalPassword)
+      throws MetadataException {
+    loginToPortal(portalUserName, portalPassword);
+    openSubscriptionsLink();
+
+    clickOnSubscriptionRow();
+
+    Util.printInfo("Turn on subscription auto renew.");
+    portalPage.clickUsingLowLevelActions("autoRenewOnButton");
+  }
+
+  @Step("Login to Portal")
+  private void loginToPortal(String portalUserName, String portalPassword) {
+    if (isPortalLoginPageVisible()) {
+      portalLogin(portalUserName, portalPassword);
+    }
+  }
+
+  @Step("Click on Subscription")
+  private void clickOnSubscriptionRow() throws MetadataException {
+    Util.waitforPresenceOfElement(
+        portalPage.getFirstFieldLocator("subscriptionRowInSubscription"));
+    Util.printInfo("Clicking on subscription row...");
+    portalPage.clickUsingLowLevelActions("subscriptionRowInSubscription");
+    portalPage.waitForPageToLoad();
   }
 }

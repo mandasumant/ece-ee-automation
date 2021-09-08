@@ -312,7 +312,7 @@ promocodeBicOrder:
   productID: "27125"
   languageStore: "en-US/"
 
-validateCancelSubscription:
+validateRestartSubscription:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
