@@ -821,8 +821,9 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"bic-cancel-subscription"}, description = "Cancel subscription in Portal")
-  public void validateCancelSubscription() throws MetadataException {
+  @Test(groups = {
+      "bic-restart-subscription"}, description = "Cancel and restart subscription in Portal")
+  public void validateRestartSubscription() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
@@ -844,11 +845,15 @@ public class BICOrderCreation extends ECETestBase {
     results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
-    // The End date of the subscription should be null
+    // The End date of the subscription should be null and status Active
     results.put("subscriptionEndDate", results.get("response_endDate"));
+    results.put("status", results.get("response_status"));
     Assert.assertNull(results.get("response_endDate"), "End date is null.");
+    AssertUtils
+        .assertEquals("Status is Active.", results.get("response_status"),
+            "ACTIVE");
 
-    // Cancel Subscription in Portal.
+    // Cancel Subscription in Portal
     portaltb.cancelSubscription(
         results.get(TestingHubConstants.emailid), "Password1");
 
@@ -862,6 +867,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put("nextBillingDate", results.get("response_nextBillingDate"));
     results.put("autoRenewEnabled", results.get("response_autoRenewEnabled"));
     results.put("expirationDate", results.get("response_expirationDate"));
+    results.put("status", results.get("response_status"));
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get("response_endDate"),
             results.get("response_nextBillingDate"));
@@ -870,5 +876,35 @@ public class BICOrderCreation extends ECETestBase {
     AssertUtils
         .assertEquals("Expiration date equals next billing date.",
             results.get("response_expirationDate"), results.get("response_nextBillingDate"));
+    AssertUtils
+        .assertEquals("Status is Cancelled.", results.get("response_status"),
+            "CANCELLED");
+
+    String originalNextBillingDate = results.get("response_nextBillingDate");
+
+    // Restart Subscription in Portal
+    portaltb.restartSubscription(
+        results.get(TestingHubConstants.emailid), "Password1");
+
+    // End date should be null, auto renew On, status Active and NBD the same
+    basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
+    pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
+        results.get("getPOReponse_subscriptionId"));
+    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
+    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
+    results.put("subscriptionEndDate", results.get("response_endDate"));
+    results.put("nextBillingDate", results.get("response_nextBillingDate"));
+    results.put("autoRenewEnabled", results.get("response_autoRenewEnabled"));
+    results.put("status", results.get("response_status"));
+
+    Assert.assertNull(results.get("response_endDate"), "End date is null.");
+    Assert.assertEquals(results.get("response_autoRenewEnabled"), "true",
+        "Auto renew is on.");
+    AssertUtils
+        .assertEquals("Next billing date should be the same as before subscription was cancelled.",
+            results.get("response_nextBillingDate"), originalNextBillingDate);
+    AssertUtils
+        .assertEquals("Status is Active.", results.get("response_status"),
+            "ACTIVE");
   }
 }

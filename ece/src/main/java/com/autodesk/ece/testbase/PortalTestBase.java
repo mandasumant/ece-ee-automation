@@ -1555,11 +1555,11 @@ public class PortalTestBase {
       throws MetadataException {
     loginToPortal(portalUserName, portalPassword);
     openSubscriptionsLink();
-
     clickOnSubscriptionRow();
-
     Util.printInfo("Turn on subscription auto renew.");
     portalPage.clickUsingLowLevelActions("autoRenewOnButton");
+    Util.printInfo("Dismiss auto renew popup.");
+    portalPage.clickUsingLowLevelActions("autoRenewPopupDismiss");
   }
 
   @Step("Login to Portal")
