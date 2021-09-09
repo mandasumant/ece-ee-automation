@@ -1,0 +1,30 @@
+{
+  "purchase": {
+    "user": {
+      "email": "{{email}}",
+      "paymentProfile": {
+        "id": "{{paymentProfileId}}",
+        "paymentProcessor": "{{paymentProcessor}}",
+        "creditCardInfo": {
+          "last4Digits": "{{last4Digits}}",
+          "cardType": "{{cardType}}"
+        }
+      }
+    },
+    "currency": "{{currency}}",
+    "subscriptions": [
+      {
+        "id": "{{subscriptionID}}",
+        "quantity": "{{quantity}}",
+        "unitPrice": "{{unitPrice}}",
+        "unitPriceAfterDiscount": "{{unitPrice}}",
+        "unitPriceBeforeDiscountWithVAT": "{{unitPriceWithVAT}}",
+        "unitPriceAfterDiscountWithVAT": "{{unitPriceWithVAT}}",
+        "promoDiscount": "0.0",
+        "taxCode": "{{taxCode}}",
+        "offerExternalKey": "{{offerExternalKey}}"
+
+      }
+    ]
+  }
+}

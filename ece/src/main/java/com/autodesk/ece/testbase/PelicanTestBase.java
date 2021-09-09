@@ -127,6 +127,9 @@ public class PelicanTestBase {
       results.put("response_nextBillingDate", js.get("data.nextBillingDate"));
       results.put("response_subscriptionQuantity", Integer.toString(js.get("data.quantity")));
       results.put("response_quantityToReduce", Integer.toString(js.get("data.quantityToReduce")));
+      results.put("response_offeringExternalKey", js.get("data.offeringExternalKey"));
+      results.put("response_nextBillingUnitPrice", js.get("data.nextBillingInfo.unitPrice"));
+      results.put("response_nextBillingChargeAmount", js.get("data.nextBillingInfo.chargeAmount"));
       results.put("response_endDate", js.get("data.endDate"));
       results.put("response_autoRenewEnabled", Boolean.toString(js.get("data.autoRenewEnabled")));
       results.put("response_expirationDate", js.get("data.expirationDate"));
@@ -164,7 +167,7 @@ public class PelicanTestBase {
     if (data.containsKey("desiredBillingDate")) {
       contractStartDate = data.get("desiredBillingDate");
     } else {
-      contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 20:13:28 UTC";
+      contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 10:00:00 UTC";
     }
     String path = Util.getCorePayloadPath() + "BIC_Update_NextBilling.json";
     File rawPayload = new File(path);
@@ -558,6 +561,17 @@ public class PelicanTestBase {
       String promotionDiscount = doc.getElementsByTagName("promotionDiscount").item(0)
           .getTextContent();
 
+      String paymentProcessor = root.getElementsByTagName("payment").item(0).getAttributes()
+          .getNamedItem("paymentProcessor").getTextContent();
+
+      String last4Digits = root.getElementsByTagName("last4Digits").item(0).getTextContent();
+
+      String taxCode = root.getElementsByTagName("additionalFee").item(0).getAttributes()
+          .getNamedItem("feeCollectorExternalKey").getTextContent();
+
+      String oxygenID = root.getElementsByTagName("buyerUser").item(0).getAttributes()
+          .getNamedItem("externalKey").getTextContent();
+
       results.put("getPOReponse_orderState", orderState);
       results.put("getPOReponse_subscriptionId", subscriptionId);
       results.put("getPOReponse_storedPaymentProfileId", storedPaymentProfileId);
@@ -566,6 +580,10 @@ public class PelicanTestBase {
       results.put("getPOReponse_subscriptionPeriodEndDate", subscriptionPeriodEndDate);
       results.put("getPOReponse_fulfillmentDate", fulfillmentDate);
       results.put("getPOResponse_promotionDiscount", promotionDiscount);
+      results.put("getPOReponse_paymentProcessor", paymentProcessor);
+      results.put("getPOReponse_last4Digits", last4Digits);
+      results.put("getPOReponse_taxCode", taxCode);
+      results.put("getPOReponse_oxygenID", oxygenID);
 
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details");
