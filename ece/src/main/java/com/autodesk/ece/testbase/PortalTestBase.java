@@ -1551,22 +1551,12 @@ public class PortalTestBase {
   }
 
   @Step("Portal : Turn On Auto Renew")
-  public void restartSubscription(String portalUserName, String portalPassword)
+  public void restartSubscription()
       throws MetadataException {
-    loginToPortal(portalUserName, portalPassword);
-    openSubscriptionsLink();
-    clickOnSubscriptionRow();
     Util.printInfo("Turn on subscription auto renew.");
     portalPage.clickUsingLowLevelActions("autoRenewOnButton");
     Util.printInfo("Dismiss auto renew popup.");
     portalPage.clickUsingLowLevelActions("autoRenewPopupDismiss");
-  }
-
-  @Step("Login to Portal")
-  private void loginToPortal(String portalUserName, String portalPassword) {
-    if (isPortalLoginPageVisible()) {
-      portalLogin(portalUserName, portalPassword);
-    }
   }
 
   @Step("Click on Subscription")

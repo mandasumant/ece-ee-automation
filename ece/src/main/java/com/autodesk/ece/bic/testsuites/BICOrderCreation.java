@@ -883,8 +883,7 @@ public class BICOrderCreation extends ECETestBase {
     String originalNextBillingDate = results.get("response_nextBillingDate");
 
     // Restart Subscription in Portal
-    portaltb.restartSubscription(
-        results.get(TestingHubConstants.emailid), "Password1");
+    portaltb.restartSubscription();
 
     // End date should be null, auto renew On, status Active and NBD the same
     basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
