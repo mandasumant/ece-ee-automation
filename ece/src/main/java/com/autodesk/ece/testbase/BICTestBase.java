@@ -2107,7 +2107,7 @@ public class BICTestBase {
         paymentDetails = "3538684728624673@3月@2025@456";
         break;
       default:
-        paymentDetails = "4035300539804083@3月@2025@456";
+        paymentDetails = "4111111111111111@3月@2025@456";
     }
     return paymentDetails;
   }
