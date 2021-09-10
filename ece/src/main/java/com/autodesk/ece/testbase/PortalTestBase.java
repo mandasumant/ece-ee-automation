@@ -1574,11 +1574,7 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
     openSubscriptionsLink();
-    Util.waitforPresenceOfElement(
-        portalPage.getFirstFieldLocator("subscriptionRowInSubscription"));
-    Util.printInfo("Clicking on subscription row...");
-    portalPage.clickUsingLowLevelActions("subscriptionRowInSubscription");
-    portalPage.waitForPageToLoad();
+    clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
     closeSubscriptionTermPopup();
 
@@ -1586,8 +1582,7 @@ public class PortalTestBase {
     portalPage.clickUsingLowLevelActions("autoRenewOffButton");
     portalPage.clickUsingLowLevelActions("autoRenewOffContinue");
     radioButtonClick("autoRenewOffRadioButton", 6);
-    portalPage.clickUsingLowLevelActions("autoRenewOffComments");
-    portalPage.populateField("Test cancellation.");
+    portalPage.populateField("autoRenewOffComments", "Test cancellation.");
     portalPage.clickUsingLowLevelActions("autoRenewTurnOffButton");
     portalPage.clickUsingLowLevelActions("autoRenewDone");
   }
@@ -1604,5 +1599,27 @@ public class PortalTestBase {
     portalPage.checkIfElementExistsInPage(fieldName, 10);
     List<WebElement> listEle = portalPage.getMultipleWebElementsfromField(fieldName);
     listEle.get(indexOfElement).click();
+  }
+
+  @Step("Portal : Turn On Auto Renew")
+  public void restartSubscription()
+      throws MetadataException {
+    Util.printInfo("Turn on subscription auto renew.");
+    if (portalPage.checkIfElementExistsInPage("autoRenewOnButton", 10)) {
+      portalPage.clickUsingLowLevelActions("autoRenewOnButton");
+    }
+    Util.printInfo("Dismiss auto renew popup.");
+    if (portalPage.checkIfElementExistsInPage("autoRenewPopupDismiss", 10)) {
+      portalPage.clickUsingLowLevelActions("autoRenewPopupDismiss");
+    }
+  }
+
+  @Step("Click on Subscription")
+  private void clickOnSubscriptionRow() throws MetadataException {
+    Util.waitforPresenceOfElement(
+        portalPage.getFirstFieldLocator("subscriptionRowInSubscription"));
+    Util.printInfo("Clicking on subscription row...");
+    portalPage.clickUsingLowLevelActions("subscriptionRowInSubscription");
+    portalPage.waitForPageToLoad();
   }
 }

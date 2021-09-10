@@ -141,6 +141,8 @@ public class PelicanTestBase {
               .toString(js.get("data.nextBillingInfo.nextBillingPriceId")) : null);
       results.put("response_switchTermPriceId", js.get("data.switchTermPriceId") != null ? Integer
           .toString(js.get("data.switchTermPriceId")) : null);
+      results.put("response_status", js.get("data.status"));
+
     } catch (Exception e) {
 
       e.printStackTrace();
@@ -174,7 +176,7 @@ public class PelicanTestBase {
     if (data.containsKey("desiredBillingDate")) {
       contractStartDate = data.get("desiredBillingDate");
     } else {
-      contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 10:00:00 UTC";
+      contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 20:13:28 UTC";
     }
     String path = Util.getCorePayloadPath() + "BIC_Update_NextBilling.json";
     File rawPayload = new File(path);
