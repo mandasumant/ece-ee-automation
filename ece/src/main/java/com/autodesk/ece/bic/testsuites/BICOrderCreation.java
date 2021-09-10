@@ -897,8 +897,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put("status", results.get("response_status"));
 
     Assert.assertNull(results.get("response_endDate"), "End date is null.");
-    Assert.assertEquals(results.get("response_autoRenewEnabled"), "true",
-        "Auto renew is on.");
+    AssertUtils.assertEquals("Auto renew is on.", results.get("response_autoRenewEnabled"), "true");
     AssertUtils
         .assertEquals("Next billing date should be the same as before subscription was cancelled.",
             results.get("response_nextBillingDate"), originalNextBillingDate);
