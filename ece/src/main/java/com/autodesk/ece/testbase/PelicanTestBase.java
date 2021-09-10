@@ -39,6 +39,7 @@ import org.json.simple.JSONObject;
 import org.testng.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 public class PelicanTestBase {
 
@@ -520,19 +521,41 @@ public class PelicanTestBase {
       String orderState = doc.getElementsByTagName("orderState").item(0).getTextContent();
       System.out.println("orderState :" + orderState);
 
+      NamedNodeMap subscriptionAttributes = doc.getElementsByTagName("subscription").item(0)
+          .getAttributes();
+
       String subscriptionId = null;
+      String subscriptionPeriodStartDate = null;
+      String subscriptionPeriodEndDate = null;
       try {
         // Native order response
         subscriptionId = doc.getElementsByTagName("offeringResponse").item(0).getAttributes()
             .getNamedItem("subscriptionId").getTextContent();
         System.out.println("subscriptionId :" + subscriptionId);
+
+        subscriptionPeriodStartDate = subscriptionAttributes.getNamedItem(
+            "subscriptionPeriodStartDate").getTextContent();
+        System.out.println("subscriptionPeriodStartDate :" + subscriptionPeriodStartDate);
+
+        subscriptionPeriodEndDate = subscriptionAttributes.getNamedItem("subscriptionPeriodEndDate")
+            .getTextContent();
+        System.out.println("subscriptionPeriodEndDate :" + subscriptionPeriodEndDate);
       } catch (Exception e) {
         // Add seat order response
         try {
-          subscriptionId = doc.getElementsByTagName("subscriptionQuantityRequest").item(0)
-              .getAttributes()
-              .getNamedItem("subscriptionId").getTextContent();
+          NamedNodeMap subscriptionRequestAttributes = doc.getElementsByTagName(
+              "subscriptionQuantityRequest").item(0).getAttributes();
+          subscriptionId = subscriptionRequestAttributes.getNamedItem("subscriptionId")
+              .getTextContent();
           System.out.println("subscriptionId :" + subscriptionId);
+
+          subscriptionPeriodStartDate = subscriptionRequestAttributes.getNamedItem(
+              "prorationStartDate").getTextContent();
+          System.out.println("prorationStartDate :" + subscriptionPeriodStartDate);
+
+          subscriptionPeriodEndDate = subscriptionRequestAttributes.getNamedItem(
+              "prorationEndDate").getTextContent();
+          System.out.println("prorationEndDate :" + subscriptionPeriodEndDate);
         } catch (Exception e1) {
           e1.printStackTrace();
         }
@@ -543,18 +566,8 @@ public class PelicanTestBase {
             .fail("SubscriptionID is not available the Pelican response : " + subscriptionId);
       }
 
-      String subscriptionPeriodStartDate = doc.getElementsByTagName("subscription").item(0)
-          .getAttributes()
-          .getNamedItem("subscriptionPeriodStartDate").getTextContent();
-      System.out.println("subscriptionPeriodStartDate :" + subscriptionPeriodStartDate);
-
-      String subscriptionPeriodEndDate = doc.getElementsByTagName("subscription").item(0)
-          .getAttributes()
-          .getNamedItem("subscriptionPeriodEndDate").getTextContent();
-      System.out.println("subscriptionPeriodEndDate :" + subscriptionPeriodEndDate);
-
-      String fulfillmentDate = doc.getElementsByTagName("subscription").item(0).getAttributes()
-          .getNamedItem("fulfillmentDate").getTextContent();
+      String fulfillmentDate = subscriptionAttributes.getNamedItem("fulfillmentDate")
+          .getTextContent();
       System.out.println("fulfillmentDate :" + fulfillmentDate);
 
       String storedPaymentProfileId = doc.getElementsByTagName("storedPaymentProfileId").item(0)
