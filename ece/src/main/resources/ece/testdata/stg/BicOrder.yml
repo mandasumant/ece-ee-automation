@@ -299,6 +299,10 @@ validateBicNativeOrderMoe:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 
+validateBicNativeOrderSwitchTerm:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+
 createGUACBICIndirectOrderJP:
   userType: "newUser"
   productID: "maya"
@@ -318,7 +322,7 @@ validateCancelSubscription:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
-
+  
 validateRenewBicOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID

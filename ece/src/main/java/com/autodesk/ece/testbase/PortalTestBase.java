@@ -75,6 +75,12 @@ public class PortalTestBase {
     return strDate;
   }
 
+  private void clickWithJavaScriptExecutor(JavascriptExecutor executor, String elementXpath) {
+    WebElement element = driver
+        .findElement(By.xpath(elementXpath));
+    executor.executeScript("arguments[0].click();", element);
+  }
+
   public String getOxygenId(HashMap<String, String> data) {
     String userSessionID = null;
     String emailID = data.get(TestingHubConstants.emailid);
@@ -583,7 +589,6 @@ public class PortalTestBase {
     return status;
   }
 
-
   @Step("Open Subscriptions and Contracts link in Portal")
   public void openSubscriptionsLink() {
     openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
@@ -600,7 +605,8 @@ public class PortalTestBase {
       } else if (GlobalConstants.getENV().equalsIgnoreCase("int")) {
         openPortalURL("https://int-manage.autodesk.com/cep/#products-services/all");
       }
-      portalPage.waitForPageToLoad();
+      // portalPage.waitForPageToLoad();
+      Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
       status = true;
       // driver.findElement(By.xpath("//a[contains(text(),'All Products & Services')]")).click();
@@ -688,6 +694,52 @@ public class PortalTestBase {
     }
 
     return status;
+  }
+
+  @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
+  public boolean switchTermInUserPortal(String cepURL, String portalUserName,
+      String portalPassword, String subscriptionID) {
+    boolean status = false, statusPS = false;
+    openPortalBICLaunch(cepURL);
+    if (isPortalLoginPageVisible()) {
+      portalLogin(portalUserName, portalPassword);
+    }
+
+    if (isPortalTabsVisible()) {
+      try {
+        clickALLPSLink();
+        JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+        portalPage.waitForPageToLoad();
+        WebElement primaryEntitlements = driver
+            .findElement(By.xpath("//*[@id='primary-entitlements']/div[2]/div"));
+        primaryEntitlements.click();
+
+        clickWithJavaScriptExecutor(javascriptExecutor, "//a[@data-action='ManageRenewal']");
+
+        driver.findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button")).click();
+        clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-1-year\"]");
+
+        clickWithJavaScriptExecutor(javascriptExecutor, "//button[@data-wat-val=\"continue\"]");
+
+        AssertUtils.assertTrue(driver
+            .findElement(By.xpath("//*[contains(text(),\"Your term change is confirmed\")]"))
+            .isDisplayed());
+
+        AssertUtils.assertTrue(driver
+            .findElement(By.xpath("//*[starts-with(text(),\"1 year starting\")]"))
+            .isDisplayed());
+
+        clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    if (statusPS) {
+      AssertUtils.fail("Product is displayed in portal" + " :: false");
+    }
+
+    return statusPS;
   }
 
   private boolean isPortalLoginPageVisible() {

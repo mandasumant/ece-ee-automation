@@ -317,6 +317,15 @@ public class BICTestBase {
     bicPage.waitForPageToLoad();
   }
 
+  @Step("Selecting Monthly Subscription")
+  public void selectMonthlySubscription(WebDriver driver) {
+    JavascriptExecutor executor = (JavascriptExecutor) driver;
+    WebElement element = driver
+        .findElement(By.xpath("//terms-container/div/div[4]/term-element[3]"));
+    executor.executeScript("arguments[0].click();", element);
+    Util.sleep(2000);
+  }
+
   @Step("Adding to cart")
   public void subscribeAndAddToCart(HashMap<String, String> data) {
     bicPage.waitForField("guacAddToCart", true, 3000);
@@ -469,34 +478,27 @@ public class BICTestBase {
       }
 
       driver.findElement(By.xpath(orgNameXpath)).click();
-      Util.sleep(1000);
       driver.findElement(By.xpath(orgNameXpath))
         .sendKeys(
           new RandomStringUtils().random(5, true, true) + address.get("Organization_Name"));
 
       driver.findElement(By.xpath(orgNameXpath)).click();
-      Util.sleep(1000);
 
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
-      Util.sleep(1000);
       driver.findElement(By.xpath(fullAddrXpath)).sendKeys(address.get("Full_Address"));
 
       clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
-      Util.sleep(1000);
       driver.findElement(By.xpath(cityXpath)).sendKeys(address.get("City"));
 
       clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
-      Util.sleep(1000);
       driver.findElement(By.xpath(zipXpath)).sendKeys(address.get("Zipcode"));
 
       clearTextInputValue(driver.findElement(By.xpath(phoneXpath)));
-      Util.sleep(1000);
       driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
 
       WebElement countryEle = driver.findElement(By.xpath(countryXpath));
       Select selCountry = new Select(countryEle);
       selCountry.selectByVisibleText(address.get("Country"));
-      Util.sleep(1000);
 
       driver.findElement(By.xpath(stateXpath)).sendKeys(address.get("State_Province"));
 
@@ -1150,6 +1152,7 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
     checkCartDetailsError();
+    selectMonthlySubscription(driver);
     subscribeAndAddToCart(data);
     firstName = null;
     lastName = null;
