@@ -253,6 +253,66 @@ public class BICOrderCreation extends ECETestBase {
     }
     updateTestingHub(testResults);
 
+    // Update the subscription so that it is expired, which will allow us to renew it
+    testDataForEachMethod.put("pelican_BaseUrl", baseUrl);
+    pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
+
+    // Lookup the subscription in pelican to confirm its renewal date
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // Verify that the subscription has actually moved to the past and is in a state to be renewed
+    try {
+      String originalBillingDateString = results.get("response_nextBillingDate");
+      Util.printInfo("Original Billing Date: " + originalBillingDateString);
+      Date originalBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+          originalBillingDateString);
+      Assert.assertTrue(originalBillingDate.before(new Date()),
+          "Check that the subscription is ready to be renewed");
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    // Trigger Invoice join so that the subscription is picked up by payport
+    baseUrl = results.get("postInvoicePelicanAPI");
+    results.put("pelican_BaseUrl", baseUrl);
+    pelicantb.postInvoicePelicanAPI(results);
+    Util.sleep(180000);
+
+    // Trigger the payport renewal job to renew the subscription
+    PayportTestBase payportTB = new PayportTestBase(testDataForEachMethod);
+    payportTB.renewPurchase(results);
+    // Wait for the payport job to complete
+    Util.sleep(300000);
+
+    // Get the subscription in pelican to check if it has renewed
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    try {
+      // Ensure that the subscription renews in the future
+      String nextBillingDateString = results.get("response_nextBillingDate");
+      Util.printInfo("New Billing Date: " + nextBillingDateString);
+      Date newBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+          nextBillingDateString);
+      Assert.assertTrue(newBillingDate.after(new Date()),
+          "Check that the subscription has been renewed");
+
+      String actualNextBillingDate = results.get("response_nextBillingDate");
+      String expectedNextBillingDate = Util.customDate("MM/dd/yyyy", 0, -5, +1) + " 10:00:00 UTC";
+
+      AssertUtils
+          .assertEquals("The billing date has been updated to next cycle ", actualNextBillingDate,
+              expectedNextBillingDate);
+
+
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
   }
 
   @Test(groups = {"bic-addseat-native-US"}, description = "Validation of BIC Add Seat Order")
@@ -886,7 +946,7 @@ public class BICOrderCreation extends ECETestBase {
     testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
     testDataForEachMethod
         .put("desiredBillingDate", Util.customDate("MM/dd/yyyy", 0, 180, 0) + " 20:13:28 UTC");
-    pelicantb.patchNextBillSubscriptionById(testDataForEachMethod);
+    pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
 
     // Open up portal UI and align billing between the 2 subscriptions
     portaltb.alignBillingInPortal(testDataForEachMethod.get(TestingHubConstants.cepURL),
@@ -998,7 +1058,7 @@ public class BICOrderCreation extends ECETestBase {
 
     // Update the subscription so that it is expired, which will allow us to renew it
     testDataForEachMethod.put("pelican_BaseUrl", baseUrl);
-    pelicantb.patchNextBillSubscriptionById(testDataForEachMethod);
+    pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
 
     // Lookup the subscription in pelican to confirm its renewal date
     baseUrl = results.get("getSubscriptionById");

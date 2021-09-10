@@ -148,7 +148,7 @@ public class PelicanTestBase {
   }
 
   @Step("Update next billing cycle with before date " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> patchNextBillSubscriptionById(HashMap<String, String> data) {
+  public HashMap<String, String> forwardNextBillingCycleForRenewal(HashMap<String, String> data) {
 
     String baseURL = data.get("pelican_BaseUrl");
     System.out.println("getPriceDetails baseURL : " + baseURL);
