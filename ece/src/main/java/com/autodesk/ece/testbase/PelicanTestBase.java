@@ -39,11 +39,12 @@ import org.json.simple.JSONObject;
 import org.testng.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 public class PelicanTestBase {
 
   public PelicanTestBase() {
-    Util.PrintInfo("PelicanTestBase from core");
+    Util.PrintInfo("PelicanTestBase from ece");
   }
 
   @SuppressWarnings("unchecked")
@@ -127,9 +128,19 @@ public class PelicanTestBase {
       results.put("response_nextBillingDate", js.get("data.nextBillingDate"));
       results.put("response_subscriptionQuantity", Integer.toString(js.get("data.quantity")));
       results.put("response_quantityToReduce", Integer.toString(js.get("data.quantityToReduce")));
+      results.put("response_offeringExternalKey", js.get("data.offeringExternalKey"));
+      results.put("response_nextBillingUnitPrice", js.get("data.nextBillingInfo.unitPrice"));
+      results.put("response_nextBillingChargeAmount", js.get("data.nextBillingInfo.chargeAmount"));
       results.put("response_endDate", js.get("data.endDate"));
       results.put("response_autoRenewEnabled", Boolean.toString(js.get("data.autoRenewEnabled")));
       results.put("response_expirationDate", js.get("data.expirationDate"));
+      results.put("response_currentBillingPriceId", js.get("data.priceId") != null ? Integer
+          .toString(js.get("data.priceId")) : null);
+      results.put("response_nextBillingPriceId",
+          js.get("data.nextBillingInfo.nextBillingPriceId") != null ? Integer
+              .toString(js.get("data.nextBillingInfo.nextBillingPriceId")) : null);
+      results.put("response_switchTermPriceId", js.get("data.switchTermPriceId") != null ? Integer
+          .toString(js.get("data.switchTermPriceId")) : null);
       results.put("response_status", js.get("data.status"));
 
     } catch (Exception e) {
@@ -140,7 +151,7 @@ public class PelicanTestBase {
   }
 
   @Step("Update next billing cycle with before date " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> patchNextBillSubscriptionById(HashMap<String, String> data) {
+  public HashMap<String, String> forwardNextBillingCycleForRenewal(HashMap<String, String> data) {
 
     String baseURL = data.get("pelican_BaseUrl");
     System.out.println("getPriceDetails baseURL : " + baseURL);
@@ -512,19 +523,41 @@ public class PelicanTestBase {
       String orderState = doc.getElementsByTagName("orderState").item(0).getTextContent();
       System.out.println("orderState :" + orderState);
 
+      NamedNodeMap subscriptionAttributes = doc.getElementsByTagName("subscription").item(0)
+          .getAttributes();
+
       String subscriptionId = null;
+      String subscriptionPeriodStartDate = null;
+      String subscriptionPeriodEndDate = null;
       try {
         // Native order response
         subscriptionId = doc.getElementsByTagName("offeringResponse").item(0).getAttributes()
             .getNamedItem("subscriptionId").getTextContent();
         System.out.println("subscriptionId :" + subscriptionId);
+
+        subscriptionPeriodStartDate = subscriptionAttributes.getNamedItem(
+            "subscriptionPeriodStartDate").getTextContent();
+        System.out.println("subscriptionPeriodStartDate :" + subscriptionPeriodStartDate);
+
+        subscriptionPeriodEndDate = subscriptionAttributes.getNamedItem("subscriptionPeriodEndDate")
+            .getTextContent();
+        System.out.println("subscriptionPeriodEndDate :" + subscriptionPeriodEndDate);
       } catch (Exception e) {
         // Add seat order response
         try {
-          subscriptionId = doc.getElementsByTagName("subscriptionQuantityRequest").item(0)
-              .getAttributes()
-              .getNamedItem("subscriptionId").getTextContent();
+          NamedNodeMap subscriptionRequestAttributes = doc.getElementsByTagName(
+              "subscriptionQuantityRequest").item(0).getAttributes();
+          subscriptionId = subscriptionRequestAttributes.getNamedItem("subscriptionId")
+              .getTextContent();
           System.out.println("subscriptionId :" + subscriptionId);
+
+          subscriptionPeriodStartDate = subscriptionRequestAttributes.getNamedItem(
+              "prorationStartDate").getTextContent();
+          System.out.println("prorationStartDate :" + subscriptionPeriodStartDate);
+
+          subscriptionPeriodEndDate = subscriptionRequestAttributes.getNamedItem(
+              "prorationEndDate").getTextContent();
+          System.out.println("prorationEndDate :" + subscriptionPeriodEndDate);
         } catch (Exception e1) {
           e1.printStackTrace();
         }
@@ -535,18 +568,8 @@ public class PelicanTestBase {
             .fail("SubscriptionID is not available the Pelican response : " + subscriptionId);
       }
 
-      String subscriptionPeriodStartDate = doc.getElementsByTagName("subscription").item(0)
-          .getAttributes()
-          .getNamedItem("subscriptionPeriodStartDate").getTextContent();
-      System.out.println("subscriptionPeriodStartDate :" + subscriptionPeriodStartDate);
-
-      String subscriptionPeriodEndDate = doc.getElementsByTagName("subscription").item(0)
-          .getAttributes()
-          .getNamedItem("subscriptionPeriodEndDate").getTextContent();
-      System.out.println("subscriptionPeriodEndDate :" + subscriptionPeriodEndDate);
-
-      String fulfillmentDate = doc.getElementsByTagName("subscription").item(0).getAttributes()
-          .getNamedItem("fulfillmentDate").getTextContent();
+      String fulfillmentDate = subscriptionAttributes.getNamedItem("fulfillmentDate")
+          .getTextContent();
       System.out.println("fulfillmentDate :" + fulfillmentDate);
 
       String storedPaymentProfileId = doc.getElementsByTagName("storedPaymentProfileId").item(0)
@@ -559,6 +582,17 @@ public class PelicanTestBase {
       String promotionDiscount = doc.getElementsByTagName("promotionDiscount").item(0)
           .getTextContent();
 
+      String paymentProcessor = root.getElementsByTagName("payment").item(0).getAttributes()
+          .getNamedItem("paymentProcessor").getTextContent();
+
+      String last4Digits = root.getElementsByTagName("last4Digits").item(0).getTextContent();
+
+      String taxCode = root.getElementsByTagName("additionalFee").item(0).getAttributes()
+          .getNamedItem("feeCollectorExternalKey").getTextContent();
+
+      String oxygenID = root.getElementsByTagName("buyerUser").item(0).getAttributes()
+          .getNamedItem("externalKey").getTextContent();
+
       results.put("getPOReponse_orderState", orderState);
       results.put("getPOReponse_subscriptionId", subscriptionId);
       results.put("getPOReponse_storedPaymentProfileId", storedPaymentProfileId);
@@ -567,6 +601,10 @@ public class PelicanTestBase {
       results.put("getPOReponse_subscriptionPeriodEndDate", subscriptionPeriodEndDate);
       results.put("getPOReponse_fulfillmentDate", fulfillmentDate);
       results.put("getPOResponse_promotionDiscount", promotionDiscount);
+      results.put("getPOReponse_paymentProcessor", paymentProcessor);
+      results.put("getPOReponse_last4Digits", last4Digits);
+      results.put("getPOReponse_taxCode", taxCode);
+      results.put("getPOReponse_oxygenID", oxygenID);
 
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details");

@@ -2,6 +2,7 @@ package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
+import com.autodesk.ece.testbase.PayportTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.common.services.OxygenService;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -12,7 +13,10 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.google.common.base.Strings;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -159,6 +163,158 @@ public class BICOrderCreation extends ECETestBase {
 
   }
 
+  @Test(groups = {
+      "bic-nativeorder-switch-term-US"}, description = "Validation of Create BIC Hybrid Order")
+  public void validateBicNativeOrderSwitchTerm() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    // Getting a PurchaseOrder details from pelican
+    String baseUrl = results.get("getPurchaseOrderDetails");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+    // Get find Subscription ById
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // Trigger Invoice join
+    baseUrl = results.get("postInvoicePelicanAPI");
+    results.put("pelican_BaseUrl", baseUrl);
+    pelicantb.postInvoicePelicanAPI(results);
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumberSAP, results.get("orderNumberSAP"));
+      testResults.put(BICConstants.orderState, results.get("getPOReponse_orderState"));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get("getPOReponse_fulfillmentStatus"));
+      testResults.put(BICConstants.fulfillmentDate, results.get("getPOReponse_fulfillmentDate"));
+      testResults.put(BICConstants.subscriptionId, results.get("getPOReponse_subscriptionId"));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get("getPOReponse_subscriptionPeriodStartDate"));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get("getPOReponse_subscriptionPeriodEndDate"));
+      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get("getPOReponse_storedPaymentProfileId"));
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testinghub");
+    }
+    updateTestingHub(testResults);
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        "Password1", results.get("getPOReponse_subscriptionId"));
+    updateTestingHub(testResults);
+
+    portaltb.switchTermInUserPortal(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        "Password1", results.get("getPOReponse_subscriptionId"));
+    updateTestingHub(testResults);
+    Util.sleep(120000);
+
+    // Get find Subscription ById
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    Assert.assertNotNull(results.get("response_currentBillingPriceId"),
+        "Current Billing PriceId  should not be null");
+    Assert.assertNotNull(results.get("response_nextBillingPriceId"),
+        "Next Billing PriceId  should not be null");
+    Assert.assertNotNull(results.get("response_switchTermPriceId"),
+        "Switch Term Billing PriceId  should not be null");
+    Assert.assertNotEquals("Current and Next billing PriceIds  must be different",
+        results.get("response_currentBillingPriceId"), results.get("response_nextBillingPriceId"));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get("getPOReponse_subscriptionPeriodStartDate"));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get("getPOReponse_subscriptionPeriodEndDate"));
+      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testinghub");
+    }
+    updateTestingHub(testResults);
+
+    // Update the subscription so that it is expired, which will allow us to renew it
+    testDataForEachMethod.put("pelican_BaseUrl", baseUrl);
+    pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
+
+    // Lookup the subscription in pelican to confirm its renewal date
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // Verify that the subscription has actually moved to the past and is in a state to be renewed
+    try {
+      String originalBillingDateString = results.get("response_nextBillingDate");
+      Util.printInfo("Original Billing Date: " + originalBillingDateString);
+      Date originalBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+          originalBillingDateString);
+      Assert.assertTrue(originalBillingDate.before(new Date()),
+          "Check that the subscription is ready to be renewed");
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    // Trigger Invoice join so that the subscription is picked up by payport
+    baseUrl = results.get("postInvoicePelicanAPI");
+    results.put("pelican_BaseUrl", baseUrl);
+    pelicantb.postInvoicePelicanAPI(results);
+    Util.sleep(180000);
+
+    // Trigger the payport renewal job to renew the subscription
+    PayportTestBase payportTB = new PayportTestBase(testDataForEachMethod);
+    payportTB.renewPurchase(results);
+    // Wait for the payport job to complete
+    Util.sleep(300000);
+
+    // Get the subscription in pelican to check if it has renewed
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    try {
+      // Ensure that the subscription renews in the future
+      String nextBillingDateString = results.get("response_nextBillingDate");
+      Util.printInfo("New Billing Date: " + nextBillingDateString);
+      Date newBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+          nextBillingDateString);
+      Assert.assertTrue(newBillingDate.after(new Date()),
+          "Check that the subscription has been renewed");
+
+      String actualNextBillingDate = results.get("response_nextBillingDate");
+      String expectedNextBillingDate = Util.customDate("MM/dd/yyyy", 0, -5, +1) + " 10:00:00 UTC";
+
+      AssertUtils
+          .assertEquals("The billing date has been updated to next cycle ", actualNextBillingDate,
+              expectedNextBillingDate);
+
+
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Test(groups = {"bic-addseat-native-US"}, description = "Validation of BIC Add Seat Order")
   public void validateBicAddSeatNativeOrder() {
     System.out.println("Version 20th April 2021");
@@ -249,6 +405,7 @@ public class BICOrderCreation extends ECETestBase {
       "bic-guac-addseats"}, description = "Validation Add Seats in GAUC with existing user")
   public void validateBicAddSeats() {
     HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
 
     Util.printInfo("Placing initial order");
 
@@ -295,6 +452,9 @@ public class BICOrderCreation extends ECETestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage("Failed to update results to Testinghub");
     }
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
@@ -790,7 +950,7 @@ public class BICOrderCreation extends ECETestBase {
     testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
     testDataForEachMethod
         .put("desiredBillingDate", Util.customDate("MM/dd/yyyy", 0, 180, 0) + " 20:13:28 UTC");
-    pelicantb.patchNextBillSubscriptionById(testDataForEachMethod);
+    pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
 
     // Open up portal UI and align billing between the 2 subscriptions
     portaltb.alignBillingInPortal(testDataForEachMethod.get(TestingHubConstants.cepURL),
@@ -904,5 +1064,98 @@ public class BICOrderCreation extends ECETestBase {
     AssertUtils
         .assertEquals("Status is Active.", results.get("response_status"),
             "ACTIVE");
+  }
+  /**
+   * Validate the renewal functionality. Steps: 1. Place an order for a subscription product 2. Get
+   * the subscription for the placed order 3. Manually update the subscription so that it is expired
+   * 4. Trigger the renewal job 5. Validate that the subscription next renews in the future
+   */
+  @Test(groups = {"renew-bic-order-US"}, description = "Validation of BIC Renewal Order")
+  public void validateRenewBicOrder() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(
+        testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    // Getting a PurchaseOrder details
+    String baseUrl = results.get("getPurchaseOrderDetails");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+    // Get find Subscription ById
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // Update the subscription so that it is expired, which will allow us to renew it
+    testDataForEachMethod.put("pelican_BaseUrl", baseUrl);
+    pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
+
+    // Lookup the subscription in pelican to confirm its renewal date
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // Verify that the subscription has actually moved to the past and is in a state to be renewed
+    try {
+      String originalBillingDateString = results.get("response_nextBillingDate");
+      Util.printInfo("Original Billing Date: " + originalBillingDateString);
+      Date originalBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+          originalBillingDateString);
+      Assert.assertTrue(originalBillingDate.before(new Date()),
+          "Check that the subscription is ready to be renewed");
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    // Trigger Invoice join so that the subscription is picked up by payport
+    baseUrl = results.get("postInvoicePelicanAPI");
+    results.put("pelican_BaseUrl", baseUrl);
+    pelicantb.postInvoicePelicanAPI(results);
+    Util.sleep(180000);
+
+    // Trigger the payport renewal job to renew the subscription
+    PayportTestBase payportTB = new PayportTestBase(testDataForEachMethod);
+    payportTB.renewPurchase(results);
+    // Wait for the payport job to complete
+    Util.sleep(300000);
+
+    // Get the subscription in pelican to check if it has renewed
+    baseUrl = results.get("getSubscriptionById");
+    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
+    results.put("pelican_BaseUrl", baseUrl);
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    try {
+      // Ensure that the subscription renews in the future
+      String nextBillingDateString = results.get("response_nextBillingDate");
+      Util.printInfo("New Billing Date: " + nextBillingDateString);
+      Date newBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+          nextBillingDateString);
+      Assert.assertTrue(newBillingDate.after(new Date()),
+          "Check that the subscription has been renewed");
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderState, results.get("getPOReponse_orderState"));
+      testResults.put(BICConstants.subscriptionId, results.get("getPOReponse_subscriptionId"));
+      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testinghub");
+    }
+    updateTestingHub(testResults);
+
   }
 }

@@ -74,6 +74,8 @@ default:
   ordertype: "nonbicindirect"
   ratePlanPPU: "NO"
   payportAddPaymentURL: "https://payport.bicsg.autodesk.com/services/v1/user/INTTESTING/paymentProfiles?syncUCM=1"
+  payportRenewalURL: "https://payport.bicstg.autodesk.com/services/v1/user/USER_ID/renewalPurchase"
+  payportCertificatePassphrase: "BuyACAD&25"
   languageStore: "en-US/"
   languageStoreDR: "ja-JP/"
   priceIDStore: "108261"      # need to check which price ID is this
@@ -297,6 +299,10 @@ validateBicNativeOrderMoe:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 
+validateBicNativeOrderSwitchTerm:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+
 createGUACBICIndirectOrderJP:
   userType: "newUser"
   productID: "maya"
@@ -313,6 +319,11 @@ promocodeBicOrder:
   languageStore: "en-US/"
 
 validateRestartSubscription:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "1"
+  
+validateRenewBicOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
