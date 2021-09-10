@@ -253,6 +253,7 @@ public class BICOrderCreation extends ECETestBase {
       "bic-guac-addseats"}, description = "Validation Add Seats in GAUC with existing user")
   public void validateBicAddSeats() {
     HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
 
     Util.printInfo("Placing initial order");
 
@@ -299,6 +300,9 @@ public class BICOrderCreation extends ECETestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage("Failed to update results to Testinghub");
     }
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 

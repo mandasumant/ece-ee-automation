@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -151,7 +152,8 @@ public class BICTestBase {
   public void createBICAccount(String firstName, String lastName, String emailID, String password) {
     switchToBICCartLoginPage();
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
-    clickLinkRetry("createNewUserGUAC");
+    bicPage.waitForField("createNewUserGUAC", true, 30000);
+    bicPage.click("createNewUserGUAC");
     bicPage.waitForField("bic_FN", true, 30000);
     bicPage.click("bic_FN");
     bicPage.populateField("bic_FN", firstName);
@@ -168,7 +170,7 @@ public class BICTestBase {
       Util.printInfo("Checked box status for bic_Agree - " + bicPage.isChecked("bic_Agree"));
 
       if (!bicPage.isFieldVisible("bic_Agree")) {
-        Util.sleep(20000);
+        bicPage.waitForField("bic_Agree", true, 30000);
         Util.printInfo("Checkbox bic_Agree is visible - " + bicPage.isFieldVisible("bic_Agree"));
         Util.printWarning(
             "Checkbox bic_Agree is present - " + bicPage.isFieldPresent("bic_Agree"));
@@ -177,8 +179,6 @@ public class BICTestBase {
       }
 
       checkboxTickJS();
-      Util.sleep(20000);
-
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to click on Create account button in BIC-Cart application");
@@ -199,10 +199,9 @@ public class BICTestBase {
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
       js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
-      Util.sleep(2000);
 
       js.executeScript("document.getElementById('btnSubmit').click()");
-      Util.sleep(10000);
+      bicPage.waitForField("verifyAccount", true, 5000);
 
       if (driver.findElement(By.xpath("//label[@id='optin_checkbox']")).getAttribute("class")
         .contains("checked")) {
@@ -210,10 +209,9 @@ public class BICTestBase {
       } else {
         js.executeScript("document.getElementById('optin_checkbox').click()");
       }
-      Util.sleep(2000);
 
       js.executeScript("document.getElementById('bttnAccountVerified').click()");
-      Util.sleep(2000);
+      bicPage.waitForFieldAbsent("signInSection", 5000);
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to click on privacypolicy_checkbox");
     }
@@ -223,27 +221,6 @@ public class BICTestBase {
     List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
     driver.switchTo().frame(element);
-  }
-
-  private void clickLinkRetry(String xpath) {
-    int loop = 0;
-    try {
-      do {
-        bicPage.click(xpath);
-
-        if (loop == 5) {
-          System.out.println(
-            "Unable to click on link " + xpath + "xpath " + bicPage.getFieldLocators(xpath));
-          break;
-        }
-        loop++;
-        Util.sleep(5000);
-      } while (bicPage.isFieldVisible(xpath));
-    } catch (Exception e) {
-      e.printStackTrace();
-      Util.PrintInfo(
-        "Unable to click on link " + xpath + "xpath " + bicPage.getFieldLocators(xpath));
-    }
   }
 
   @Step("Login BIC account")
@@ -1382,23 +1359,25 @@ public class BICTestBase {
   private void checkCartDetailsError() {
     Util.printInfo("Checking Cart page error...");
     try {
-      if (driver.findElement(By.xpath("//*[@id=\"register_link\"]")).isDisplayed()) {
+      bicPage.waitForElementVisible(bicPage.getMultipleWebElementsfromField("bicSections").get(0),
+          10);
+      if (driver.findElement(By.xpath("//*[@data-testid=\"sections\"")).isDisplayed()) {
         System.out.println("Page is loaded");
       } else if (driver
-        .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
-        .isDisplayed()) {
+          .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
+          .isDisplayed()) {
         Util.printTestFailedMessage("Error message is displayed while loading Checkout Cart");
         String errorMsg = driver
-          .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
-          .getText();
+            .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
+            .getText();
         AssertUtils.fail(errorMsg);
       } else if (driver
-        .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
-        .isDisplayed()) {
+          .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
+          .isDisplayed()) {
         Util.printTestFailedMessage("Error message is displayed while loading Commerce Cart");
         String errorMsg = driver
-          .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
-          .getText();
+            .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
+            .getText();
         AssertUtils.fail(errorMsg);
       }
     } catch (Exception e) {
@@ -1543,7 +1522,6 @@ public class BICTestBase {
     try {
       driver.manage().deleteAllCookies();
       driver.get(URL);
-      bicPage.waitForPageToLoad();
     } catch (Exception e) {
       try {
         retryLoadingURL(URL);
@@ -1591,28 +1569,25 @@ public class BICTestBase {
   }
 
   public void acceptCookiesAndUSSiteLink() {
+    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
     try {
-      WebElement bicAcceptCookiesBtn = bicPage
-        .getMultipleWebElementsfromField("bicAcceptCookiesBtn").get(0);
-      if (bicAcceptCookiesBtn.isDisplayed()) {
-        bicAcceptCookiesBtn.click();
-      }
-
+      WebElement cookieButton = driver.findElement(
+          By.xpath("button[@id=\"adsk-eprivacy-yes-to-all\" and .=\"OK\"]"));
+      cookieButton.click();
       Util.printInfo("Cookies accepted...");
     } catch (Exception e) {
       Util.printInfo("Cookies accept box does not appear on the page...");
     }
 
     try {
-      WebElement stayOnUSSite = bicPage.getMultipleWebElementsfromField("stayOnUSPageLink").get(0);
-      if (stayOnUSSite.isDisplayed()) {
-        stayOnUSSite.click();
-      }
-
+      WebElement usButton = driver.findElement(
+          By.xpath("a[contains(.,\"No thanks, I want to stay\")]"));
+      usButton.click();
       Util.printInfo("Clicked on Stay On US page link...");
     } catch (Exception e) {
       Util.printInfo("Stay on US Site link is not displayed...");
     }
+    driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
   }
 
   @SuppressWarnings({"static-access", "unused"})
@@ -1663,7 +1638,7 @@ public class BICTestBase {
     String guacResourceURL, String region, String password, String paymentMethod) {
     String orderNumber;
     String constructGuacURL =
-      guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
+        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
     System.out.println("constructGuacURL " + constructGuacURL);
     String firstName = null, lastName = null;
     Map<String, String> address = null;
