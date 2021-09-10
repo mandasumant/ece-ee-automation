@@ -934,7 +934,6 @@ public class BICTestBase {
     String quantity = "";
     String guacResourceURL = data.get("guacResourceURL");
     String userType = data.get("userType");
-//    String addressUS = data.get("Cart_Address_US");
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
@@ -982,7 +981,6 @@ public class BICTestBase {
     String guacOverviewResourceURL = data.get("guacOverviewTermResource");
 
     String userType = data.get("userType");
-//    String addressUS = data.get("Cart_Address_US");
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
@@ -1022,7 +1020,6 @@ public class BICTestBase {
     String quantity = "";
     String guacResourceURL = data.get("guacResourceURL");
     String userType = data.get("userType");
-//    String addressUS = data.get("Cart_Address_US");
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
@@ -1364,7 +1361,7 @@ public class BICTestBase {
     int o2len = 0;
     String o2ID = "";
     try {
-      o2ID = os.getOxygenID(emailID, System.getProperty("password")).toString();
+      o2ID = os.getOxygenID(emailID, System.getProperty("password"));
       data.put(BICConstants.oxygenid, o2ID);
     } catch (Exception e) {
       e.printStackTrace();
@@ -1663,7 +1660,6 @@ public class BICTestBase {
 
     return results;
   }
-
   @Step("Get BIC order")
   private String getBICOrder(LinkedHashMap<String, String> data, String emailID, String guacBaseURL,
     String productID, String quantity,
@@ -2114,7 +2110,7 @@ public class BICTestBase {
         paymentDetails = "3538684728624673@3月@2025@456";
         break;
       default:
-        paymentDetails = "4035300539804083@3月@2025@456";
+        paymentDetails = "4111111111111111@3月@2025@456";
     }
     return paymentDetails;
   }
