@@ -1,0 +1,22 @@
+{
+      "agent": {
+        "metrics_collection_interval": 1,
+        "logfile": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\amazon-cloudwatch-agent.log"
+      },
+
+      "logs": {
+        "logs_collected": {
+          "files": {
+            "collect_list": [
+              {
+                "file_path": "C:\\ece\\ece-ee-automation\\ece\\testexecution.log",
+                "log_group_name": "replace_stackloggroup",
+                "log_stream_name": "replacewithtransactionid",
+                "timezone": "UTC"
+              }
+            ]
+          }
+        },
+        "log_stream_name": "replacewithtransactionid"
+      }
+}
