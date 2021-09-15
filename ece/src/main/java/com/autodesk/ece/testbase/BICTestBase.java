@@ -54,8 +54,12 @@ public class BICTestBase {
   }
 
   @Step("Generate email id")
-  public String generateUniqueEmailID(String storeKey, String timeStamp, String sourceName,
-    String emailDomain) {
+  public static String generateUniqueEmailID() {
+    String storeKey = System.getProperty("store").replace("-", "");
+    String sourceName = "thub";
+    String emailDomain = "letscheck.pw";
+
+    String timeStamp = new RandomStringUtils().random(12, true, false);
     String strDate = null;
     String stk = storeKey.replace("-", "");
     if (storeKey.contains("NAMER")) {
@@ -932,11 +936,9 @@ public class BICTestBase {
           guacResourceURL, region, password, paymentMethod);
       }
     } else {
-      String timeStamp = new RandomStringUtils().random(12, true, false);
-      emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-        "thub", "letscheck.pw");
+      emailID = generateUniqueEmailID();
       orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-        region, password, paymentMethod);
+          region, password, paymentMethod);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -972,12 +974,10 @@ public class BICTestBase {
           region, quantity, password, paymentMethod);
       }
     } else {
-      String timeStamp = new RandomStringUtils().random(12, true, false);
-      emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-        "thub", "letscheck.pw");
+      emailID = generateUniqueEmailID();
       orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL, guacOverviewResourceURL,
-        productName, term,
-        region, quantity, password, paymentMethod);
+          productName, term,
+          region, quantity, password, paymentMethod);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1038,11 +1038,9 @@ public class BICTestBase {
           paymentMethod, promocode);
       }
     } else {
-      String timeStamp = new RandomStringUtils().random(13, true, false);
-      emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-        "thub", "letscheck.pw");
+      emailID = generateUniqueEmailID();
       orderNumber = getBICOrderPromoCode(data, emailID, guacBaseURL, productID, guacResourceURL,
-        region, password, paymentMethod, promocode);
+          region, password, paymentMethod, promocode);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1622,12 +1620,10 @@ public class BICTestBase {
           paymentMethod);
       }
     } else {
-      String timeStamp = new RandomStringUtils().random(12, true, false);
-      emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-        "thub", "letscheck.pw");
+      emailID = generateUniqueEmailID();
       orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-        region, password,
-        paymentMethod);
+          region, password,
+          paymentMethod);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1805,12 +1801,10 @@ public class BICTestBase {
           guacMoeResourceURL, region, password, paymentMethod, cepURL);
       }
     } else {
-      String timeStamp = new RandomStringUtils().random(12, true, false);
-      emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-        "thub", "letscheck.pw");
+      emailID = generateUniqueEmailID();
       orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-        guacMoeResourceURL,
-        region, password, paymentMethod, cepURL);
+          guacMoeResourceURL,
+          region, password, paymentMethod, cepURL);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -1987,12 +1981,10 @@ public class BICTestBase {
           region, password, paymentMethod);
       }
     } else {
-      String timeStamp = new RandomStringUtils().random(12, true, false);
-      emailID = generateUniqueEmailID(System.getProperty("store").replace("-", ""), timeStamp,
-        "thub", "letscheck.pw");
+      emailID = generateUniqueEmailID();
       orderNumber = createBicIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity,
-        guacDRResourceURL, region,
-        password, paymentMethod);
+          guacDRResourceURL, region,
+          password, paymentMethod);
     }
 
     results.put(BICConstants.emailid, emailID);
