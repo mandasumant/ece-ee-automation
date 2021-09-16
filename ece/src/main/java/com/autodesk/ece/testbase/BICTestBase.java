@@ -834,7 +834,7 @@ public class BICTestBase {
         JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
         orderNumber = purchaseOrder.get("id").toString();
         if (orderNumber != null && !orderNumber.isEmpty()) {
-          Util.printInfo("Yay! Found the Order Number. Proceeding to next steps ... ");
+          Util.printInfo("Yay! Found the Order Number. Proceeding to next steps...");
         }
       }
     } catch (Exception e) {
