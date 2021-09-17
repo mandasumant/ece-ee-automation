@@ -4,6 +4,7 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.EDUTestBase;
 import com.autodesk.ece.testbase.EDUTestBase.EDUUserType;
 import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.Util;
 import java.util.HashMap;
 import org.testng.Assert;
@@ -22,7 +23,18 @@ public class EDUUserFlows extends ECETestBase {
     try {
       updateTestingHub(results);
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage("Failed to update results to Testing hub");
     }
+  }
+
+  @Test(groups = {"activate-fusion-educator"}, description = "Educator activates Fusion 360")
+  public void validateFusionActivationByEducator() throws MetadataException {
+    EDUTestBase edutb = new EDUTestBase(this.getDriver(), this.getTestBase());
+    // Create new user with Educator role
+    registerEDUUser();
+    // Activate product and assign users
+    edutb.activateFusionAndAssignUsers();
+    // Check that we can see fusion product in portal
+    edutb.validateFusionActivation();
   }
 }
