@@ -175,15 +175,14 @@ public class EDUTestBase {
     // Assign user
     eduPage.clickUsingLowLevelActions("activateFusionClassButton");
     eduPage.clickUsingLowLevelActions("educationConfirmButton");
-    // Wait time because it takes up to 15 sec somtimes to load assignUsersButton
+    // Wait time because it takes up to 15 sec sometimes to load assignUsersButton
     Util.sleep(15000);
     eduPage.clickUsingLowLevelActions("assignUsersButton");
   }
 
   public void validateFusionActivation() throws MetadataException {
-    // Wait time to load the page
-    Util.sleep(10000);
     // verify that Fusion is visible in a list of products
+    eduPage.waitForField("eduFusionProduct", true, 10);
     Util.printInfo("Verify fusion");
     eduPage.checkIfElementExistsInPage("eduFusionProduct", 10);
   }
