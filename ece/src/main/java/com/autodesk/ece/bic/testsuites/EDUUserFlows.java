@@ -29,7 +29,7 @@ public class EDUUserFlows extends ECETestBase {
 
   @Test(groups = {"activate-fusion-educator"}, description = "Educator activates Fusion 360")
   public void validateFusionActivationByEducator() throws MetadataException {
-    EDUTestBase edutb = new EDUTestBase(this.getDriver(), this.getTestBase());
+    EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
     // Create new user with Educator role
     registerEDUUser();
     // Activate product and assign users
