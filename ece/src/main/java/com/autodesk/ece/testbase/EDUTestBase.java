@@ -164,9 +164,31 @@ public class EDUTestBase {
     selectElement.selectByValue(value);
   }
 
+  public void activateFusionAndAssignUsers() throws MetadataException {
+    // Activate new subscription model for Fusion 360
+    eduPage.clickUsingLowLevelActions("educationClassLabTab");
+    eduPage.clickUsingLowLevelActions("educationFusionGetStartedButton");
+    eduPage.clickUsingLowLevelActions("vsosSubmitButton");
+    eduPage.clickUsingLowLevelActions("getAutodeskSoftwareButton");
+    eduPage.clickUsingLowLevelActions("subscriptionAcceptButton");
+
+    // Assign user
+    eduPage.clickUsingLowLevelActions("activateFusionClassButton");
+    eduPage.clickUsingLowLevelActions("educationConfirmButton");
+    // Wait time because it takes up to 15 sec sometimes to load assignUsersButton
+    Util.sleep(15000);
+    eduPage.clickUsingLowLevelActions("assignUsersButton");
+  }
+
+  public void validateFusionActivation() throws MetadataException {
+    // verify that Fusion is visible in a list of products
+    eduPage.waitForField("eduFusionProduct", true, 10);
+    Util.printInfo("Verify fusion");
+    eduPage.checkIfElementExistsInPage("eduFusionProduct", 10);
+  }
+
   public enum EDUUserType {
     STUDENT,
     EDUCATOR
   }
-
 }
