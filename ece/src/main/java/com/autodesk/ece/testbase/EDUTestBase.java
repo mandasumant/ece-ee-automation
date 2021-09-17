@@ -1,13 +1,17 @@
 package com.autodesk.ece.testbase;
 
+import static io.restassured.RestAssured.given;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
+import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
+import io.restassured.response.Response;
 import java.time.Year;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -15,15 +19,17 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-public class EDUTestBase extends ECETestBase {
+public class EDUTestBase {
 
   public static Page_ eduPage = null;
   public WebDriver driver = null;
+  LinkedHashMap<String, String> testData = null;
 
-  public EDUTestBase(WebDriver driver, GlobalTestBase testbase) {
+  public EDUTestBase(GlobalTestBase testbase, LinkedHashMap<String, String> testData) {
     Util.PrintInfo("EDUTestBase from ece");
     eduPage = testbase.createPage("PAGE_EDU");
     this.driver = testbase.getdriver();
+    this.testData = testData;
   }
 
   /**
@@ -38,8 +44,7 @@ public class EDUTestBase extends ECETestBase {
     int currentYear = Year.now().getValue();
 
     // Navigate to education site and click on "Get Started"
-    eduPage.navigateToURL(
-        "https://www-pt.autodesk.com/education/edu-software/overview?sorting=featured&filters=individual");
+    eduPage.navigateToURL(testData.get("eduLandingPage"));
     eduPage.click("getStarted");
     eduPage.waitForField("createAccountEDU", true, 5000);
     eduPage.click("createAccountEDU");
@@ -104,10 +109,46 @@ public class EDUTestBase extends ECETestBase {
     }
 
     eduPage.clickToSubmit("eduSubmit");
+
+    String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
+    results.put(BICConstants.oxid, oxygenId);
+
     eduPage.waitForField("eduComplete", true, 5000);
     eduPage.clickToSubmit("eduComplete");
 
     return results;
+  }
+
+  /**
+   * Mark a user as an approved education user in the EDU database
+   *
+   * @param oxygenId - Oxygen ID of the user to approve
+   */
+  public void verifyUser(String oxygenId) {
+    String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
+    Response response = given()
+        .auth().basic(testData.get("eduAEMUser"), testData.get("eduAEMPassword"))
+        .when().get(baseUrl);
+  }
+
+  /**
+   * From the main education landing page with a logged in user, click through the flow to accept
+   * VSOS (student verification) terms
+   */
+  public void signUpUser() {
+    eduPage.waitForField("eduSignStarted", true, 5000);
+    eduPage.click("eduSignStarted");
+    eduPage.waitForField("eduSignSubmit", true, 5000);
+    eduPage.click("eduSignSubmit");
+    eduPage.waitForField("eduSignSuccess", true, 5000);
+    eduPage.click("eduSignSuccess");
+    Util.sleep(5000);
+    eduPage.refresh();
+
+    String xPath = eduPage.getFirstFieldLocator("eduStatus");
+    String status = driver.findElement(By.xpath(xPath)).getText();
+    AssertUtils.assertTrue(
+        status.contains("Your educational access to Autodesk products is valid"));
   }
 
   /**
