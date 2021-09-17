@@ -31,7 +31,7 @@ public class EDUUserFlows extends ECETestBase {
   public void validateFusionActivationByEducator() throws MetadataException {
     EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
     // Create new user with Educator role
-    registerEDUUser();
+    edutb.registerUser(EDUUserType.EDUCATOR);
     // Activate product and assign users
     edutb.activateFusionAndAssignUsers();
     // Check that we can see fusion product in portal
