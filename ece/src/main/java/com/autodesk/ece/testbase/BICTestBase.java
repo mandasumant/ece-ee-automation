@@ -825,7 +825,7 @@ public class BICTestBase {
       if (driver.findElement(By.xpath(
           "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
-        Util.printInfo(
+        Util.printWarning(
             "Export compliance issue is present. Checking for order number in the Pelican response");
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         String response = (String) executor

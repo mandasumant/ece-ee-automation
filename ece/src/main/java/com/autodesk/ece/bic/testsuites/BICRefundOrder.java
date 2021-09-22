@@ -78,7 +78,7 @@ public class BICRefundOrder extends ECETestBase {
     pelicantb.postInvoicePelicanAPI(results);
 
     // Refund PurchaseOrder details from pelican
-    baseUrl = results.get("putPelicanRefundOrder");
+    baseUrl = results.get("putPelicanRefundOrderUrl");
     baseUrl = pelicantb
         .addTokenInResourceUrl(baseUrl, results.get(TestingHubConstants.orderNumber));
     results.put("pelican_BaseUrl", baseUrl);

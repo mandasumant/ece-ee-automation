@@ -1101,9 +1101,9 @@ public class PortalTestBase {
       debugPageUrl("Step 1");
       data.putAll(navigateToSubscriptionAndOrdersTab());
       Util.printInfo("Clicking on change payment option...");
+      portalPage.waitForFieldPresent("portalChangePaymentBtn", 2000);
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
-      Util.sleep(5000);
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator("portalPaymentMethod")
           .replaceAll("<PAYMENTOPTION>", "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
@@ -1573,6 +1573,7 @@ public class PortalTestBase {
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
     }
+
     openSubscriptionsLink();
     clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
