@@ -12,6 +12,7 @@ import io.restassured.response.Response;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -149,6 +150,34 @@ public class EDUTestBase {
     String status = driver.findElement(By.xpath(xPath)).getText();
     AssertUtils.assertTrue(
         status.contains("Your educational access to Autodesk products is valid"));
+  }
+
+  /**
+   * On an "Individual" education tab page, download Fusion 360
+   */
+  public void downloadF360Product() {
+    // Click on menus to download Fusion 360
+    eduPage.click("eduFusionGet");
+    eduPage.waitForField("eduFusionAccess", true, 10000);
+    eduPage.click("eduFusionAccess");
+
+    // Downloading opens a new browser tab, so save the current tab handle and determine the
+    // handle of the new tab
+    String currentTabHandle = driver.getWindowHandle();
+    Set<String> windowHandles = driver.getWindowHandles();
+    windowHandles.remove(currentTabHandle); // The new tab is the tab that isn't the current one
+    String newTabHandle = windowHandles.iterator().next();
+    driver.switchTo().window(newTabHandle);
+
+    // Assert that we have successfully downloaded the product
+    WebElement downloadTitle = driver.findElement(
+        By.xpath(eduPage.getFirstFieldLocator("eduFusionStatus")));
+    AssertUtils.assertTrue(
+        downloadTitle.getText().contains("Thank you for downloading Fusion 360"));
+
+    // Close the new tab and switch back to the old tab
+    driver.close();
+    driver.switchTo().window(currentTabHandle);
   }
 
   /**

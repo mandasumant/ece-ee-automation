@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -1565,6 +1566,36 @@ public class PortalTestBase {
       AssertUtils.fail("Product is displayed in portal" + " :: false");
     }
     return status;
+  }
+
+  /**
+   * Navigate to the all products page and validate that the latest product purchased matched a
+   * pattern
+   *
+   * @param cepURL      - URL of portal to visit
+   * @param peIdPattern - Pattern of the pe ID to validate
+   * @return - Results data
+   */
+  public HashMap<String, String> validateProductByName(String cepURL, Pattern peIdPattern) {
+    openPortalBICLaunch(cepURL);
+    clickALLPSLink();
+    HashMap<String, String> results = new HashMap<>();
+    results.put("product_pe_id", verifyProductVisible(peIdPattern));
+    return results;
+  }
+
+  /**
+   * Find the last purchased product and determine if it's peId matches the provided pattern
+   *
+   * @param peIdPattern - Pattern to match
+   * @return - Full pe ID found
+   */
+  private String verifyProductVisible(Pattern peIdPattern) {
+    String lastProductXPath = portalPage.getFirstFieldLocator("lastPurchasedProduct");
+    WebElement lastProduct = driver.findElement(By.xpath(lastProductXPath));
+    String subscriptionID = lastProduct.getAttribute("data-pe-id");
+    AssertUtils.assertTrue(peIdPattern.matcher(subscriptionID).find());
+    return subscriptionID;
   }
 
   @Step("Portal : Cancel subscription")
