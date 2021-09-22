@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.testng.Assert;
+import java.util.regex.Pattern;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -34,21 +34,37 @@ public class EDUUserFlows extends ECETestBase {
     testDataForEachMethod = (LinkedHashMap<String, String>) loadYaml.get("default");
   }
 
-  @Test(groups = {"register-edu-user"}, description = "Register EDU User")
-  public void registerEDUUser() {
-
+  @Test(groups = {"validate-student-subscription"}, description = "Register EDU User")
+  public void validateNewStudentSubscription() {
     HashMap<String, String> results = new HashMap<String, String>();
     EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
 
-    results.putAll(edutb.registerUser(EDUUserType.EDUCATOR));
+    // Register a new Student account
+    results.putAll(edutb.registerUser(EDUUserType.STUDENT));
 
-    Assert.assertNotNull(results.get(BICConstants.emailid));
-
+    // Manually verify the student's oxygen account as a valid education account
     edutb.verifyUser(results.get(BICConstants.oxid));
+
+    // Accept VSOS terms
     edutb.signUpUser();
 
+    // Download Fusion 360
+    edutb.downloadF360Product();
+
+    // Sleep 3 minutes to wait for subscription to show up in portal
+    Util.sleep(180000);
+
+    // Validate that the user has a subscription to Fusion 360 in portal
+    results.putAll(portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL),
+        Pattern.compile("STU_.+_F360")));
+
+    HashMap<String, String> testResults = new HashMap<>();
     try {
-      updateTestingHub(results);
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
+      testResults.put("product_pe_id", results.get("product_pe_id"));
+
+      updateTestingHub(testResults);
     } catch (Exception e) {
       Util.printTestFailedMessage("Failed to update results to Testing hub");
     }

@@ -3,3 +3,4 @@ default:
   eduVerificationEndpoint: "https://aem-author-internal.efddotcom-stg.autodesk.com/content/education/support/search.user-edit-verification.html?uid={oxygenId}&action=approve"
   eduAEMUser: "svc-testing-hub"
   eduAEMPassword: "oS1adpvJ40mwuBQibZBGQize1Oy5DsrW"
+  cepURL: "https://customer-stg.autodesk.com/"
