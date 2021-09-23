@@ -543,8 +543,6 @@ public class PelicanTestBase {
       String oxygenID = null;
 
       try {
-        subscriptionAttributes = doc.getElementsByTagName("subscription").item(0)
-            .getAttributes();
         // Native order response
         subscriptionId = doc.getElementsByTagName("offeringResponse").item(0).getAttributes()
             .getNamedItem("subscriptionId").getTextContent();
