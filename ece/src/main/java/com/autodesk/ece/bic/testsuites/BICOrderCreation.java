@@ -830,7 +830,7 @@ public class BICOrderCreation extends ECETestBase {
     testDataForEachMethod
         .put("getPOReponse_subscriptionId", results.get("getPOReponse_subscriptionId"));
     results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
-    results.put("sub1NextBillingDate", results.get("sub1ID"));
+    results.put("sub1NextBillingDate", results.get("response_nextBillingDate"));
 
     Util.printInfo("Placing second order for the returning user");
 
