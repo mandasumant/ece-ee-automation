@@ -7,6 +7,7 @@ import com.autodesk.testinghub.core.bicapiModel.PayloadSpocAUTHToken;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.common.CommonConstants;
 import com.autodesk.testinghub.core.common.services.ApigeeAuthenticationService;
+import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ErrorEnum;
@@ -95,10 +96,13 @@ public class PelicanTestBase {
 
   @Step("Order Service : Order Capture" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> getSubscriptionById(HashMap<String, String> data) {
-    System.out.println();
+    String subscriptionByIdUrl = data.get("getSubscriptionByIdUrl");
+
+    subscriptionByIdUrl = addTokenInResourceUrl(subscriptionByIdUrl,
+        data.get("getPOReponse_subscriptionId"));
     HashMap<String, String> results = new HashMap<String, String>();
     String baseURL = data.get("pelican_BaseUrl");
-    System.out.println("getPriceDetails baseURL : " + baseURL);
+    System.out.println("getPriceDetails baseURL : " + subscriptionByIdUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
@@ -115,7 +119,7 @@ public class PelicanTestBase {
     header.put("Content-Type", Content_Type);
     header.put("Accept", Content_Type);
 
-    Response response = getRestResponse(baseURL, header);
+    Response response = getRestResponse(subscriptionByIdUrl, header);
     String result = response.getBody().asString();
     Util.PrintInfo("result :: " + result);
     JsonPath js = new JsonPath(result);
@@ -153,8 +157,10 @@ public class PelicanTestBase {
   @Step("Update next billing cycle with before date " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> forwardNextBillingCycleForRenewal(HashMap<String, String> data) {
 
-    String baseURL = data.get("pelican_BaseUrl");
-    System.out.println("getPriceDetails baseURL : " + baseURL);
+    String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsUrl");
+    getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
+        data.get(BICConstants.orderNumber));
+    System.out.println("getPriceDetails baseURL : " + getPurchaseOrderDetailsUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
@@ -192,7 +198,7 @@ public class PelicanTestBase {
       e1.printStackTrace();
       AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
     }
-    return patchRestResponse(baseURL, header, inputPayload);
+    return patchRestResponse(getPurchaseOrderDetailsUrl, header, inputPayload);
   }
 
   public HashMap<String, String> patchRestResponse(String baseUrl, HashMap<String, String> header,
@@ -233,15 +239,15 @@ public class PelicanTestBase {
   @SuppressWarnings("unused")
   @Step("Create invoice for PO " + GlobalConstants.TAG_TESTINGHUB)
   public void postInvoicePelicanAPI(HashMap<String, String> data) {
+    String invoicePelicanAPIUrl = data.get("postInvoicePelicanAPIUrl");
     HashMap<String, String> results = new HashMap<String, String>();
-    String baseURL = data.get("pelican_BaseUrl");
-    System.out.println("getPriceDetails baseURL : " + baseURL);
+    Util.printInfo("invoicePelicanAPIUrl  : " + invoicePelicanAPIUrl);
     String Content_Type = "application/json";
 
     Map<String, String> header = new HashMap<>();
     header.put("Content-Type", Content_Type);
 
-    Response response = getRestResponse(baseURL, header);
+    Response response = getRestResponse(invoicePelicanAPIUrl, header);
     String result = response.getBody().asString();
     Util.PrintInfo("result :: " + result);
     JsonPath js = new JsonPath(result);
@@ -251,9 +257,12 @@ public class PelicanTestBase {
   // @Step("Validate BIC Order in Pelican" + GlobalConstants.TAG_TESTINGHUB)
   @SuppressWarnings("unused")
   public String getPelicanResponse(HashMap<String, String> data) {
+    String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsUrl");
+    getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
+        data.get(BICConstants.orderNumber));
+    data.put("pelican_getPurchaseOrderDetailsUrl", getPurchaseOrderDetailsUrl);
     HashMap<String, String> results = new HashMap<String, String>();
-    String baseURL = data.get("pelican_BaseUrl");
-    System.out.println("baseURL : " + baseURL);
+    Util.printInfo("getPurchaseOrderDetailsUrl : " + getPurchaseOrderDetailsUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
@@ -270,7 +279,7 @@ public class PelicanTestBase {
     header.put("Content-Type", Content_Type);
     // header.put("Accept", "application/xml");
 
-    Response response = getRestResponse(baseURL, header);
+    Response response = getRestResponse(getPurchaseOrderDetailsUrl, header);
     String result = response.getBody().asString();
     Util.PrintInfo("result :: " + result);
 
@@ -280,7 +289,7 @@ public class PelicanTestBase {
   public HashMap<String, String> createRefundOrder(HashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
     String baseURL = data.get("pelican_BaseUrl");
-    System.out.println("putPelicanRefund details : " + baseURL);
+    Util.printInfo("putPelicanRefund details : " + baseURL);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
@@ -408,7 +417,6 @@ public class PelicanTestBase {
   }
 
   public String getPaymentProfileId(LinkedHashMap<String, String> testDataForEachMethod) {
-    System.out.println();
     String paymentProfileID = "";
     try {
       ObjectMapper om = new ObjectMapper();
@@ -529,6 +537,11 @@ public class PelicanTestBase {
       String subscriptionId = null;
       String subscriptionPeriodStartDate = null;
       String subscriptionPeriodEndDate = null;
+      String fulfillmentDate = null;
+      String taxCode = null;
+      String promotionDiscount = null;
+      String oxygenID = null;
+
       try {
         // Native order response
         subscriptionId = doc.getElementsByTagName("offeringResponse").item(0).getAttributes()
@@ -539,7 +552,8 @@ public class PelicanTestBase {
             "subscriptionPeriodStartDate").getTextContent();
         System.out.println("subscriptionPeriodStartDate :" + subscriptionPeriodStartDate);
 
-        subscriptionPeriodEndDate = subscriptionAttributes.getNamedItem("subscriptionPeriodEndDate")
+        subscriptionPeriodEndDate = subscriptionAttributes
+            .getNamedItem("subscriptionPeriodEndDate")
             .getTextContent();
         System.out.println("subscriptionPeriodEndDate :" + subscriptionPeriodEndDate);
       } catch (Exception e) {
@@ -568,7 +582,7 @@ public class PelicanTestBase {
             .fail("SubscriptionID is not available the Pelican response : " + subscriptionId);
       }
 
-      String fulfillmentDate = subscriptionAttributes.getNamedItem("fulfillmentDate")
+      fulfillmentDate = subscriptionAttributes.getNamedItem("fulfillmentDate")
           .getTextContent();
       System.out.println("fulfillmentDate :" + fulfillmentDate);
 
@@ -578,19 +592,19 @@ public class PelicanTestBase {
 
       String fulfillmentStatus = root.getAttribute("fulfillmentStatus");
       System.out.println("fulfillmentStatus : " + root.getAttribute("fulfillmentStatus"));
-
-      String promotionDiscount = doc.getElementsByTagName("promotionDiscount").item(0)
-          .getTextContent();
-
+      if (doc.getElementsByTagName("promotionDiscount") != null) {
+        promotionDiscount = doc.getElementsByTagName("promotionDiscount").item(0)
+            .getTextContent();
+      }
       String paymentProcessor = root.getElementsByTagName("payment").item(0).getAttributes()
           .getNamedItem("paymentProcessor").getTextContent();
 
       String last4Digits = root.getElementsByTagName("last4Digits").item(0).getTextContent();
 
-      String taxCode = root.getElementsByTagName("additionalFee").item(0).getAttributes()
+      taxCode = root.getElementsByTagName("additionalFee").item(0).getAttributes()
           .getNamedItem("feeCollectorExternalKey").getTextContent();
 
-      String oxygenID = root.getElementsByTagName("buyerUser").item(0).getAttributes()
+      oxygenID = root.getElementsByTagName("buyerUser").item(0).getAttributes()
           .getNamedItem("externalKey").getTextContent();
 
       results.put("getPOReponse_orderState", orderState);
@@ -634,7 +648,6 @@ public class PelicanTestBase {
 
   public HashMap<String, String> subscriptionsPelicanAPIHeaders(HashMap<String, String> data) {
     HashMap<String, String> authHeaders = new HashMap<String, String>();
-    System.out.println();
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];

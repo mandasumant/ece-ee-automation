@@ -74,11 +74,10 @@ public class BICOrderCreation extends ECETestBase {
 
       updateTestingHub(results);
       results.putAll(testDataForEachMethod);
+
       // Trigger Invoice join
-      String baseUrl = results.get("postInvoicePelicanAPI");
-      results.put("pelican_BaseUrl", baseUrl);
       pelicantb.postInvoicePelicanAPI(results);
-      Util.sleep(180000);
+
     }
 
     ArrayList<String> payments = new ArrayList<String>();
@@ -119,20 +118,13 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
+
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
 
     try {
@@ -177,21 +169,14 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
+    Util.sleep(300000);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -226,9 +211,6 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(120000);
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     Assert.assertNotNull(results.get("response_currentBillingPriceId"),
@@ -254,13 +236,9 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Update the subscription so that it is expired, which will allow us to renew it
-    testDataForEachMethod.put("pelican_BaseUrl", baseUrl);
-    pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
+    pelicantb.forwardNextBillingCycleForRenewal(results);
 
     // Lookup the subscription in pelican to confirm its renewal date
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Verify that the subscription has actually moved to the past and is in a state to be renewed
@@ -276,21 +254,12 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     // Trigger Invoice join so that the subscription is picked up by payport
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
-    Util.sleep(180000);
 
     // Trigger the payport renewal job to renew the subscription
-    PayportTestBase payportTB = new PayportTestBase(testDataForEachMethod);
-    payportTB.renewPurchase(results);
-    // Wait for the payport job to complete
-    Util.sleep(300000);
+    triggerPayportRenewalJob(results);
 
     // Get the subscription in pelican to check if it has renewed
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     try {
@@ -325,8 +294,6 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     // Trigger Invoice join
-    String baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
 
     Util.sleep(180000);
@@ -336,9 +303,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Initial order validation in Portal
@@ -358,23 +322,14 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb
-        .addTokenInResourceUrl(baseUrl, testResults.get(TestingHubConstants.addSeatOrderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
+
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
-    Util.sleep(180000);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -426,15 +381,9 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Verify that a seat was added
@@ -473,9 +422,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Initial order validation in Portal
@@ -490,9 +436,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Verify that a seat was reduced
@@ -538,20 +481,15 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
+
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
+
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
+
     pelicantb.postInvoicePelicanAPI(results);
 
     try {
@@ -579,7 +517,7 @@ public class BICOrderCreation extends ECETestBase {
         "Password1", results.get("getPOReponse_subscriptionId"));
     updateTestingHub(testResults);
 
-    // Validate Sumbit Order
+    // Validate Submit Order
     tibcotb.validateSubmitOrder(results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
@@ -625,20 +563,12 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
 
     try {
@@ -696,26 +626,16 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Trigger Invoice join
-    String baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
+
     pelicantb.postInvoicePelicanAPI(results);
-    Util.sleep(300000);
 
     // Getting a PurchaseOrder details from pelican
-    baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
 
     Util.sleep(180000);
@@ -739,8 +659,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
 
     // Validate Submit Order
@@ -791,7 +709,6 @@ public class BICOrderCreation extends ECETestBase {
       Util.printTestFailedMessage("Failed to update results to Testinghub");
     }
     updateTestingHub(testResults);
-    Util.sleep(60000);
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
@@ -815,7 +732,6 @@ public class BICOrderCreation extends ECETestBase {
     results.remove(BICConstants.orderNumber);
     updateTestingHub(results);
     testDataForEachMethod.putAll(results);
-    Util.sleep(600000);
     getBicTestBase().driver.quit();
 
     ECETestBase tb = new ECETestBase();
@@ -841,8 +757,6 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     // Trigger Invoice join
-    String baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -850,15 +764,9 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     try {
@@ -914,19 +822,13 @@ public class BICOrderCreation extends ECETestBase {
     getBicTestBase().driver.manage().deleteAllCookies();
 
     // Get the subscription id for the first order
-    String basePelicanOrderUrl = testDataForEachMethod.get("getPurchaseOrderDetails");
-    String pelicanOrderUrl = pelicantb
-        .addTokenInResourceUrl(basePelicanOrderUrl, results.get(BICConstants.orderNumber));
-    testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
     results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
     results.put("sub1ID", results.get("getPOReponse_subscriptionId"));
 
     // Get the original billing date for the first subscription
-    String basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
-    String pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
-        results.get("getPOReponse_subscriptionId"));
-    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
+    testDataForEachMethod
+        .put("getPOReponse_subscriptionId", results.get("getPOReponse_subscriptionId"));
     results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
     results.put("sub1NextBillingDate", results.get("response_nextBillingDate"));
 
@@ -937,17 +839,12 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
 
     // Get the subscription id for the second subscription
-    pelicanOrderUrl = pelicantb
-        .addTokenInResourceUrl(basePelicanOrderUrl, results.get(BICConstants.orderNumber));
-    testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
+
     results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
     results.put("sub2ID", results.get("getPOReponse_subscriptionId"));
 
     // Forcefully update the second subscription's billing date to make it unaligned from the first subscription
-    pelicanOrderUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
-        results.get("getPOReponse_subscriptionId"));
-    testDataForEachMethod.put("pelican_BaseUrl", pelicanOrderUrl);
     testDataForEachMethod
         .put("desiredBillingDate", Util.customDate("MM/dd/yyyy", 0, 180, 0) + " 20:13:28 UTC");
     pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
@@ -957,10 +854,10 @@ public class BICOrderCreation extends ECETestBase {
         results.get(TestingHubConstants.emailid), "Password1", results.get("sub1ID"),
         results.get("sub2ID"));
 
+    Util.sleep(240000);
+
     // Get the billing date of the aligned subscription
-    pelicanSubscriptionUrl = pelicantb
-        .addTokenInResourceUrl(basePelicanSubscriptionUrl, results.get("sub2ID"));
-    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
+
     results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
     results.put("sub2NextBillingDate", results.get("response_nextBillingDate"));
 
@@ -994,15 +891,9 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // The End date of the subscription should be null and status Active
@@ -1018,11 +909,8 @@ public class BICOrderCreation extends ECETestBase {
         results.get(TestingHubConstants.emailid), "Password1");
 
     // The End Date of the subscription should be the same as the Next Billing Date
-    String basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
-    String pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
-        results.get("getPOReponse_subscriptionId"));
-    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
-    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
+    results.putAll(pelicantb.getSubscriptionById(results));
+
     results.put("subscriptionEndDate", results.get("response_endDate"));
     results.put("nextBillingDate", results.get("response_nextBillingDate"));
     results.put("autoRenewEnabled", results.get("response_autoRenewEnabled"));
@@ -1046,11 +934,9 @@ public class BICOrderCreation extends ECETestBase {
     portaltb.restartSubscription();
 
     // End date should be null, auto renew On, status Active and NBD the same
-    basePelicanSubscriptionUrl = testDataForEachMethod.get("getSubscriptionById");
-    pelicanSubscriptionUrl = pelicantb.addTokenInResourceUrl(basePelicanSubscriptionUrl,
-        results.get("getPOReponse_subscriptionId"));
-    testDataForEachMethod.put("pelican_BaseUrl", pelicanSubscriptionUrl);
-    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
+
+    results.putAll(pelicantb.getSubscriptionById(results));
+
     results.put("subscriptionEndDate", results.get("response_endDate"));
     results.put("nextBillingDate", results.get("response_nextBillingDate"));
     results.put("autoRenewEnabled", results.get("response_autoRenewEnabled"));
@@ -1083,25 +969,15 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get(BICConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Update the subscription so that it is expired, which will allow us to renew it
-    testDataForEachMethod.put("pelican_BaseUrl", baseUrl);
-    pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
+    pelicantb.forwardNextBillingCycleForRenewal(results);
 
     // Lookup the subscription in pelican to confirm its renewal date
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Verify that the subscription has actually moved to the past and is in a state to be renewed
@@ -1117,21 +993,14 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     // Trigger Invoice join so that the subscription is picked up by payport
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
+
     Util.sleep(180000);
 
     // Trigger the payport renewal job to renew the subscription
-    PayportTestBase payportTB = new PayportTestBase(testDataForEachMethod);
-    payportTB.renewPurchase(results);
-    // Wait for the payport job to complete
-    Util.sleep(300000);
+    triggerPayportRenewalJob(results);
 
     // Get the subscription in pelican to check if it has renewed
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     try {
@@ -1158,4 +1027,13 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
   }
+
+  private void triggerPayportRenewalJob(
+      HashMap<String, String> results) {
+    PayportTestBase payportTB = new PayportTestBase(results);
+    payportTB.renewPurchase(results);
+    // Wait for the payport job to complete
+    Util.sleep(300000);
+  }
+
 }
