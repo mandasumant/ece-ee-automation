@@ -80,4 +80,31 @@ public class EDUUserFlows extends ECETestBase {
     // Check that we can see fusion product in portal
     edutb.validateFusionActivation();
   }
+
+  @Test(groups = {
+      "validate-edu-admin"
+  }, description = "Validate an IT Admin registering and downloading a product")
+  public void validateAdminUser() throws MetadataException {
+    HashMap<String, String> results = new HashMap<String, String>();
+    EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
+    // Create new user with IT Admin role
+    results.putAll(edutb.registerUser(EDUUserType.ADMIN));
+    edutb.verifyUser(results.get(BICConstants.oxid));
+
+    // Accept VSOS terms
+    edutb.signUpUser();
+
+    // Configure a license to download
+    edutb.verifySeibelDownload();
+
+    HashMap<String, String> testResults = new HashMap<>();
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
+
+      updateTestingHub(testResults);
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testing hub");
+    }
+  }
 }

@@ -67,6 +67,9 @@ public class EDUTestBase {
       case EDUCATOR:
         pickSelectOption("eduRole", "4"); // "4" is "Educator"
         break;
+      case ADMIN:
+        pickSelectOption("eduRole", "2"); // "2" is "School IT Administrator"
+        break;
     }
 
     eduPage.clickToSubmit("eduSubmit");
@@ -180,19 +183,6 @@ public class EDUTestBase {
     driver.switchTo().window(currentTabHandle);
   }
 
-  /**
-   * Select a value from a select element
-   *
-   * @param field - Page field name
-   * @param value - Value to select
-   */
-  private void pickSelectOption(String field, String value) {
-    String xPath = eduPage.getFirstFieldLocator(field);
-    WebElement element = driver.findElement(By.xpath(xPath));
-    Select selectElement = new Select(element);
-    selectElement.selectByValue(value);
-  }
-
   public void activateFusionAndAssignUsers() throws MetadataException {
     // Activate new subscription model for Fusion 360
     eduPage.clickUsingLowLevelActions("educationClassLabTab");
@@ -216,8 +206,48 @@ public class EDUTestBase {
     eduPage.checkIfElementExistsInPage("eduFusionProduct", 10);
   }
 
+  /**
+   * Get a license for Autocad
+   */
+  public void verifySeibelDownload() {
+    try {
+      eduPage.clickUsingLowLevelActions("eduAutocadGet");
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
+    eduPage.waitForField("eduLicenseType", true, 5000);
+
+    // Configure the product for download
+    pickSelectOption("eduLicenseType", "network");
+    pickSelectOption("eduChooseVersion", "autocad-2022");
+    pickSelectOption("eduOperatingSystem", "Win64");
+    pickSelectOption("eduSeibelDownloadLanguage", "en-US");
+
+    try {
+      AssertUtils.assertTrue(!eduPage.checkIfElementExistsInPage("eduAdminError", 10),
+          "Assert that there are no errors on the admin download page");
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * Select a value from a select element
+   *
+   * @param field - Page field name
+   * @param value - Value to select
+   */
+  private void pickSelectOption(String field, String value) {
+    String xPath = eduPage.getFirstFieldLocator(field);
+    WebElement element = driver.findElement(By.xpath(xPath));
+    Select selectElement = new Select(element);
+    selectElement.selectByValue(value);
+  }
+
   public enum EDUUserType {
     STUDENT,
-    EDUCATOR
+    EDUCATOR,
+    ADMIN
   }
 }
