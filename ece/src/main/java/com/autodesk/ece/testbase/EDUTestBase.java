@@ -67,6 +67,9 @@ public class EDUTestBase {
       case EDUCATOR:
         pickSelectOption("eduRole", "4"); // "4" is "Educator"
         break;
+      case MENTOR:
+        pickSelectOption("eduRole", "3"); // "3" is "Design Competition Mentor"
+        break;
       case ADMIN:
         pickSelectOption("eduRole", "2"); // "2" is "School IT Administrator"
         break;
@@ -93,26 +96,28 @@ public class EDUTestBase {
 
     eduPage.clickToSubmit("eduSubmit");
 
-    // Pick a school called "Broadway"
-    eduPage.waitForField("eduSchool", true, 5000);
-    eduPage.populateField("eduSchool", "Broadway");
-    eduPage.waitForField("eduSchoolOption", true, 5000);
+    if (userType != EDUUserType.MENTOR) {
+      // Pick a school called "Broadway"
+      eduPage.waitForField("eduSchool", true, 5000);
+      eduPage.populateField("eduSchool", "Broadway");
+      eduPage.waitForField("eduSchoolOption", true, 5000);
 
-    try {
-      eduPage.clickUsingLowLevelActions("eduSchoolOption");
-    } catch (MetadataException e) {
-      e.printStackTrace();
+      try {
+        eduPage.clickUsingLowLevelActions("eduSchoolOption");
+      } catch (MetadataException e) {
+        e.printStackTrace();
+      }
+
+      // For students, specify the enrollment dates for a student in grade 11
+      if (userType == EDUUserType.STUDENT) {
+        pickSelectOption("enrollStartMonth", "8"); // August
+        pickSelectOption("enrollStartYear", Integer.toString(currentYear - 5));
+        pickSelectOption("enrollEndMonth", "6"); // June
+        pickSelectOption("enrollEndYear", Integer.toString(currentYear + 1));
+      }
+
+      eduPage.clickToSubmit("eduSubmit");
     }
-
-    // For students, specify the enrollment dates for a student in grade 11
-    if (userType == EDUUserType.STUDENT) {
-      pickSelectOption("enrollStartMonth", "8"); // August
-      pickSelectOption("enrollStartYear", Integer.toString(currentYear - 5));
-      pickSelectOption("enrollEndMonth", "6"); // June
-      pickSelectOption("enrollEndYear", Integer.toString(currentYear + 1));
-    }
-
-    eduPage.clickToSubmit("eduSubmit");
 
     String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
     results.put(BICConstants.oxid, oxygenId);
@@ -248,6 +253,7 @@ public class EDUTestBase {
   public enum EDUUserType {
     STUDENT,
     EDUCATOR,
-    ADMIN
+    ADMIN,
+    MENTOR
   }
 }

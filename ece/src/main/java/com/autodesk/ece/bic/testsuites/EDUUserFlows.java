@@ -107,4 +107,33 @@ public class EDUUserFlows extends ECETestBase {
       Util.printTestFailedMessage("Failed to update results to Testing hub");
     }
   }
+
+  @Test(groups = {"validate-mentor-user"}, description = "Register Mentor User")
+  public void validateMentorUser() {
+    HashMap<String, String> results = new HashMap<String, String>();
+    EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
+    // Create new user with Mentor role
+    results.putAll(edutb.registerUser(EDUUserType.MENTOR));
+
+    // Download Fusion 360
+    edutb.downloadF360Product();
+
+    // Sleep 3 minutes to wait for subscription to show up in portal
+    Util.sleep(180000);
+
+    // Validate that the user has a subscription to Fusion 360 in portal
+    results.putAll(portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL),
+        Pattern.compile("STU_.+_F360")));
+
+    HashMap<String, String> testResults = new HashMap<>();
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
+      testResults.put("product_pe_id", results.get("product_pe_id"));
+
+      updateTestingHub(testResults);
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testing hub");
+    }
+  }
 }
