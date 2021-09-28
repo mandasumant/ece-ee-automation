@@ -626,8 +626,8 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Trigger Invoice join
-
     pelicantb.postInvoicePelicanAPI(results);
+    Util.sleep(300000);
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
