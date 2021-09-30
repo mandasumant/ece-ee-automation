@@ -618,7 +618,6 @@ public class BICOrderCreation extends ECETestBase {
 
     String bicOrderO2ID = getPortalTestBase().getOxygenId(results).trim();
     results.put(BICConstants.oxid, bicOrderO2ID);
-    Util.sleep(180000);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -626,11 +625,10 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Trigger Invoice join
-
     pelicantb.postInvoicePelicanAPI(results);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryPelicanResponse(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));

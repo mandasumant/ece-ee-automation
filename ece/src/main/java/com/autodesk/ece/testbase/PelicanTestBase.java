@@ -664,4 +664,20 @@ public class PelicanTestBase {
 
     return authHeaders;
   }
+
+  public String retryPelicanResponse(HashMap<String, String> results) {
+    String response = "";
+    for (int i = 1; i < 4; i++) {
+      response = getPelicanResponse(results);
+      int intIndex = response.indexOf("subscriptionId");
+      if (intIndex == -1) {
+        Util.printInfo("SubscriptionId not found. Retry #" + i);
+        Util.sleep(300000);
+      } else {
+        Util.printInfo("Found subscriptionId at index " + intIndex);
+        break;
+      }
+    }
+    return response;
+  }
 }
