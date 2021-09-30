@@ -618,7 +618,6 @@ public class BICOrderCreation extends ECETestBase {
 
     String bicOrderO2ID = getPortalTestBase().getOxygenId(results).trim();
     results.put(BICConstants.oxid, bicOrderO2ID);
-    //Util.sleep(180000);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
