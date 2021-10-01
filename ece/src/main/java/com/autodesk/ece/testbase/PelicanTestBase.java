@@ -34,6 +34,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.json.simple.JSONObject;
@@ -518,6 +519,10 @@ public class PelicanTestBase {
     HashMap<String, String> results = new HashMap<>();
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      // Disable external access to protect from SSRF vulnerabilities
+      factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+      factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
       DocumentBuilder builder = factory.newDocumentBuilder();
       ByteArrayInputStream input = new ByteArrayInputStream(
           purchaseOrderAPIresponse.getBytes(StandardCharsets.UTF_8));
