@@ -324,7 +324,6 @@ public class BICOrderCreation extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
-
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 
@@ -481,15 +480,12 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
-
     pelicantb.postInvoicePelicanAPI(results);
 
     try {
@@ -949,6 +945,7 @@ public class BICOrderCreation extends ECETestBase {
         .assertEquals("Status is Active.", results.get("response_status"),
             "ACTIVE");
   }
+
   /**
    * Validate the renewal functionality. Steps: 1. Place an order for a subscription product 2. Get
    * the subscription for the placed order 3. Manually update the subscription so that it is expired
@@ -1032,6 +1029,53 @@ public class BICOrderCreation extends ECETestBase {
     payportTB.renewPurchase(results);
     // Wait for the payport job to complete
     Util.sleep(300000);
+  }
+
+  @Test(groups = {
+      "cloudcredit-order-US"}, description = "Validation of Create BIC Cloud credit Order")
+  public void validateBicCloudCreditOrder() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));
+    testResults.put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    // Getting a PurchaseOrder details
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
+    portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
+
+    String emailID = System.getProperty("email");
+    String password = System.getProperty("password");
+
+    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
+      portaltb.portalLogin(emailID, password);
+    }
+    portaltb.reporting_CloudServiceUsageLinkDisplayed();
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put("orderState", results.get("getPOReponse_orderState"));
+      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
+      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
+      testResults.put("subscriptionId", "NA");
+      testResults.put("subscriptionPeriodStartDate", "NA");
+      testResults.put("subscriptionPeriodEndDate", "NA");
+      testResults.put("nextBillingDate", "NA");
+      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Failed to update results to Testinghub");
+    }
+
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    updateTestingHub(testResults);
   }
 
 }

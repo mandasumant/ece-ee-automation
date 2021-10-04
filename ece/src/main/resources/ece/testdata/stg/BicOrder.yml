@@ -253,7 +253,7 @@ validateBicFlexOrder:
   productID: *FlexOrderPriceID
   bicFlexPriceID: *FlexOrderPriceID
 
-validatateBicCloudCreditOrder:
+validateBicCloudCreditOrder:
   productID: *bicCloudCreditsPriceId
   bicCloudCreditsPriceID: *bicCloudCreditsPriceId
 

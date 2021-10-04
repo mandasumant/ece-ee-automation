@@ -1298,7 +1298,9 @@ public class BICTestBase {
   }
 
   private void populatePromoCode(String promocode, LinkedHashMap<String, String> data) {
-    System.out.println();
+    new WebDriverWait(driver, 10).until(
+        ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@data-testid='loading']")));
+
     String priceBeforePromo = null;
     String priceAfterPromo = null;
 
@@ -1599,47 +1601,6 @@ public class BICTestBase {
       Util.printInfo("Stay on US Site link is not displayed...");
     }
     driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
-  }
-
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place Cloud Credit Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACCloudCreditOrdersUS(LinkedHashMap<String, String> data) {
-    String orderNumber = null;
-    String emailID = null;
-    HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
-    String productID = "";
-    String quantity = "";
-    String guacResourceURL = data.get("guacResourceURL");
-    String userType = data.get("userType");
-    String region = data.get("languageStore");
-    String password = data.get("password");
-    String paymentMethod = System.getProperty("payment");
-
-    if (System.getProperty("sku").contains("default")) {
-      productID = data.get("productID");
-    }
-
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      emailID = System.getProperty("email");
-      String O2ID = getO2ID(data, emailID);
-      // New user to be created
-      if ((Strings.isNullOrEmpty(O2ID))) {
-        orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity,
-            guacResourceURL, region, password,
-            paymentMethod);
-      }
-    } else {
-      emailID = generateUniqueEmailID();
-      orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-          region, password,
-          paymentMethod);
-    }
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
   }
 
   @Step("Get BIC order")

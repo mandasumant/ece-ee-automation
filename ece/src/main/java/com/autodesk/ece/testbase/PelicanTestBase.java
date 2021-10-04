@@ -1,6 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.bicapiModel.PayloadAddPaymentProfile;
 import com.autodesk.testinghub.core.bicapiModel.PayloadSpocAUTHToken;
@@ -56,7 +57,7 @@ public class PelicanTestBase {
     requestParams.put("orderEvent", "REFUND");
 
     Response response = RestAssured.given().headers(header).body(requestParams).put(baseUrl);
-    System.out.println(response.asString());
+    Util.printInfo(response.asString());
 
     int statusCode = response.getStatusCode();
     if (statusCode != 200) {
@@ -103,7 +104,7 @@ public class PelicanTestBase {
         data.get("getPOReponse_subscriptionId"));
     HashMap<String, String> results = new HashMap<String, String>();
     String baseURL = data.get("pelican_BaseUrl");
-    System.out.println("getPriceDetails baseURL : " + subscriptionByIdUrl);
+    Util.printInfo("getPriceDetails baseURL : " + subscriptionByIdUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
@@ -161,7 +162,7 @@ public class PelicanTestBase {
     String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsUrl");
     getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
         data.get(BICConstants.orderNumber));
-    System.out.println("getPriceDetails baseURL : " + getPurchaseOrderDetailsUrl);
+    Util.printInfo("getPriceDetails baseURL : " + getPurchaseOrderDetailsUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
@@ -212,14 +213,14 @@ public class PelicanTestBase {
           .response();
 
       int responseStatusCode = response.getStatusCode();
-      System.out.println("Response code : " + responseStatusCode);
+      Util.printInfo("Response code : " + responseStatusCode);
       if (responseStatusCode != 200) {
         AssertUtils.assertTrue(false,
             "Response code must be 200 but the API return " + responseStatusCode);
       }
 
       String result = response.getBody().asString();
-      System.out.println("" + result);
+      Util.printInfo("" + result);
       JsonPath jp = new JsonPath(result);
       String purchaseOrderId = jp.get("data.purchaseOrderId").toString();
       String exportControlStatus = jp.get("data.exportControlStatus").toString();
@@ -528,16 +529,23 @@ public class PelicanTestBase {
           purchaseOrderAPIresponse.getBytes(StandardCharsets.UTF_8));
       Document doc = builder.parse(input);
       Element root = doc.getDocumentElement();
-      System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+      Util.printInfo("Root element :" + doc.getDocumentElement().getNodeName());
       String origin = root.getAttribute("origin");
-      System.out.println("origin : " + origin);
-      System.out.println("storeExternalKey : " + root.getAttribute("storeExternalKey"));
+      Util.printInfo("origin : " + origin);
+      Util.printInfo("storeExternalKey : " + root.getAttribute("storeExternalKey"));
 
       String orderState = doc.getElementsByTagName("orderState").item(0).getTextContent();
-      System.out.println("orderState :" + orderState);
+      Util.printInfo("orderState : " + orderState);
 
-      NamedNodeMap subscriptionAttributes = doc.getElementsByTagName("subscription").item(0)
-          .getAttributes();
+      String productLineCode = root.getElementsByTagName("offeringResponse").item(0).getAttributes()
+          .getNamedItem("productLineCode").getTextContent();
+      Util.printInfo("productLineCode : " + productLineCode);
+
+      NamedNodeMap subscriptionAttributes = null;
+      if (!productLineCode.contains(BICECEConstants.CLDCR_PLC)) {
+        subscriptionAttributes = doc.getElementsByTagName("subscription").item(0)
+            .getAttributes();
+      }
 
       String subscriptionId = null;
       String subscriptionPeriodStartDate = null;
@@ -551,52 +559,58 @@ public class PelicanTestBase {
         // Native order response
         subscriptionId = doc.getElementsByTagName("offeringResponse").item(0).getAttributes()
             .getNamedItem("subscriptionId").getTextContent();
-        System.out.println("subscriptionId :" + subscriptionId);
+        Util.printInfo("subscriptionId : " + subscriptionId);
 
         subscriptionPeriodStartDate = subscriptionAttributes.getNamedItem(
             "subscriptionPeriodStartDate").getTextContent();
-        System.out.println("subscriptionPeriodStartDate :" + subscriptionPeriodStartDate);
+        Util.printInfo("subscriptionPeriodStartDate : " + subscriptionPeriodStartDate);
 
         subscriptionPeriodEndDate = subscriptionAttributes
             .getNamedItem("subscriptionPeriodEndDate")
             .getTextContent();
-        System.out.println("subscriptionPeriodEndDate :" + subscriptionPeriodEndDate);
+        Util.printInfo("subscriptionPeriodEndDate : " + subscriptionPeriodEndDate);
       } catch (Exception e) {
         // Add seat order response
-        try {
-          NamedNodeMap subscriptionRequestAttributes = doc.getElementsByTagName(
-              "subscriptionQuantityRequest").item(0).getAttributes();
-          subscriptionId = subscriptionRequestAttributes.getNamedItem("subscriptionId")
-              .getTextContent();
-          System.out.println("subscriptionId :" + subscriptionId);
+        if (!productLineCode.contains(BICECEConstants.CLDCR_PLC)) {
+          try {
+            NamedNodeMap subscriptionRequestAttributes = doc.getElementsByTagName(
+                "subscriptionQuantityRequest").item(0).getAttributes();
 
-          subscriptionPeriodStartDate = subscriptionRequestAttributes.getNamedItem(
-              "prorationStartDate").getTextContent();
-          System.out.println("prorationStartDate :" + subscriptionPeriodStartDate);
+            subscriptionId = subscriptionRequestAttributes.getNamedItem("subscriptionId")
+                .getTextContent();
+            Util.printInfo("subscriptionId : " + subscriptionId);
 
-          subscriptionPeriodEndDate = subscriptionRequestAttributes.getNamedItem(
-              "prorationEndDate").getTextContent();
-          System.out.println("prorationEndDate :" + subscriptionPeriodEndDate);
-        } catch (Exception e1) {
-          e1.printStackTrace();
+            subscriptionPeriodStartDate = subscriptionRequestAttributes.getNamedItem(
+                "prorationStartDate").getTextContent();
+            Util.printInfo("prorationStartDate : " + subscriptionPeriodStartDate);
+
+            subscriptionPeriodEndDate = subscriptionRequestAttributes.getNamedItem(
+                "prorationEndDate").getTextContent();
+            Util.printInfo("prorationEndDate : " + subscriptionPeriodEndDate);
+          } catch (Exception e1) {
+            e1.printStackTrace();
+          }
         }
       }
 
-      if (Strings.isNullOrEmpty(subscriptionId)) {
-        AssertUtils
-            .fail("SubscriptionID is not available the Pelican response : " + subscriptionId);
-      }
+      if (!productLineCode.contains(BICECEConstants.CLDCR_PLC)) {
+        if (Strings.isNullOrEmpty(subscriptionId)) {
+          AssertUtils
+              .fail("SubscriptionID is not available the Pelican response : " + subscriptionId);
+        }
 
-      fulfillmentDate = subscriptionAttributes.getNamedItem("fulfillmentDate")
-          .getTextContent();
-      System.out.println("fulfillmentDate :" + fulfillmentDate);
+        fulfillmentDate = subscriptionAttributes.getNamedItem("fulfillmentDate")
+            .getTextContent();
+        Util.printInfo("fulfillmentDate : " + fulfillmentDate);
+      }
 
       String storedPaymentProfileId = doc.getElementsByTagName("storedPaymentProfileId").item(0)
           .getTextContent();
-      System.out.println("storedPaymentProfileId :" + storedPaymentProfileId);
+      Util.printInfo("storedPaymentProfileId : " + storedPaymentProfileId);
 
       String fulfillmentStatus = root.getAttribute("fulfillmentStatus");
-      System.out.println("fulfillmentStatus : " + root.getAttribute("fulfillmentStatus"));
+      Util.printInfo("fulfillmentStatus : " + root.getAttribute("fulfillmentStatus"));
+
       if (doc.getElementsByTagName("promotionDiscount") != null) {
         promotionDiscount = doc.getElementsByTagName("promotionDiscount").item(0)
             .getTextContent();
@@ -613,17 +627,25 @@ public class PelicanTestBase {
           .getNamedItem("externalKey").getTextContent();
 
       results.put("getPOReponse_orderState", orderState);
-      results.put("getPOReponse_subscriptionId", subscriptionId);
       results.put("getPOReponse_storedPaymentProfileId", storedPaymentProfileId);
       results.put("getPOReponse_fulfillmentStatus", fulfillmentStatus);
-      results.put("getPOReponse_subscriptionPeriodStartDate", subscriptionPeriodStartDate);
-      results.put("getPOReponse_subscriptionPeriodEndDate", subscriptionPeriodEndDate);
-      results.put("getPOReponse_fulfillmentDate", fulfillmentDate);
-      results.put("getPOResponse_promotionDiscount", promotionDiscount);
-      results.put("getPOReponse_paymentProcessor", paymentProcessor);
-      results.put("getPOReponse_last4Digits", last4Digits);
-      results.put("getPOReponse_taxCode", taxCode);
-      results.put("getPOReponse_oxygenID", oxygenID);
+
+      if (!productLineCode.contains(BICECEConstants.CLDCR_PLC)) {
+        results.put("getPOReponse_subscriptionId", subscriptionId);
+        results.put("getPOReponse_subscriptionPeriodStartDate", subscriptionPeriodStartDate);
+        results.put("getPOReponse_subscriptionPeriodEndDate", subscriptionPeriodEndDate);
+        results.put("getPOReponse_fulfillmentDate", fulfillmentDate);
+        results.put("getPOResponse_promotionDiscount", promotionDiscount);
+        results.put("getPOReponse_paymentProcessor", paymentProcessor);
+        results.put("getPOReponse_last4Digits", last4Digits);
+        results.put("getPOReponse_taxCode", taxCode);
+        results.put("getPOReponse_oxygenID", oxygenID);
+      } else {
+        results.put("getPOReponse_subscriptionId", "NA");
+        results.put("getPOReponse_subscriptionPeriodStartDate", "NA");
+        results.put("getPOReponse_subscriptionPeriodEndDate", "NA");
+        results.put("getPOReponse_fulfillmentDate", "NA");
+      }
 
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details");

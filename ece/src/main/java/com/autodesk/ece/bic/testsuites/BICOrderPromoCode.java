@@ -63,16 +63,9 @@ public class BICOrderPromoCode extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb
-        .addTokenInResourceUrl(baseUrl, results.get(TestingHubConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     String promotionDiscount = results.get("getPOResponse_promotionDiscount");
@@ -80,8 +73,6 @@ public class BICOrderPromoCode extends ECETestBase {
     AssertUtils.assertTrue(Float.parseFloat(promotionDiscount) > 0, "Promotion was applied");
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
 
     try {

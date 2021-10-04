@@ -16,18 +16,14 @@ import org.testng.annotations.AfterTest;
 
 public class ECETestBase {
 
-  protected static SAPTestBase saptb = null;
   protected static DBValidations dbValtb = null;
   protected SFDCTestBase sfdctb = null;
   protected TIBCOServiceTestBase tibcotb = null;
   protected SOAPTestBase soaptb = null;
   protected PortalTestBase portaltb = null;
-  protected SAPDriverFiori sapfioritb = null;
   protected DynamoDBValidation dynamotb = null;
   protected ApigeeTestBase resttb = null;
   protected PelicanTestBase pelicantb = null;
-  protected HerokuTestBase herokutb = null;
-  protected LemTestBase lemtb = null;
   private WebDriver webdriver = null;
   private GlobalTestBase testbase = null;
   private AoeTestBase aoetb = null;
@@ -43,15 +39,11 @@ public class ECETestBase {
     tibcotb = new TIBCOServiceTestBase();
     dbValtb = new DBValidations();
     sfdctb = new SFDCTestBase(webdriver);
-    saptb = new SAPTestBase();
     soaptb = new SOAPTestBase();
     portaltb = new PortalTestBase(testbase);
     resttb = new ApigeeTestBase();
-    sapfioritb = new SAPDriverFiori(GlobalConstants.getTESTDATADIR(), webdriver);
     dynamotb = new DynamoDBValidation();
     pelicantb = new PelicanTestBase();
-    herokutb = new HerokuTestBase();
-    lemtb = new LemTestBase();
   }
 
   public static void updateTestingHub(HashMap<String, String> results) {
@@ -93,12 +85,6 @@ public class ECETestBase {
       tibcotb.tibcoConnectionClose();
     } catch (Exception e) {
       e.printStackTrace();
-    } finally {
-      if (saptb.loginSAPStatus == true) {
-        Util.printInfo("Closing SAPDriver after the end of the test");
-        saptb.logoffSAP();
-        saptb.closeSAP();
-      }
     }
   }
 }
