@@ -933,42 +933,46 @@ public class BICTestBase {
     Util.printInfo("*************************************************************");
   }
 
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACBICOrderUS(LinkedHashMap<String, String> data) {
-    String orderNumber = null;
-    String emailID = null;
-    HashMap<String, String> results = new HashMap<>();
+  private void navigateToGUAC(LinkedHashMap<String, String> data, String region) {
     String guacBaseURL = data.get("guacBaseURL");
+    String guacResourceURL = data.get("guacResourceURL");
     String productID = "";
     String quantity = "";
-    String guacResourceURL = data.get("guacResourceURL");
-    String userType = data.get("userType");
-    String region = data.get("languageStore");
-    String password = data.get("password");
-    String paymentMethod = System.getProperty("payment");
 
     if (System.getProperty("sku").contains("default")) {
       productID = data.get("productID");
+      quantity = data.get("quantity");
     } else {
       String sku = System.getProperty("sku");
       productID = sku.split(":")[0];
       quantity = sku.split(":")[1];
     }
 
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      emailID = System.getProperty("email");
-      String O2ID = getO2ID(data, emailID);
-      // New user to be created
-      if ((Strings.isNullOrEmpty(O2ID))) {
-        orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity,
-            guacResourceURL, region, password, paymentMethod);
-      }
-    } else {
-      emailID = generateUniqueEmailID();
-      orderNumber = createBICOrder(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-          region, password, paymentMethod);
-    }
+    String constructGuacURL =
+        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
+    System.out.println("constructGuacURL " + constructGuacURL);
+
+    getUrl(constructGuacURL);
+    disableChatSession();
+    checkCartDetailsError();
+    acceptCookiesAndUSSiteLink();
+  }
+
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createGUACBICOrderUS(LinkedHashMap<String, String> data) {
+    HashMap<String, String> results = new HashMap<>();
+
+    String guacResourceURL = data.get("guacResourceURL");
+    String userType = data.get("userType");
+    String password = data.get("password");
+    String paymentMethod = System.getProperty("payment");
+    String region = data.get("languageStore");
+
+    navigateToGUAC(data, region);
+
+    String emailID = generateUniqueEmailID();
+    String orderNumber = createBICOrder(data, emailID, region, password, paymentMethod);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -979,8 +983,6 @@ public class BICTestBase {
   @SuppressWarnings({"static-access", "unused"})
   @Step("Guac: Place GUAC Dot Com Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createGUACBICOrderDotCom(LinkedHashMap<String, String> data) {
-    String orderNumber = null;
-    String emailID = null;
     HashMap<String, String> results = new HashMap<>();
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
     String productName = data.get("productName");
@@ -993,21 +995,9 @@ public class BICTestBase {
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
 
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      emailID = System.getProperty("email");
-      String O2ID = getO2ID(data, emailID);
-      // New user to be created
-      if ((Strings.isNullOrEmpty(O2ID))) {
-        orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
-            guacOverviewResourceURL, productName, term,
-            region, quantity, password, paymentMethod);
-      }
-    } else {
-      emailID = generateUniqueEmailID();
-      orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL, guacOverviewResourceURL,
-          productName, term,
-          region, quantity, password, paymentMethod);
-    }
+    String emailID = generateUniqueEmailID();
+    String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
+        guacOverviewResourceURL, productName, term, region, quantity, password, paymentMethod);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1018,8 +1008,6 @@ public class BICTestBase {
   @SuppressWarnings({"static-access", "unused"})
   @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createGUACBICOrderPromoCode(LinkedHashMap<String, String> data) {
-    String orderNumber = null;
-    String emailID = null;
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
     String productID = "";
@@ -1029,48 +1017,17 @@ public class BICTestBase {
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
-    String promocode = System.getProperty("promocode");
+    String promoCode = System.getProperty("promocode");
 
-    if (System.getProperty("sku").contains("default")) {
-      productID = data.get("productID");
-    } else {
-      String sku = System.getProperty("sku");
-      productID = sku.split(":")[0];
-      quantity = sku.split(":")[1];
+    navigateToGUAC(data, region);
+
+    if (Strings.isNullOrEmpty(promoCode)) {
+      promoCode = "GUACPROMO";
     }
 
-    // While picking the default value we are also overriding the Price ID to match
-    // with the promo code
-
-    try {
-      System.out.println(Strings.isNullOrEmpty(promocode));
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    boolean promoAvailable = !(Strings.isNullOrEmpty(promocode));
-    boolean skuAvailable = !(System.getProperty("sku").contains("default"));
-
-    if (!(promoAvailable && skuAvailable)) {
-      promocode = "GUACPROMO";
-      productID = "27125";
-    }
-
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      emailID = System.getProperty("email");
-      String O2ID = getO2ID(data, emailID);
-      // New user to be created
-      if ((Strings.isNullOrEmpty(O2ID))) {
-        orderNumber = getBICOrderPromoCode(data, emailID, guacBaseURL, productID, guacResourceURL,
-            region, password,
-            paymentMethod, promocode);
-      }
-    } else {
-      emailID = generateUniqueEmailID();
-      orderNumber = getBICOrderPromoCode(data, emailID, guacBaseURL, productID, guacResourceURL,
-          region, password, paymentMethod, promocode);
-    }
+    String emailID = generateUniqueEmailID();
+    String orderNumber = getBICOrderPromoCode(data, emailID, region, password, paymentMethod,
+        promoCode);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1092,20 +1049,11 @@ public class BICTestBase {
     }
   }
 
-  private String createBICOrder(LinkedHashMap<String, String> data, String emailID,
-      String guacBaseURL,
-      String productID, String quantity, String guacResourceURL, String region, String password,
-      String paymentMethod) {
+  private String createBICOrder(LinkedHashMap<String, String> data, String emailID, String region,
+      String password, String paymentMethod) {
     String orderNumber;
-    String constructGuacURL =
-        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
-    System.out.println("constructGuacURL " + constructGuacURL);
     String firstName = null, lastName = null;
     Map<String, String> address = null;
-
-    getUrl(constructGuacURL);
-    disableChatSession();
-    checkCartDetailsError();
 
     firstName = null;
     lastName = null;
@@ -1114,8 +1062,6 @@ public class BICTestBase {
     region = region.replace("/", "").replace("-", "");
     address = getBillingAddress(region);
     String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-
-    acceptCookiesAndUSSiteLink();
 
     firstName = "FN" + randomString;
     Util.printInfo("firstName :: " + firstName);
@@ -1159,7 +1105,7 @@ public class BICTestBase {
 
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
-    printConsole(constructGuacURL, orderNumber, emailID, address, firstName, lastName,
+    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, firstName, lastName,
         paymentMethod);
 
     return orderNumber;
@@ -1241,17 +1187,12 @@ public class BICTestBase {
   }
 
   private String getBICOrderPromoCode(LinkedHashMap<String, String> data, String emailID,
-      String guacBaseURL, String productID, String guacResourceURL, String region, String password,
+      String region, String password,
       String paymentMethod, String promocode) {
     String orderNumber;
-    String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
-    System.out.println("constructGuacURL " + constructGuacURL);
+
     String firstName = null, lastName = null;
     Map<String, String> address = null;
-
-    getUrl(constructGuacURL);
-    disableChatSession();
-    checkCartDetailsError();
 
     firstName = null;
     lastName = null;
@@ -1260,8 +1201,6 @@ public class BICTestBase {
     region = region.replace("/", "").replace("-", "");
     address = getBillingAddress(region);
     String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-
-    acceptCookiesAndUSSiteLink();
 
     firstName = "FN" + randomString;
     Util.printInfo("firstName :: " + firstName);
@@ -1310,7 +1249,7 @@ public class BICTestBase {
 
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
-    printConsole(constructGuacURL, orderNumber, emailID, address, firstName, lastName,
+    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, firstName, lastName,
         paymentMethod);
 
     return orderNumber;
@@ -1415,63 +1354,14 @@ public class BICTestBase {
   }
 
   @SuppressWarnings("unused")
-  @Step("Create BIC Hybrid Order via Cart " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createBICHybridOrder(LinkedHashMap<String, String> data) {
-    String orderNumber;
-    HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
-    String region = data.get("US");
-    String guacResourceURL = data.get("guacResourceURL");
-    String productID = data.get("bicNativePriceID");
-    String paymentMethod = data.get("paymentMethod");
-    String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
-    System.out.println("constructGuacURL " + constructGuacURL);
-
-    getUrl(constructGuacURL);
-    disableChatSession();
-    checkCartDetailsError();
-    acceptCookiesAndUSSiteLink();
-
-    switchToBICCartLoginPage();
-    loginBICAccount(data);
-
-    if (data.get("paymentType").equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
-      populatePaypalPaymentDetails(data);
-    } else if (data.get("paymentType").equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-      if (bicPage.isChecked("achCheckBox") == false) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("document.getElementById('mandate-agreement').click()");
-      } else {
-        Util.printInfo("ACH Debit card checkbox is Checked");
-      }
-    }
-
-    orderNumber = submitGetOrderNumber();
-    validateBicOrderNumber(orderNumber);
-    Util.printInfo("OrderNumber  :: " + orderNumber);
-
-    results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
-  }
-
-  @SuppressWarnings("unused")
   @Step("Create BIC Existing User Order Creation via Cart " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBICReturningUser(LinkedHashMap<String, String> data) {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
     String region = data.get("US");
-    String guacResourceURL = data.get("guacResourceURL");
-    String productID = data.get("bicNativePriceID");
     String paymentMethod = data.get("paymentMethod");
-    String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
-    System.out.println("constructGuacURL " + constructGuacURL);
 
-    getUrl(constructGuacURL);
-    disableChatSession();
-    checkCartDetailsError();
-    acceptCookiesAndUSSiteLink();
+    navigateToGUAC(data, region);
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
@@ -1495,16 +1385,9 @@ public class BICTestBase {
       LinkedHashMap<String, String> data) {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
     String region = data.get("US");
-    String guacResourceURL = data.get("guacResourceURL");
-    String productID = data.get("bicNativePriceID");
-    String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
-    System.out.println("constructGuacURL " + constructGuacURL);
 
-    getUrl(constructGuacURL);
-    disableChatSession();
-    acceptCookiesAndUSSiteLink();
+    navigateToGUAC(data, region);
 
     skipAddSeats();
 
@@ -1523,17 +1406,10 @@ public class BICTestBase {
       LinkedHashMap<String, String> data) {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
     String region = data.get("US");
-    String guacResourceURL = data.get("guacResourceURL");
-    String productID = data.get("bicNativePriceID");
-    String constructGuacURL = guacBaseURL + region + guacResourceURL + productID;
 
     // Go to checkout with a product that was already added
-    getUrl(constructGuacURL);
-    disableChatSession();
-    checkCartDetailsError();
-    acceptCookiesAndUSSiteLink();
+    navigateToGUAC(data, region);
 
     // Login to an existing account and add seats
     loginAccount(data);
@@ -1619,79 +1495,6 @@ public class BICTestBase {
     driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
   }
 
-  @Step("Get BIC order")
-  private String getBICOrder(LinkedHashMap<String, String> data, String emailID, String guacBaseURL,
-      String productID, String quantity,
-      String guacResourceURL, String region, String password, String paymentMethod) {
-    String orderNumber;
-    String constructGuacURL =
-        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
-    System.out.println("constructGuacURL " + constructGuacURL);
-    String firstName = null, lastName = null;
-    Map<String, String> address = null;
-
-    getUrl(constructGuacURL);
-    disableChatSession();
-    checkCartDetailsError();
-    firstName = null;
-    lastName = null;
-    String randomString = RandomStringUtils.random(6, true, false);
-
-    region = region.replace("/", "").replace("-", "");
-    address = getBillingAddress(region);
-    String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-
-    acceptCookiesAndUSSiteLink();
-
-    firstName = "FN" + randomString;
-    Util.printInfo("firstName :: " + firstName);
-    lastName = "LN" + randomString;
-    Util.printInfo("lastName :: " + lastName);
-    createBICAccount(firstName, lastName, emailID, password);
-
-    data.put("firstname", firstName);
-    data.put("lastname", lastName);
-
-    debugHTMLPage("Entire Payment details");
-    // Get Payment details
-    selectPaymentProfile(data, paymentCardDetails);
-
-    // Entire billing details
-    debugHTMLPage("Entire billing details");
-
-    populateBillingAddress(address, data);
-    debugHTMLPage("After entering billing details");
-
-    try {
-      if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        Util.printInfo(
-            "Checked ACH Authorization Agreement is visible - " + bicPage
-                .isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
-
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("document.getElementById('mandate-agreement').click()");
-        WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
-
-        Util.printInfo(
-            "Checked ACH Authorization Agreement is visible - " + bicPage
-                .isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    orderNumber = submitGetOrderNumber();
-
-    // Check to see if EXPORT COMPLIANCE or Null
-    validateBicOrderNumber(orderNumber);
-    printConsole(constructGuacURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
-
-    return orderNumber;
-  }
-
   @Step("Guac: Test Trail Download  " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> testCjtTrialDownloadUI(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
@@ -1757,8 +1560,6 @@ public class BICTestBase {
   @SuppressWarnings({"static-access", "unused"})
   @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBicOrderMoe(LinkedHashMap<String, String> data) {
-    String orderNumber = null;
-    String emailID = null;
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
     String productID = "";
@@ -1771,29 +1572,11 @@ public class BICTestBase {
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
 
-    if (System.getProperty("sku").contains("default")) {
-      productID = data.get("productID");
-    } else {
-      String sku = System.getProperty("sku");
-      productID = sku.split(":")[0];
-      quantity = "[qty:" + sku.split(":")[1] + "]";
-    }
+    navigateToGUAC(data, region);
 
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      emailID = System.getProperty("email");
-      String O2ID = getO2ID(data, emailID);
-      // New user to be created
-      if ((Strings.isNullOrEmpty(O2ID))) {
-        orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, productID, quantity,
-            guacResourceURL,
-            guacMoeResourceURL, region, password, paymentMethod, cepURL);
-      }
-    } else {
-      emailID = generateUniqueEmailID();
-      orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, productID, quantity, guacResourceURL,
-          guacMoeResourceURL,
-          region, password, paymentMethod, cepURL);
-    }
+    String emailID = generateUniqueEmailID();
+    String orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, guacMoeResourceURL,
+        region, password, paymentMethod, cepURL);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1802,21 +1585,14 @@ public class BICTestBase {
   }
 
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
-      String guacBaseURL, String productID, String quantity,
-      String guacResourceURL, String guacMoeResourceURL, String region, String password,
+      String guacBaseURL, String guacMoeResourceURL, String region, String password,
       String paymentMethod, String cepURL) {
     String orderNumber;
-    String constructGuacURL = guacBaseURL + region + guacResourceURL + productID + quantity;
-    System.out.println("constructGuacURL " + constructGuacURL);
     String constructGuacMoeURL = guacBaseURL + region + guacMoeResourceURL;
     System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
     String constructPortalUrl = cepURL;
     String firstName = null, lastName = null;
     Map<String, String> address = null;
-
-    getUrl(constructGuacURL);
-    disableChatSession();
-    checkCartDetailsError();
 
     firstName = null;
     lastName = null;
@@ -1825,8 +1601,6 @@ public class BICTestBase {
     region = region.replace("/", "").replace("-", "");
     address = getBillingAddress(region);
     String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-
-    acceptCookiesAndUSSiteLink();
 
     firstName = "FN" + randomString;
     Util.printInfo("firstName :: " + firstName);
