@@ -199,6 +199,8 @@ public class BICTestBase {
     }
 
     driver.switchTo().defaultContent();
+
+    waitForLoadingSpinnerToComplete();
   }
 
   private void checkboxTickJS() {
@@ -251,7 +253,7 @@ public class BICTestBase {
       bicPage.click("getStartedSkipLink");
     }
 
-    Util.sleep(20000);
+    waitForLoadingSpinnerToComplete();
 
     skipAddSeats();
 
@@ -282,9 +284,26 @@ public class BICTestBase {
           driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
               .sendKeys(Keys.PAGE_DOWN);
         }
-        System.out.println("count : " + count);
+        Util.printInfo("count : " + count);
       }
+    } catch (Exception e) {
+    }
+  }
 
+  @Step("Wait for loading spinner to complete")
+  public void waitForLoadingSpinnerToComplete() {
+    Util.sleep(2000);
+    try {
+      int count = 0;
+      while (driver.findElement(By.xpath("//*[@data-testid=\"loading\"]"))
+          .isDisplayed()) {
+        count++;
+        Util.sleep(1000);
+        if (count == 20) {
+          break;
+        }
+        Util.printInfo("Loading spinner visible: " + count + " second(s)");
+      }
     } catch (Exception e) {
     }
   }
@@ -823,7 +842,7 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-          "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
         Util.printWarning(
             "Export compliance issue is present. Checking for order number in the Pelican response");
@@ -1298,9 +1317,6 @@ public class BICTestBase {
   }
 
   private void populatePromoCode(String promocode, LinkedHashMap<String, String> data) {
-    new WebDriverWait(driver, 10).until(
-        ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@data-testid='loading']")));
-
     String priceBeforePromo = null;
     String priceAfterPromo = null;
 
@@ -1318,7 +1334,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("promocodeInput");
       bicPage.populateField("promocodeInput", promocode);
       bicPage.clickUsingLowLevelActions("promocodeSubmit");
-      Util.sleep(5000);
+      waitForLoadingSpinnerToComplete();
       priceAfterPromo = bicPage.getValueFromGUI("promocodeAfterDiscountPrice").trim();
 
       Util.printInfo("----------------------------------------------------------------------");
