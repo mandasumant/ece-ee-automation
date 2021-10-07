@@ -272,14 +272,10 @@ public class BICOrderCreation extends ECETestBase {
       Assert.assertTrue(newBillingDate.after(new Date()),
           "Check that the subscription has been renewed");
 
-      String actualNextBillingDate = results.get(BICECEConstants.NEXT_BILLING_DATE);
-      String expectedNextBillingDate = Util.customDate("MM/dd/yyyy", 0, -5, +1) + " 10:00:00 UTC";
-
       AssertUtils
-          .assertEquals("The billing date has been updated to next cycle ", actualNextBillingDate,
-              expectedNextBillingDate);
-
-
+          .assertEquals("The billing date has been updated to next cycle ",
+              results.get(BICECEConstants.NEXT_BILLING_DATE).split("\\s")[0],
+              Util.customDate("MM/dd/yyyy", 0, -5, +1));
     } catch (ParseException e) {
       e.printStackTrace();
     }
