@@ -27,6 +27,8 @@ import org.testng.annotations.Test;
 
 public class BICOrderCreation extends ECETestBase {
 
+  private static final String EMAIL = System.getProperty("email");
+  private static final String PASSWORD = "Password1";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
@@ -64,13 +66,13 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBICChangePaymentProfile() {
     Util.printInfo("Gathering payment details...");
     String emailID = System.getProperty("email");
-    String cepSSAP = System.getProperty("password");
+    String password = System.getProperty("password");
 
-    if (Strings.isNullOrEmpty(emailID)) {
+    if (Strings.isNullOrEmpty(EMAIL)) {
       HashMap<String, String> results = getBicTestBase()
           .createGUACBICOrderUS(testDataForEachMethod);
       emailID = results.get(BICConstants.emailid);
-      cepSSAP = "Password1";
+      password = PASSWORD;
 
       updateTestingHub(results);
       results.putAll(testDataForEachMethod);
@@ -96,8 +98,8 @@ public class BICOrderCreation extends ECETestBase {
 
     portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
 
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      portaltb.portalLogin(emailID, cepSSAP);
+    if (!(Strings.isNullOrEmpty(EMAIL))) {
+      portaltb.portalLogin(emailID, password);
     }
     String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentType.toUpperCase())
         .split("@");
@@ -121,7 +123,6 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
@@ -130,27 +131,27 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put(BICConstants.orderNumberSAP, results.get("orderNumberSAP"));
-      testResults.put(BICConstants.orderState, results.get("getPOReponse_orderState"));
+      testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-          .put(BICConstants.fulfillmentStatus, results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put(BICConstants.fulfillmentDate, results.get("getPOReponse_fulfillmentDate"));
-      testResults.put(BICConstants.subscriptionId, results.get("getPOReponse_subscriptionId"));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
       testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
       testResults
-          .put(BICConstants.payment_ProfileId, results.get("getPOReponse_storedPaymentProfileId"));
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        "Password1", results.get("getPOReponse_subscriptionId"));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
   }
@@ -181,32 +182,32 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put(BICConstants.orderNumberSAP, results.get("orderNumberSAP"));
-      testResults.put(BICConstants.orderState, results.get("getPOReponse_orderState"));
+      testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-          .put(BICConstants.fulfillmentStatus, results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put(BICConstants.fulfillmentDate, results.get("getPOReponse_fulfillmentDate"));
-      testResults.put(BICConstants.subscriptionId, results.get("getPOReponse_subscriptionId"));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
       testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
       testResults
-          .put(BICConstants.payment_ProfileId, results.get("getPOReponse_storedPaymentProfileId"));
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        "Password1", results.get("getPOReponse_subscriptionId"));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
     portaltb.switchTermInUserPortal(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        "Password1", results.get("getPOReponse_subscriptionId"));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
     Util.sleep(120000);
 
@@ -226,12 +227,12 @@ public class BICOrderCreation extends ECETestBase {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
 
       testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
       testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 
@@ -243,9 +244,9 @@ public class BICOrderCreation extends ECETestBase {
 
     // Verify that the subscription has actually moved to the past and is in a state to be renewed
     try {
-      String originalBillingDateString = results.get("response_nextBillingDate");
+      String originalBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
       Util.printInfo("Original Billing Date: " + originalBillingDateString);
-      Date originalBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+      Date originalBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
           originalBillingDateString);
       Assert.assertTrue(originalBillingDate.before(new Date()),
           "Check that the subscription is ready to be renewed");
@@ -264,14 +265,14 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       // Ensure that the subscription renews in the future
-      String nextBillingDateString = results.get("response_nextBillingDate");
+      String nextBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
       Util.printInfo("New Billing Date: " + nextBillingDateString);
-      Date newBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
           nextBillingDateString);
       Assert.assertTrue(newBillingDate.after(new Date()),
           "Check that the subscription has been renewed");
 
-      String actualNextBillingDate = results.get("response_nextBillingDate");
+      String actualNextBillingDate = results.get(BICECEConstants.NEXT_BILLING_DATE);
       String expectedNextBillingDate = Util.customDate("MM/dd/yyyy", 0, -5, +1) + " 10:00:00 UTC";
 
       AssertUtils
@@ -287,7 +288,8 @@ public class BICOrderCreation extends ECETestBase {
   @Test(groups = {"bic-addseat-native-US"}, description = "Validation of BIC Add Seat Order")
   public void validateBicAddSeatNativeOrder() {
     System.out.println("Version 20th April 2021");
-    testDataForEachMethod.put("productID", testDataForEachMethod.get("nativeproductID"));
+    testDataForEachMethod
+        .put(BICECEConstants.PRODUCT_ID, testDataForEachMethod.get("nativeproductID"));
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
@@ -308,17 +310,18 @@ public class BICOrderCreation extends ECETestBase {
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        "Password1", results.get("getPOReponse_subscriptionId"));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
     // Place add Seat order in Portal
     results.putAll(
-        portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get("addSeatQty"),
+        portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
+            BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
     // results.get("perSeatGrossAmount"));
-    testResults.put("addSeatQty", results.get("addSeatQty"));
+    testResults.put(BICECEConstants.ADD_SEAT_QTY, results.get(BICECEConstants.ADD_SEAT_QTY));
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
@@ -333,25 +336,28 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderState", results.get("getPOReponse_orderState"));
-      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
-      testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
-      testResults.put("subscriptionPeriodStartDate",
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-          .put("subscriptionPeriodEndDate", results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
-      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put("subscriptionPeriodStartDate",
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults
+          .put(BICConstants.subscriptionPeriodEndDate, results.get(
+              BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
     Util.sleep(60000);
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
@@ -372,7 +378,8 @@ public class BICOrderCreation extends ECETestBase {
     getBicTestBase().driver.quit();
 
     ECETestBase tb = new ECETestBase();
-    testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get("productID"));
+    testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get(
+        BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing second order for the returning user");
 
     results = tb.getBicTestBase().createBic_ReturningUserAddSeat(testDataForEachMethod);
@@ -392,23 +399,25 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderState", results.get("getPOReponse_orderState"));
-      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
-      testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put("subscriptionQuantity", results.get("response_subscriptionQuantity"));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
   @Test(groups = {"bic-reduceseats-native-US"}, description = "Validation of BIC Reduce Seats")
   public void validateBicReduceSeats() throws MetadataException {
-    testDataForEachMethod.put("productID", testDataForEachMethod.get("nativeproductID"));
+    testDataForEachMethod
+        .put(BICECEConstants.PRODUCT_ID, testDataForEachMethod.get("nativeproductID"));
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
@@ -426,7 +435,7 @@ public class BICOrderCreation extends ECETestBase {
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        "Password1", results.get("getPOReponse_subscriptionId"));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
     // Reduce seats in Portal
@@ -444,16 +453,19 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderState", results.get("getPOReponse_orderState"));
-      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
-      testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
-      testResults.put("subscriptionPeriodStartDate",
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-          .put("subscriptionPeriodEndDate", results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
-      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put("subscriptionPeriodStartDate",
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults
+          .put(BICConstants.subscriptionPeriodEndDate, results.get(
+              BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
       testResults.put("quantityToReduce", results.get("response_quantityToReduce"));
     } catch (Exception e) {
       Util.printTestFailedMessage("Failed to update results to Testing Hub");
@@ -463,7 +475,7 @@ public class BICOrderCreation extends ECETestBase {
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
@@ -491,26 +503,26 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put(BICConstants.orderState, results.get("getPOReponse_orderState"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-          .put(BICConstants.fulfillmentStatus, results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put(BICConstants.fulfillmentDate, results.get("getPOReponse_fulfillmentDate"));
-      testResults.put(BICConstants.subscriptionId, results.get("getPOReponse_subscriptionId"));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
       testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
       testResults
-          .put(BICConstants.payment_ProfileId, results.get("getPOReponse_storedPaymentProfileId"));
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        "Password1", results.get("getPOReponse_subscriptionId"));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
     // Validate Submit Order
@@ -518,10 +530,11 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Validate Create Order
-    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber), "CreateOrder");
+    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber),
+        BICECEConstants.ORDER_CREATION);
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
@@ -530,7 +543,7 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     try {
-      testResults.put(BICConstants.emailid, System.getProperty("email"));
+      testResults.put(BICConstants.emailid, EMAIL);
       testResults = getBicTestBase().testCjtTrialDownloadUI(testDataForEachMethod);
       updateTestingHub(testResults);
     } catch (Exception e) {
@@ -570,25 +583,27 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderNumber_SAP", results.get("orderNumberSAP"));
-      testResults.put("orderState", results.get("getPOReponse_orderState"));
-      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
-      testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
-      testResults.put("subscriptionPeriodStartDate",
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
-      testResults.put("subscriptionPeriodEndDate",
-          results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
-      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+      testResults.put("orderNumber_SAP", results.get(BICConstants.orderNumberSAP));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        "Password1", results.get("getPOReponse_subscriptionId"));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
     // Validate Submit Order
@@ -596,10 +611,11 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Validate Create Order
-    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber), "CreateOrder");
+    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber),
+        BICECEConstants.ORDER_CREATION);
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
@@ -637,16 +653,19 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderState", results.get("getPOReponse_orderState"));
-      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
-      testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
-      testResults.put("subscriptionPeriodStartDate",
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-          .put("subscriptionPeriodEndDate", results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
-      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults
+          .put(BICConstants.subscriptionPeriodEndDate, results.get(
+              BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
       Util.printTestFailedMessage("Failed to update results to Testing hub.");
     }
@@ -662,14 +681,15 @@ public class BICOrderCreation extends ECETestBase {
     // Portal
     portaltb.validateMetaOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        "Password1", results.get("getPOReponse_subscriptionId"));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
     // Validate Create Order
-    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber), "CreateOrder");
+    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber),
+        BICECEConstants.ORDER_CREATION);
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
@@ -689,24 +709,27 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderState", results.get("getPOReponse_orderState"));
-      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
-      testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
-      testResults.put("subscriptionPeriodStartDate",
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-          .put("subscriptionPeriodEndDate", results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
-      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults
+          .put(BICConstants.subscriptionPeriodEndDate, results.get(
+              BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
@@ -714,7 +737,8 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBicReturningUser() {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
-    testDataForEachMethod.put("productID", testDataForEachMethod.get("productID"));
+    testDataForEachMethod.put(
+        BICECEConstants.PRODUCT_ID, testDataForEachMethod.get(BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing initial order.");
 
     HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
@@ -729,7 +753,8 @@ public class BICOrderCreation extends ECETestBase {
     getBicTestBase().driver.quit();
 
     ECETestBase tb = new ECETestBase();
-    testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get("productID"));
+    testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get(
+        BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing second order for the returning user.");
 
     results = tb.getBicTestBase().createBICReturningUser(testDataForEachMethod);
@@ -743,7 +768,7 @@ public class BICOrderCreation extends ECETestBase {
     String bicOrderO2ID = "";
     OxygenService os = new OxygenService();
     try {
-      bicOrderO2ID = os.getOxygenID(results.get(BICConstants.emailid), results.get("password"));
+      bicOrderO2ID = os.getOxygenID(results.get(BICConstants.emailid), results.get(PASSWORD));
       results.put(BICConstants.oxid, bicOrderO2ID);
     } catch (Exception e1) {
     }
@@ -766,16 +791,18 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderState", results.get("getPOReponse_orderState"));
-      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
-      testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
-      testResults.put("subscriptionPeriodStartDate",
-          results.get("getPOReponse_subscriptionPeriodStartDate"));
-      testResults.put("subscriptionPeriodEndDate",
-          results.get("getPOReponse_subscriptionPeriodEndDate"));
-      testResults.put("nextBillingDate", results.get("response_nextBillingDate"));
-      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
       Util.printTestFailedMessage("Failed to update results to Testing hub.");
     }
@@ -784,12 +811,13 @@ public class BICOrderCreation extends ECETestBase {
 
     // Initial order validation in Portal
     tb.getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid), "Password1", results.get("getPOReponse_subscriptionId"));
+        results.get(BICConstants.emailid), PASSWORD,
+        results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
@@ -818,13 +846,14 @@ public class BICOrderCreation extends ECETestBase {
     // Get the subscription id for the first order
     results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
-    results.put("sub1ID", results.get("getPOReponse_subscriptionId"));
+    results.put(BICECEConstants.SUB1_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
     // Get the original billing date for the first subscription
     testDataForEachMethod
-        .put("getPOReponse_subscriptionId", results.get("getPOReponse_subscriptionId"));
+        .put(BICECEConstants.SUBSCRIPTION_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));
     results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
-    results.put("sub1NextBillingDate", results.get("response_nextBillingDate"));
+    results.put(
+        BICECEConstants.SUB1_NEXT_BILLING_DATE, results.get(BICECEConstants.NEXT_BILLING_DATE));
 
     Util.printInfo("Placing second order for the returning user");
 
@@ -836,7 +865,7 @@ public class BICOrderCreation extends ECETestBase {
 
     results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
-    results.put("sub2ID", results.get("getPOReponse_subscriptionId"));
+    results.put(BICECEConstants.SUB2_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
     // Forcefully update the second subscription's billing date to make it unaligned from the first subscription
     testDataForEachMethod
@@ -845,29 +874,34 @@ public class BICOrderCreation extends ECETestBase {
 
     // Open up portal UI and align billing between the 2 subscriptions
     portaltb.alignBillingInPortal(testDataForEachMethod.get(TestingHubConstants.cepURL),
-        results.get(TestingHubConstants.emailid), "Password1", results.get("sub1ID"),
-        results.get("sub2ID"));
+        results.get(TestingHubConstants.emailid), PASSWORD, results.get(BICECEConstants.SUB1_ID),
+        results.get(BICECEConstants.SUB2_ID));
 
     Util.sleep(240000);
 
     // Get the billing date of the aligned subscription
 
     results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
-    results.put("sub2NextBillingDate", results.get("response_nextBillingDate"));
+    results.put(
+        BICECEConstants.SUB2_NEXT_BILLING_DATE, results.get(BICECEConstants.NEXT_BILLING_DATE));
 
     AssertUtils.assertEquals("Billing Dates should be aligned",
-        results.get("sub1NextBillingDate").split("\\s")[0],
-        results.get("sub2NextBillingDate").split("\\s")[0]);
+        results.get(BICECEConstants.SUB1_NEXT_BILLING_DATE).split("\\s")[0],
+        results.get(BICECEConstants.SUB2_NEXT_BILLING_DATE).split("\\s")[0]);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("sub1ID", results.get("sub1ID"));
-      testResults.put("sub2ID", results.get("sub2ID"));
-      testResults.put("sub1NextBillingDate", results.get("sub1NextBillingDate"));
-      testResults.put("sub2NextBillingDate", results.get("sub2NextBillingDate"));
+      testResults.put(BICECEConstants.SUB1_ID, results.get(BICECEConstants.SUB1_ID));
+      testResults.put(BICECEConstants.SUB2_ID, results.get(BICECEConstants.SUB2_ID));
+      testResults.put(
+          BICECEConstants.SUB1_NEXT_BILLING_DATE,
+          results.get(BICECEConstants.SUB1_NEXT_BILLING_DATE));
+      testResults.put(
+          BICECEConstants.SUB2_NEXT_BILLING_DATE,
+          results.get(BICECEConstants.SUB2_NEXT_BILLING_DATE));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
   }
@@ -891,38 +925,41 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // The End date of the subscription should be null and status Active
-    results.put("subscriptionEndDate", results.get("response_endDate"));
-    results.put("status", results.get("response_status"));
-    Assert.assertNull(results.get("response_endDate"), "End date is null.");
+    results
+        .put(BICECEConstants.SUBSCRIPTION_END_DATE, results.get(BICECEConstants.RESPONSE_END_DATE));
+    results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
+    Assert.assertNull(results.get(BICECEConstants.RESPONSE_END_DATE), "End date is null.");
     AssertUtils
-        .assertEquals("Status is Active.", results.get("response_status"),
+        .assertEquals("Status is Active.", results.get(BICECEConstants.RESPONSE_STATUS),
             "ACTIVE");
 
     // Cancel Subscription in Portal
     portaltb.cancelSubscription(
-        results.get(TestingHubConstants.emailid), "Password1");
+        results.get(TestingHubConstants.emailid), PASSWORD);
 
     // The End Date of the subscription should be the same as the Next Billing Date
     results.putAll(pelicantb.getSubscriptionById(results));
 
-    results.put("subscriptionEndDate", results.get("response_endDate"));
-    results.put("nextBillingDate", results.get("response_nextBillingDate"));
-    results.put("autoRenewEnabled", results.get("response_autoRenewEnabled"));
+    results
+        .put(BICECEConstants.SUBSCRIPTION_END_DATE, results.get(BICECEConstants.RESPONSE_END_DATE));
+    results.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+    results.put("autoRenewEnabled", results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED));
     results.put("expirationDate", results.get("response_expirationDate"));
-    results.put("status", results.get("response_status"));
+    results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
     AssertUtils
-        .assertEquals("End date should equal Next Billing Date.", results.get("response_endDate"),
-            results.get("response_nextBillingDate"));
-    Assert.assertEquals(results.get("response_autoRenewEnabled"), "false",
+        .assertEquals("End date should equal Next Billing Date.", results.get(
+            BICECEConstants.RESPONSE_END_DATE),
+            results.get(BICECEConstants.NEXT_BILLING_DATE));
+    Assert.assertEquals(results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "false",
         "Auto renew is off.");
     AssertUtils
         .assertEquals("Expiration date equals next billing date.",
-            results.get("response_expirationDate"), results.get("response_nextBillingDate"));
+            results.get("response_expirationDate"), results.get(BICECEConstants.NEXT_BILLING_DATE));
     AssertUtils
-        .assertEquals("Status is Cancelled.", results.get("response_status"),
+        .assertEquals("Status is Cancelled.", results.get(BICECEConstants.RESPONSE_STATUS),
             "CANCELLED");
 
-    String originalNextBillingDate = results.get("response_nextBillingDate");
+    String originalNextBillingDate = results.get(BICECEConstants.NEXT_BILLING_DATE);
 
     // Restart Subscription in Portal
     portaltb.restartSubscription();
@@ -931,18 +968,20 @@ public class BICOrderCreation extends ECETestBase {
 
     results.putAll(pelicantb.getSubscriptionById(results));
 
-    results.put("subscriptionEndDate", results.get("response_endDate"));
-    results.put("nextBillingDate", results.get("response_nextBillingDate"));
-    results.put("autoRenewEnabled", results.get("response_autoRenewEnabled"));
-    results.put("status", results.get("response_status"));
+    results
+        .put(BICECEConstants.SUBSCRIPTION_END_DATE, results.get(BICECEConstants.RESPONSE_END_DATE));
+    results.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+    results.put("autoRenewEnabled", results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED));
+    results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
 
-    Assert.assertNull(results.get("response_endDate"), "End date is null.");
-    AssertUtils.assertEquals("Auto renew is on.", results.get("response_autoRenewEnabled"), "true");
+    Assert.assertNull(results.get(BICECEConstants.RESPONSE_END_DATE), "End date is null.");
+    AssertUtils.assertEquals("Auto renew is on.", results.get(
+        BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "true");
     AssertUtils
         .assertEquals("Next billing date should be the same as before subscription was cancelled.",
-            results.get("response_nextBillingDate"), originalNextBillingDate);
+            results.get(BICECEConstants.NEXT_BILLING_DATE), originalNextBillingDate);
     AssertUtils
-        .assertEquals("Status is Active.", results.get("response_status"),
+        .assertEquals("Status is Active.", results.get(BICECEConstants.RESPONSE_STATUS),
             "ACTIVE");
   }
 
@@ -977,9 +1016,9 @@ public class BICOrderCreation extends ECETestBase {
 
     // Verify that the subscription has actually moved to the past and is in a state to be renewed
     try {
-      String originalBillingDateString = results.get("response_nextBillingDate");
+      String originalBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
       Util.printInfo("Original Billing Date: " + originalBillingDateString);
-      Date originalBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+      Date originalBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
           originalBillingDateString);
       Assert.assertTrue(originalBillingDate.before(new Date()),
           "Check that the subscription is ready to be renewed");
@@ -1000,9 +1039,9 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       // Ensure that the subscription renews in the future
-      String nextBillingDateString = results.get("response_nextBillingDate");
+      String nextBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
       Util.printInfo("New Billing Date: " + nextBillingDateString);
-      Date newBillingDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z").parse(
+      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
           nextBillingDateString);
       Assert.assertTrue(newBillingDate.after(new Date()),
           "Check that the subscription has been renewed");
@@ -1013,11 +1052,11 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put(BICConstants.orderState, results.get("getPOReponse_orderState"));
-      testResults.put(BICConstants.subscriptionId, results.get("getPOReponse_subscriptionId"));
-      testResults.put(BICConstants.nextBillingDate, results.get("response_nextBillingDate"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 
@@ -1049,32 +1088,31 @@ public class BICOrderCreation extends ECETestBase {
 
     portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
 
-    String emailID = System.getProperty("email");
-    String password = System.getProperty("password");
-
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      portaltb.portalLogin(emailID, password);
+    if (!(Strings.isNullOrEmpty(EMAIL))) {
+      portaltb.portalLogin(EMAIL, PASSWORD);
     }
     portaltb.reporting_CloudServiceUsageLinkDisplayed();
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderState", results.get("getPOReponse_orderState"));
-      testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
-      testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
-      testResults.put("subscriptionId", "NA");
-      testResults.put("subscriptionPeriodStartDate", "NA");
-      testResults.put("subscriptionPeriodEndDate", "NA");
-      testResults.put("nextBillingDate", "NA");
-      testResults.put("payment_ProfileId", results.get("getPOReponse_storedPaymentProfileId"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, "NA");
+      testResults.put(BICConstants.subscriptionPeriodStartDate, "NA");
+      testResults.put(BICConstants.subscriptionPeriodEndDate, "NA");
+      testResults.put(BICConstants.nextBillingDate, "NA");
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put("e2e_ExecutionTime", String.valueOf(executionTime));
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 
