@@ -865,7 +865,7 @@ public class BICOrderCreation extends ECETestBase {
 
     results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
-    results.put(BICECEConstants.SUB_2_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    results.put(BICECEConstants.SUB2_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
     // Forcefully update the second subscription's billing date to make it unaligned from the first subscription
     testDataForEachMethod
@@ -874,8 +874,8 @@ public class BICOrderCreation extends ECETestBase {
 
     // Open up portal UI and align billing between the 2 subscriptions
     portaltb.alignBillingInPortal(testDataForEachMethod.get(TestingHubConstants.cepURL),
-        results.get(TestingHubConstants.emailid), PASSWORD, results.get("sub1ID"),
-        results.get(BICECEConstants.SUB_2_ID));
+        results.get(TestingHubConstants.emailid), PASSWORD, results.get(BICECEConstants.SUB1_ID),
+        results.get(BICECEConstants.SUB2_ID));
 
     Util.sleep(240000);
 
@@ -892,8 +892,8 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("sub1ID", results.get("sub1ID"));
-      testResults.put(BICECEConstants.SUB_2_ID, results.get(BICECEConstants.SUB_2_ID));
+      testResults.put(BICECEConstants.SUB1_ID, results.get(BICECEConstants.SUB1_ID));
+      testResults.put(BICECEConstants.SUB2_ID, results.get(BICECEConstants.SUB2_ID));
       testResults.put(
           BICECEConstants.SUB1_NEXT_BILLING_DATE,
           results.get(BICECEConstants.SUB1_NEXT_BILLING_DATE));

@@ -20,7 +20,7 @@ public class BICECEConstants extends BICConstants {
   public static final String E2E_EXECUTION_TIME = "e2e_ExecutionTime";
   public static final String ORDER_CREATION = "CreateOrder";
   public static final String SUB1_ID = "sub1ID";
-  public static final String SUB_2_ID = "sub2ID";
+  public static final String SUB2_ID = "sub2ID";
   public static final String SUB1_NEXT_BILLING_DATE = "sub1NextBillingDate";
   public static final String SUB2_NEXT_BILLING_DATE = "sub2NextBillingDate";
   public static final String SUBSCRIPTION_END_DATE = "subscriptionEndDate";
