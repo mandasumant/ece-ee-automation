@@ -862,7 +862,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
 
     // Get the subscription id for the second subscription
-
+    testDataForEachMethod.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
     results.put(BICECEConstants.SUB2_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));

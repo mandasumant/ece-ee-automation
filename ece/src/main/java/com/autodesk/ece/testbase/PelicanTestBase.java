@@ -159,9 +159,9 @@ public class PelicanTestBase {
   @Step("Update next billing cycle with before date " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> forwardNextBillingCycleForRenewal(HashMap<String, String> data) {
 
-    String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsUrl");
+    String getPurchaseOrderDetailsUrl = data.get("getSubscriptionByIdUrl");
     getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
-        data.get(BICConstants.orderNumber));
+        data.get("getPOReponse_subscriptionId"));
     Util.printInfo("getPriceDetails baseURL : " + getPurchaseOrderDetailsUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
