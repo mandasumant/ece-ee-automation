@@ -418,7 +418,6 @@ public class BICOrderCreation extends ECETestBase {
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
-    Util.sleep(180000);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
