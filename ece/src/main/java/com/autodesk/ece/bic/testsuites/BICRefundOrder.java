@@ -48,7 +48,7 @@ public class BICRefundOrder extends ECETestBase {
   }
 
   @Test(groups = {"bic-RefundOrder"}, description = "BIC refund order")
-  public void validateBicNativeOrder() {
+  public void validateBicRefundOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);

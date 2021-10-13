@@ -250,6 +250,11 @@ validateBicNativeOrder:
   bicNativePriceID: *bicNativePriceID
   quantity: "2"
 
+validateBicRefundOrder:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "2"
+
 validateBicFlexOrder:
   productID: *FlexOrderPriceID
   bicFlexPriceID: *FlexOrderPriceID
