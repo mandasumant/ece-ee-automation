@@ -1012,7 +1012,7 @@ public class PortalTestBase {
       driver.switchTo().defaultContent();
       Util.printInfo("Refreshing the page...");
       driver.navigate().refresh();
-      Util.sleep(30000);
+      Util.sleep(15000);
 
       Util.waitForElement(portalPage.getFirstFieldLocator("portalAddSeatButton"),
           "Add Seat button");
