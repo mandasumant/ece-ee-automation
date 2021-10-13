@@ -3,12 +3,27 @@
 def common_sonar
 
 pipeline {
+
     agent {
         label 'aws-centos'
     }
 
+    triggers {
+        cron 'H 2 * * *'
+    }
+
+    options {
+        timeout(time: 1, unit: 'HOURS')
+        timestamps()
+    }
+
     stages {
         stage ('Prepare environment') {
+            when {
+                not {
+                    triggeredBy 'TimerTrigger'
+                }
+            }
             steps {
                 script {
                     common_sonar = new ors.utils.CommonSonar(steps, env, docker)
@@ -20,6 +35,11 @@ pipeline {
         }
 
         stage('Build Maven Project') {
+            when {
+                not {
+                    triggeredBy 'TimerTrigger'
+                }
+            }
             agent {
                 docker {
                     image 'artifactory.dev.adskengineer.net/autodeskcloud/ctr-ci-slave-jdk-11:latest'
@@ -35,6 +55,11 @@ pipeline {
         }
 
         stage ('SonarQube code quality scan') {
+            when {
+                not {
+                    triggeredBy 'TimerTrigger'
+                }
+            }
             agent {
                 docker {
                     image 'artifactory.dev.adskengineer.net/autodeskcloud/ctr-ci-slave-jdk-11:latest'
@@ -46,6 +71,18 @@ pipeline {
                 script {
                     common_sonar.do_maven_scan(trunk: "${env.BRANCH_NAME}")
                 }
+            }
+        }
+
+        stage ('Nightly Regression') {
+            when {
+                allOf {
+                    branch 'master'
+                    triggeredBy 'TimerTrigger'
+                }
+            }
+            steps {
+                echo 'Space for Nightly CJT TestingHub Call'
             }
         }
     }
