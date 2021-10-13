@@ -1057,11 +1057,11 @@ public class BICTestBase {
     data.put("firstname", firstName);
     data.put("lastname", lastName);
 
-    debugPageUrl("Entire Payment details");
+    debugPageUrl("Enter Payment details");
     // Get Payment details
     selectPaymentProfile(data, paymentCardDetails);
-    // Entire billing details
-    debugPageUrl("Entire billing details");
+    // Enter billing details
+    debugPageUrl("Enter billing details");
 
     populateBillingAddress(address, data);
     debugPageUrl("After entering billing details");
@@ -1131,11 +1131,11 @@ public class BICTestBase {
     data.put("firstname", firstName);
     data.put("lastname", lastName);
 
-    debugPageUrl("Entire Payment details");
+    debugPageUrl("Enter Payment details");
     // Get Payment details
     selectPaymentProfile(data, paymentCardDetails);
-    // Entire billing details
-    debugPageUrl("Entire billing details");
+    // Enter billing details
+    debugPageUrl("Enter billing details");
 
     populateBillingAddress(address, data);
     debugPageUrl("After entering billing details");
@@ -1204,8 +1204,8 @@ public class BICTestBase {
     // Get Payment details
     selectPaymentProfile(data, paymentCardDetails);
 
-    // Entire billing details
-    debugPageUrl("Entire billing details");
+    // Enter billing details
+    debugPageUrl("Enter billing details");
 
     populateBillingAddress(address, data);
     debugPageUrl("After entering billing details");
@@ -1596,13 +1596,13 @@ public class BICTestBase {
     data.put("firstname", firstName);
     data.put("lastname", lastName);
 
-    debugPageUrl("Entire Payment details");
+    debugPageUrl("Enter Payment details");
 
     // Get Payment details
     selectPaymentProfile(data, paymentCardDetails);
 
-    // Entire billing details
-    debugPageUrl("Entire billing details");
+    // Enter billing details
+    debugPageUrl("Enter billing details");
 
     populateBillingAddress(address, data);
     debugPageUrl("After entering billing details");
