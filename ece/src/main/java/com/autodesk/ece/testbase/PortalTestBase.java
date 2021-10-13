@@ -885,7 +885,7 @@ public class PortalTestBase {
       String paymentDetails = orderDetails.get("paymentDetails");
       Util.printInfo("Payment Details : " + paymentDetails);
 
-      Util.sleep(5000);
+      Util.sleep(20000);
       Util.printInfo("Clicking on Add Seat button...");
       String currentURL = driver.getCurrentUrl();
       Util.printInfo("currentURL1 before clicking on Add seat : " + currentURL);
@@ -893,7 +893,7 @@ public class PortalTestBase {
       portalPage.waitForFieldPresent("portalAddSeatButton",10000);
       portalPage.clickUsingLowLevelActions("portalAddSeatButton");
 
-      Util.sleep(5000);
+      Util.sleep(20000);
       currentURL = driver.getCurrentUrl();
       Util.printInfo("currentURL2 : " + currentURL);
 
@@ -904,7 +904,7 @@ public class PortalTestBase {
         Util.printInfo("Attempt1 - Javascript method to redirect to Add seat page");
         String portalAddSeatButton = "document.getElementById(\"add-seats\").click()";
         clickCheckBox(portalAddSeatButton);
-        Util.sleep(5000);
+        Util.sleep(20000);
 
         status = currentURL.contains("add-seats");
 
@@ -912,7 +912,7 @@ public class PortalTestBase {
           Util.printInfo("Attempt2 to redirect with hardcoded URL " + currentURL);
           driver.get("https://stg-manage.autodesk.com/billing/add-seats");
           driver.navigate().refresh();
-          Util.sleep(5000);
+          Util.sleep(20000);
           currentURL = driver.getCurrentUrl();
           Util.printInfo("currentURL3 : " + currentURL);
         } else {
