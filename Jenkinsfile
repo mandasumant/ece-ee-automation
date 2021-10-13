@@ -9,7 +9,7 @@ pipeline {
     }
 
     triggers {
-        cron '0 2 * * *'
+        cron 'H 2 * * *'
     }
 
     options {
