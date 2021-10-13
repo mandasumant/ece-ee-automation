@@ -70,7 +70,7 @@ public class BICOrderCreation extends ECETestBase {
 
     if (Strings.isNullOrEmpty(EMAIL)) {
       HashMap<String, String> results = getBicTestBase()
-          .createGUACBICOrderUS(testDataForEachMethod);
+          .createGUACBICOrderDotCom(testDataForEachMethod);
       emailID = results.get(BICConstants.emailid);
       password = PASSWORD;
 
@@ -288,7 +288,7 @@ public class BICOrderCreation extends ECETestBase {
         .put(BICECEConstants.PRODUCT_ID, testDataForEachMethod.get("nativeproductID"));
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     // Trigger Invoice join
@@ -366,7 +366,7 @@ public class BICOrderCreation extends ECETestBase {
     Util.printInfo("Placing initial order");
 
     HashMap<String, String> results = getBicTestBase()
-        .createGUACBICOrderUS(testDataForEachMethod);
+        .createGUACBICOrderDotCom(testDataForEachMethod);
 
     results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
     results.remove(BICConstants.orderNumber);
@@ -383,7 +383,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryPelicanResponse(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -417,7 +417,7 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
-        .createGUACBICOrderUS(testDataForEachMethod);
+        .createGUACBICOrderDotCom(testDataForEachMethod);
     Util.sleep(180000);
     results.putAll(testDataForEachMethod);
 
@@ -479,7 +479,7 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBicFlexOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
     Util.sleep(180000);
     results.putAll(testDataForEachMethod);
 
@@ -620,7 +620,7 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
 
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
@@ -737,7 +737,7 @@ public class BICOrderCreation extends ECETestBase {
         BICECEConstants.PRODUCT_ID, testDataForEachMethod.get(BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing initial order.");
 
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     updateTestingHub(testResults);
@@ -833,7 +833,7 @@ public class BICOrderCreation extends ECETestBase {
 
     // Place the first order
     HashMap<String, String> results = getBicTestBase()
-        .createGUACBICOrderUS(testDataForEachMethod);
+        .createGUACBICOrderDotCom(testDataForEachMethod);
 
     results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
     testDataForEachMethod.putAll(results);
@@ -907,7 +907,7 @@ public class BICOrderCreation extends ECETestBase {
   public void validateRestartSubscription() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -1071,7 +1071,7 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBicCloudCreditOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
 
     results.putAll(testDataForEachMethod);
 

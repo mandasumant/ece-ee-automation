@@ -51,7 +51,7 @@ public class BICRefundOrder extends ECETestBase {
   public void validateBicNativeOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
     Util.sleep(120000);
     results.putAll(testDataForEachMethod);
 
@@ -60,28 +60,15 @@ public class BICRefundOrder extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    String baseUrl = results.get("getPurchaseOrderDetails");
-    baseUrl = pelicantb
-        .addTokenInResourceUrl(baseUrl, results.get(TestingHubConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
 
     // Get find Subscription ById
-    baseUrl = results.get("getSubscriptionById");
-    baseUrl = pelicantb.addTokenInResourceUrl(baseUrl, results.get("getPOReponse_subscriptionId"));
-    results.put("pelican_BaseUrl", baseUrl);
     results.putAll(pelicantb.getSubscriptionById(results));
 
     // Trigger Invoice join
-    baseUrl = results.get("postInvoicePelicanAPI");
-    results.put("pelican_BaseUrl", baseUrl);
     pelicantb.postInvoicePelicanAPI(results);
 
     // Refund PurchaseOrder details from pelican
-    baseUrl = results.get("putPelicanRefundOrderUrl");
-    baseUrl = pelicantb
-        .addTokenInResourceUrl(baseUrl, results.get(TestingHubConstants.orderNumber));
-    results.put("pelican_BaseUrl", baseUrl);
     testResults.putAll(pelicantb.createRefundOrder(results));
 
     try {

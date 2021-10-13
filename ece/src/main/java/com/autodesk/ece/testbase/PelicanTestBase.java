@@ -290,8 +290,11 @@ public class PelicanTestBase {
 
   public HashMap<String, String> createRefundOrder(HashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
-    String baseURL = data.get("pelican_BaseUrl");
-    Util.printInfo("putPelicanRefund details : " + baseURL);
+
+    String purchaseOrderDetailsUrl = data.get("putPelicanRefundOrderUrl");
+    String getPurchaseOrderDetailsUrl = addTokenInResourceUrl(purchaseOrderDetailsUrl,
+        data.get(BICConstants.orderNumber));
+    Util.printInfo("putPelicanRefund details Url : " + purchaseOrderDetailsUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
@@ -309,7 +312,7 @@ public class PelicanTestBase {
     header.put("Content-Type", Content_Type);
     header.put("Accept", Content_Type);
 
-    Response response = createRefundOrder(baseURL, header);
+    Response response = createRefundOrder(getPurchaseOrderDetailsUrl, header);
     String result = response.getBody().asString();
     Util.PrintInfo("result :: " + result);
     JsonPath js = new JsonPath(result);

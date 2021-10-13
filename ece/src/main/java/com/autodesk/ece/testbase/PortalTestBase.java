@@ -647,14 +647,14 @@ public class PortalTestBase {
       if (portalPage.checkIfElementExistsInPage("portalEmailPopupYesButton", 10) == true) {
         Util.sleep(15000);
         Util.printInfo("HTML code - Before Clicking portalEmailPopupYesButton");
-        debugHTMLPage();
+        debugPageUrl("Clicking on portal email popup");
         Util.printInfo("Clicking on portal email popup got it button...");
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();",
             portalPage.getMultipleWebElementsfromField("portalEmailPopupYesButton").get(0));
         Util.printInfo("HTML code - After Clicking portalEmailPopupYesButton");
         Util.sleep(15000);
-        debugHTMLPage();
+        debugPageUrl("After Clicking portalEmailPopupYesButton");
 
       }
     } catch (Exception e) {
@@ -781,7 +781,7 @@ public class PortalTestBase {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<String, String>();
     orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod));
-    orderDetails.putAll(validateAddSeatOrder(orderDetails));
+    orderDetails.putAll(validateAddSeatOrder(orderDetails,addSeatQty));
     return orderDetails;
   }
 
@@ -885,14 +885,15 @@ public class PortalTestBase {
       String paymentDetails = orderDetails.get("paymentDetails");
       Util.printInfo("Payment Details : " + paymentDetails);
 
-      Util.sleep(15000);
+      Util.sleep(5000);
       Util.printInfo("Clicking on Add Seat button...");
       String currentURL = driver.getCurrentUrl();
       Util.printInfo("currentURL1 before clicking on Add seat : " + currentURL);
 
+      portalPage.waitForFieldPresent("portalAddSeatButton",10000);
       portalPage.clickUsingLowLevelActions("portalAddSeatButton");
 
-      Util.sleep(45000);
+      Util.sleep(5000);
       currentURL = driver.getCurrentUrl();
       Util.printInfo("currentURL2 : " + currentURL);
 
@@ -903,7 +904,7 @@ public class PortalTestBase {
         Util.printInfo("Attempt1 - Javascript method to redirect to Add seat page");
         String portalAddSeatButton = "document.getElementById(\"add-seats\").click()";
         clickCheckBox(portalAddSeatButton);
-        Util.sleep(15000);
+        Util.sleep(5000);
 
         status = currentURL.contains("add-seats");
 
@@ -911,7 +912,7 @@ public class PortalTestBase {
           Util.printInfo("Attempt2 to redirect with hardcoded URL " + currentURL);
           driver.get("https://stg-manage.autodesk.com/billing/add-seats");
           driver.navigate().refresh();
-          Util.sleep(45000);
+          Util.sleep(5000);
           currentURL = driver.getCurrentUrl();
           Util.printInfo("currentURL3 : " + currentURL);
         } else {
@@ -921,7 +922,7 @@ public class PortalTestBase {
         status = currentURL.contains("add-seats");
 
         if (!status) {
-          debugHTMLPage();
+          debugPageUrl(" Portal - ADD Seat page");
           Util.printTestFailedMessage(
               "Multiple attempts failed to redirect in Portal - ADD Seat page " + currentURL);
           AssertUtils.fail("Unable to redirect to Add Seat page in Account portal");
@@ -931,26 +932,28 @@ public class PortalTestBase {
 
       }
 
-      Util.sleep(15000);
 
-      debugHTMLPage();
+      debugPageUrl("trying to log into portal again");
 
       if (isPortalLoginPageVisible()) {
         System.out.println("Session timed out - trying to log into portal again");
         portalLogin(testDataForEachMethod.get("emailid"), "Password1");
         driver.get(currentURL);
+        portalPage.waitForFieldPresent("portalAddSeatButton",10000);
         portalPage.clickUsingLowLevelActions("portalAddSeatButton");
       }
 
       portalPage.waitForPageToLoad();
-      Util.sleep(10000);
 
       // Util.waitForElement(portalPage.getFirstFieldLocator("portalASProductTerm"),
       // "Product Term");
+      portalPage.waitForFieldPresent("portalASProductTerm",5000);
+
       String productSubscriptionTerm = portalPage
           .getLinkText("portalASProductTerm"); // .split(":")[1].trim();
       Util.printInfo("Product subscription term on add seat page : " + productSubscriptionTerm);
       orderDetails.put("productSubscriptionTerm", productSubscriptionTerm);
+      portalPage.waitForFieldPresent("portalASAmountPerSeat",5000);
 
       String perSeatProratedAmount = portalPage.getLinkText("portalASAmountPerSeat");
       Util.printInfo("Prorated amount per seat : " + perSeatProratedAmount);
@@ -960,7 +963,8 @@ public class PortalTestBase {
       orderDetails.put("addSeatQty", addSeatQty);
       portalPage.populateField("portalASQtyTextField", addSeatQty);
 
-      Util.sleep(5000);
+       portalPage.waitForFieldPresent("portalASFinalProratedPrice",5000);
+
       String proratedFinalPrice = portalPage.getLinkText("portalASFinalProratedPrice");
       Util.printInfo("Prorated Final Amount : " + proratedFinalPrice);
       orderDetails.put("proratedFinalAmount", proratedFinalPrice);
@@ -973,8 +977,8 @@ public class PortalTestBase {
       String subtotalPrice = portalPage.getLinkText("portalASFinalSubtotalAmount");
       Util.printInfo("Subtotal amount : " + subtotalPrice);
       orderDetails.put("subtotalPrice", subtotalPrice);
-
       Util.printInfo("Clicking on Submit Order button...");
+      portalPage.waitForFieldPresent("portalASSubmitOrderBtn",5000);
       portalPage.clickUsingLowLevelActions("portalASSubmitOrderBtn");
 
     } catch (Exception e) {
@@ -984,7 +988,7 @@ public class PortalTestBase {
     return orderDetails;
   }
 
-  public HashMap<String, String> validateAddSeatOrder(HashMap<String, String> data) {
+  public HashMap<String, String> validateAddSeatOrder(HashMap<String, String> data,String addSeatQty) {
     HashMap<String, String> orderDetails = new HashMap<String, String>();
 
     try {
@@ -996,31 +1000,10 @@ public class PortalTestBase {
 
       Util.printInfo("Validating prorated amount on confirmation page...");
       String confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
-      AssertUtils.assertEquals(data.get("proratedFinalAmount"), confirmProratedAmount);
 
-//          Util.printInfo("Validating product subscription term on confirmation page...");
-//          String confirmProductTerm = portalPage.getLinkText("portalASConfirmProductTerm").trim().split(":")[1].trim();
-//          AssertUtils.assertEquals(data.get("productSubscriptionTerm"),confirmProductTerm);
-//
-//          Util.printInfo("Validating quantity on confirmation page...");
-//          String confirmAddSeatQty = portalPage.getLinkText("portalASConfirmQty");
-//          AssertUtils.assertEquals(data.get("addSeatQty"),confirmAddSeatQty);
-//
-//          Util.printInfo("Validating subtotal on confirmation page...");
-//          String confirmSubtotal = portalPage.getLinkText("portalASTotalAmount");
-//          AssertUtils.assertEquals(data.get("subtotalPrice"), confirmSubtotal);
-
-//          Util.printInfo("Validating tax amount on confirmation page...");
-//          String confirmTaxAmount = portalPage.getLinkText("portalASConfirmTax");
-//          AssertUtils.assertEquals(data.get("taxAmount"), confirmTaxAmount);
-
-//          Util.printInfo("Validating total amount on confirmation page...");
-//          String confirmTotalAmount = portalPage.getLinkText("portalASConfirmTotalAmt");
-//          AssertUtils.assertEquals(data.get("totalAmount"),confirmTotalAmount);
-
-      //Close button functionality is no longer available for add seat
-//          Util.printInfo("Clicking on close button...");
-//          portalPage.clickUsingLowLevelActions("portalASCloseButton");
+      AssertUtils.assertEquals(
+          Double.valueOf(data.get("proratedFinalAmount").substring(1)).doubleValue() * Double.valueOf(addSeatQty).doubleValue() ,
+                Double.valueOf(confirmProratedAmount.substring(1)).doubleValue());
 
       Util.printInfo("Clicking on back button...");
       portalPage.clickUsingLowLevelActions("portalBackButton");
@@ -1029,7 +1012,7 @@ public class PortalTestBase {
       driver.switchTo().defaultContent();
       Util.printInfo("Refreshing the page...");
       driver.navigate().refresh();
-      Util.sleep(15000);
+      Util.sleep(30000);
 
       Util.waitForElement(portalPage.getFirstFieldLocator("portalAddSeatButton"),
           "Add Seat button");
@@ -1133,16 +1116,15 @@ public class PortalTestBase {
       populateBillingAddress(data, data.get("userType"));
       Util.printInfo("Clicking on save button");
       portalPage.clickUsingLowLevelActions("portalCardSaveBtn");
-      Util.sleep(10000);
 
       if (data.get("paymentType").toUpperCase()
           .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo("Clicking on madate agreement form...");
+        portalPage.waitForFieldPresent("portalDebitMandateAgreement",5000);
         portalPage.clickUsingLowLevelActions("portalDebitMandateAgreement");
-        Util.sleep(2000);
+        portalPage.waitForFieldPresent("portalCardSaveBtn",5000);
         portalPage.clickUsingLowLevelActions("portalCardSaveBtn");
-        Util.sleep(10000);
-      }
+       }
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to select payment profile...");
