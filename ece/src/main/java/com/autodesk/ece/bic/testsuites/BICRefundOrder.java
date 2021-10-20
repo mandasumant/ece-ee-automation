@@ -51,7 +51,10 @@ public class BICRefundOrder extends ECETestBase {
   public void validateBicNativeOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+
+    HashMap<String, String> results = getBicTestBase()
+            .createGUACBICOrderDotCom(testDataForEachMethod);
+
     Util.sleep(120000);
     results.putAll(testDataForEachMethod);
 
