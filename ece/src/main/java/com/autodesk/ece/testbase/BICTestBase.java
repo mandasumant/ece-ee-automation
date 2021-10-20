@@ -1024,36 +1024,6 @@ public class BICTestBase {
 
     return results;
   }
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACBICOrderPromoCode(LinkedHashMap<String, String> data) {
-    HashMap<String, String> results = new HashMap<>();
-     String productID = "";
-    String quantity = "";
-    String guacResourceURL = data.get("guacResourceURL");
-    String userType = data.get("userType");
-    String region = data.get("languageStore");
-    String password = data.get("password");
-    String paymentMethod = System.getProperty("payment");
-    String promoCode = System.getProperty("promocode");
-
-    navigateToCart(data, region);
-
-    if (Strings.isNullOrEmpty(promoCode)) {
-      promoCode = "GUACPROMO";
-    }
-
-    String emailID = generateUniqueEmailID();
-    String orderNumber = getBICOrderPromoCode(data, emailID, region, password, paymentMethod,
-        promoCode);
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-    results.put("priceBeforePromo", data.get("priceBeforePromo"));
-    results.put("priceAfterPromo", data.get("priceAfterPromo"));
-
-    return results;
-  }
 
   public void disableChatSession() {
     try {
@@ -1216,75 +1186,6 @@ public class BICTestBase {
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
     printConsole(constructGuacDotComURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
-
-    return orderNumber;
-  }
-
-  private String getBICOrderPromoCode(LinkedHashMap<String, String> data, String emailID,
-      String region, String password,
-      String paymentMethod, String promocode) {
-    String orderNumber;
-
-    String firstName = null, lastName = null;
-    Map<String, String> address = null;
-
-    firstName = null;
-    lastName = null;
-    String randomString = RandomStringUtils.random(6, true, false);
-
-    region = region.replace("/", "").replace("-", "");
-    address = getBillingAddress(region);
-    String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-
-    firstName = "FN" + randomString;
-    Util.printInfo("firstName :: " + firstName);
-    lastName = "LN" + randomString;
-    Util.printInfo("lastName :: " + lastName);
-    createBICAccount(firstName, lastName, emailID, password);
-
-    data.put("firstname", firstName);
-    data.put("lastname", lastName);
-
-    debugPageUrl("Enter Payment details");
-
-    // Enter Promo Code
-    populatePromoCode(promocode, data);
-
-    // Get Payment details
-    selectPaymentProfile(data, paymentCardDetails);
-
-    // Enter billing details
-    debugPageUrl("Enter billing details");
-
-    populateBillingAddress(address, data);
-    debugPageUrl("After entering billing details");
-
-    try {
-      if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        Util.printInfo(
-            "Checked ACH Authorization Agreement is visible - " + bicPage
-                .isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
-
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("document.getElementById('mandate-agreement').click()");
-        WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
-
-        Util.printInfo(
-            "Checked ACH Authorization Agreement is visible - " + bicPage
-                .isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    orderNumber = submitGetOrderNumber();
-
-    // Check to see if EXPORT COMPLIANCE or Null
-    validateBicOrderNumber(orderNumber);
-    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, firstName, lastName,
         paymentMethod);
 
     return orderNumber;
