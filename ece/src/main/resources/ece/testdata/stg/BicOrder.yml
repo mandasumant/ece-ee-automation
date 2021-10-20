@@ -18,7 +18,6 @@ default:
   guacDRResourceURL: "checkout?plc="
   guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
   productName: "3ds-max"
-  guacOverviewTermResource: "/overview"
   US: "en-US/"
   CANADA_FRENCH: "fr-CA/"
   CANADA_US: "en-CA/"

@@ -986,16 +986,16 @@ public class BICTestBase {
     String productName = data.get("productName");
     String term = "";
     String quantity = "";
-    String guacOverviewResourceURL = data.get("guacOverviewTermResource");
-
     String userType = data.get("userType");
     String region = data.get("languageStore");
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
+    String promoCode = data.get("promoCode");
 
     String emailID = generateUniqueEmailID();
+
     String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
-        guacOverviewResourceURL, productName, term, region, quantity, password, paymentMethod);
+       productName, term, region, quantity, password, paymentMethod, promoCode);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1131,11 +1131,11 @@ public class BICTestBase {
 
   private String createBICOrderDotCom(LinkedHashMap<String, String> data, String emailID,
       String guacDotComBaseURL,
-      String guacOverviewResourceURL, String productName, String term, String region,
+      String productName, String term, String region,
       String quantity, String password,
-      String paymentMethod) {
+      String paymentMethod,String promocode) {
     String orderNumber;
-    String constructGuacDotComURL = guacDotComBaseURL + productName + guacOverviewResourceURL;
+    String constructGuacDotComURL = guacDotComBaseURL + productName;
 
     System.out.println("constructGuacDotComURL " + constructGuacDotComURL);
     String firstName = null, lastName = null;
@@ -1175,6 +1175,11 @@ public class BICTestBase {
 
     data.put("firstname", firstName);
     data.put("lastname", lastName);
+
+    //Apply promo if exists
+    if(promocode != null && !promocode.isEmpty()) {
+      populatePromoCode(promocode, data);
+    }
 
     debugPageUrl("Enter Payment details");
     // Get Payment details
