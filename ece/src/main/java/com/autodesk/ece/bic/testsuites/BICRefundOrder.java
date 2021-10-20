@@ -69,6 +69,7 @@ public class BICRefundOrder extends ECETestBase {
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
 
+    Util.sleep(60000);
     // Refund PurchaseOrder details from pelican
     testResults.putAll(pelicantb.createRefundOrder(results));
 

@@ -112,7 +112,6 @@ public class BICOrderCreation extends ECETestBase {
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
-    Util.sleep(180000);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -475,11 +474,10 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {"bic-flexorder-US"}, description = "Validation of Create BIC Flex Order")
-  public void validateBicFlexOrder() {
+        public void validateBicFlexOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
-    Util.sleep(180000);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

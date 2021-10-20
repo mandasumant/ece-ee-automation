@@ -1049,13 +1049,18 @@ public class PortalTestBase {
     orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
 
     Util.printInfo("Reducing seats.");
+
     closeSubscriptionTermPopup();
+    portalPage.waitForFieldPresent("portalReduceSeatsButton",5000);
     portalPage.clickUsingLowLevelActions("portalReduceSeatsButton");
     portalPage.checkIfElementExistsInPage("portalReduceSeatsPanel", 10);
+    portalPage.waitForFieldPresent("portalMinusButton",5000);
     portalPage.clickUsingLowLevelActions("portalMinusButton");
+    portalPage.waitForFieldPresent("portalSaveChangesButton",5000);
     portalPage.clickUsingLowLevelActions("portalSaveChangesButton");
     portalPage.checkIfElementExistsInPage("portalConfirmationModal", 10);
     Util.printInfo("Clicking on ok button...");
+    portalPage.waitForFieldPresent("portalConfirmationOkButton",5000);
     portalPage.clickUsingLowLevelActions("portalConfirmationOkButton");
     Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator("portalOrderSeatCount"));
     String renewingSeatsCount = portalPage.getTextFromLink("portalRenewingSeatsCount");
@@ -1085,7 +1090,7 @@ public class PortalTestBase {
       debugPageUrl("Step 1");
       data.putAll(navigateToSubscriptionAndOrdersTab());
       Util.printInfo("Clicking on change payment option...");
-      portalPage.waitForFieldPresent("portalChangePaymentBtn", 2000);
+      portalPage.waitForFieldPresent("portalChangePaymentBtn", 10000);
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator("portalPaymentMethod")

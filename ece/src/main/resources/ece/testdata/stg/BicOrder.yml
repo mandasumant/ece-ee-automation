@@ -84,7 +84,7 @@ default:
   paypalSsap: "Password1"
   paypalPaymentType: "CREDIT UNION 1"
   getPriceByPriceID: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/price/"
-  getPurchaseOrderDetailsUrl: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/purchaseOrder/passtoken?id=passtoken"
+  getPurchaseOrderDetailsUrl: "https://api.pelicanstg.autodesk.com/orders/v3/filters"
   putPelicanRefundOrderUrl: "https://api.pelicanstg.autodesk.com/orders/v3/passtoken"
   getSubscriptionByIdUrl: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
   postInvoicePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/job/invoice"
@@ -262,6 +262,7 @@ validateBicFlexOrder:
 validateBicCloudCreditOrder:
   productID: *bicCloudCreditsPriceId
   bicCloudCreditsPriceID: *bicCloudCreditsPriceId
+  productName: "cloud-credits"
 
 validateBicMetaOrder:
   productID: *bicMetaPriceID

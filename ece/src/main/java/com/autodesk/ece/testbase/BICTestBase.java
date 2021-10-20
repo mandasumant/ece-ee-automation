@@ -819,6 +819,7 @@ public class BICTestBase {
     }
 
     try {
+      bicPage.waitForFieldPresent("SubmitOrderButton",10000);
       bicPage.clickUsingLowLevelActions("SubmitOrderButton");
       bicPage.waitForPageToLoad();
     } catch (Exception e) {
@@ -933,13 +934,10 @@ public class BICTestBase {
   }
 
   private void navigateToGUAC(LinkedHashMap<String, String> data, String region) {
+    String guacBaseURL = data.get("guacBaseURL");
+    String guacResourceURL = data.get("guacResourceURL");
     String productID = "";
     String quantity = "";
-
-    String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = data.get("productName");
-    String term = "";
-    String guacOverviewResourceURL = data.get("guacOverviewTermResource");
 
     if (System.getProperty("sku").contains("default")) {
       productID = data.get("productID");
@@ -950,8 +948,22 @@ public class BICTestBase {
       quantity = sku.split(":")[1];
     }
 
-/*    String constructGuacURL =
-        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";*/
+    String constructGuacURL =
+        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
+    System.out.println("constructGuacURL " + constructGuacURL);
+
+    getUrl(constructGuacURL);
+    disableChatSession();
+    checkCartDetailsError();
+    acceptCookiesAndUSSiteLink();
+  }
+
+  private void navigateToCart(LinkedHashMap<String, String> data, String region) {
+
+    String guacBaseDotComURL = data.get("guacDotComBaseURL");
+    String productName = data.get("productName");
+    String guacOverviewResourceURL = data.get("guacOverviewTermResource");
+
     String constructGuacDotComURL = guacBaseDotComURL + productName + guacOverviewResourceURL;
 
     System.out.println("constructGuacURL " + constructGuacDotComURL);
@@ -993,6 +1005,27 @@ public class BICTestBase {
 
   @SuppressWarnings({"static-access", "unused"})
   @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createGUACBICOrderUS(LinkedHashMap<String, String> data) {
+    HashMap<String, String> results = new HashMap<>();
+
+    String guacResourceURL = data.get("guacResourceURL");
+    String userType = data.get("userType");
+    String password = data.get("password");
+    String paymentMethod = System.getProperty("payment");
+    String region = data.get("languageStore");
+
+    navigateToGUAC(data, region);
+
+    String emailID = generateUniqueEmailID();
+    String orderNumber = createBICOrder(data, emailID, region, password, paymentMethod);
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createGUACBICOrderPromoCode(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<>();
      String productID = "";
@@ -1004,7 +1037,7 @@ public class BICTestBase {
     String paymentMethod = System.getProperty("payment");
     String promoCode = System.getProperty("promocode");
 
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
     if (Strings.isNullOrEmpty(promoCode)) {
       promoCode = "GUACPROMO";
@@ -1127,6 +1160,18 @@ public class BICTestBase {
     lastName = "LN" + randomString;
     Util.printInfo("lastName :: " + lastName);
     createBICAccount(firstName, lastName, emailID, password);
+    Util.sleep(20000);
+
+    if(data.get(BICECEConstants.ADD_SEAT_QTY) != null && !data.get(BICECEConstants.ADD_SEAT_QTY).isEmpty()){
+    bicPage.waitForFieldPresent("gaucCartEditQuantiy",5000);
+    try {
+      bicPage.populateField("gaucCartEditQuantiy", Keys.BACK_SPACE.name());
+      bicPage.sendKeysInTextFieldSlowly("gaucCartEditQuantiy",data.get(BICECEConstants.ADD_SEAT_QTY));
+      Util.sleep(5000);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    }
 
     data.put("firstname", firstName);
     data.put("lastname", lastName);
@@ -1346,7 +1391,7 @@ public class BICTestBase {
     String region = data.get("US");
     String paymentMethod = data.get("paymentMethod");
 
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
@@ -1372,9 +1417,9 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<>();
     String region = data.get("US");
 
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
-    skipAddSeats();
+  //  skipAddSeats();
 
     orderNumber = submitGetOrderNumber();
     validateBicOrderNumber(orderNumber);
@@ -1394,7 +1439,7 @@ public class BICTestBase {
     String region = data.get("US");
 
     // Go to checkout with a product that was already added
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
     // Login to an existing account and add seats
     loginAccount(data);
@@ -1557,7 +1602,7 @@ public class BICTestBase {
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
 
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
     String emailID = generateUniqueEmailID();
     String orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, guacMoeResourceURL,
