@@ -1,5 +1,6 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.EDUTestBase;
 import com.autodesk.ece.testbase.EDUTestBase.EDUUserType;
@@ -62,11 +63,11 @@ public class EDUUserFlows extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
-      testResults.put("product_pe_id", results.get("product_pe_id"));
+      testResults.put(BICECEConstants.PRODUCT_PE_ID, results.get(BICECEConstants.PRODUCT_PE_ID));
 
       updateTestingHub(testResults);
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testing hub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
   }
 
@@ -104,7 +105,7 @@ public class EDUUserFlows extends ECETestBase {
 
       updateTestingHub(testResults);
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testing hub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
   }
 
@@ -129,11 +130,11 @@ public class EDUUserFlows extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
-      testResults.put("product_pe_id", results.get("product_pe_id"));
+      testResults.put(BICECEConstants.PRODUCT_PE_ID, results.get(BICECEConstants.PRODUCT_PE_ID));
 
       updateTestingHub(testResults);
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testing hub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
   }
 }

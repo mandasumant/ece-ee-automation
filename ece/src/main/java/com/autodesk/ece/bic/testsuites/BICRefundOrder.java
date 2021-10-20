@@ -1,5 +1,6 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -79,7 +80,7 @@ public class BICRefundOrder extends ECETestBase {
           .put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
       testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testing hub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
     updateTestingHub(testResults);

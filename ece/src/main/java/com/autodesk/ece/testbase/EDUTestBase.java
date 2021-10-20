@@ -1,6 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -56,7 +57,7 @@ public class EDUTestBase {
 
     switch (userType) {
       case STUDENT:
-        pickSelectOption("eduRole", "1"); // "1" is "Student"
+        pickSelectOption(BICECEConstants.EDU_ROLE, "1"); // "1" is "Student"
 
         // Fill out student date of birth
         pickSelectOption("dobMonth", "1");
@@ -65,17 +66,17 @@ public class EDUTestBase {
         pickSelectOption("dobYear", Integer.toString(currentYear - 16));
         break;
       case EDUCATOR:
-        pickSelectOption("eduRole", "4"); // "4" is "Educator"
+        pickSelectOption(BICECEConstants.EDU_ROLE, "4"); // "4" is "Educator"
         break;
       case MENTOR:
-        pickSelectOption("eduRole", "3"); // "3" is "Design Competition Mentor"
+        pickSelectOption(BICECEConstants.EDU_ROLE, "3"); // "3" is "Design Competition Mentor"
         break;
       case ADMIN:
-        pickSelectOption("eduRole", "2"); // "2" is "School IT Administrator"
+        pickSelectOption(BICECEConstants.EDU_ROLE, "2"); // "2" is "School IT Administrator"
         break;
     }
 
-    eduPage.clickToSubmit("eduSubmit");
+    eduPage.clickToSubmit(BICECEConstants.EDU_SUBMIT);
 
     // Generate a new user email, name, and password
     String email = BICTestBase.generateUniqueEmailID();
@@ -94,7 +95,7 @@ public class EDUTestBase {
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
 
-    eduPage.clickToSubmit("eduSubmit");
+    eduPage.clickToSubmit(BICECEConstants.EDU_SUBMIT);
 
     if (userType != EDUUserType.MENTOR) {
       // Pick a school called "Broadway"
@@ -116,7 +117,7 @@ public class EDUTestBase {
         pickSelectOption("enrollEndYear", Integer.toString(currentYear + 1));
       }
 
-      eduPage.clickToSubmit("eduSubmit");
+      eduPage.clickToSubmit(BICECEConstants.EDU_SUBMIT);
     }
 
     String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
