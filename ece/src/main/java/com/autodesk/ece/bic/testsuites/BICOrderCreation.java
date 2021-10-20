@@ -474,7 +474,7 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {"bic-flexorder-US"}, description = "Validation of Create BIC Flex Order")
-        public void validateBicFlexOrder() {
+  public void validateBicFlexOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);

@@ -971,11 +971,11 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
 
-    checkCartDetailsError();
-    acceptCookiesAndUSSiteLink();
-
     selectMonthlySubscription(driver);
     subscribeAndAddToCart(data);
+
+    checkCartDetailsError();
+    acceptCookiesAndUSSiteLink();
   }
 
   @SuppressWarnings({"static-access", "unused"})
