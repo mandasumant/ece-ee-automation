@@ -53,8 +53,13 @@ public class BICOrderPromoCode extends ECETestBase {
   public void promocodeBicOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
+
+    if(testDataForEachMethod.get("promoCode") == null || testDataForEachMethod.isEmpty()) {
+       testDataForEachMethod.put("promoCode", "GUACPROMO");
+    }
+
     HashMap<String, String> results = getBicTestBase()
-        .createGUACBICOrderPromoCode(testDataForEachMethod);
+        .createGUACBICOrderDotCom(testDataForEachMethod);
 
     results.putAll(testDataForEachMethod);
 

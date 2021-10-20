@@ -18,7 +18,6 @@ default:
   guacDRResourceURL: "checkout?plc="
   guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
   productName: "3ds-max"
-  guacOverviewTermResource: "/overview"
   US: "en-US/"
   CANADA_FRENCH: "fr-CA/"
   CANADA_US: "en-CA/"
@@ -84,7 +83,7 @@ default:
   paypalSsap: "Password1"
   paypalPaymentType: "CREDIT UNION 1"
   getPriceByPriceID: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/price/"
-  getPurchaseOrderDetailsUrl: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/purchaseOrder/passtoken?id=passtoken"
+  getPurchaseOrderDetailsUrl: "https://api.pelicanstg.autodesk.com/orders/v3/filters"
   putPelicanRefundOrderUrl: "https://api.pelicanstg.autodesk.com/orders/v3/passtoken"
   getSubscriptionByIdUrl: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
   postInvoicePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/job/invoice"
@@ -250,6 +249,11 @@ validateBicNativeOrder:
   bicNativePriceID: *bicNativePriceID
   quantity: "2"
 
+validateBicRefundOrder:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "2"
+
 validateBicFlexOrder:
   productID: *FlexOrderPriceID
   bicFlexPriceID: *FlexOrderPriceID
@@ -257,6 +261,7 @@ validateBicFlexOrder:
 validateBicCloudCreditOrder:
   productID: *bicCloudCreditsPriceId
   bicCloudCreditsPriceID: *bicCloudCreditsPriceId
+  productName: "cloud-credits"
 
 validateBicMetaOrder:
   productID: *bicMetaPriceID

@@ -38,6 +38,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
 import org.w3c.dom.Document;
@@ -45,6 +46,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 public class PelicanTestBase {
+
+  private  static  String productName = "";
 
   public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
@@ -78,12 +81,16 @@ public class PelicanTestBase {
     return result.toString();
   }
 
-  public static Response getRestResponse(String baseUrl, Map<String, String> header) {
+  public static Response getRestResponse(String baseUrl, Map<String, String> header,String requestJson) {
     Response response = null;
     try {
       Util.printInfo("Hitting the URL = " + baseUrl);
       RestAssured.baseURI = baseUrl;
-      response = given().headers(header).when().get();
+      if(requestJson != null) {
+        response = given().headers(header).body(requestJson).when().post();
+      }else{
+        response = given().headers(header).when().get();
+      }
       String result = response.getBody().asString();
       Util.printInfo("results from the url-" + result);
       if (response.getStatusCode() != 200) {
@@ -121,7 +128,7 @@ public class PelicanTestBase {
     header.put("Content-Type", Content_Type);
     header.put("Accept", Content_Type);
 
-    Response response = getRestResponse(subscriptionByIdUrl, header);
+    Response response = getRestResponse(subscriptionByIdUrl, header,null);
     String result = response.getBody().asString();
     Util.PrintInfo("result :: " + result);
     JsonPath js = new JsonPath(result);
@@ -249,7 +256,7 @@ public class PelicanTestBase {
     Map<String, String> header = new HashMap<>();
     header.put("Content-Type", Content_Type);
 
-    Response response = getRestResponse(invoicePelicanAPIUrl, header);
+    Response response = getRestResponse(invoicePelicanAPIUrl, header,"{}");
     String result = response.getBody().asString();
     Util.PrintInfo("result :: " + result);
     JsonPath js = new JsonPath(result);
@@ -258,10 +265,20 @@ public class PelicanTestBase {
 
   // @Step("Validate BIC Order in Pelican" + GlobalConstants.TAG_TESTINGHUB)
   @SuppressWarnings("unused")
+
   public String getPelicanResponse(HashMap<String, String> data) {
     String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsUrl");
-    getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
-        data.get(BICConstants.orderNumber));
+    productName = data.get("productName");
+
+    //Generate the input JSON
+    JSONObject filters = new JSONObject();
+    JSONArray array = new JSONArray();
+    array.put(data.get(BICConstants.orderNumber));
+    JSONObject orders = new JSONObject();
+    orders.put("orderIds",array);
+    filters.put("filters",orders);
+    String requestJSon = filters.toJSONString();
+
     data.put("pelican_getPurchaseOrderDetailsUrl", getPurchaseOrderDetailsUrl);
     HashMap<String, String> results = new HashMap<String, String>();
     Util.printInfo("getPurchaseOrderDetailsUrl : " + getPurchaseOrderDetailsUrl);
@@ -271,7 +288,7 @@ public class PelicanTestBase {
     String X_E2_PartnerId = data.get("getPriceDetails_X_E2_PartnerId");
     String X_E2_AppFamilyId = data.get("getPriceDetails_X_E2_AppFamilyId");
 
-    String Content_Type = "application/x-www-form-urlencoded; charset=UTF-8";
+    String Content_Type = "application/json";
 
     Map<String, String> header = new HashMap<>();
     header.put("X-E2-HMAC-Signature", hmacSignature);
@@ -279,9 +296,8 @@ public class PelicanTestBase {
     header.put("X-E2-AppFamilyId", X_E2_AppFamilyId);
     header.put("X-E2-HMAC-Timestamp", X_E2_HMAC_Timestamp);
     header.put("Content-Type", Content_Type);
-    // header.put("Accept", "application/xml");
 
-    Response response = getRestResponse(getPurchaseOrderDetailsUrl, header);
+    Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, requestJSon);
     String result = response.getBody().asString();
     Util.PrintInfo("result :: " + result);
 
@@ -290,8 +306,11 @@ public class PelicanTestBase {
 
   public HashMap<String, String> createRefundOrder(HashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
-    String baseURL = data.get("pelican_BaseUrl");
-    Util.printInfo("putPelicanRefund details : " + baseURL);
+
+    String purchaseOrderDetailsUrl = data.get("putPelicanRefundOrderUrl");
+    String getPurchaseOrderDetailsUrl = addTokenInResourceUrl(purchaseOrderDetailsUrl,
+        data.get(BICConstants.orderNumber));
+    Util.printInfo("putPelicanRefund details Url : " + getPurchaseOrderDetailsUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
@@ -309,7 +328,7 @@ public class PelicanTestBase {
     header.put("Content-Type", Content_Type);
     header.put("Accept", Content_Type);
 
-    Response response = createRefundOrder(baseURL, header);
+    Response response = createRefundOrder(getPurchaseOrderDetailsUrl, header);
     String result = response.getBody().asString();
     Util.PrintInfo("result :: " + result);
     JsonPath js = new JsonPath(result);
@@ -518,129 +537,29 @@ public class PelicanTestBase {
   @Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> getPurchaseOrderDetails(String purchaseOrderAPIresponse) {
     HashMap<String, String> results = new HashMap<>();
+    JsonPath jp = new JsonPath(purchaseOrderAPIresponse);
     try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      // Disable external access to protect from SSRF vulnerabilities
-      factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-      factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
-      DocumentBuilder builder = factory.newDocumentBuilder();
-      ByteArrayInputStream input = new ByteArrayInputStream(
-          purchaseOrderAPIresponse.getBytes(StandardCharsets.UTF_8));
-      Document doc = builder.parse(input);
-      Element root = doc.getDocumentElement();
-      Util.printInfo("Root element :" + doc.getDocumentElement().getNodeName());
-      String origin = root.getAttribute("origin");
-      Util.printInfo("origin : " + origin);
-      Util.printInfo("storeExternalKey : " + root.getAttribute("storeExternalKey"));
+      results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
+      results.put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
+      results.put("getPOReponse_storedPaymentProfileId", jp.get("content[0].payments[0].paymentProfileId").toString());
+      results.put("getPOReponse_fulfillmentStatus", jp.get("content[0].lineItems[0].fulfillmentStatus").toString());
 
-      String orderState = doc.getElementsByTagName("orderState").item(0).getTextContent();
-      Util.printInfo("orderState : " + orderState);
-
-      String productLineCode = root.getElementsByTagName("offeringResponse").item(0).getAttributes()
-          .getNamedItem("productLineCode").getTextContent();
-      Util.printInfo("productLineCode : " + productLineCode);
-
-      NamedNodeMap subscriptionAttributes = null;
-      if (!productLineCode.contains(BICECEConstants.CLDCR_PLC)) {
-        subscriptionAttributes = doc.getElementsByTagName("subscription").item(0)
-            .getAttributes();
-      }
-
-      String subscriptionId = null;
-      String subscriptionPeriodStartDate = null;
-      String subscriptionPeriodEndDate = null;
-      String fulfillmentDate = null;
-      String taxCode = null;
-      String promotionDiscount = null;
-      String oxygenID = null;
-
-      try {
-        // Native order response
-        subscriptionId = doc.getElementsByTagName("offeringResponse").item(0).getAttributes()
-            .getNamedItem("subscriptionId").getTextContent();
-        Util.printInfo("subscriptionId : " + subscriptionId);
-
-        subscriptionPeriodStartDate = subscriptionAttributes.getNamedItem(
-            "subscriptionPeriodStartDate").getTextContent();
-        Util.printInfo("subscriptionPeriodStartDate : " + subscriptionPeriodStartDate);
-
-        subscriptionPeriodEndDate = subscriptionAttributes
-            .getNamedItem("subscriptionPeriodEndDate")
-            .getTextContent();
-        Util.printInfo("subscriptionPeriodEndDate : " + subscriptionPeriodEndDate);
-      } catch (Exception e) {
-        // Add seat order response
-        if (!productLineCode.contains(BICECEConstants.CLDCR_PLC)) {
-          try {
-            NamedNodeMap subscriptionRequestAttributes = doc.getElementsByTagName(
-                "subscriptionQuantityRequest").item(0).getAttributes();
-
-            subscriptionId = subscriptionRequestAttributes.getNamedItem("subscriptionId")
-                .getTextContent();
-            Util.printInfo("subscriptionId : " + subscriptionId);
-
-            subscriptionPeriodStartDate = subscriptionRequestAttributes.getNamedItem(
-                "prorationStartDate").getTextContent();
-            Util.printInfo("prorationStartDate : " + subscriptionPeriodStartDate);
-
-            subscriptionPeriodEndDate = subscriptionRequestAttributes.getNamedItem(
-                "prorationEndDate").getTextContent();
-            Util.printInfo("prorationEndDate : " + subscriptionPeriodEndDate);
-          } catch (Exception e1) {
-            e1.printStackTrace();
-          }
-        }
-      }
-
-      if (!productLineCode.contains(BICECEConstants.CLDCR_PLC)) {
-        if (Strings.isNullOrEmpty(subscriptionId)) {
-          AssertUtils
-              .fail("SubscriptionID is not available the Pelican response : " + subscriptionId);
-        }
-
-        fulfillmentDate = subscriptionAttributes.getNamedItem("fulfillmentDate")
-            .getTextContent();
-        Util.printInfo("fulfillmentDate : " + fulfillmentDate);
-      }
-
-      String storedPaymentProfileId = doc.getElementsByTagName("storedPaymentProfileId").item(0)
-          .getTextContent();
-      Util.printInfo("storedPaymentProfileId : " + storedPaymentProfileId);
-
-      String fulfillmentStatus = root.getAttribute("fulfillmentStatus");
-      Util.printInfo("fulfillmentStatus : " + root.getAttribute("fulfillmentStatus"));
-
-      if (doc.getElementsByTagName("promotionDiscount") != null) {
-        promotionDiscount = doc.getElementsByTagName("promotionDiscount").item(0)
-            .getTextContent();
-      }
-      String paymentProcessor = root.getElementsByTagName("payment").item(0).getAttributes()
-          .getNamedItem("paymentProcessor").getTextContent();
-
-      String last4Digits = root.getElementsByTagName("last4Digits").item(0).getTextContent();
-
-      taxCode = root.getElementsByTagName("additionalFee").item(0).getAttributes()
-          .getNamedItem("feeCollectorExternalKey").getTextContent();
-
-      oxygenID = root.getElementsByTagName("buyerUser").item(0).getAttributes()
-          .getNamedItem("externalKey").getTextContent();
-
-      results.put("getPOReponse_orderState", orderState);
-      results.put("getPOReponse_storedPaymentProfileId", storedPaymentProfileId);
-      results.put("getPOReponse_fulfillmentStatus", fulfillmentStatus);
-
-      if (!productLineCode.contains(BICECEConstants.CLDCR_PLC)) {
-        results.put("getPOReponse_subscriptionId", subscriptionId);
-        results.put("getPOReponse_subscriptionPeriodStartDate", subscriptionPeriodStartDate);
-        results.put("getPOReponse_subscriptionPeriodEndDate", subscriptionPeriodEndDate);
-        results.put("getPOReponse_fulfillmentDate", fulfillmentDate);
-        results.put("getPOResponse_promotionDiscount", promotionDiscount);
-        results.put("getPOReponse_paymentProcessor", paymentProcessor);
-        results.put("getPOReponse_last4Digits", last4Digits);
-        results.put("getPOReponse_taxCode", taxCode);
-        results.put("getPOReponse_oxygenID", oxygenID);
-      } else {
+       if (!productName.equals(BICECEConstants.CLDCR_PLC))
+       {
+        results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
+        results.put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
+        results.put("getPOReponse_orderState", jp.get("content[0].orderState").toString());
+        results.put("getPOReponse_subscriptionId", jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionId").toString());
+        results.put("getPOReponse_subscriptionPeriodStartDate", jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodStartDate").toString());
+        results.put("getPOReponse_subscriptionPeriodEndDate",  jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodEndDate").toString());
+        results.put("getPOReponse_fulfillmentDate",jp.get("content[0].lineItems[0].fulfillmentDate").toString());
+        results.put("getPOResponse_promotionDiscount",jp.get("content[0].lineItems[0].lineItemTotals.promotionDiscount").toString());
+        results.put("getPOReponse_paymentProcessor", jp.get("content[0].payments[0].paymentProcessor").toString());
+        results.put("getPOReponse_last4Digits",  jp.get("content[0].billingInfo.lastDigits").toString());
+        results.put("getPOReponse_taxCode",jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey").toString());
+        results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
+       }else {
         results.put("getPOReponse_subscriptionId", "NA");
         results.put("getPOReponse_subscriptionPeriodStartDate", "NA");
         results.put("getPOReponse_subscriptionPeriodEndDate", "NA");

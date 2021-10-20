@@ -403,17 +403,16 @@ public class BICTestBase {
       clickOnContinueBtn(paymentType);
     } catch (Exception e) {
       e.printStackTrace();
-      debugHTMLPage(e.getMessage());
+      debugPageUrl(e.getMessage());
       AssertUtils.fail("Unable to populate the Billing Address details");
     }
     return status;
   }
 
-  private void debugHTMLPage(String Message) {
-    Util.printInfo("-------------" + Message + "----------------" +
+  private void debugPageUrl(String message) {
+    Util.printInfo("-------------" + message + "----------------" +
         "\n" + " URL :            " + driver.getCurrentUrl() + "\n" +
         "\n" + " Page Title :     " + driver.getTitle() + "\n" +
-//				"\n" + " Page source  :   " + 	driver.getPageSource() +
         "\n" + "-----------------------------");
   }
 
@@ -768,7 +767,7 @@ public class BICTestBase {
 
   private String submitGetOrderNumber() {
     int count = 0;
-    debugHTMLPage(" Step 1 wait for SubmitOrderButton");
+    debugPageUrl(" Step 1 wait for SubmitOrderButton");
     while (!bicPage.waitForField("SubmitOrderButton", true, 60000)) {
       Util.sleep(20000);
       count++;
@@ -780,7 +779,7 @@ public class BICTestBase {
       }
     }
 
-    debugHTMLPage(" Step 2 wait for SubmitOrderButton");
+    debugPageUrl(" Step 2 wait for SubmitOrderButton");
 
     try {
       if (System.getProperty("payment").equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
@@ -820,15 +819,16 @@ public class BICTestBase {
     }
 
     try {
+      bicPage.waitForFieldPresent("SubmitOrderButton",10000);
       bicPage.clickUsingLowLevelActions("SubmitOrderButton");
       bicPage.waitForPageToLoad();
     } catch (Exception e) {
       e.printStackTrace();
-      debugHTMLPage(e.getMessage());
+      debugPageUrl(e.getMessage());
       AssertUtils.fail("Failed to click on Submit button...");
     }
     String orderNumber = null;
-    debugHTMLPage(" Step 3 Check order Number is Null");
+    debugPageUrl(" Step 3 Check order Number is Null");
     bicPage.waitForPageToLoad();
 
     try {
@@ -859,20 +859,20 @@ public class BICTestBase {
     } catch (Exception e) {
       Util.printMessage("Great! Export Compliance issue is not present");
     }
-    debugHTMLPage(" Step 3a Check order Number is Null");
+    debugPageUrl(" Step 3a Check order Number is Null");
     try {
       orderNumber = driver.findElement(By.xpath("//h5[.='Order Number']/..//p")).getText();
     } catch (Exception e) {
-      debugHTMLPage(" Step 4 Check order Number is Null");
+      debugPageUrl(" Step 4 Check order Number is Null");
     }
 
     try {
       orderNumber = driver.findElement(By.xpath("//h5[.='注文番号：']/..//p")).getText();
     } catch (Exception e) {
-      debugHTMLPage(" Step 4 Check order Number is Null for JP");
+      debugPageUrl(" Step 4 Check order Number is Null for JP");
     }
 
-    debugHTMLPage(" Step 4a Check order Number is Null");
+    debugPageUrl(" Step 4a Check order Number is Null");
 
     if (orderNumber == null) {
 
@@ -881,7 +881,7 @@ public class BICTestBase {
       try {
         orderNumber = driver.findElement(By.xpath("//h5[.='Order Number:']/..//p")).getText();
       } catch (Exception e) {
-        debugHTMLPage(" Step 5 Check order Number is Null");
+        debugPageUrl(" Step 5 Check order Number is Null");
       }
     }
 
@@ -889,22 +889,22 @@ public class BICTestBase {
       try {
         orderNumber = driver.findElement(By.xpath("//h5[.='注文番号：']/..//p")).getText();
       } catch (Exception e) {
-        debugHTMLPage(" Step 5 Check order Number is Null for JP");
+        debugPageUrl(" Step 5 Check order Number is Null for JP");
       }
     }
 
-    debugHTMLPage(" Step 5a Check order Number is Null");
+    debugPageUrl(" Step 5a Check order Number is Null");
 
     if (orderNumber == null) {
       try {
-        debugHTMLPage(" Step 6 Assert order Number is Null");
+        debugPageUrl(" Step 6 Assert order Number is Null");
 
         orderNumber = driver.findElement(By.xpath("//h2[text()='Order Processing Problem']"))
             .getText();
-        debugHTMLPage("");
+        debugPageUrl("");
         AssertUtils.fail("Unable to place BIC order : " + orderNumber);
       } catch (Exception e) {
-        debugHTMLPage(" Step 7 Assert order Number is Null");
+        debugPageUrl(" Step 7 Assert order Number is Null");
         e.printStackTrace();
         Util.printTestFailedMessage("Error while fetching Order Number from Cart");
         AssertUtils.fail("Unable to place BIC order");
@@ -958,6 +958,51 @@ public class BICTestBase {
     acceptCookiesAndUSSiteLink();
   }
 
+  private void navigateToCart(LinkedHashMap<String, String> data, String region) {
+
+    String guacBaseDotComURL = data.get("guacDotComBaseURL");
+    String productName = data.get("productName");
+    String guacOverviewResourceURL = data.get("guacOverviewTermResource");
+
+    String constructGuacDotComURL = guacBaseDotComURL + productName + guacOverviewResourceURL;
+
+    System.out.println("constructGuacURL " + constructGuacDotComURL);
+
+    getUrl(constructGuacDotComURL);
+    disableChatSession();
+
+    selectMonthlySubscription(driver);
+    subscribeAndAddToCart(data);
+
+    checkCartDetailsError();
+    acceptCookiesAndUSSiteLink();
+  }
+
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Guac: Place GUAC Dot Com Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createGUACBICOrderDotCom(LinkedHashMap<String, String> data) {
+    HashMap<String, String> results = new HashMap<>();
+    String guacBaseDotComURL = data.get("guacDotComBaseURL");
+    String productName = data.get("productName");
+    String term = "";
+    String quantity = "";
+    String userType = data.get("userType");
+    String region = data.get("languageStore");
+    String password = data.get("password");
+    String paymentMethod = System.getProperty("payment");
+    String promoCode = data.get("promoCode");
+
+    String emailID = generateUniqueEmailID();
+
+    String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
+       productName, term, region, quantity, password, paymentMethod, promoCode);
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
   @SuppressWarnings({"static-access", "unused"})
   @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createGUACBICOrderUS(LinkedHashMap<String, String> data) {
@@ -976,63 +1021,6 @@ public class BICTestBase {
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
-  }
-
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place GUAC Dot Com Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACBICOrderDotCom(LinkedHashMap<String, String> data) {
-    HashMap<String, String> results = new HashMap<>();
-    String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = data.get("productName");
-    String term = "";
-    String quantity = "";
-    String guacOverviewResourceURL = data.get("guacOverviewTermResource");
-
-    String userType = data.get("userType");
-    String region = data.get("languageStore");
-    String password = data.get("password");
-    String paymentMethod = System.getProperty("payment");
-
-    String emailID = generateUniqueEmailID();
-    String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
-        guacOverviewResourceURL, productName, term, region, quantity, password, paymentMethod);
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
-  }
-
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACBICOrderPromoCode(LinkedHashMap<String, String> data) {
-    HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
-    String productID = "";
-    String quantity = "";
-    String guacResourceURL = data.get("guacResourceURL");
-    String userType = data.get("userType");
-    String region = data.get("languageStore");
-    String password = data.get("password");
-    String paymentMethod = System.getProperty("payment");
-    String promoCode = System.getProperty("promocode");
-
-    navigateToGUAC(data, region);
-
-    if (Strings.isNullOrEmpty(promoCode)) {
-      promoCode = "GUACPROMO";
-    }
-
-    String emailID = generateUniqueEmailID();
-    String orderNumber = getBICOrderPromoCode(data, emailID, region, password, paymentMethod,
-        promoCode);
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-    results.put("priceBeforePromo", data.get("priceBeforePromo"));
-    results.put("priceAfterPromo", data.get("priceAfterPromo"));
 
     return results;
   }
@@ -1072,14 +1060,14 @@ public class BICTestBase {
     data.put("firstname", firstName);
     data.put("lastname", lastName);
 
-    debugHTMLPage("Entire Payment details");
+    debugPageUrl("Enter Payment details");
     // Get Payment details
     selectPaymentProfile(data, paymentCardDetails);
-    // Entire billing details
-    debugHTMLPage("Entire billing details");
+    // Enter billing details
+    debugPageUrl("Enter billing details");
 
     populateBillingAddress(address, data);
-    debugHTMLPage("After entering billing details");
+    debugPageUrl("After entering billing details");
 
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
@@ -1113,11 +1101,11 @@ public class BICTestBase {
 
   private String createBICOrderDotCom(LinkedHashMap<String, String> data, String emailID,
       String guacDotComBaseURL,
-      String guacOverviewResourceURL, String productName, String term, String region,
+      String productName, String term, String region,
       String quantity, String password,
-      String paymentMethod) {
+      String paymentMethod,String promocode) {
     String orderNumber;
-    String constructGuacDotComURL = guacDotComBaseURL + productName + guacOverviewResourceURL;
+    String constructGuacDotComURL = guacDotComBaseURL + productName;
 
     System.out.println("constructGuacDotComURL " + constructGuacDotComURL);
     String firstName = null, lastName = null;
@@ -1142,18 +1130,35 @@ public class BICTestBase {
     lastName = "LN" + randomString;
     Util.printInfo("lastName :: " + lastName);
     createBICAccount(firstName, lastName, emailID, password);
+    Util.sleep(20000);
+
+    if(data.get(BICECEConstants.ADD_SEAT_QTY) != null && !data.get(BICECEConstants.ADD_SEAT_QTY).isEmpty()){
+    bicPage.waitForFieldPresent("gaucCartEditQuantiy",5000);
+    try {
+      bicPage.populateField("gaucCartEditQuantiy", Keys.BACK_SPACE.name());
+      bicPage.sendKeysInTextFieldSlowly("gaucCartEditQuantiy",data.get(BICECEConstants.ADD_SEAT_QTY));
+      Util.sleep(5000);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    }
 
     data.put("firstname", firstName);
     data.put("lastname", lastName);
 
-    debugHTMLPage("Entire Payment details");
+    //Apply promo if exists
+    if(promocode != null && !promocode.isEmpty()) {
+      populatePromoCode(promocode, data);
+    }
+
+    debugPageUrl("Enter Payment details");
     // Get Payment details
     selectPaymentProfile(data, paymentCardDetails);
-    // Entire billing details
-    debugHTMLPage("Entire billing details");
+    // Enter billing details
+    debugPageUrl("Enter billing details");
 
     populateBillingAddress(address, data);
-    debugHTMLPage("After entering billing details");
+    debugPageUrl("After entering billing details");
 
     try {
       if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
@@ -1181,75 +1186,6 @@ public class BICTestBase {
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
     printConsole(constructGuacDotComURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
-
-    return orderNumber;
-  }
-
-  private String getBICOrderPromoCode(LinkedHashMap<String, String> data, String emailID,
-      String region, String password,
-      String paymentMethod, String promocode) {
-    String orderNumber;
-
-    String firstName = null, lastName = null;
-    Map<String, String> address = null;
-
-    firstName = null;
-    lastName = null;
-    String randomString = RandomStringUtils.random(6, true, false);
-
-    region = region.replace("/", "").replace("-", "");
-    address = getBillingAddress(region);
-    String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-
-    firstName = "FN" + randomString;
-    Util.printInfo("firstName :: " + firstName);
-    lastName = "LN" + randomString;
-    Util.printInfo("lastName :: " + lastName);
-    createBICAccount(firstName, lastName, emailID, password);
-
-    data.put("firstname", firstName);
-    data.put("lastname", lastName);
-
-    debugHTMLPage("Entire Payment details");
-
-    // Enter Promo Code
-    populatePromoCode(promocode, data);
-
-    // Get Payment details
-    selectPaymentProfile(data, paymentCardDetails);
-
-    // Entire billing details
-    debugHTMLPage("Entire billing details");
-
-    populateBillingAddress(address, data);
-    debugHTMLPage("After entering billing details");
-
-    try {
-      if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        Util.printInfo(
-            "Checked ACH Authorization Agreement is visible - " + bicPage
-                .isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo("Checked box status for achCheckBox - " + bicPage.isChecked("achCheckBox"));
-
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("document.getElementById('mandate-agreement').click()");
-        WebElement achAgreeElement = driver.findElement(By.xpath("//*[@id=\"mandate-agreement\"]"));
-
-        Util.printInfo(
-            "Checked ACH Authorization Agreement is visible - " + bicPage
-                .isFieldVisible("achCheckBoxHeader"));
-        Util.printInfo("Checked box status for achCheckBox - " + achAgreeElement.isEnabled());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    orderNumber = submitGetOrderNumber();
-
-    // Check to see if EXPORT COMPLIANCE or Null
-    validateBicOrderNumber(orderNumber);
-    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, firstName, lastName,
         paymentMethod);
 
     return orderNumber;
@@ -1361,7 +1297,7 @@ public class BICTestBase {
     String region = data.get("US");
     String paymentMethod = data.get("paymentMethod");
 
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
@@ -1387,9 +1323,9 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<>();
     String region = data.get("US");
 
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
-    skipAddSeats();
+  //  skipAddSeats();
 
     orderNumber = submitGetOrderNumber();
     validateBicOrderNumber(orderNumber);
@@ -1409,7 +1345,7 @@ public class BICTestBase {
     String region = data.get("US");
 
     // Go to checkout with a product that was already added
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
     // Login to an existing account and add seats
     loginAccount(data);
@@ -1572,7 +1508,7 @@ public class BICTestBase {
     String password = data.get("password");
     String paymentMethod = System.getProperty("payment");
 
-    navigateToGUAC(data, region);
+    navigateToCart(data, region);
 
     String emailID = generateUniqueEmailID();
     String orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, guacMoeResourceURL,
@@ -1611,16 +1547,16 @@ public class BICTestBase {
     data.put("firstname", firstName);
     data.put("lastname", lastName);
 
-    debugHTMLPage("Entire Payment details");
+    debugPageUrl("Enter Payment details");
 
     // Get Payment details
     selectPaymentProfile(data, paymentCardDetails);
 
-    // Entire billing details
-    debugHTMLPage("Entire billing details");
+    // Enter billing details
+    debugPageUrl("Enter billing details");
 
     populateBillingAddress(address, data);
-    debugHTMLPage("After entering billing details");
+    debugPageUrl("After entering billing details");
 
     getUrl(constructGuacMoeURL);
     loginToMoe();
@@ -1788,13 +1724,13 @@ public class BICTestBase {
     data.put("lastname", lastName);
 
     // Get Payment details
-    debugHTMLPage("Enter Payment details");
+    debugPageUrl("Enter Payment details");
     selectPaymentProfileDR(data, paymentCardDetails);
 
     // Enter billing details
-    debugHTMLPage("Enter billing details");
+    debugPageUrl("Enter billing details");
     populateBillingAddressDR(address, data);
-    debugHTMLPage("After entering billing details");
+    debugPageUrl("After entering billing details");
 
     agreeToTerm();
     clickOnMakeThisATestOrder();
@@ -1921,7 +1857,7 @@ public class BICTestBase {
 
     } catch (Exception e) {
       e.printStackTrace();
-      debugHTMLPage(e.getMessage());
+      debugPageUrl(e.getMessage());
       AssertUtils.fail("Unable to populate the Billing Address details");
     }
     return status;
