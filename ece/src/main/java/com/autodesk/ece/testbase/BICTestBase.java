@@ -1618,9 +1618,9 @@ public class BICTestBase {
     bicPage.click(BICECEConstants.MOE_LOGIN_USERNAME_FIELD);
     bicPage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, "svc_s_guac@autodesk.com");
     bicPage.click("moeLoginButton");
-    bicPage.waitForField("moeLoginPasswordField", true, 30000);
-    bicPage.click("moeLoginPasswordField");
-    bicPage.populateField("moeLoginPasswordField", "K16PF6LCtnsf99");
+    bicPage.waitForField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, true, 30000);
+    bicPage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
+    bicPage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, "K16PF6LCtnsf99");
     bicPage.click("moeLoginButton");
     bicPage.waitForPageToLoad();
     Util.printInfo("Successfully logged into MOE");

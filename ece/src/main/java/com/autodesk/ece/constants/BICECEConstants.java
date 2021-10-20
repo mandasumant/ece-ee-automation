@@ -85,4 +85,5 @@ public class BICECEConstants extends BICConstants {
   public static final String PRODUCT_PE_ID = "product_pe_id";
   public static final String EDU_ROLE = "eduRole";
   public static final String EDU_SUBMIT = "eduSubmit";
+  public static final String MOE_LOGIN_PASSWORD_FIELD = "moeLoginPasswordField";
 }
