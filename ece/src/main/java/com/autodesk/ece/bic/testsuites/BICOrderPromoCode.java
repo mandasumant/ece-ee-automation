@@ -1,5 +1,6 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -97,7 +98,7 @@ public class BICOrderPromoCode extends ECETestBase {
       testResults.put("priceBeforePromo", results.get("priceBeforePromo"));
       testResults.put("priceAfterPromo", results.get("priceAfterPromo"));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testinghub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 

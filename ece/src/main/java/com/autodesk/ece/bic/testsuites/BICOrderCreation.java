@@ -462,7 +462,7 @@ public class BICOrderCreation extends ECETestBase {
           .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
       testResults.put("quantityToReduce", results.get("response_quantityToReduce"));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testing Hub");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
     Util.sleep(60000);
@@ -660,7 +660,7 @@ public class BICOrderCreation extends ECETestBase {
       testResults
           .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testing hub.");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
 
@@ -797,7 +797,7 @@ public class BICOrderCreation extends ECETestBase {
       testResults
           .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
-      Util.printTestFailedMessage("Failed to update results to Testing hub.");
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
     Util.sleep(60000);

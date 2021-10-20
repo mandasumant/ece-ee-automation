@@ -1,5 +1,6 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.CommonConstants;
@@ -1567,7 +1568,7 @@ public class PortalTestBase {
     openPortalBICLaunch(cepURL);
     clickALLPSLink();
     HashMap<String, String> results = new HashMap<>();
-    results.put("product_pe_id", verifyProductVisible(peIdPattern));
+    results.put(BICECEConstants.PRODUCT_PE_ID, verifyProductVisible(peIdPattern));
     return results;
   }
 
