@@ -15,13 +15,11 @@ import com.autodesk.testinghub.core.utils.ErrorEnum;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.config.SSLConfig;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -35,19 +33,13 @@ import java.util.TimeZone;
 import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 
 public class PelicanTestBase {
 
-  private  static  String productName = "";
+  private static String productName = "";
 
   public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
@@ -65,7 +57,7 @@ public class PelicanTestBase {
     int statusCode = response.getStatusCode();
     if (statusCode != 200) {
       String result = response.getBody().asString();
-      Util.PrintInfo("result :: " + result);
+      Util.PrintInfo(BICECEConstants.RESULT + result);
       JsonPath js = new JsonPath(result);
       String message = js.get("message");
       AssertUtils.fail("Error while Refunding the Order -" + message);
@@ -108,29 +100,29 @@ public class PelicanTestBase {
     String subscriptionByIdUrl = data.get("getSubscriptionByIdUrl");
 
     subscriptionByIdUrl = addTokenInResourceUrl(subscriptionByIdUrl,
-        data.get("getPOReponse_subscriptionId"));
+        data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
     HashMap<String, String> results = new HashMap<String, String>();
     String baseURL = data.get("pelican_BaseUrl");
     Util.printInfo("getPriceDetails baseURL : " + subscriptionByIdUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get("getPriceDetails_X_E2_PartnerId");
-    String X_E2_AppFamilyId = data.get("getPriceDetails_X_E2_AppFamilyId");
+    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
-    String Content_Type = "application/vnd.api+json";
+    String Content_Type = BICECEConstants.APPLICATION_VNDAPI_JSON;
 
     Map<String, String> header = new HashMap<>();
-    header.put("X-E2-HMAC-Signature", hmacSignature);
-    header.put("X-E2-PartnerId", X_E2_PartnerId);
-    header.put("X-E2-AppFamilyId", X_E2_AppFamilyId);
-    header.put("X-E2-HMAC-Timestamp", X_E2_HMAC_Timestamp);
-    header.put("Content-Type", Content_Type);
-    header.put("Accept", Content_Type);
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.ACCEPT, Content_Type);
 
-    Response response = getRestResponse(subscriptionByIdUrl, header,null);
+    Response response = getRestResponse(subscriptionByIdUrl, header, null);
     String result = response.getBody().asString();
-    Util.PrintInfo("result :: " + result);
+    Util.PrintInfo(BICECEConstants.RESULT + result);
     JsonPath js = new JsonPath(result);
     Util.printInfo("js is:" + js);
 
@@ -147,8 +139,9 @@ public class PelicanTestBase {
       results.put("response_endDate", js.get("data.endDate"));
       results.put("response_autoRenewEnabled", Boolean.toString(js.get("data.autoRenewEnabled")));
       results.put("response_expirationDate", js.get("data.expirationDate"));
-      results.put("response_currentBillingPriceId", js.get("data.priceId") != null ? Integer
-          .toString(js.get("data.priceId")) : null);
+      results.put("response_currentBillingPriceId",
+          js.get(BICECEConstants.DATA_PRICE_ID) != null ? Integer
+              .toString(js.get(BICECEConstants.DATA_PRICE_ID)) : null);
       results.put("response_nextBillingPriceId",
           js.get("data.nextBillingInfo.nextBillingPriceId") != null ? Integer
               .toString(js.get("data.nextBillingInfo.nextBillingPriceId")) : null);
@@ -168,24 +161,24 @@ public class PelicanTestBase {
 
     String getPurchaseOrderDetailsUrl = data.get("getSubscriptionByIdUrl");
     getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
-        data.get("getPOReponse_subscriptionId"));
+        data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
     Util.printInfo("getPriceDetails baseURL : " + getPurchaseOrderDetailsUrl);
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get("getPriceDetails_X_E2_PartnerId");
-    String X_E2_AppFamilyId = data.get("getPriceDetails_X_E2_AppFamilyId");
+    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
-    String Content_Type = "application/json";
-    String accept = "application/vnd.api+json";
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
+    String accept = BICECEConstants.APPLICATION_VNDAPI_JSON;
     HashMap<String, String> header = new HashMap<>();
-    header.put("X-E2-HMAC-Signature", hmacSignature);
-    header.put("X-E2-PartnerId", X_E2_PartnerId);
-    header.put("X-E2-AppFamilyId", X_E2_AppFamilyId);
-    header.put("X-E2-HMAC-Timestamp", X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
     header.put("X-Request-Ref", UUID.randomUUID().toString());
-    header.put("Content-Type", Content_Type);
-    header.put("accept", accept);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.ACCEPT, accept);
 
     String contractStartDate;
     if (data.containsKey("desiredBillingDate")) {
@@ -202,7 +195,7 @@ public class PelicanTestBase {
       nextBillingJson = om.readValue(rawPayload, UpdateNextBilling.class);
       nextBillingJson.getData().setNextBillingDate(contractStartDate);
       inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(nextBillingJson);
-      Util.PrintInfo("Payload Auth:: " + inputPayload + "\n");
+      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
     } catch (IOException e1) {
       e1.printStackTrace();
       AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
@@ -231,7 +224,7 @@ public class PelicanTestBase {
       JsonPath jp = new JsonPath(result);
       String purchaseOrderId = jp.get("data.purchaseOrderId").toString();
       String exportControlStatus = jp.get("data.exportControlStatus").toString();
-      String priceId = jp.get("data.priceId").toString();
+      String priceId = jp.get(BICECEConstants.DATA_PRICE_ID).toString();
       String nextBillingDate = jp.get("data.nextBillingInfo.nextBillingDate").toString();
 
       results.put("purchaseOrderId", purchaseOrderId);
@@ -251,14 +244,14 @@ public class PelicanTestBase {
     String invoicePelicanAPIUrl = data.get("postInvoicePelicanAPIUrl");
     HashMap<String, String> results = new HashMap<String, String>();
     Util.printInfo("invoicePelicanAPIUrl  : " + invoicePelicanAPIUrl);
-    String Content_Type = "application/json";
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
 
     Map<String, String> header = new HashMap<>();
-    header.put("Content-Type", Content_Type);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
     Response response = getRestResponse(invoicePelicanAPIUrl, header,"{}");
     String result = response.getBody().asString();
-    Util.PrintInfo("result :: " + result);
+    Util.PrintInfo(BICECEConstants.RESULT + result);
     JsonPath js = new JsonPath(result);
     Util.printInfo("js is:" + js);
   }
@@ -275,8 +268,8 @@ public class PelicanTestBase {
     JSONArray array = new JSONArray();
     array.put(data.get(BICConstants.orderNumber));
     JSONObject orders = new JSONObject();
-    orders.put("orderIds",array);
-    filters.put("filters",orders);
+    orders.put("orderIds", array);
+    filters.put("filters", orders);
     String requestJSon = filters.toJSONString();
 
     data.put("pelican_getPurchaseOrderDetailsUrl", getPurchaseOrderDetailsUrl);
@@ -285,21 +278,21 @@ public class PelicanTestBase {
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get("getPriceDetails_X_E2_PartnerId");
-    String X_E2_AppFamilyId = data.get("getPriceDetails_X_E2_AppFamilyId");
+    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
-    String Content_Type = "application/json";
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
 
     Map<String, String> header = new HashMap<>();
-    header.put("X-E2-HMAC-Signature", hmacSignature);
-    header.put("X-E2-PartnerId", X_E2_PartnerId);
-    header.put("X-E2-AppFamilyId", X_E2_AppFamilyId);
-    header.put("X-E2-HMAC-Timestamp", X_E2_HMAC_Timestamp);
-    header.put("Content-Type", Content_Type);
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
     Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, requestJSon);
     String result = response.getBody().asString();
-    Util.PrintInfo("result :: " + result);
+    Util.PrintInfo(BICECEConstants.RESULT + result);
 
     return result;
   }
@@ -314,23 +307,23 @@ public class PelicanTestBase {
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get("getPriceDetails_X_E2_PartnerId");
-    String X_E2_AppFamilyId = data.get("getPriceDetails_X_E2_AppFamilyId");
+    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
     // String Content_Type="application/x-www-form-urlencoded; charset=UTF-8";
-    String Content_Type = "application/json";
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
 
     Map<String, String> header = new HashMap<>();
     header.put("x-e2-hmac-signature", hmacSignature);
     header.put("x-e2-partnerid", X_E2_PartnerId);
     header.put("x-e2-appfamilyid", X_E2_AppFamilyId);
     header.put("x-e2-hmac-timestamp", X_E2_HMAC_Timestamp);
-    header.put("Content-Type", Content_Type);
-    header.put("Accept", Content_Type);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.ACCEPT, Content_Type);
 
     Response response = createRefundOrder(getPurchaseOrderDetailsUrl, header);
     String result = response.getBody().asString();
-    Util.PrintInfo("result :: " + result);
+    Util.PrintInfo(BICECEConstants.RESULT + result);
     JsonPath js = new JsonPath(result);
 
     results.put("refund_orderState", js.get("orderState"));
@@ -352,8 +345,8 @@ public class PelicanTestBase {
       SecretKeySpec keySpec = new SecretKeySpec(terceS.getBytes(), "HmacSHA256");
       mac.init(keySpec);
 
-      String appFamilyId = data.get("getPriceDetails_X_E2_AppFamilyId");
-      String partnerId = data.get("getPriceDetails_X_E2_PartnerId");
+      String appFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
+      String partnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
 
       Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
       timestamp = String.valueOf(cal.getTimeInMillis() / 1000);
@@ -398,7 +391,7 @@ public class PelicanTestBase {
     String secretKey = ProtectedConfigFile.decrypt(CommonConstants.spocSecretKey);
     String spocSignature = getSpocSignature(o2id, email, secretKey, timeStamp);
     HashMap<String, String> authHeaders = new HashMap<String, String>();
-    authHeaders.put("Content-Type", "application/json");
+    authHeaders.put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
 
     PayloadSpocAUTHToken authJsonClass = null;
 
@@ -413,7 +406,7 @@ public class PelicanTestBase {
       authJsonClass.setUserExtKey(o2id);
 
       inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(authJsonClass);
-      Util.PrintInfo("Payload Auth:: " + inputPayload + "\n");
+      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
     } catch (IOException e1) {
       e1.printStackTrace();
       AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
@@ -443,7 +436,8 @@ public class PelicanTestBase {
       ObjectMapper om = new ObjectMapper();
       String inputPayload = "";
       String processor =
-          testDataForEachMethod.get("billingProcessor").equalsIgnoreCase("adyen") ? "adyen"
+          testDataForEachMethod.get("billingProcessor").equalsIgnoreCase(
+              BICECEConstants.ADYEN) ? BICECEConstants.ADYEN
               : "bluesnap";
 
       File jsonFile = ApigeeTestBase.getFile(processor, "PayloadAddPaymentProfile.json");
@@ -461,7 +455,7 @@ public class PelicanTestBase {
       String oxid = testDataForEachMethod.get(TestingHubConstants.oxygenid);
 
       try {
-        if (processor.equals("adyen")) {
+        if (processor.equals(BICECEConstants.ADYEN)) {
           PayloadAddPaymentProfile authJsonClass = om
               .readValue(jsonFile, PayloadAddPaymentProfile.class);
           authJsonClass.getUser().setCurrency(currency);
@@ -478,7 +472,7 @@ public class PelicanTestBase {
           authJsonClass.getUser().getPaymentProfile().getBillingInfo().setLastName(lastName);
           authJsonClass.getUser().getPaymentProfile().getBillingInfo().setCompanyName(companyName);
           inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(authJsonClass);
-          Util.PrintInfo("Payload Auth:: " + inputPayload);
+          Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload);
         } else {
           PayloadAddPaymentProfile authJsonBluesnapClass = om.readValue(jsonFile,
               PayloadAddPaymentProfile.class);
@@ -491,7 +485,7 @@ public class PelicanTestBase {
               .setCompanyName(companyName);
           inputPayload = om.writerWithDefaultPrettyPrinter()
               .writeValueAsString(authJsonBluesnapClass);
-          Util.PrintInfo("Payload Auth:: " + inputPayload);
+          Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload);
         }
       } catch (IOException e1) {
         e1.printStackTrace();
@@ -504,7 +498,7 @@ public class PelicanTestBase {
 
       HashMap<String, String> authHeaders = new HashMap<String, String>();
       authHeaders.put("Authorization", getSpocAuthToken(testDataForEachMethod));
-      authHeaders.put("Content-Type", "application/json");
+      authHeaders.put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
 
       Response response = given().headers(authHeaders).body(inputPayload).when().post(baseUrl);
       String result = response.getBody().asString();
@@ -513,7 +507,7 @@ public class PelicanTestBase {
         response = given().headers(authHeaders).body(inputPayload).when().post(baseUrl);
         result = response.getBody().asString();
         if (response.getStatusCode() != 200) {
-          Util.printInfo("result :: " + result);
+          Util.printInfo(BICECEConstants.RESULT + result);
           Util.printTestFailedMessage(
               "Response code must be 200 but Payment Profle API return " + response
                   .getStatusCode());
@@ -541,26 +535,40 @@ public class PelicanTestBase {
     try {
 
       results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
-      results.put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
-      results.put("getPOReponse_storedPaymentProfileId", jp.get("content[0].payments[0].paymentProfileId").toString());
-      results.put("getPOReponse_fulfillmentStatus", jp.get("content[0].lineItems[0].fulfillmentStatus").toString());
+      results
+          .put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
+      results.put("getPOReponse_storedPaymentProfileId",
+          jp.get("content[0].payments[0].paymentProfileId").toString());
+      results.put("getPOReponse_fulfillmentStatus",
+          jp.get("content[0].lineItems[0].fulfillmentStatus").toString());
 
-       if (!productName.equals(BICECEConstants.CLDCR_PLC))
-       {
+      if (!productName.equals(BICECEConstants.CLDCR_PLC)) {
         results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
-        results.put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
+        results.put("getPOReponse_storeExternalKey",
+            jp.get("content[0].storeExternalKey").toString());
         results.put("getPOReponse_orderState", jp.get("content[0].orderState").toString());
-        results.put("getPOReponse_subscriptionId", jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionId").toString());
-        results.put("getPOReponse_subscriptionPeriodStartDate", jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodStartDate").toString());
-        results.put("getPOReponse_subscriptionPeriodEndDate",  jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodEndDate").toString());
-        results.put("getPOReponse_fulfillmentDate",jp.get("content[0].lineItems[0].fulfillmentDate").toString());
-        results.put("getPOResponse_promotionDiscount",jp.get("content[0].lineItems[0].lineItemTotals.promotionDiscount").toString());
-        results.put("getPOReponse_paymentProcessor", jp.get("content[0].payments[0].paymentProcessor").toString());
-        results.put("getPOReponse_last4Digits",  jp.get("content[0].billingInfo.lastDigits").toString());
-        results.put("getPOReponse_taxCode",jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey").toString());
+        results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+            jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionId").toString());
+        results.put("getPOReponse_subscriptionPeriodStartDate",
+            jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodStartDate")
+                .toString());
+        results.put("getPOReponse_subscriptionPeriodEndDate",
+            jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodEndDate")
+                .toString());
+        results.put("getPOReponse_fulfillmentDate",
+            jp.get("content[0].lineItems[0].fulfillmentDate").toString());
+        results.put("getPOResponse_promotionDiscount",
+            jp.get("content[0].lineItems[0].lineItemTotals.promotionDiscount").toString());
+        results.put("getPOReponse_paymentProcessor",
+            jp.get("content[0].payments[0].paymentProcessor").toString());
+        results.put("getPOReponse_last4Digits",
+            jp.get("content[0].billingInfo.lastDigits").toString());
+        results.put("getPOReponse_taxCode",
+            jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey")
+                .toString());
         results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
-       }else {
-        results.put("getPOReponse_subscriptionId", "NA");
+      } else {
+        results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID, "NA");
         results.put("getPOReponse_subscriptionPeriodStartDate", "NA");
         results.put("getPOReponse_subscriptionPeriodEndDate", "NA");
         results.put("getPOReponse_fulfillmentDate", "NA");
@@ -597,16 +605,16 @@ public class PelicanTestBase {
     String sig_details = getPriceByPriceIdSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get("getPriceDetails_X_E2_PartnerId");
-    String X_E2_AppFamilyId = data.get("getPriceDetails_X_E2_AppFamilyId");
+    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
-    authHeaders.put("X-E2-PartnerId", X_E2_PartnerId);
-    authHeaders.put("X-E2-AppFamilyId", X_E2_AppFamilyId);
-    authHeaders.put("X-E2-HMAC-Timestamp", X_E2_HMAC_Timestamp);
-    authHeaders.put("X-E2-HMAC-Signature", hmacSignature);
+    authHeaders.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
+    authHeaders.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
+    authHeaders.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    authHeaders.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
     authHeaders.put("X-Request-Ref", UUID.randomUUID().toString());
-    authHeaders.put("aaccept", "application/vnd.api+json");
-    authHeaders.put("Content-Type", "application/json");
+    authHeaders.put(BICECEConstants.ACCEPT, BICECEConstants.APPLICATION_VNDAPI_JSON);
+    authHeaders.put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
 
     return authHeaders;
   }

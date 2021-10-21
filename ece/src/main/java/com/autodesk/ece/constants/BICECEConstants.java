@@ -86,4 +86,19 @@ public class BICECEConstants extends BICConstants {
   public static final String EDU_ROLE = "eduRole";
   public static final String EDU_SUBMIT = "eduSubmit";
   public static final String MOE_LOGIN_PASSWORD_FIELD = "moeLoginPasswordField";
+  public static final String GET_POREPONSE_SUBSCRIPTION_ID = "getPOReponse_subscriptionId";
+  public static final String GETPRICEDETAILS_X_E2_PARTNER_ID = "getPriceDetails_X_E2_PartnerId";
+  public static final String GETPRICEDETAILS_X_E2_APPFAMILY_ID = "getPriceDetails_X_E2_AppFamilyId";
+  public static final String APPLICATION_VNDAPI_JSON = "application/vnd.api+json";
+  public static final String X_E2_HMAC_TIMESTAMP = "X-E2-HMAC-Timestamp";
+  public static final String X_E2_HMAC_SIGNATURE = "X-E2-HMAC-Signature";
+  public static final String X_E2_APPFAMILY_ID = "X-E2-AppFamilyId";
+  public static final String X_E2_PARTNER_ID = "X-E2-PartnerId";
+  public static final String CONTENT_TYPE = "Content-Type";
+  public static final String ACCEPT = "Accept";
+  public static final String DATA_PRICE_ID = "data.priceId";
+  public static final String APPLICATION_JSON = "application/json";
+  public static final String PAYLOAD_AUTH = "Payload Auth:: ";
+  public static final String ADYEN = "adyen";
+  public static final String RESULT = "result :: ";
 }
