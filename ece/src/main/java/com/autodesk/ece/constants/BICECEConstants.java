@@ -101,4 +101,20 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYLOAD_AUTH = "Payload Auth:: ";
   public static final String ADYEN = "adyen";
   public static final String RESULT = "result :: ";
+  public static final String FALSE = " :: false";
+  public static final String PRODUCT_IS_DISPLAYED_IN_PORTAL = "Product is displayed in portal";
+  public static final String SEPARATION_LINE = "-----------------------------";
+  public static final String SUBSCRIPTION_ROW_IN_SUBSCRIPTION = "subscriptionRowInSubscription";
+  public static final String PORTAL_ORDER_SEAT_COUNT = "portalOrderSeatCount";
+  public static final String INITIAL_ORDER_QTY = "initialOrderQty";
+  public static final String PAYMENT_DETAILS = "paymentDetails";
+  public static final String PORTAL_ADD_SEAT_BUTTON = "portalAddSeatButton";
+  public static final String ADD_SEATS = "add-seats";
+  public static final String PORTAL_REDUCE_SEATS_BUTTON = "portalReduceSeatsButton";
+  public static final String PORTAL_PAYMENT_METHOD = "portalPaymentMethod";
+  public static final String PAYMENTOPTION = "<PAYMENTOPTION>";
+  public static final String PORTAL_CARD_SAVE_BTN = "portalCardSaveBtn";
+  public static final String PAYMENT_DETAILS1 = "Payment details [";
+  public static final String ARGUMENTS_CLICK = "arguments[0].click();";
+  public static final String SKIP_LINK = "skipLink";
 }
