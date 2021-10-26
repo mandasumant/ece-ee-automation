@@ -562,7 +562,7 @@ public class PelicanTestBase {
         results.put("getPOReponse_paymentProcessor",
             jp.get("content[0].payments[0].paymentProcessor").toString());
         results.put("getPOReponse_last4Digits",
-            jp.get("content[0].billingInfo.lastDigits").toString());
+            jp.get("content[0].billingInfo.lastDigits"));
         results.put("getPOReponse_taxCode",
             jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey")
                 .toString());

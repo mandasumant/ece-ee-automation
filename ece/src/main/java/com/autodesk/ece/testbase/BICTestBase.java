@@ -85,11 +85,14 @@ public class BICTestBase {
       case "ENUS":
         address = getAmericaAddress();
         break;
-      case "CA":
+      case "ENCA":
         address = "Autodesk@75 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec";
         break;
       case "EMEA":
         address = "Autodesk@Talbot Way@Birmingham@B10 0HJ@9916800100@United Kingdom";
+        break;
+      case "NLNL":
+        address = "Autodesk@High Way@Noord-Holland@1826 GN@06-30701138@Netherlands@Flevoland";
         break;
       case "JAJP":
         address = "Autodesk@532-0003@Street@81-6-6350-5223";
@@ -113,7 +116,7 @@ public class BICTestBase {
       ba.put(BICECEConstants.ZIPCODE, billingAddress[3]);
       ba.put(BICECEConstants.PHONE_NUMBER, getRandomMobileNumber());
       ba.put(BICECEConstants.COUNTRY, billingAddress[5]);
-      if (!region.equalsIgnoreCase("emea")) {
+      if (!region.equalsIgnoreCase("EMEA")) {
         ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
       }
     }
@@ -399,15 +402,7 @@ public class BICTestBase {
       clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
       Util.sleep(1000);
       driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
-
-      if (address.size() == 6) {
-        status = emeaPopulateBillingDetails(address);
-        clickContinueCartBillingPage();
-        bicPage.waitForPageToLoad();
-      } else {
-        status = namerPopulateBillingDetails(address, paymentType);
-        // clickContinueCartBillingPage();
-      }
+      status = populateBillingDetails(address, paymentType);
       clickOnContinueBtn(paymentType);
     } catch (Exception e) {
       e.printStackTrace();
@@ -445,7 +440,7 @@ public class BICTestBase {
   }
 
   @SuppressWarnings("static-access")
-  private boolean namerPopulateBillingDetails(Map<String, String> address, String paymentType) {
+  private boolean populateBillingDetails(Map<String, String> address, String paymentType) {
     boolean status = false;
     try {
       Util.printInfo("Adding billing details...");
@@ -516,8 +511,7 @@ public class BICTestBase {
 
       driver.findElement(By.xpath(orgNameXpath)).click();
       driver.findElement(By.xpath(orgNameXpath))
-          .sendKeys(
-              new RandomStringUtils().random(5, true, true) + address.get(
+          .sendKeys( address.get(
                   BICECEConstants.ORGANIZATION_NAME));
 
       driver.findElement(By.xpath(orgNameXpath)).click();
@@ -538,41 +532,17 @@ public class BICTestBase {
       WebElement countryEle = driver.findElement(By.xpath(countryXpath));
       Select selCountry = new Select(countryEle);
       selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));
-
-      driver.findElement(By.xpath(stateXpath))
-          .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
-
+      Util.printInfo("THE ADDRESS "+address.toString());
+      if(address.get(BICECEConstants.STATE_PROVINCE) != null && !address.get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
+        driver.findElement(By.xpath(stateXpath))
+            .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
+      }
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-      Util.printTestFailedMessage("namerPopulateBillingDetails");
+      Util.printTestFailedMessage("populateBillingDetails");
       AssertUtils.fail("Unable to Populate Billing Details");
     }
-    return status;
-  }
-
-  private boolean emeaPopulateBillingDetails(Map<String, String> address) {
-    Util.sleep(3000);
-    boolean status = false;
-    try {
-      status = bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0), 60000);
-    } catch (MetadataException e) {
-      AssertUtils.fail("Organization_NameEMEA is not displayed on page...");
-    }
-    bicPage.populateField("Organization_NameEMEA", address.get(BICECEConstants.ORGANIZATION_NAME));
-    Util.sleep(1000);
-    bicPage.populateField("Full_AddressEMEA", address.get(BICECEConstants.FULL_ADDRESS));
-    Util.sleep(2000);
-    bicPage.populateField("CityEMEA", address.get(BICECEConstants.CITY));
-    Util.sleep(3000);
-    bicPage.populateField("ZipcodeEMEA", address.get(BICECEConstants.ZIPCODE));
-    Util.sleep(1000);
-    bicPage.populateField("Phone_NumberEMEA", getRandomMobileNumber());
-    Util.sleep(1000);
-    bicPage.populateField("CountryEMEA", address.get(BICECEConstants.COUNTRY));
-    Util.sleep(3000);
-
     return status;
   }
 
@@ -687,9 +657,9 @@ public class BICTestBase {
     String parentWindow = driver.getWindowHandle();
 
     try {
+
       Util.printInfo("Clicking on Paypal payments tab...");
       bicPage.clickUsingLowLevelActions("paypalPaymentTab");
-
       Util.printInfo("Clicking on Paypal checkout tab...");
       bicPage.waitForElementVisible(
           bicPage.getMultipleWebElementsfromField("paypalPaymentHead").get(0), 10);
@@ -706,7 +676,7 @@ public class BICTestBase {
       bicPage.waitForElementToDisappear("paypalPageLoader", 30);
 
       String title = driver.getTitle();
-      AssertUtils.assertTrue(title.contains("PayPal"),
+      AssertUtils.assertTrue(title.contains("Log in"),
           "Current title [" + title + "] does not contains keyword : PayPal");
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
@@ -738,7 +708,11 @@ public class BICTestBase {
               data.get("paypalPaymentType"));
       driver.findElement(By.xpath(paymentTypeXpath)).click();
 
+
       bicPage.executeJavascript("window.scrollBy(0,1000);");
+      if(bicPage.checkFieldExistence("paypalContinueButton")) {
+        bicPage.clickUsingLowLevelActions("paypalContinueButton");
+      }
       Util.printInfo("Clicking on agree and continue button...");
       bicPage.waitForFieldPresent("paypalAgreeAndContBtn", 10000);
       bicPage.clickUsingLowLevelActions("paypalAgreeAndContBtn");
@@ -761,19 +735,38 @@ public class BICTestBase {
     Util.sleep(20000);
   }
 
+  private void validateStore(HashMap<String, String> data){
+
+  }
   public void selectPaymentProfile(HashMap<String, String> data, String[] paymentCardDetails) {
     try {
+
       Util.printInfo("Selecting payment profile : " + data.get(BICECEConstants.PAYMENT_TYPE));
-      switch (data.get(BICECEConstants.PAYMENT_TYPE).toUpperCase()) {
-        case BICConstants.paymentTypePayPal:
-          populatePaypalPaymentDetails(data);
-          break;
-        case BICConstants.paymentTypeDebitCard:
-          populateACHPaymentDetails(paymentCardDetails);
-          break;
-        default:
-          populatePaymentDetails(paymentCardDetails);
-          break;
+
+      String[] paymentMethods = data.get(BICECEConstants.PAYMENT_METHODS).split(",");
+      boolean isValidPaymentType = false;
+
+      for(String paymentMethod : paymentMethods){
+        if(paymentMethod.equals(data.get(BICECEConstants.PAYMENT_TYPE))){
+           isValidPaymentType = true;
+           break;
+         }
+      }
+      if(isValidPaymentType){
+        switch (data.get(BICECEConstants.PAYMENT_TYPE).toUpperCase()) {
+          case BICConstants.paymentTypePayPal:
+            populatePaypalPaymentDetails(data);
+            break;
+          case BICConstants.paymentTypeDebitCard:
+            populateACHPaymentDetails(paymentCardDetails);
+            break;
+          default:
+            populatePaymentDetails(paymentCardDetails);
+            break;
+      }
+     }else{
+        AssertUtils.fail("The payment method is not supported for the given country/locale : "+ data.get("locale") +". Supported payment methods are "
+            + data.get(BICECEConstants.PAYMENT_METHODS));
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1003,14 +996,15 @@ public class BICTestBase {
   public HashMap<String, String> createGUACBICOrderDotCom(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = data.get("productName");
+    String productName = data.get(BICECEConstants.PRODUCT_NAME);
     String term = "";
     String quantity = "";
     String userType = data.get(BICECEConstants.USER_TYPE);
-    String region = data.get(BICECEConstants.LANGUAGE_STORE);
+    String region = data.get(BICECEConstants.REGION);
     String password = data.get(BICECEConstants.PASSWORD);
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-    String promoCode = data.get("promoCode");
+    String promoCode = data.get(BICECEConstants.PROMO_CODE);
+
 
     String emailID = generateUniqueEmailID();
 
@@ -1128,7 +1122,7 @@ public class BICTestBase {
       String quantity, String password,
       String paymentMethod,String promocode) {
     String orderNumber;
-    String constructGuacDotComURL = guacDotComBaseURL + productName;
+    String constructGuacDotComURL = guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get(BICECEConstants.PRODUCTS_PATH) + productName;
 
     System.out.println("constructGuacDotComURL " + constructGuacDotComURL);
     String firstName = null, lastName = null;
@@ -1138,15 +1132,18 @@ public class BICTestBase {
     checkCartDetailsError();
     selectMonthlySubscription(driver);
     subscribeAndAddToCart(data);
+
+    acceptCookiesAndUSSiteLink();
+
     firstName = null;
     lastName = null;
     String randomString = RandomStringUtils.random(6, true, false);
 
-    region = region.replace("/", "").replace("-", "");
+    region = data.get("region");
     address = getBillingAddress(region);
     String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
 
-    acceptCookiesAndUSSiteLink();
+
 
     firstName = "FN" + randomString;
     Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
@@ -1449,10 +1446,9 @@ public class BICTestBase {
     }
 
     try {
-      WebElement usButton = driver.findElement(
-          By.xpath("a[contains(.,\"No thanks, I want to stay\")]"));
-      usButton.click();
-      Util.printInfo("Clicked on Stay On US page link...");
+      bicPage.waitForFieldPresent("bicStayOnSameSite",5000);
+      bicPage.clickUsingLowLevelActions("bicStayOnSameSite");
+      Util.printInfo("Clicked on Stay On Same page link...");
     } catch (Exception e) {
       Util.printInfo("Stay on US Site link is not displayed...");
     }

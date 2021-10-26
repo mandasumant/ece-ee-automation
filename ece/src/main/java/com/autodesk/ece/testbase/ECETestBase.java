@@ -7,7 +7,10 @@ import com.autodesk.testinghub.core.database.DBValidations;
 import com.autodesk.testinghub.core.sap.SAPDriverFiori;
 import com.autodesk.testinghub.core.testbase.*;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,7 +34,7 @@ public class ECETestBase {
   private BICTestBase bictb = null;
   private PWSTestBase pwstb = null;
   private RegonceTestBase regoncetb = null;
-
+  LinkedHashMap<String, String> localeConfig;
   public ECETestBase() {
     System.out.println("into the testing hub. core changes");
     testbase = new GlobalTestBase("ece", "ece", GlobalConstants.BROWSER);
