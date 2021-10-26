@@ -1109,7 +1109,7 @@ public class PortalTestBase {
   }
 
   public void addPaymentDetails(HashMap<String, String> data, String[] paymentCardDetails) {
-    Util.printInfo("Selecting payment profile : " + data.get(BICECEConstants.PAYMENT_TYPE));
+    Util.printInfo("Selected payment profile : " + data.get(BICECEConstants.PAYMENT_TYPE));
     try {
       switch (data.get(BICECEConstants.PAYMENT_TYPE).toUpperCase()) {
         case BICConstants.paymentTypePayPal:
@@ -1457,8 +1457,10 @@ public class PortalTestBase {
     } else {
       selCountry.selectByIndex(0);
     }
-
-    driver.findElement(By.xpath(stateXpath)).sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
+    if(address.get(BICECEConstants.STATE_PROVINCE) != null && !address.get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
+      driver.findElement(By.xpath(stateXpath))
+          .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
+    }
     return status;
   }
 

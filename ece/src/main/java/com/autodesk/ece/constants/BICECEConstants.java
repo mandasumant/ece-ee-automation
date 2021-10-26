@@ -5,8 +5,14 @@ import com.autodesk.testinghub.core.constants.BICConstants;
 public class BICECEConstants extends BICConstants {
 
   public static final String EMAIL = "email";
+  public static final String EMAIL_ID = "email_id";
   public static final String PASSWORD = "password";
   public static final String DOWNLOAD_STATUS = "downloadStatus";
+  public static final String LOCALE = "locale";
+  public static final String REGION = "region";
+  public static final String LOCALE_CONFIG  = "LocaleConfig";
+  public static final String STORE_NAME= "storeName";
+  public static final String STORE = "store";
   public static final String CLDCR_PLC = "CLDCR";
   public static final String SUBSCRIPTION_ID = "getPOReponse_subscriptionId";
   public static final String SUBSCRIPTION_PERIOD_START_DATE = "getPOReponse_subscriptionPeriodStartDate";
@@ -52,11 +58,13 @@ public class BICECEConstants extends BICConstants {
   public static final String ADD_SEATS_MODAL_SKIP_BUTTON = "//*[@data-testid=\"addSeats-modal-skip-button\"]";
   public static final String PAYMENT = "payment";
   public static final String PAYMENT_TYPE = "paymentType";
+  public static final String PAYMENT_METHODS = "paymentMethods";
   public static final String FIRSTNAME = "firstname";
   public static final String PAYPAL = "paypal";
   public static final String PAYMENT_PROFILE = "<PAYMENTPROFILE>";
   public static final String LAST_NAME = "lastName";
   public static final String CREDIT_CARD = "credit-card";
+  public static final String PROMO_CODE = "promoCode";
   public static final String LASTNAME = "lastname";
   public static final String FIRST_NAME = "firstName";
   public static final String CREDIT_CARD_NUMBER_FRAME = "creditCardNumberFrame";
@@ -83,6 +91,9 @@ public class BICECEConstants extends BICConstants {
   public static final String MOE_LOGIN_USERNAME_FIELD = "moeLoginUsernameField";
   public static final String CREDIT_CARD_FRAME_DR = "creditCardFrameDR";
   public static final String PRODUCT_PE_ID = "product_pe_id";
+  public static final String PRODUCT_NAME = "productName";
+  public static final String PRODUCTS_PATH = "productsPath";
+  public static final String COUNTRY_DOMAIN="countryDomain";
   public static final String EDU_ROLE = "eduRole";
   public static final String EDU_SUBMIT = "eduSubmit";
   public static final String MOE_LOGIN_PASSWORD_FIELD = "moeLoginPasswordField";

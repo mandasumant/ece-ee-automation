@@ -33,6 +33,8 @@ public class BICOrderCreation extends ECETestBase {
   Map<?, ?> loadRestYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   long startTime, stopTime, executionTime;
+  private static String defaultLocale = "en_US";
+  Map<?, ?> localeConfigYaml = null;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -40,6 +42,8 @@ public class BICOrderCreation extends ECETestBase {
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String restFileKey = "REST_" + GlobalConstants.ENV.toUpperCase();
     loadRestYaml = YamlUtil.loadYmlUsingTestManifest(restFileKey);
+    String localeConfigFile= "LOCALE_CONFIG_" + GlobalConstants.ENV.toUpperCase();
+    localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
   }
 
   @BeforeMethod(alwaysRun = true)
@@ -51,12 +55,39 @@ public class BICOrderCreation extends ECETestBase {
         .get(name.getName());
     LinkedHashMap<String, String> restdefaultvalues = (LinkedHashMap<String, String>) loadRestYaml
         .get("default");
-    LinkedHashMap<String, String> regionalData = (LinkedHashMap<String, String>) loadYaml
-        .get(System.getProperty("store"));
-    defaultvalues.putAll(regionalData);
+
     defaultvalues.putAll(testcasedata);
     defaultvalues.putAll(restdefaultvalues);
     testDataForEachMethod = defaultvalues;
+
+    String locale = System.getProperty(BICECEConstants.LOCALE);
+
+    if(locale == null || locale.trim().isEmpty()){
+      locale = defaultLocale;
+    }
+    testDataForEachMethod.put("locale",locale);
+
+    LinkedHashMap<String, Map<String,String>> localeDataMap = (LinkedHashMap<String, Map<String,String>>) localeConfigYaml
+        .get(BICECEConstants.LOCALE_CONFIG);
+    testDataForEachMethod.putAll(localeDataMap.get(locale));
+
+    Util.printInfo("Validating the store for the locale " +System.getProperty(BICECEConstants.STORE));
+
+    boolean isValidStore = false;
+    if(testDataForEachMethod.get(BICECEConstants.STORE_NAME).equals(System.getProperty(BICECEConstants.STORE))){
+      isValidStore = true;
+    }
+
+    if(!isValidStore){
+      AssertUtils.fail("The store  is not supported for the given country/locale : "+ locale + ". Supported stores  are "
+          + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
+    }
+
+    LinkedHashMap<String, String> regionalData = (LinkedHashMap<String, String>) loadYaml
+        .get(System.getProperty("store"));
+
+    testDataForEachMethod.putAll(regionalData);
+
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
   }
@@ -65,8 +96,8 @@ public class BICOrderCreation extends ECETestBase {
       "bic-changePayment-US"}, description = "Validation of BIC change payment details functionality")
   public void validateBICChangePaymentProfile() {
     Util.printInfo("Gathering payment details...");
-    String emailID = System.getProperty("email");
-    String password = System.getProperty("password");
+    String emailID = System.getProperty(BICECEConstants.EMAIL);
+    String password = System.getProperty(BICECEConstants.PASSWORD);
 
     if (Strings.isNullOrEmpty(EMAIL)) {
       HashMap<String, String> results = getBicTestBase()
@@ -79,7 +110,6 @@ public class BICOrderCreation extends ECETestBase {
 
       // Trigger Invoice join
       pelicantb.postInvoicePelicanAPI(results);
-
     }
 
     ArrayList<String> payments = new ArrayList<String>();
@@ -477,7 +507,7 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBicFlexOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
