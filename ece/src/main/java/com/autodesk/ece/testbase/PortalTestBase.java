@@ -528,13 +528,7 @@ public class PortalTestBase {
     boolean status = false, link1 = false, link2 = false, link3 = false;
     status = isPortalElementPresent("portalProductServiceTab");
     Util.printInfo("portalProductServiceTab is loading :: " + status);
-    link1 = isPortalElementPresent("portalUMTab");
-    Util.printInfo("portalUMTab is loading :: " + link1);
-    link2 = isPortalElementPresent("portalBOTab");
-    Util.printInfo("portalBOTab is loading :: " + link2);
-    link3 = isPortalElementPresent("portalReportingTab");
-    Util.printInfo("portalReportingTab is loading :: " + link3);
-    return status && (link1 /* && link2 */ || link3);
+    return status;
   }
 
   @Step("Portal : Validate subscription" + GlobalConstants.TAG_TESTINGHUB)
