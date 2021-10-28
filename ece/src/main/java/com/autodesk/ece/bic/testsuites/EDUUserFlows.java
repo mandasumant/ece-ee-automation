@@ -5,6 +5,7 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.EDUTestBase;
 import com.autodesk.ece.testbase.EDUTestBase.EDUUserType;
 import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.Util;
@@ -73,13 +74,38 @@ public class EDUUserFlows extends ECETestBase {
 
   @Test(groups = {"activate-fusion-educator"}, description = "Educator activates Fusion 360")
   public void validateFusionActivationByEducator() throws MetadataException {
-    EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
+    HashMap<String, String> results = new HashMap<String, String>();
+    EDUTestBase eduSetupTB = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
     // Create new user with Educator role
-    edutb.registerUser(EDUUserType.EDUCATOR);
+    results.putAll(eduSetupTB.registerUser(EDUUserType.EDUCATOR));
+
+    // Manually verify the educator's oxygen account as a valid education account
+    eduSetupTB.verifyUser(results.get(BICConstants.oxid));
+
+    // Accept the education licence terms
+    eduSetupTB.acceptVSOSTerms();
+
+    // Quit and restart the driver to clear the cache.
+    // Usually users need to wait a day for their verification to process,
+    // so they would have closed their browser and opened it from the
+    // email sent to verified users
+    EISTestBase.driver.quit();
+    ECETestBase tb = new ECETestBase();
+    EDUTestBase eduVerifiedTB = new EDUTestBase(tb.getTestBase(), testDataForEachMethod);
+
+    // Login as the previously registered user
+    eduVerifiedTB.loginUser(results.get(BICConstants.emailid), results.get("password"));
+
+    eduVerifiedTB.dismissSuccessPopup();
+
+    // Verify that the education status has been applied
+    eduVerifiedTB.verifyEducationStatus();
+
     // Activate product and assign users
-    edutb.activateFusionAndAssignUsers();
+    eduVerifiedTB.activateFusionAndAssignUsers();
+
     // Check that we can see fusion product in portal
-    edutb.validateFusionActivation();
+    eduVerifiedTB.validateFusionActivation();
   }
 
   @Test(groups = {
