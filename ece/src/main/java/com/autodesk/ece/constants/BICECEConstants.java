@@ -129,4 +129,5 @@ public class BICECEConstants extends BICConstants {
   public static final String ARGUMENTS_CLICK = "arguments[0].click();";
   public static final String SKIP_LINK = "skipLink";
   public static final String PAYMENT_TYPE_SEPA = "SEPA";
+  public static final String PAYMENT_SEPA_LOWERCASE = "sepa";
 }

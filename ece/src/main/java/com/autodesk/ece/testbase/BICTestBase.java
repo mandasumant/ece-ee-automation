@@ -394,9 +394,9 @@ public class BICTestBase {
       } else if (data.get(BICECEConstants.PAYMENT_TYPE)
           .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
         firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, "sepa");
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
         lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME).replace(
-            BICECEConstants.PAYMENT_PROFILE, "sepa");
+            BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
       } else {
         firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
@@ -494,19 +494,19 @@ public class BICTestBase {
           break;
         case BICECEConstants.PAYMENT_TYPE_SEPA:
           orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, "sepa");
+              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
           fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-              .replace(BICECEConstants.PAYMENT_PROFILE, "sepa");
+              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
           cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
-              BICECEConstants.PAYMENT_PROFILE, "sepa");
+              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
           zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
-              BICECEConstants.PAYMENT_PROFILE, "sepa");
+              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
           phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-              .replace(BICECEConstants.PAYMENT_PROFILE, "sepa");
+              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
           countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY).replace(
-              BICECEConstants.PAYMENT_PROFILE, "sepa");
+              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
           stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-              .replace(BICECEConstants.PAYMENT_PROFILE, "sepa");
+              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
           break;
         default:
           orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)

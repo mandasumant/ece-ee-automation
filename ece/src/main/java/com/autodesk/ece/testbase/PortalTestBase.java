@@ -528,6 +528,16 @@ public class PortalTestBase {
     boolean status = false, link1 = false, link2 = false, link3 = false;
     status = isPortalElementPresent("portalProductServiceTab");
     Util.printInfo("portalProductServiceTab is loading :: " + status);
+    /*
+    Commented out because they only support running test for English language
+    link1 = isPortalElementPresent("portalUMTab");
+    Util.printInfo("portalUMTab is loading :: " + link1);
+    link2 = isPortalElementPresent("portalBOTab");
+    Util.printInfo("portalBOTab is loading :: " + link2);
+    link3 = isPortalElementPresent("portalReportingTab");
+    Util.printInfo("portalReportingTab is loading :: " + link3);
+    return status && (link1 && link2 || link3);
+    */
     return status;
   }
 
@@ -784,9 +794,9 @@ public class PortalTestBase {
     Util.printInfo("Navigating to subscriptions and orders tab...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
     try {
-      if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 10) == true) {
+      if (portalPage.checkIfElementExistsInPage("portalProductServiceTab", 10) == true) {
         Util.printInfo("Clicking on portal subscription and contracts link...");
-        portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
+        portalPage.clickUsingLowLevelActions("portalProductServiceTab");
         portalPage.waitForPageToLoad();
 
         debugPageUrl("Step 2");
@@ -849,8 +859,11 @@ public class PortalTestBase {
             .trim();
         Util.printInfo("City : " + city);
 
-        String state = portalPage.getTextFromLink("portalSubscriptionStateFromSubs");
-        Util.printInfo("State Province : " + state);
+        if (portalPage.checkIfElementExistsInPage("portalSubscriptionStateFromSubs", 10)) {
+          String state = portalPage.getTextFromLink("portalSubscriptionStateFromSubs");
+          Util.printInfo("State Province : " + state);
+          orderDetails.put(BICECEConstants.STATE_PROVINCE, state);
+        }
 
         String pin = portalPage.getTextFromLink("portalSubscriptionZipFromSubs");
         Util.printInfo("Zip Code : " + pin);
@@ -858,7 +871,7 @@ public class PortalTestBase {
         orderDetails.put(BICECEConstants.FULL_ADDRESS, streetAddress);
         orderDetails.put("City", city);
         orderDetails.put(BICECEConstants.ZIPCODE, pin);
-        orderDetails.put(BICECEConstants.STATE_PROVINCE, state);
+
         driver.navigate().refresh();
       } else {
         AssertUtils.fail("Subscription and contracts link is not present on portal page...");
@@ -944,14 +957,14 @@ public class PortalTestBase {
 
       // Util.waitForElement(portalPage.getFirstFieldLocator("portalASProductTerm"),
       // "Product Term");
-      portalPage.waitForFieldPresent("portalASProductTerm",5000);
+      portalPage.waitForFieldPresent("portalASProductTerm", 5000);
 
       String productSubscriptionTerm = portalPage
           .getLinkText("portalASProductTerm"); // .split(":")[1].trim();
       Util.printInfo("Product subscription term on add seat page : " + productSubscriptionTerm);
       orderDetails.put("productSubscriptionTerm", productSubscriptionTerm);
-      portalPage.waitForFieldPresent("portalASAmountPerSeat",5000);
 
+      portalPage.waitForFieldPresent("portalASAmountPerSeat", 5000);
       String perSeatProratedAmount = portalPage.getLinkText("portalASAmountPerSeat");
       Util.printInfo("Prorated amount per seat : " + perSeatProratedAmount);
       orderDetails.put("perSeatProratedAmount", perSeatProratedAmount);
@@ -960,7 +973,7 @@ public class PortalTestBase {
       orderDetails.put("addSeatQty", addSeatQty);
       portalPage.populateField("portalASQtyTextField", addSeatQty);
 
-       portalPage.waitForFieldPresent("portalASFinalProratedPrice",5000);
+      portalPage.waitForFieldPresent("portalASFinalProratedPrice", 5000);
 
       String proratedFinalPrice = portalPage.getLinkText("portalASFinalProratedPrice");
       Util.printInfo("Prorated Final Amount : " + proratedFinalPrice);
@@ -975,7 +988,7 @@ public class PortalTestBase {
       Util.printInfo("Subtotal amount : " + subtotalPrice);
       orderDetails.put("subtotalPrice", subtotalPrice);
       Util.printInfo("Clicking on Submit Order button...");
-      portalPage.waitForFieldPresent("portalASSubmitOrderBtn",5000);
+      portalPage.waitForFieldPresent("portalASSubmitOrderBtn", 5000);
       portalPage.clickUsingLowLevelActions("portalASSubmitOrderBtn");
 
     } catch (Exception e) {
