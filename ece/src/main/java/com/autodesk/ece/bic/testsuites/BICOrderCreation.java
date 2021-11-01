@@ -1068,7 +1068,7 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBicCloudCreditOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
 
     results.putAll(testDataForEachMethod);
 
