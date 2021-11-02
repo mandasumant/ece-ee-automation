@@ -122,7 +122,7 @@ public class BICOrderCreation extends ECETestBase {
     int index = (int) Util.randomNumber(payments.size());
     paymentType = payments.get(index);
     Util.printInfo("New Payment Type is : " + paymentType);
-    testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE,paymentType);
+    testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
 
     portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
 
