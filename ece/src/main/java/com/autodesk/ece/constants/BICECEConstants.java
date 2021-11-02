@@ -25,6 +25,7 @@ public class BICECEConstants extends BICConstants {
   public static final String ADD_SEAT_QTY = "addSeatQty";
   public static final String E2E_EXECUTION_TIME = "e2e_ExecutionTime";
   public static final String ORDER_CREATION = "CreateOrder";
+  public static final String ORDER_NUMBER_LABEL="orderNumberLabel";
   public static final String SUB1_ID = "sub1ID";
   public static final String SUB2_ID = "sub2ID";
   public static final String SUB1_NEXT_BILLING_DATE = "sub1NextBillingDate";
@@ -55,12 +56,16 @@ public class BICECEConstants extends BICConstants {
   public static final String LOGIN_PASSWORD = "loginPassword";
   public static final String LOGIN_BUTTON = "loginButton";
   public static final String GET_STARTED_SKIP_LINK = "getStartedSkipLink";
-  public static final String ADD_SEATS_MODAL_SKIP_BUTTON = "//*[@data-testid=\"addSeats-modal-skip-button\"]";
+  public static final String ADD_SEATS_MODAL_SKIP_BUTTON = "//*[@data-testid=\'addSeats-modal-skip-button\']";
   public static final String PAYMENT = "payment";
   public static final String PAYMENT_TYPE = "paymentType";
   public static final String PAYMENT_METHODS = "paymentMethods";
   public static final String FIRSTNAME = "firstname";
   public static final String PAYPAL = "paypal";
+  public static final String PAYMENT_BACS ="BACS";
+  public static final String PAYMENT_BACS_LOWERCASE ="bacs";
+  public static final String PAYMENT_ACH_LOWERCASE ="ach";
+
   public static final String PAYMENT_PROFILE = "<PAYMENTPROFILE>";
   public static final String LAST_NAME = "lastName";
   public static final String CREDIT_CARD = "credit-card";
@@ -85,6 +90,7 @@ public class BICECEConstants extends BICConstants {
   public static final String ENTER_PAYMENT_DETAILS = "Enter Payment details";
   public static final String ENTER_BILLING_DETAILS = "Enter billing details";
   public static final String AFTER_ENTERING_BILLING_DETAILS = "After entering billing details";
+  public static final String BILLING_DETAILS_ADDED = "billingDetailAdded";
   public static final String GUAC_CART_EDIT_QUANTITY = "guacCartEditQuantity";
   public static final String ORDER_NUMBER = "OrderNumber  :: ";
   public static final String DOWNLOAD_FREE_TRIAL_LOGIN_FRAME = "downloadFreeTrialLoginFrame";
@@ -128,4 +134,5 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYMENT_DETAILS1 = "Payment details [";
   public static final String ARGUMENTS_CLICK = "arguments[0].click();";
   public static final String SKIP_LINK = "skipLink";
+  public static final String TRUE = "true";
 }

@@ -18,7 +18,7 @@
     storeName: "STORE-UK"
     currencyStore: "GBP"
     countryDomain : ".co.uk"
-    paymentMethods : "CREDITCARD,PAYPAL,BAC"
+    paymentMethods : "CREDITCARD,PAYPAL,BACS"
 
   nl_NL:
     region: "NLNL"
@@ -32,4 +32,18 @@
     storeName: "STORE-UK"
     currencyStore: "EUR"
     countryDomain: ".fr"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+
+  ja_JP:
+    region: "JAJP"
+    storeName: "STORE-JP"
+    currencyStore: "YEN"
+    countryDomain: ".jp"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+
+  de_DE:
+    region: "DEDE"
+    storeName: "STORE-DE"
+    currencyStore: "EUR"
+    countryDomain: ".de"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
