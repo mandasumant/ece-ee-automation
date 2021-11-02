@@ -278,7 +278,6 @@ public class BICTestBase {
   @Step("Skip add seats modal")
   public void skipAddSeats() {
     Util.printInfo("Finding the skip Button");
-    //driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
 
     try {
       int count = 0;
