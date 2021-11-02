@@ -29,7 +29,7 @@
 
   fr_FR:
     region: "FRFR"
-    storeName: "STORE-UK"
+    storeName: "STORE-FR"
     currencyStore: "EUR"
     countryDomain: ".fr"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
@@ -40,3 +40,10 @@
     currencyStore: "EUR"
     countryDomain: ".de"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+
+    de_DE:
+      region: "ITIT"
+      storeName: "STORE-IT"
+      currencyStore: "EUR"
+      countryDomain: ".it"
+      paymentMethods: "CREDITCARD,PAYPAL,SEPA"
