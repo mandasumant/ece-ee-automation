@@ -119,7 +119,7 @@ public class BICTestBase {
       ba.put(BICECEConstants.ZIPCODE, billingAddress[3]);
       ba.put(BICECEConstants.PHONE_NUMBER, getRandomMobileNumber());
       ba.put(BICECEConstants.COUNTRY, billingAddress[5]);
-      if (!region.equalsIgnoreCase("EMEA") && !region.equalsIgnoreCase("DEDE")) {
+      if (region.equalsIgnoreCase("ENUS")) {
         ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
       }
     }
