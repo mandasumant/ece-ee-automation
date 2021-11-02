@@ -41,9 +41,9 @@
     countryDomain: ".de"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
 
-    it_IT:
-      region: "ITIT"
-      storeName: "STORE-IT"
-      currencyStore: "EUR"
-      countryDomain: ".it"
-      paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+  it_IT:
+    region: "ITIT"
+    storeName: "STORE-IT"
+    currencyStore: "EUR"
+    countryDomain: ".it"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA"
