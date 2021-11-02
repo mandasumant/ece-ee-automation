@@ -29,11 +29,11 @@ public class BICOrderCreation extends ECETestBase {
 
   private static final String EMAIL = System.getProperty("email");
   private static final String PASSWORD = "Password1";
+  private static String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   long startTime, stopTime, executionTime;
-  private static String defaultLocale = "en_US";
   Map<?, ?> localeConfigYaml = null;
 
   @BeforeClass(alwaysRun = true)
@@ -116,6 +116,7 @@ public class BICOrderCreation extends ECETestBase {
     payments.add("VISA");
     payments.add("PAYPAL");
     payments.add("ACH");
+    payments.add("SEPA");
 
     String paymentType = System.getProperty("payment");
     payments.remove(paymentType);

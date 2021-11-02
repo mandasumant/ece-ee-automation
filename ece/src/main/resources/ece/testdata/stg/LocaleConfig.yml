@@ -24,12 +24,26 @@
     region: "NLNL"
     storeName: "STORE-UK"
     currencyStore: "EUR"
-    countryDomain : ".nl"
-    paymentMethods : "CREDITCARD,PAYPAL"
+    countryDomain: ".nl"
+    paymentMethods: "CREDITCARD,PAYPAL"
 
   fr_FR:
     region: "FRFR"
-    storeName: "STORE-UK"
+    storeName: "STORE-FR"
     currencyStore: "EUR"
     countryDomain: ".fr"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+
+  de_DE:
+    region: "DEDE"
+    storeName: "STORE-DE"
+    currencyStore: "EUR"
+    countryDomain: ".de"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+
+  it_IT:
+    region: "ITIT"
+    storeName: "STORE-IT"
+    currencyStore: "EUR"
+    countryDomain: ".it"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
