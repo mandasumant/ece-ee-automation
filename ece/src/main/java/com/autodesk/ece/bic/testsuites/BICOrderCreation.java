@@ -30,11 +30,11 @@ public class BICOrderCreation extends ECETestBase {
 
   private static final String EMAIL = System.getProperty("email");
   private static final String PASSWORD = "Password1";
+  private static String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   long startTime, stopTime, executionTime;
-  private static String defaultLocale = "en_US";
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String,String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
@@ -131,7 +131,7 @@ public class BICOrderCreation extends ECETestBase {
     }
     String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentType.toUpperCase())
         .split("@");
-    portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails,localeDataMap.get(locale));
+    portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails, localeDataMap.get(locale));
   }
 
   @Test(groups = {"bic-nativeorder-US"}, description = "Validation of Create BIC Hybrid Order")
@@ -178,7 +178,7 @@ public class BICOrderCreation extends ECETestBase {
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID),localeDataMap.get(locale));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID), localeDataMap.get(locale));
     updateTestingHub(testResults);
 
   }
@@ -229,7 +229,7 @@ public class BICOrderCreation extends ECETestBase {
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID),localeDataMap.get(locale));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID), localeDataMap.get(locale));
     updateTestingHub(testResults);
 
     portaltb.switchTermInUserPortal(results.get(BICConstants.cepURL),
@@ -333,14 +333,14 @@ public class BICOrderCreation extends ECETestBase {
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID),localeDataMap.get(locale));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID), localeDataMap.get(locale));
     updateTestingHub(testResults);
 
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
             BICECEConstants.ADD_SEAT_QTY),
-            testDataForEachMethod,localeDataMap.get(locale)));
+            testDataForEachMethod, localeDataMap.get(locale)));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
     // results.get("perSeatGrossAmount"));
@@ -457,11 +457,11 @@ public class BICOrderCreation extends ECETestBase {
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID),localeDataMap.get(locale));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID), localeDataMap.get(locale));
     updateTestingHub(testResults);
 
     // Reduce seats in Portal
-    Util.printInfo("The locale map :"+localeDataMap);
+    Util.printInfo("The locale map :" + localeDataMap);
     results.putAll(portaltb.reduceSeatsInPortalAndValidate(localeDataMap.get(locale)));
     testResults.put("reducedSeatQty", results.get("reducedSeatQty"));
     updateTestingHub(testResults);
@@ -544,7 +544,7 @@ public class BICOrderCreation extends ECETestBase {
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID),localeDataMap.get(BICECEConstants.LOCALE));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID), localeDataMap.get(BICECEConstants.LOCALE));
     updateTestingHub(testResults);
 
     // Validate Submit Order
@@ -625,7 +625,7 @@ public class BICOrderCreation extends ECETestBase {
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID),localeDataMap.get(locale));
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID), localeDataMap.get(locale));
     updateTestingHub(testResults);
 
     // Validate Submit Order
@@ -834,7 +834,7 @@ public class BICOrderCreation extends ECETestBase {
     // Initial order validation in Portal
     tb.getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid), PASSWORD,
-        results.get(BICECEConstants.SUBSCRIPTION_ID),localeDataMap.get(locale));
+        results.get(BICECEConstants.SUBSCRIPTION_ID), localeDataMap.get(locale));
     updateTestingHub(testResults);
 
     stopTime = System.nanoTime();

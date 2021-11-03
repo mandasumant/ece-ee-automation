@@ -91,6 +91,7 @@ public class EDUTestBase {
     eduPage.populateField("newEmail", email);
     eduPage.populateField("newConfirmEmail", email);
     eduPage.populateField("newPassword", "Password1");
+    results.put("password", "Password1");
 
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
@@ -130,10 +131,36 @@ public class EDUTestBase {
   }
 
   /**
+   * Login as a user on the EDU landing page
+   *
+   * @param username - User's email
+   * @param password - User's password
+   */
+  @Step("Login EDU User")
+  public void loginUser(String username, String password) {
+    // Navigate to education site and click on "Get Started"
+    eduPage.navigateToURL(testData.get("eduLandingPage"));
+    eduPage.click("getStarted");
+
+    // Enter the username and password
+    eduPage.waitForField("eduUsername", true, 5000);
+    eduPage.populateField("eduUsername", username);
+    eduPage.clickToSubmit("eduUsernameNext");
+
+    eduPage.waitForField("newPassword", true, 5000);
+    eduPage.populateField("newPassword", password);
+    eduPage.clickToSubmit("eduSubmit");
+
+    eduPage.waitForField("eduSkipTFA", true, 5000);
+    eduPage.clickToSubmit("eduSkipTFA");
+  }
+
+  /**
    * Mark a user as an approved education user in the EDU database
    *
    * @param oxygenId - Oxygen ID of the user to approve
    */
+  @Step("Mark user as approved")
   public void verifyUser(String oxygenId) {
     String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
     Response response = given()
@@ -146,15 +173,29 @@ public class EDUTestBase {
    * VSOS (student verification) terms
    */
   public void signUpUser() {
+    acceptVSOSTerms();
+    dismissSuccessPopup();
+    Util.sleep(5000);
+    eduPage.refresh();
+    verifyEducationStatus();
+  }
+
+  @Step("Accept VSOS terms")
+  public void acceptVSOSTerms() {
     eduPage.waitForField("eduSignStarted", true, 5000);
     eduPage.click("eduSignStarted");
     eduPage.waitForField("eduSignSubmit", true, 5000);
     eduPage.click("eduSignSubmit");
+  }
+
+  @Step("Dismiss registration success message")
+  public void dismissSuccessPopup() {
     eduPage.waitForField("eduSignSuccess", true, 5000);
     eduPage.click("eduSignSuccess");
-    Util.sleep(5000);
-    eduPage.refresh();
+  }
 
+  @Step("Verify Education Status")
+  public void verifyEducationStatus() {
     String xPath = eduPage.getFirstFieldLocator("eduStatus");
     String status = driver.findElement(By.xpath(xPath)).getText();
     AssertUtils.assertTrue(
@@ -189,12 +230,10 @@ public class EDUTestBase {
     driver.switchTo().window(currentTabHandle);
   }
 
+  @Step("Activate Class Fusion Subscription")
   public void activateFusionAndAssignUsers() throws MetadataException {
     // Activate new subscription model for Fusion 360
     eduPage.clickUsingLowLevelActions("educationClassLabTab");
-    eduPage.clickUsingLowLevelActions("educationFusionGetStartedButton");
-    eduPage.clickUsingLowLevelActions("vsosSubmitButton");
-    eduPage.clickUsingLowLevelActions("getAutodeskSoftwareButton");
     eduPage.clickUsingLowLevelActions("subscriptionAcceptButton");
 
     // Assign user
@@ -205,6 +244,7 @@ public class EDUTestBase {
     eduPage.clickUsingLowLevelActions("assignUsersButton");
   }
 
+  @Step("Verify Fusion in Portal")
   public void validateFusionActivation() throws MetadataException {
     // verify that Fusion is visible in a list of products
     eduPage.waitForField("eduFusionProduct", true, 10);
