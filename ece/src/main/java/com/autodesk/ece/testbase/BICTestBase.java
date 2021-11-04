@@ -870,8 +870,8 @@ public class BICTestBase {
             populateACHPaymentDetails(paymentCardDetails);
             break;
           case BICECEConstants.PAYMENT_BACS:
-            populateBACSPaymentDetails(paymentCardDetails,address,data);
-            data.put(BICECEConstants.BILLING_DETAILS_ADDED,BICECEConstants.TRUE);
+            populateBACSPaymentDetails(paymentCardDetails, address, data);
+            data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
             break;
           case BICECEConstants.PAYMENT_TYPE_SEPA:
             populateSepaPaymentDetails(paymentCardDetails);
@@ -880,9 +880,11 @@ public class BICTestBase {
             populatePaymentDetails(paymentCardDetails);
             break;
         }
-     }else{
-        AssertUtils.fail("The payment method is not supported for the given country/locale : "+ data.get(BICECEConstants.LOCALE) +". Supported payment methods are "
-            + data.get(BICECEConstants.PAYMENT_METHODS));
+      } else {
+        AssertUtils.fail(
+            "The payment method is not supported for the given country/locale : " + data
+                .get(BICECEConstants.LOCALE) + ". Supported payment methods are "
+                + data.get(BICECEConstants.PAYMENT_METHODS));
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -890,7 +892,8 @@ public class BICTestBase {
     }
   }
 
-  private String submitGetOrderNumber(String orderNumberLabel) {
+  private String submitGetOrderNumber() {
+    clickAchMandateAgreementCheckbox();
     int count = 0;
     debugPageUrl(" Step 1 wait for SubmitOrderButton");
     while (!bicPage.waitForField(BICECEConstants.SUBMIT_ORDER_BUTTON, true, 60000)) {
@@ -905,31 +908,6 @@ public class BICTestBase {
     }
 
     debugPageUrl(" Step 2 wait for SubmitOrderButton");
-    try {
-      if (System.getProperty(BICECEConstants.PAYMENT)
-          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        Util.printInfo(
-            BICECEConstants.CHECKED_ACH_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                .isFieldVisible(BICECEConstants.ACH_CHECKBOX_HEADER));
-        Util.printInfo(BICECEConstants.CHECKED_BOX_STATUS_FOR_ACH_CHECKBOX + bicPage.isChecked(
-            BICECEConstants.ACH_CHECKBOX));
-
-        WebElement achAgreeElement = driver.findElement(By.xpath(
-            BICECEConstants.ID_MANDATE_AGREEMENT));
-        if (!achAgreeElement.isEnabled()) {
-          JavascriptExecutor js = (JavascriptExecutor) driver;
-          js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
-        }
-        Util.printInfo(
-            BICECEConstants.CHECKED_ACH_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                .isFieldVisible(BICECEConstants.ACH_CHECKBOX_HEADER));
-        Util.printInfo(
-            BICECEConstants.CHECKED_BOX_STATUS_FOR_ACH_CHECKBOX + achAgreeElement.isEnabled());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
     try {
       int countModal1 = 0;
       while (driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).isDisplayed()) {
@@ -1197,14 +1175,27 @@ public class BICTestBase {
     selectPaymentProfile(data, paymentCardDetails, address);
 
     // Enter billing details
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) !=null && !data.get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
       debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
 
-   try {
-      if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+    orderNumber = submitGetOrderNumber();
+
+    // Check to see if EXPORT COMPLIANCE or Null
+    validateBicOrderNumber(orderNumber);
+    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, firstName, lastName,
+        paymentMethod);
+
+    return orderNumber;
+  }
+
+  private void clickAchMandateAgreementCheckbox() {
+    try {
+      if (System.getProperty(BICECEConstants.PAYMENT)
+          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo(
             BICECEConstants.CHECKED_ACH_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
                 .isFieldVisible(BICECEConstants.ACH_CHECKBOX_HEADER));
@@ -1225,24 +1216,17 @@ public class BICTestBase {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
-
-    // Check to see if EXPORT COMPLIANCE or Null
-    validateBicOrderNumber(orderNumber);
-    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
-
-    return orderNumber;
   }
 
   private String createBICOrderDotCom(LinkedHashMap<String, String> data, String emailID,
       String guacDotComBaseURL,
       String productName, String term, String region,
       String quantity, String password,
-      String paymentMethod,String promocode) {
+      String paymentMethod, String promocode) {
     String orderNumber;
-    String constructGuacDotComURL = guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get(BICECEConstants.PRODUCTS_PATH) + productName;
+    String constructGuacDotComURL =
+        guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
+            .get(BICECEConstants.PRODUCTS_PATH) + productName;
 
     System.out.println("constructGuacDotComURL " + constructGuacDotComURL);
     String firstName = null, lastName = null;
@@ -1301,31 +1285,7 @@ public class BICTestBase {
       debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
 
-    try {
-      if (paymentMethod.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        Util.printInfo(
-            BICECEConstants.CHECKED_ACH_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                .isFieldVisible(BICECEConstants.ACH_CHECKBOX_HEADER));
-        Util.printInfo(
-            BICECEConstants.CHECKED_BOX_STATUS_FOR_ACH_CHECKBOX + bicPage.isChecked(
-                BICECEConstants.ACH_CHECKBOX));
-
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
-        WebElement achAgreeElement = driver.findElement(By.xpath(
-            BICECEConstants.ID_MANDATE_AGREEMENT));
-
-        Util.printInfo(
-            BICECEConstants.CHECKED_ACH_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                .isFieldVisible(BICECEConstants.ACH_CHECKBOX_HEADER));
-        Util.printInfo(
-            BICECEConstants.CHECKED_BOX_STATUS_FOR_ACH_CHECKBOX + achAgreeElement.isEnabled());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
+    orderNumber = submitGetOrderNumber();
 
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
@@ -1445,7 +1405,7 @@ public class BICTestBase {
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
+    orderNumber = submitGetOrderNumber();
     validateBicOrderNumber(orderNumber);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
@@ -1472,7 +1432,7 @@ public class BICTestBase {
     Util.sleep(60000);
     skipAddSeats();
 
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
+    orderNumber = submitGetOrderNumber();
     validateBicOrderNumber(orderNumber);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
@@ -1495,7 +1455,7 @@ public class BICTestBase {
     // Login to an existing account and add seats
     loginAccount(data);
     existingSubscriptionAddSeat(data);
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
+    orderNumber = submitGetOrderNumber();
     validateBicOrderNumber(orderNumber);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
@@ -1710,7 +1670,7 @@ public class BICTestBase {
     populateBillingAddress(address, data);
     agreeToTerm();
 
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
+    orderNumber = submitGetOrderNumber();
 
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
@@ -1884,7 +1844,7 @@ public class BICTestBase {
     agreeToTerm();
     clickOnMakeThisATestOrder();
 
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
+    orderNumber = submitGetOrderNumber();
 
     // Check to see if EXPORT COMPLIANCE or Null
     validateBicOrderNumber(orderNumber);
