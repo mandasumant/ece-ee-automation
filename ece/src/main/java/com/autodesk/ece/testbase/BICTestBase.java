@@ -903,7 +903,6 @@ public class BICTestBase {
     }
 
     debugPageUrl(" Step 2 wait for SubmitOrderButton");
-
     try {
       if (System.getProperty(BICECEConstants.PAYMENT)
           .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
@@ -946,11 +945,6 @@ public class BICTestBase {
     }
 
     try {
-      if (bicPage
-          .checkIfElementExistsInPage("achCheckBox", 10)) {
-        Util.printInfo("Clicking on mandate agreement checkbox.");
-        bicPage.clickUsingLowLevelActions("achCheckBox");
-      }
       bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
       bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
       bicPage.waitForPageToLoad();
