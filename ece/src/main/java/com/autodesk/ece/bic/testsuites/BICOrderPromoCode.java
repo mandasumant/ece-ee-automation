@@ -21,6 +21,10 @@ public class BICOrderPromoCode extends ECETestBase {
   Map<?, ?> loadRestYaml = null;
   long startTime, stopTime, executionTime;
   LinkedHashMap<String, String> testDataForEachMethod = null;
+  private static String defaultLocale = "en_US";
+  Map<?, ?> localeConfigYaml = null;
+  LinkedHashMap<String, Map<String,String>> localeDataMap = null;
+  String locale = null;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -28,6 +32,8 @@ public class BICOrderPromoCode extends ECETestBase {
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String restFileKey = "REST_" + GlobalConstants.ENV.toUpperCase();
     loadRestYaml = YamlUtil.loadYmlUsingTestManifest(restFileKey);
+    String localeConfigFile= "LOCALE_CONFIG_" + GlobalConstants.ENV.toUpperCase();
+    localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
   }
 
   @BeforeMethod(alwaysRun = true)
@@ -46,6 +52,18 @@ public class BICOrderPromoCode extends ECETestBase {
     defaultValues.putAll(testCaseData);
     defaultValues.putAll(restDefaultValues);
     testDataForEachMethod = defaultValues;
+
+    locale = System.getProperty(BICECEConstants.LOCALE);
+
+    if(locale == null || locale.trim().isEmpty()){
+      locale = defaultLocale;
+    }
+    testDataForEachMethod.put("locale",locale);
+
+    localeDataMap = (LinkedHashMap<String, Map<String,String>>) localeConfigYaml
+        .get(BICECEConstants.LOCALE_CONFIG);
+    testDataForEachMethod.putAll(localeDataMap.get(locale));
+
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
   }
@@ -104,7 +122,7 @@ public class BICOrderPromoCode extends ECETestBase {
 
     portaltb.validateBICOrderProductInCEP(results.get(TestingHubConstants.cepURL),
         results.get(TestingHubConstants.emailid), "Password1",
-        results.get("getPOReponse_subscriptionId"));
+        results.get("getPOReponse_subscriptionId"),localeDataMap.get(locale));
     updateTestingHub(testResults);
 
     // Validate Create Order

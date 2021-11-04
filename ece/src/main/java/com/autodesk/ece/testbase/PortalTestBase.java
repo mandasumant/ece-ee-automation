@@ -1,5 +1,4 @@
 package com.autodesk.ece.testbase;
-
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
@@ -527,8 +526,9 @@ public class PortalTestBase {
   public boolean isPortalTabsVisible() {
     boolean status = false, link1 = false, link2 = false, link3 = false;
     status = isPortalElementPresent("portalProductServiceTab");
+   /*
     Util.printInfo("portalProductServiceTab is loading :: " + status);
-    /*
+    Util.printInfo("portalProductServiceTab is loading :: " + status);
     Commented out because they only support running test for English language
     link1 = isPortalElementPresent("portalUMTab");
     Util.printInfo("portalUMTab is loading :: " + link1);
@@ -669,7 +669,7 @@ public class PortalTestBase {
 
   @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
   public boolean validateBICOrderProductInCEP(String cepURL, String portalUserName,
-      String portalPassword, String subscriptionID) {
+      String portalPassword, String subscriptionID,Map<String,String> localeDataMap) {
     boolean status = false, statusPS, statusBO, statusBOC, statusBOS, portalLogin, portalLoad = false;
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
@@ -782,21 +782,22 @@ public class PortalTestBase {
 
   @Step("Adding seat from portal for BIC orders")
   public HashMap<String, String> createAndValidateAddSeatOrderInPortal(String addSeatQty,
-      LinkedHashMap<String, String> testDataForEachMethod) {
+      LinkedHashMap<String, String> testDataForEachMethod,Map<String,String> localeMap) {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<String, String>();
-    orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod));
+    orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod,localeMap));
     orderDetails.putAll(validateAddSeatOrder(orderDetails,addSeatQty));
     return orderDetails;
   }
 
-  public HashMap<String, String> navigateToSubscriptionAndOrdersTab() {
+  public HashMap<String, String> navigateToSubscriptionAndOrdersTab(Map<String,String> localeMap) {
     Util.printInfo("Navigating to subscriptions and orders tab...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
+    Util.sleep(60000);
     try {
-      if (portalPage.checkIfElementExistsInPage("portalProductServiceTab", 10) == true) {
+      if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 10) == true) {
         Util.printInfo("Clicking on portal subscription and contracts link...");
-        portalPage.clickUsingLowLevelActions("portalProductServiceTab");
+        portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
         portalPage.waitForPageToLoad();
 
         debugPageUrl("Step 2");
@@ -865,6 +866,7 @@ public class PortalTestBase {
           orderDetails.put(BICECEConstants.STATE_PROVINCE, state);
         }
 
+
         String pin = portalPage.getTextFromLink("portalSubscriptionZipFromSubs");
         Util.printInfo("Zip Code : " + pin);
 
@@ -885,12 +887,12 @@ public class PortalTestBase {
   }
 
   public HashMap<String, String> createAddSeatOrder(String addSeatQty,
-      LinkedHashMap<String, String> testDataForEachMethod) {
+      LinkedHashMap<String, String> testDataForEachMethod,Map<String,String> localeMap) {
     Util.printInfo("Placing add seat order from portal...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
 
     try {
-      orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
+      orderDetails.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
 
       String paymentDetails = orderDetails.get(BICECEConstants.PAYMENT_DETAILS);
       Util.printInfo("Payment Details : " + paymentDetails);
@@ -978,16 +980,17 @@ public class PortalTestBase {
       String proratedFinalPrice = portalPage.getLinkText("portalASFinalProratedPrice");
       Util.printInfo("Prorated Final Amount : " + proratedFinalPrice);
       orderDetails.put("proratedFinalAmount", proratedFinalPrice);
-
-      Util.printInfo("Capturing Tax details...");
-      String taxAmount = portalPage.getLinkText("portalASTaxDetails");
-      Util.printInfo("Tax amount : " + taxAmount);
-      orderDetails.put("taxAmount", taxAmount);
-
+     if(!localeMap.get(BICECEConstants.REGION).equals("ENGB")) {
+       Util.printInfo("Capturing Tax details...");
+       String taxAmount = portalPage.getLinkText("portalASTaxDetails");
+       Util.printInfo("Tax amount : " + taxAmount);
+       orderDetails.put("taxAmount", taxAmount);
+     }
       String subtotalPrice = portalPage.getLinkText("portalASFinalSubtotalAmount");
       Util.printInfo("Subtotal amount : " + subtotalPrice);
       orderDetails.put("subtotalPrice", subtotalPrice);
       Util.printInfo("Clicking on Submit Order button...");
+
       portalPage.waitForFieldPresent("portalASSubmitOrderBtn", 5000);
       portalPage.clickUsingLowLevelActions("portalASSubmitOrderBtn");
 
@@ -1022,7 +1025,7 @@ public class PortalTestBase {
       driver.switchTo().defaultContent();
       Util.printInfo("Refreshing the page...");
       driver.navigate().refresh();
-      Util.sleep(15000);
+      Util.sleep(65000);
 
       Util.waitForElement(portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_ADD_SEAT_BUTTON),
           "Add Seat button");
@@ -1046,17 +1049,17 @@ public class PortalTestBase {
   }
 
   @Step("Reduce seats from portal for BIC orders")
-  public HashMap<String, String> reduceSeatsInPortalAndValidate() throws MetadataException {
+  public HashMap<String, String> reduceSeatsInPortalAndValidate(Map<String,String> localeMap) throws MetadataException {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<>();
-    orderDetails.putAll(reduceSeats());
+    orderDetails.putAll(reduceSeats(localeMap));
     validateReducedSeats(orderDetails);
     return orderDetails;
   }
 
-  public HashMap<String, String> reduceSeats() throws MetadataException {
+  public HashMap<String, String> reduceSeats(Map<String,String> localeMap) throws MetadataException {
     HashMap<String, String> orderDetails = new HashMap<>();
-    orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
+    orderDetails.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
 
     Util.printInfo("Reducing seats.");
 
@@ -1093,22 +1096,32 @@ public class PortalTestBase {
     }
   }
 
+
   @Step("Changing payment from Portal" + GlobalConstants.TAG_TESTINGHUB)
   public void changePaymentMethodAndValidate(HashMap<String, String> data,
-      String[] paymentCardDetails) {
+      String[] paymentCardDetails,Map<String,String> localeMap) {
     Util.printInfo("Changing the payment method from portal...");
     try {
       debugPageUrl("Step 1");
-      data.putAll(navigateToSubscriptionAndOrdersTab());
+      data.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
       Util.printInfo("Clicking on change payment option...");
+
+      if(portalPage.checkIfElementExistsInPage("portalASCloseButton",10)) {
+        Util.printInfo("Closing the popup ..");
+        portalPage.clickUsingLowLevelActions("portalASCloseButton");
+        Util.printInfo("Closed the popup ..");
+      }
+
       portalPage.waitForFieldPresent("portalChangePaymentBtn", 10000);
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
+
+      Util.sleep(60000);
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
           BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
-      validatePaymentDetailsOnPortal(data);
+      validatePaymentDetailsOnPortal(data, localeMap);
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to change the payment details from portal...");
@@ -1382,7 +1395,7 @@ public class PortalTestBase {
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-        cityXpath = BICTestBase.bicPage.getFirstFieldLocator("City")
+        cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
@@ -1395,26 +1408,26 @@ public class PortalTestBase {
         break;
       case BICConstants.paymentTypeDebitCard:
         orgNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-            .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
-        cityXpath = BICTestBase.bicPage.getFirstFieldLocator("City")
-            .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
+        cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
-            .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         phoneXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-            .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         countryXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
-            .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         stateXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-            .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         break;
       default:
         orgNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-        cityXpath = BICTestBase.bicPage.getFirstFieldLocator("City")
+        cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
@@ -1447,7 +1460,7 @@ public class PortalTestBase {
 
     driver.findElement(By.xpath(cityXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
     Util.sleep(3000);
-    driver.findElement(By.xpath(cityXpath)).sendKeys(address.get("City"));
+    driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY));
 
     driver.findElement(By.xpath(zipXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
     Util.sleep(3000);
@@ -1471,9 +1484,9 @@ public class PortalTestBase {
     return status;
   }
 
-  public void validatePaymentDetailsOnPortal(HashMap<String, String> data) {
+  public void validatePaymentDetailsOnPortal(HashMap<String, String> data,Map<String,String> localeMap) {
     Util.printInfo("Validating payment details...");
-    data.putAll(navigateToSubscriptionAndOrdersTab());
+    data.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
     String paymentDetails = data.get(BICECEConstants.PAYMENT_DETAILS).toLowerCase();
     Util.printInfo("Payment Details on order info page: " + paymentDetails);
 
@@ -1482,7 +1495,7 @@ public class PortalTestBase {
           BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] does not contains text [paypal]");
     } else if (data.get(BICECEConstants.PAYMENT_TYPE)
         .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-      Assert.assertTrue(paymentDetails.contains("account"),
+      Assert.assertTrue(paymentDetails.contains(BICECEConstants.ACCOUNT),
           BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] does not contains text [account]");
     } else {
       Util.printInfo(BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] ");
