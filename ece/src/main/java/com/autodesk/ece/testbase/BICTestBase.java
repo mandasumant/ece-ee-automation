@@ -1616,6 +1616,7 @@ public class BICTestBase {
         bicPage.clickUsingLowLevelActions("downloadFreeTrialSignInButtonClick");
       }
 
+      Util.sleep(10000);
       bicPage.waitForFieldPresent("downloadFreeTrialCompanyName", 1000);
       bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialCompanyName", data.get("companyName"));
       bicPage.clickUsingLowLevelActions("downloadFreeTrialState");
