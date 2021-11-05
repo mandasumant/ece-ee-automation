@@ -810,6 +810,8 @@ public class PortalTestBase {
         portalPage.clickUsingLowLevelActions(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION);
         portalPage.waitForPageToLoad();
 
+        clickPortalClosePopup();
+
         debugPageUrl("Step 4");
         checkEmailVerificationPopupAndClick();
         debugPageUrl("Step 5");
@@ -859,13 +861,13 @@ public class PortalTestBase {
             .replaceAll(",", "")
             .trim();
         Util.printInfo("City : " + city);
-
+        Util.printInfo("Waiting for portalSubscriptionStateFromSubs");
+        Util.sleep(10000);
         if (portalPage.checkIfElementExistsInPage("portalSubscriptionStateFromSubs", 10)) {
           String state = portalPage.getTextFromLink("portalSubscriptionStateFromSubs");
           Util.printInfo("State Province : " + state);
           orderDetails.put(BICECEConstants.STATE_PROVINCE, state);
         }
-
 
         String pin = portalPage.getTextFromLink("portalSubscriptionZipFromSubs");
         Util.printInfo("Zip Code : " + pin);
@@ -875,6 +877,7 @@ public class PortalTestBase {
         orderDetails.put(BICECEConstants.ZIPCODE, pin);
 
         driver.navigate().refresh();
+
       } else {
         AssertUtils.fail("Subscription and contracts link is not present on portal page...");
       }
@@ -960,7 +963,6 @@ public class PortalTestBase {
       // Util.waitForElement(portalPage.getFirstFieldLocator("portalASProductTerm"),
       // "Product Term");
       portalPage.waitForFieldPresent("portalASProductTerm", 5000);
-
       String productSubscriptionTerm = portalPage
           .getLinkText("portalASProductTerm"); // .split(":")[1].trim();
       Util.printInfo("Product subscription term on add seat page : " + productSubscriptionTerm);
@@ -974,9 +976,8 @@ public class PortalTestBase {
       Util.printInfo("Adding quantity for seat as..." + addSeatQty);
       orderDetails.put("addSeatQty", addSeatQty);
       portalPage.populateField("portalASQtyTextField", addSeatQty);
-
+      Util.sleep(10000);
       portalPage.waitForFieldPresent("portalASFinalProratedPrice", 5000);
-
       String proratedFinalPrice = portalPage.getLinkText("portalASFinalProratedPrice");
       Util.printInfo("Prorated Final Amount : " + proratedFinalPrice);
       orderDetails.put("proratedFinalAmount", proratedFinalPrice);
@@ -1015,7 +1016,7 @@ public class PortalTestBase {
       String confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
 
       AssertUtils.assertEquals(
-          Double.valueOf(data.get("proratedFinalAmount").substring(1)).doubleValue() * Double.valueOf(addSeatQty).doubleValue() ,
+          Double.valueOf(data.get("proratedFinalAmount").substring(1)).doubleValue()  ,
                 Double.valueOf(confirmProratedAmount.substring(1)).doubleValue());
 
       Util.printInfo("Clicking on back button...");
@@ -1096,6 +1097,13 @@ public class PortalTestBase {
     }
   }
 
+  private void clickPortalClosePopup() throws Exception {
+    if (portalPage.checkIfElementExistsInPage("portalASCloseButton", 10)) {
+      Util.printInfo("Closing the popup ..");
+      portalPage.clickUsingLowLevelActions("portalASCloseButton");
+      Util.printInfo("Closed the popup ..");
+    }
+  }
 
   @Step("Changing payment from Portal" + GlobalConstants.TAG_TESTINGHUB)
   public void changePaymentMethodAndValidate(HashMap<String, String> data,
@@ -1104,14 +1112,8 @@ public class PortalTestBase {
     try {
       debugPageUrl("Step 1");
       data.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
+      clickPortalClosePopup();
       Util.printInfo("Clicking on change payment option...");
-
-      if(portalPage.checkIfElementExistsInPage("portalASCloseButton",10)) {
-        Util.printInfo("Closing the popup ..");
-        portalPage.clickUsingLowLevelActions("portalASCloseButton");
-        Util.printInfo("Closed the popup ..");
-      }
-
       portalPage.waitForFieldPresent("portalChangePaymentBtn", 10000);
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();

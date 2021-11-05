@@ -443,6 +443,7 @@ public class BICOrderCreation extends ECETestBase {
         .put(BICECEConstants.PRODUCT_ID, testDataForEachMethod.get("nativeproductID"));
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
+    testDataForEachMethod.put(BICECEConstants.REDUCE_SEATS, BICECEConstants.TRUE);
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -461,7 +462,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Reduce seats in Portal
-    Util.printInfo("The locale map :" + localeDataMap);
     results.putAll(portaltb.reduceSeatsInPortalAndValidate(localeDataMap.get(locale)));
     testResults.put("reducedSeatQty", results.get("reducedSeatQty"));
     updateTestingHub(testResults);
@@ -586,7 +586,6 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase().createBicOrderMoe(testDataForEachMethod);
-    Util.sleep(180000);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -1051,7 +1050,7 @@ public class BICOrderCreation extends ECETestBase {
     // Trigger Invoice join so that the subscription is picked up by payport
     pelicantb.postInvoicePelicanAPI(results);
 
-    Util.sleep(180000);
+    Util.sleep(60000);
 
     // Trigger the payport renewal job to renew the subscription
     triggerPayportRenewalJob(results);
