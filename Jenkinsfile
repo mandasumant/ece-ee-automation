@@ -83,7 +83,7 @@ pipeline {
         stage ('Nightly Regression') {
             when {
                 allOf {
-                    branch 'master'
+                    branch 'ECEEPLT-869'
                     triggeredBy 'TimerTrigger'
                 }
             }
