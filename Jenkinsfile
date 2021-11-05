@@ -81,12 +81,12 @@ pipeline {
         }
 
         stage ('Nightly Regression') {
-           /* when {
+           when {
                 allOf {
                     branch 'master'
                     triggeredBy 'TimerTrigger'
                 }
-           } */
+           }
             steps {
                 echo 'Initiating Nightly Customer Lifecycle Tests'
 
