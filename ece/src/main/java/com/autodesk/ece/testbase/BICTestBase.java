@@ -469,9 +469,6 @@ public class BICTestBase {
     boolean status = false;
     try {
       Util.printInfo("Adding billing details...");
-
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript("document.getElementById('checkout--liveagent--close-button').click();");
       String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
           stateXpath = "";
       switch (paymentType.toUpperCase()) {
@@ -1270,8 +1267,10 @@ public class BICTestBase {
     createBICAccount(firstName, lastName, emailID, password);
     Util.sleep(20000);
 
-    if (data.get(BICECEConstants.ADD_SEAT_QTY) != null && !data.get(BICECEConstants.ADD_SEAT_QTY)
+   if (data.get(BICECEConstants.REDUCE_SEATS) != null && data.get(BICECEConstants.REDUCE_SEATS).equals(BICECEConstants.TRUE)
+         && data.get(BICECEConstants.ADD_SEAT_QTY) != null && !data.get(BICECEConstants.ADD_SEAT_QTY)
         .isEmpty()) {
+      Util.printInfo("Getting into Reduce Seats ...");
       bicPage.waitForFieldPresent(BICECEConstants.GUAC_CART_EDIT_QUANTITY, 5000);
       try {
         bicPage.populateField(BICECEConstants.GUAC_CART_EDIT_QUANTITY, Keys.BACK_SPACE.name());
@@ -1469,7 +1468,7 @@ public class BICTestBase {
 
     navigateToCart(data);
     loginAccount(data);
-    Util.sleep(60000);
+    Util.sleep(5000);
     skipAddSeats();
 
     orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
@@ -1612,7 +1611,7 @@ public class BICTestBase {
         bicPage.waitForFieldPresent("downloadFreeTrialPassword", 1000);
         bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialPassword",
             System.getProperty(BICECEConstants.PASSWORD));
-
+        Util.sleep(20000);
         bicPage.waitForFieldPresent("downloadFreeTrialSignInButtonClick", 1000);
         bicPage.clickUsingLowLevelActions("downloadFreeTrialSignInButtonClick");
       }
@@ -1708,6 +1707,13 @@ public class BICTestBase {
     loginToMoe();
     emulateUser(emailID);
     populateBillingAddress(address, data);
+    selectPaymentProfile(data, paymentCardDetails, address);
+    try {
+      bicPage.clickUsingLowLevelActions("savePaymentProfile");
+    }catch (Exception e) {
+      e.printStackTrace();
+    }
+    Util.sleep(5000);
     agreeToTerm();
 
     orderNumber = submitGetOrderNumber(data.get(BICECEConstants.ORDER_NUMBER_LABEL));
@@ -1734,7 +1740,7 @@ public class BICTestBase {
         e.printStackTrace();
       }
     }
-    Util.sleep(60000);
+    Util.sleep(20000);
     bicPage.waitForField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, true, 30000);
     bicPage.click(BICECEConstants.MOE_LOGIN_USERNAME_FIELD);
     bicPage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, "svc_s_guac@autodesk.com");
@@ -1759,9 +1765,10 @@ public class BICTestBase {
   }
 
   private void agreeToTerm() {
+    Util.printInfo("Agree Element");
     try {
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript("document.getElementById('order-agreement').click()");
+       JavascriptExecutor js = (JavascriptExecutor) driver;
+       js.executeScript("document.getElementById('order-agreement').click()");
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to click on 'order-agreement' checkbox");
     }
@@ -1770,6 +1777,7 @@ public class BICTestBase {
 
   private void loginToOxygen(String emailID, String password) {
     bicPage.waitForPageToLoad();
+    Util.sleep(60000);
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
       js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");

@@ -23,6 +23,7 @@ public class BICECEConstants extends BICConstants {
   public static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss z";
   public static final String PRODUCT_ID = "productID";
   public static final String ADD_SEAT_QTY = "addSeatQty";
+  public static final String REDUCE_SEATS = "reduceSeats";
   public static final String E2E_EXECUTION_TIME = "e2e_ExecutionTime";
   public static final String ORDER_CREATION = "CreateOrder";
   public static final String ORDER_NUMBER_LABEL="orderNumberLabel";
