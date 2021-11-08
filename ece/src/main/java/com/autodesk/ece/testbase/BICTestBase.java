@@ -890,7 +890,7 @@ public class BICTestBase {
   }
 
   private String submitGetOrderNumber() {
-    clickAchMandateAgreementCheckbox();
+    clickMandateAgreementCheckbox();
     int count = 0;
     debugPageUrl(" Step 1 wait for SubmitOrderButton");
     while (!bicPage.waitForField(BICECEConstants.SUBMIT_ORDER_BUTTON, true, 60000)) {
@@ -1189,26 +1189,29 @@ public class BICTestBase {
     return orderNumber;
   }
 
-  private void clickAchMandateAgreementCheckbox() {
+  private void clickMandateAgreementCheckbox() {
     try {
       if (System.getProperty(BICECEConstants.PAYMENT)
-          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard) || System
+          .getProperty(BICECEConstants.PAYMENT)
+          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
         Util.printInfo(
-            BICECEConstants.CHECKED_ACH_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                .isFieldVisible(BICECEConstants.ACH_CHECKBOX_HEADER));
-        Util.printInfo(BICECEConstants.CHECKED_BOX_STATUS_FOR_ACH_CHECKBOX + bicPage.isChecked(
-            BICECEConstants.ACH_CHECKBOX));
+            BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
+                .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
+        Util.printInfo(BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + bicPage.isChecked(
+            BICECEConstants.MANDATE_AGREEMENT_CHECKBOX));
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
-        WebElement achAgreeElement = driver.findElement(By.xpath(
+        WebElement mandateAgreementElement = driver.findElement(By.xpath(
             BICECEConstants.ID_MANDATE_AGREEMENT));
 
         Util.printInfo(
-            BICECEConstants.CHECKED_ACH_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                .isFieldVisible(BICECEConstants.ACH_CHECKBOX_HEADER));
+            BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
+                .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
         Util.printInfo(
-            BICECEConstants.CHECKED_BOX_STATUS_FOR_ACH_CHECKBOX + achAgreeElement.isEnabled());
+            BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + mandateAgreementElement
+                .isEnabled());
       }
     } catch (Exception e) {
       e.printStackTrace();
