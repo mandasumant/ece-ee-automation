@@ -890,7 +890,7 @@ public class BICOrderCreation extends ECETestBase {
 
     // Forcefully update the second subscription's billing date to make it unaligned from the first subscription
     testDataForEachMethod
-        .put("desiredBillingDate", Util.customDate("MM/dd/yyyy", 0, 180, 0) + " 20:13:28 UTC");
+        .put("desiredBillingDate", Util.customDate("MM/dd/yyyy", 0, 15, 0) + " 20:13:28 UTC");
     pelicantb.forwardNextBillingCycleForRenewal(testDataForEachMethod);
 
     // Open up portal UI and align billing between the 2 subscriptions

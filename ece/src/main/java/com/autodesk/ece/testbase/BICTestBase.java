@@ -349,6 +349,7 @@ public class BICTestBase {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
     }
 
+    driver.switchTo().defaultContent();
     bicPage.waitForPageToLoad();
   }
 
