@@ -28,32 +28,66 @@ import org.testng.annotations.Test;
 
 public class IndirectOrderCreation extends ECETestBase {
 
-  private static final String EMAIL = System.getProperty("email");
-  private static final String PASSWORD = "Password1";
-  private static String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
-  String locale = System.getProperty(BICECEConstants.LOCALE);
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
-    String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
+    String testFileKey = "SAP_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-    String restFileKey = "REST_" + GlobalConstants.ENV.toUpperCase();
-    loadRestYaml = YamlUtil.loadYmlUsingTestManifest(restFileKey);
-    String localeConfigFile= "LOCALE_CONFIG_" + GlobalConstants.ENV.toUpperCase();
-    localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
+    
   }
 
   @BeforeMethod(alwaysRun = true)
   public void beforeTestMethod(Method name) {
+	LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml.get("default");
+	LinkedHashMap<String, String> testcasedata = (LinkedHashMap<String, String>) loadYaml.get(name.getName());
+
+	defaultvalues.putAll(testcasedata);
+	testDataForEachMethod = defaultvalues;
 
   }
 
   @Test(groups = {"bic-changePayment-US"}, description = "Validate BIC Indirect functionality")
   public void validateBICIndirectOrder() {
+
+	  	String soldToParty = System.getProperty(TestingHubConstants.soldToParty);
+	  	String shipToParty = System.getProperty(TestingHubConstants.shipToParty);
+	  	String ponumber = System.getProperty(TestingHubConstants.ponumber);
+	  	String email= System.getProperty(TestingHubConstants.emailid);
+	  	String supportingReseller = System.getProperty(TestingHubConstants.supportingReseller);
+	  	String enduserForFTrade = System.getProperty(TestingHubConstants.enduserForFTrade);
+		String salesOrg = System.getProperty("salesorg");
+		String channel = System.getProperty(TestingHubConstants.channel);
+		String userType = System.getProperty("usertype").toLowerCase();
+		String startDate = System.getProperty(TestingHubConstants.contractStartDate);
+		
+		testDataForEachMethod.put(TestingHubConstants.contractStartDate, startDate);
+		testDataForEachMethod.put(TestingHubConstants.soldToParty, soldToParty);
+		testDataForEachMethod.put(TestingHubConstants.shipToParty, shipToParty);
+		testDataForEachMethod.put(TestingHubConstants.supportingReseller, supportingReseller);
+		testDataForEachMethod.put(TestingHubConstants.salesOrg, salesOrg);
+		testDataForEachMethod.put(TestingHubConstants.channel, channel);
+		testDataForEachMethod.put(TestingHubConstants.contractEndDate, "");
+		testDataForEachMethod.put(TestingHubConstants.usertype, userType);
+		
+		
+		if(Strings.isNullOrEmpty(email)) {
+			userDetails = getUserDetails(testDataForEachMethod);
+			testDataForEachMethod.putAll(userDetails);
+			Util.printInfo("Enduser CSN Fetched from dynamo : " + testDataForEachMethod.get(TestingHubConstants.enduserCSN));
+			Util.printInfo("Contact Fetched from dynamo : " + testDataForEachMethod.get(TestingHubConstants.emailid));
+			email = testDataForEachMethod.get(TestingHubConstants.emailid); 
+		}
+		else {  //email is not empty/ provided by user
+			boolean matchAccountContact=true;
+			testDataForEachMethod = associateAccountContact(testDataForEachMethod, email, shipToAccount, matchAccountContact);
+			email = testDataForEachMethod.get(TestingHubConstants.emailid); 
+		} 
+		
+		
 
   }
 
