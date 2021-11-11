@@ -28,7 +28,9 @@ public class IndirectOrderCreation extends ECETestBase {
   }
 
   @BeforeMethod(alwaysRun = true)
+  @SuppressWarnings("unchecked")
   public void beforeTestMethod(Method name) {
+	
 	LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml.get("default");
 	LinkedHashMap<String, String> testcasedata = (LinkedHashMap<String, String>) loadYaml.get(name.getName());
 
@@ -38,12 +40,12 @@ public class IndirectOrderCreation extends ECETestBase {
   	String shipToParty = System.getProperty(TestingHubConstants.shipToParty);
   	String supportingReseller = System.getProperty(TestingHubConstants.supportingReseller);
   	
-	String userType = System.getProperty("usertype").toLowerCase();
+//	String userType = System.getProperty("usertype").toLowerCase();
 	
-	testDataForEachMethod.put(TestingHubConstants.soldToParty, soldToParty);
-	testDataForEachMethod.put(TestingHubConstants.shipToParty, shipToParty);
-	testDataForEachMethod.put(TestingHubConstants.supportingReseller, supportingReseller);
-	testDataForEachMethod.put(TestingHubConstants.usertype, userType);
+//	testDataForEachMethod.put(TestingHubConstants.soldToParty, soldToParty);
+//	testDataForEachMethod.put(TestingHubConstants.shipToParty, shipToParty);
+//	testDataForEachMethod.put(TestingHubConstants.supportingReseller, supportingReseller);
+//	testDataForEachMethod.put(TestingHubConstants.usertype, userType);
 
   }
 
@@ -60,7 +62,7 @@ public class IndirectOrderCreation extends ECETestBase {
 		String[] skuList = sku.split(":");
 		String skus = skuList[0];
 		String quantity = skuList[1];		
-		String skuDetails = "sku=" + sku + ",qty=" + quantity + ",hgvlt=";
+		String skuDetails = "sku=" + skus + ",qty=" + quantity + ",hgvlt=";
 		
 		testDataForEachMethod.put("skuDetails", skuDetails);
 	
