@@ -5,10 +5,13 @@ default:
     supportingReseller: "5151245178"
     enduserCSN: "5151250619"
     salesOrg: "3000"
+    distributionChannel: "02"
+    division: "10"
     usertype: "new"
     ordertype: "nonbicindirect"
     sapOrderType: "GOR"
     version: "Y"
+    Maintenance: "No"
  
 validateBICIndirectOrder:
     skuDetails: "sku=128K1-WW6542-L618,qty=1,hgvlt="
