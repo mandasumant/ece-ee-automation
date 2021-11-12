@@ -5,6 +5,7 @@ import com.autodesk.testinghub.core.constants.BICConstants;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.testng.annotations.BeforeClass;
@@ -66,6 +67,20 @@ public class IndirectOrderCreation extends ECETestBase {
 		}
 		SAPTestBase saptb = new SAPTestBase();
 		HashMap<String, String>  results = saptb.createMetaInitialOrderDynamo(testDataForEachMethod);
+		updateTestingHub(results);
+		
+		List<String> subsIDs = dbValtb.getSubidListSFDCResult(results.get(TestingHubConstants.agreementNumber));
+		String subsriptionID = subsIDs.get(0);
+		results.put("subscription ID for the order", subsriptionID);
+		updateTestingHub(results);
+
+		/* Below code checks Tibco, SAP, GBX and SFDC for validation. Lets keep this for future
+		tibcotb.validateSyncOrderInTibcoForFirstOrder(results.get(TestingHubConstants.orderNumber));
+		tibcotb.validatePublishOrderSAPForFirstOrder(results.get(TestingHubConstants.orderNumber));
+		tibcotb.validatePublishOrderGreenboxForFirstOrder(results.get(TestingHubConstants.orderNumber));
+		tibcotb.validateSyncEntitlementFirstOrder(results.get(TestingHubConstants.agreementNumber));
+		dbValtb.validatedAgreementExistSfdc(results.get(TestingHubConstants.agreementNumber));
+		*/
 
 		// Initial order validation in Portal
 		tb.getPortalTestBase().validateBICOrderProductInCEP(testDataForEachMethod.get(BICConstants.cepURL),
