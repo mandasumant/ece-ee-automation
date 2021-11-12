@@ -47,7 +47,7 @@ public class IndirectOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {"sap-bicindirect"}, description = "Validate BIC Indirect functionality")
-  public void validateBICIndirectOrder() {
+  public void validateBICIndirectSAPOrder() {
   		ECETestBase tb = new ECETestBase();
 	    String email = "thubsrd1629665792@letscheck.pw"; //call the getuser() method once its moved to core to fetch new/existing contacts
 	  	String endusercsn = "5151567993";

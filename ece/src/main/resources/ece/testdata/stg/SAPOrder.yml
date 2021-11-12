@@ -12,8 +12,9 @@ default:
     sapOrderType: "GOR"
     version: "Y"
     Maintenance: "No"
+    cepURL: "https://customer-stg.autodesk.com/"
  
-validateBICIndirectOrder:
+validateBICIndirectSAPOrder:
     skuDetails: "sku=128K1-WW6542-L618,qty=1,hgvlt="
     dataSets: "BICIndirect"    
     streetAddress: "10 Duke St"
