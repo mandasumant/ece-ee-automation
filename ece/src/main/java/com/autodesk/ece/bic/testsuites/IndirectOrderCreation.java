@@ -1,5 +1,7 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.testinghub.core.constants.BICConstants;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,6 +21,7 @@ public class IndirectOrderCreation extends ECETestBase {
 
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
+  private static final String PASSWORD = "Password1";
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -39,41 +42,40 @@ public class IndirectOrderCreation extends ECETestBase {
 	String soldToParty = System.getProperty(TestingHubConstants.soldToParty);
   	String shipToParty = System.getProperty(TestingHubConstants.shipToParty);
   	String supportingReseller = System.getProperty(TestingHubConstants.supportingReseller);
-  	
-//	String userType = System.getProperty("usertype").toLowerCase();
-	
-//	testDataForEachMethod.put(TestingHubConstants.soldToParty, soldToParty);
-//	testDataForEachMethod.put(TestingHubConstants.shipToParty, shipToParty);
-//	testDataForEachMethod.put(TestingHubConstants.supportingReseller, supportingReseller);
-//	testDataForEachMethod.put(TestingHubConstants.usertype, userType);
 
   }
 
   @Test(groups = {"sap-bicindirect"}, description = "Validate BIC Indirect functionality")
   public void validateBICIndirectOrder() {
-
+  		ECETestBase tb = new ECETestBase();
 	    String email = "thubsrd1629665792@letscheck.pw"; //call the getuser() method once its moved to core to fetch new/existing contacts
 	  	String endusercsn = "5151567993";
-	  	testDataForEachMethod.put(TestingHubConstants.emailid, email);
-	  	testDataForEachMethod.put(TestingHubConstants.enduserCSN, endusercsn);
-	    
-	    
 	    String sku = System.getProperty(TestingHubConstants.sku);
 		String[] skuList = sku.split(":");
 		String skus = skuList[0];
 		String quantity = skuList[1];		
 		String skuDetails = "sku=" + skus + ",qty=" + quantity + ",hgvlt=";
-		
+		testDataForEachMethod.put(TestingHubConstants.emailid, email);
+		testDataForEachMethod.put(TestingHubConstants.enduserCSN, endusercsn);
 		testDataForEachMethod.put("skuDetails", skuDetails);
 	
-		if ( System.getProperty(TestingHubConstants.contractStartDate) != null)
+		if ( System.getProperty(TestingHubConstants.contractStartDate) != null) {
 			testDataForEachMethod.put(TestingHubConstants.contractStartDate, System.getProperty(TestingHubConstants.contractStartDate));
-		else
+		} else {
 			testDataForEachMethod.put(TestingHubConstants.contractStartDate, "");
+		}
 		SAPTestBase saptb = new SAPTestBase();
 		HashMap<String, String>  results = saptb.createMetaInitialOrderDynamo(testDataForEachMethod);
-		updateTestingHub(results);	
 
+		// Initial order validation in Portal
+		tb.getPortalTestBase().validateBICOrderProductInCEP(testDataForEachMethod.get(BICConstants.cepURL),
+			  results.get(BICConstants.emailid), PASSWORD,
+			  results.get(BICECEConstants.SUBSCRIPTION_ID));
+		updateTestingHub(results);
+
+		// Validate Submit Order
+		tibcotb.validateSubmitOrder(results.get(BICConstants.orderNumber));
+		updateTestingHub(results);
   }
 
 }
