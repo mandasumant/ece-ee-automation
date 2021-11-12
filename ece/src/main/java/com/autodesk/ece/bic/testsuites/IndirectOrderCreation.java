@@ -3,6 +3,7 @@ package com.autodesk.ece.bic.testsuites;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.testng.annotations.BeforeClass;
@@ -70,7 +71,18 @@ public class IndirectOrderCreation extends ECETestBase {
 			testDataForEachMethod.put(TestingHubConstants.contractStartDate, "");
 		SAPTestBase saptb = new SAPTestBase();
 		HashMap<String, String>  results = saptb.createMetaInitialOrderDynamo(testDataForEachMethod);
-		updateTestingHub(results);	
+		updateTestingHub(results);
+		
+		List<String> subsIDs = dbValtb.getSubidListSFDCResult(results.get(TestingHubConstants.agreementNumber));
+		String subsID = subsIDs.get(0);
+		results.put("subscription ID for the order", subsID);
+		updateTestingHub(results);
+		
+		tibcotb.validateSyncOrderInTibcoForFirstOrder(results.get(TestingHubConstants.orderNumber));
+		tibcotb.validatePublishOrderSAPForFirstOrder(results.get(TestingHubConstants.orderNumber));
+		tibcotb.validatePublishOrderGreenboxForFirstOrder(results.get(TestingHubConstants.orderNumber));
+		tibcotb.validateSyncEntitlementFirstOrder(results.get(TestingHubConstants.agreementNumber));
+		dbValtb.validatedAgreementExistSfdc(results.get(TestingHubConstants.agreementNumber));
 
   }
 
