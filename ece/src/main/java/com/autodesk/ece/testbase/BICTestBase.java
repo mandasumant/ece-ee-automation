@@ -74,7 +74,7 @@ public class BICTestBase {
 
   @Step("get billing address")
   public Map<String, String> getBillingAddress(String region) {
-
+    region = region.replace("/", "").replace("-", "");
     String address = null;
     Map<String, String> ba = null;
 
@@ -137,22 +137,18 @@ public class BICTestBase {
         break;
       }
       case "1": {
-        address = "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO";
-        break;
-      }
-      case "2": {
         address = "Thub@Novel Coworking Hooper Building@Cincinnati@45207@9916800100@United States@OH";
         break;
       }
-      case "3": {
+      case "2": {
         address = "Thub@1550 Wewatta Street@Denver@80202@9916800100@United States@CO";
         break;
       }
-      case "7": {
+      case "3": {
         address = "Thub@26200 Town Center Drive@Novi@48375@9916800100@United States@MI";
         break;
       }
-      case "8": {
+      case "4": {
         address = "Thub@15800 Pines Blvd, Suite 338@Pittsburgh@15206@9916800100@United States@PA";
         break;
       }
@@ -163,16 +159,16 @@ public class BICTestBase {
   }
 
   @Step("Create BIC account")
-  public void createBICAccount(String firstName, String lastName, String emailID, String password) {
+  public void createBICAccount(Names names, String emailID, String password) {
     switchToBICCartLoginPage();
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
     bicPage.waitForField("createNewUserGUAC", true, 30000);
     bicPage.click("createNewUserGUAC");
     bicPage.waitForField(BICECEConstants.BIC_FN, true, 30000);
     bicPage.click(BICECEConstants.BIC_FN);
-    bicPage.populateField(BICECEConstants.BIC_FN, firstName);
+    bicPage.populateField(BICECEConstants.BIC_FN, names.firstName);
     bicPage.waitForField("bic_LN", true, 30000);
-    bicPage.populateField("bic_LN", lastName);
+    bicPage.populateField("bic_LN", names.lastName);
     bicPage.populateField("bic_New_Email", emailID);
     bicPage.populateField("bic_New_ConfirmEmail", emailID);
     bicPage.waitForField("bic_Password", true, 30000);
@@ -1018,6 +1014,10 @@ public class BICTestBase {
         AssertUtils.fail("Unable to place BIC order");
       }
     }
+
+    debugPageUrl("Step 8 Check to see if EXPORT COMPLIANCE issue or Null");
+    validateBicOrderNumber(orderNumber);
+
     return orderNumber;
   }
 
@@ -1103,7 +1103,7 @@ public class BICTestBase {
     String emailID = generateUniqueEmailID();
 
     String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
-        productName, term, region, quantity, password, paymentMethod, promoCode);
+        productName, password, paymentMethod, promoCode);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1148,43 +1148,20 @@ public class BICTestBase {
   private String createBICOrder(LinkedHashMap<String, String> data, String emailID, String region,
       String password, String paymentMethod) {
     String orderNumber;
-    String firstName = null, lastName = null;
-    Map<String, String> address = null;
 
-    firstName = null;
-    lastName = null;
-    String randomString = RandomStringUtils.random(6, true, false);
+    Names names = generateFirstAndLastNames();
+    data.putAll(names.getMap());
 
-    region = region.replace("/", "").replace("-", "");
-    address = getBillingAddress(region);
-    String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
+    createBICAccount(names, emailID, password);
 
-    firstName = "FN" + randomString;
-    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
-    lastName = "LN" + randomString;
-    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
-    createBICAccount(firstName, lastName, emailID, password);
+    Map<String, String> address = getBillingAddress(region);
 
-    data.put(BICECEConstants.FIRSTNAME, firstName);
-    data.put(BICECEConstants.LASTNAME, lastName);
-
-    debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
-    // Get Payment details
-    selectPaymentProfile(data, paymentCardDetails, address);
-
-    // Enter billing details
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
-        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
-      debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
-      populateBillingAddress(address, data);
-      debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
-    }
+    enterBillingDetails(data, address, paymentMethod, region);
 
     orderNumber = submitGetOrderNumber();
 
-    // Check to see if EXPORT COMPLIANCE or Null
-    validateBicOrderNumber(orderNumber);
-    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, firstName, lastName,
+    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, names.firstName,
+        names.lastName,
         paymentMethod);
 
     return orderNumber;
@@ -1221,8 +1198,8 @@ public class BICTestBase {
 
   private String createBICOrderDotCom(LinkedHashMap<String, String> data, String emailID,
       String guacDotComBaseURL,
-      String productName, String term, String region,
-      String quantity, String password,
+      String productName,
+      String password,
       String paymentMethod, String promocode) {
     String orderNumber;
     String constructGuacDotComURL =
@@ -1230,7 +1207,6 @@ public class BICTestBase {
             .get(BICECEConstants.PRODUCTS_PATH) + productName;
 
     System.out.println("constructGuacDotComURL " + constructGuacDotComURL);
-    String firstName = null, lastName = null;
     Map<String, String> address = null;
     getUrl(constructGuacDotComURL);
     disableChatSession();
@@ -1240,23 +1216,16 @@ public class BICTestBase {
 
     acceptCookiesAndUSSiteLink();
 
-    firstName = null;
-    lastName = null;
-    String randomString = RandomStringUtils.random(6, true, false);
-
-    region = data.get(BICECEConstants.REGION);
+    String region = data.get(BICECEConstants.REGION);
     address = getBillingAddress(region);
-    String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
 
-    firstName = "FN" + randomString;
-    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
-    lastName = "LN" + randomString;
-    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
-    createBICAccount(firstName, lastName, emailID, password);
+    Names names = generateFirstAndLastNames();
+    createBICAccount(names, emailID, password);
     Util.sleep(20000);
 
-   if (data.get(BICECEConstants.REDUCE_SEATS) != null && data.get(BICECEConstants.REDUCE_SEATS).equals(BICECEConstants.TRUE)
-         && data.get(BICECEConstants.ADD_SEAT_QTY) != null && !data.get(BICECEConstants.ADD_SEAT_QTY)
+    if (data.get(BICECEConstants.REDUCE_SEATS) != null && data.get(BICECEConstants.REDUCE_SEATS)
+        .equals(BICECEConstants.TRUE)
+        && data.get(BICECEConstants.ADD_SEAT_QTY) != null && !data.get(BICECEConstants.ADD_SEAT_QTY)
         .isEmpty()) {
       Util.printInfo("Getting into Reduce Seats ...");
       bicPage.waitForFieldPresent(BICECEConstants.GUAC_CART_EDIT_QUANTITY, 5000);
@@ -1270,32 +1239,35 @@ public class BICTestBase {
       }
     }
 
-    data.put(BICECEConstants.FIRSTNAME, firstName);
-    data.put(BICECEConstants.LASTNAME, lastName);
+    data.putAll(names.getMap());
 
     //Apply promo if exists
     if (promocode != null && !promocode.isEmpty()) {
       populatePromoCode(promocode, data);
     }
 
-    debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
-    // Get Payment details
+    enterBillingDetails(data, address, paymentMethod, region);
+
+    orderNumber = submitGetOrderNumber();
+
+    printConsole(constructGuacDotComURL, orderNumber, emailID, address, names.firstName,
+        names.lastName,
+        paymentMethod);
+
+    return orderNumber;
+  }
+
+  private void enterBillingDetails(LinkedHashMap<String, String> data,
+      Map<String, String> address, String paymentMethod, String region) {
+    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod, region);
     selectPaymentProfile(data, paymentCardDetails, address);
-    // Enter billing details
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data.get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+
+    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
       debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
-
-    orderNumber = submitGetOrderNumber();
-
-    // Check to see if EXPORT COMPLIANCE or Null
-    validateBicOrderNumber(orderNumber);
-    printConsole(constructGuacDotComURL, orderNumber, emailID, address, firstName, lastName,
-        paymentMethod);
-
-    return orderNumber;
   }
 
   private void populatePromoCode(String promocode, LinkedHashMap<String, String> data) {
@@ -1409,7 +1381,6 @@ public class BICTestBase {
     switchToBICCartLoginPage();
     loginBICAccount(data);
     orderNumber = submitGetOrderNumber();
-    validateBicOrderNumber(orderNumber);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1436,7 +1407,6 @@ public class BICTestBase {
     skipAddSeats();
 
     orderNumber = submitGetOrderNumber();
-    validateBicOrderNumber(orderNumber);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1459,7 +1429,6 @@ public class BICTestBase {
     loginAccount(data);
     existingSubscriptionAddSeat(data);
     orderNumber = submitGetOrderNumber();
-    validateBicOrderNumber(orderNumber);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1636,33 +1605,24 @@ public class BICTestBase {
     String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
     System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
     String constructPortalUrl = cepURL;
-    String firstName = null, lastName = null;
     Map<String, String> address = null;
 
-    firstName = null;
-    lastName = null;
-    String randomString = RandomStringUtils.random(6, true, false);
-
     address = getBillingAddress(data.get(BICECEConstants.REGION));
+
+    Names names = generateFirstAndLastNames();
+    createBICAccount(names, emailID, password);
+
+    data.putAll(names.getMap());
+
     String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-
-    firstName = "FN" + randomString;
-    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
-    lastName = "LN" + randomString;
-    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
-    createBICAccount(firstName, lastName, emailID, password);
-
-    data.put(BICECEConstants.FIRSTNAME, firstName);
-    data.put(BICECEConstants.LASTNAME, lastName);
-
     debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
 
     // Get Payment details
     selectPaymentProfile(data, paymentCardDetails, address);
 
     // Enter billing details
-
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data.get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
       debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
@@ -1675,7 +1635,7 @@ public class BICTestBase {
     selectPaymentProfile(data, paymentCardDetails, address);
     try {
       bicPage.clickUsingLowLevelActions("savePaymentProfile");
-    }catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
     Util.sleep(5000);
@@ -1683,9 +1643,8 @@ public class BICTestBase {
 
     orderNumber = submitGetOrderNumber();
 
-    // Check to see if EXPORT COMPLIANCE or Null
-    validateBicOrderNumber(orderNumber);
-    printConsole(constructGuacMoeURL, orderNumber, emailID, address, firstName, lastName,
+    printConsole(constructGuacMoeURL, orderNumber, emailID, address, names.firstName,
+        names.lastName,
         paymentMethod);
 
     // Navigate to Portal, logout from service account session and log back in with user account
@@ -1821,33 +1780,20 @@ public class BICTestBase {
     String orderNumber;
     String constructGuacDRURL = guacDRBaseURL + region + guacDRResourceURL + productID + quantity;
     System.out.println("constructGuacDRURL " + constructGuacDRURL);
-    String firstName = null, lastName = null;
-    Map<String, String> address = null;
 
     getUrl(constructGuacDRURL);
     disableChatSession();
     checkCartDetailsError();
 
-    firstName = null;
-    lastName = null;
-    String randomString = RandomStringUtils.random(6, true, false);
+    Names names = generateFirstAndLastNames();
+    createBICAccount(names, emailID, password);
 
-    region = region.replace("/", "").replace("-", "");
-    address = getBillingAddress(region);
-    String[] paymentCardDetails = getPaymentDetailsDR(paymentMethod.toUpperCase()).split("@");
+    data.putAll(names.getMap());
 
-    firstName = "FN" + randomString;
-    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
-    lastName = "LN" + randomString;
-    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
-    createBICAccount(firstName, lastName, emailID, password);
-
-    data.put(BICECEConstants.FIRSTNAME, firstName);
-    data.put(BICECEConstants.LASTNAME, lastName);
-
-    // Get Payment details
-    debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
+    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod, region);
     selectPaymentProfileDR(data, paymentCardDetails);
+
+    Map<String, String> address = getBillingAddress(region);
 
     // Enter billing details
     debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
@@ -1859,9 +1805,7 @@ public class BICTestBase {
 
     orderNumber = submitGetOrderNumber();
 
-    // Check to see if EXPORT COMPLIANCE or Null
-    validateBicOrderNumber(orderNumber);
-    printConsole(constructGuacDRURL, orderNumber, emailID, address, firstName, lastName,
+    printConsole(constructGuacDRURL, orderNumber, emailID, address, names.firstName, names.lastName,
         paymentMethod);
 
     clickOnViewInvoiceLink();
@@ -2050,6 +1994,24 @@ public class BICTestBase {
     return status;
   }
 
+  private Names generateFirstAndLastNames() {
+    String randomString = RandomStringUtils.random(6, true, false);
+    String firstName = "FN" + randomString;
+    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
+    String lastName = "LN" + randomString;
+    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
+    return new Names(firstName, lastName);
+  }
+
+  private String[] getCardPaymentDetails(String paymentMethod, String region) {
+    debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
+    if (region == "ja-JP/") {
+      return getPaymentDetailsDR(paymentMethod.toUpperCase()).split("@");
+    } else {
+      return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
+    }
+  }
+
   private void clickOnSaveProfileBtnDR() {
     try {
       Util.printInfo("Clicking on DR save payment profile button...");
@@ -2109,6 +2071,24 @@ public class BICTestBase {
       AssertUtils.assertEquals(orderNumber, orderNumberInStore);
     } catch (Exception e) {
       AssertUtils.fail("Failed to validate order number from Store");
+    }
+  }
+
+  private static class Names {
+
+    private final String firstName;
+    private final String lastName;
+
+    private Names(String firstName, String lastName) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+    }
+
+    private HashMap<String, String> getMap() {
+      return new HashMap<String, String>() {{
+        put(BICECEConstants.FIRSTNAME, firstName);
+        put(BICECEConstants.LASTNAME, lastName);
+      }};
     }
   }
 }
