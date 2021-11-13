@@ -156,7 +156,7 @@ public class PortalTestBase {
     driver.manage().deleteAllCookies();
     driver.navigate().to(data);
     Util.printInfo("Opened:" + data);
-    return feynamnLayoutLoaded();
+    return true;
   }
 
   @Step("Create End-User Account - {1}")

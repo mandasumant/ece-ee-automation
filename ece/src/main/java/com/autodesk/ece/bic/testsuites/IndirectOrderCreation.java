@@ -1,6 +1,7 @@
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -69,10 +70,15 @@ public class IndirectOrderCreation extends ECETestBase {
 		HashMap<String, String>  results = saptb.createMetaInitialOrderDynamo(testDataForEachMethod);
 		updateTestingHub(results);
 		
-		List<String> subsIDs = dbValtb.getSubidListSFDCResult(results.get(TestingHubConstants.agreementNumber));
-		String subsriptionID = subsIDs.get(0);
-		results.put("subscription ID for the order", subsriptionID);
-		updateTestingHub(results);
+//	  results.put("orderNumber","7064390814");
+//	  results.put("serialNumber", "581-05531602");
+//	  results.put("price", "382.20");
+//	  results.put("contractEndDate", "11/11/2022");
+//	  results.put("enduserCSN", "5151567993");
+//	  results.put("emailid", "thubsrd1629623425@letscheck.pw");
+//	  results.put("tax", "14.75");
+//	  results.put("agreementNumber", "110005478778");
+//	  results.put("poNumber", "AutoTh_jlh9gvxczq");
 
 		/* Below code checks Tibco, SAP, GBX and SFDC for validation. Lets keep this for future
 		tibcotb.validateSyncOrderInTibcoForFirstOrder(results.get(TestingHubConstants.orderNumber));
@@ -84,12 +90,7 @@ public class IndirectOrderCreation extends ECETestBase {
 
 		// Initial order validation in Portal
 		tb.getPortalTestBase().validateBICOrderProductInCEP(testDataForEachMethod.get(BICConstants.cepURL),
-			  results.get(BICConstants.emailid), PASSWORD,
-			  results.get(BICECEConstants.SUBSCRIPTION_ID));
-		updateTestingHub(results);
-
-		// Validate Submit Order
-		tibcotb.validateSubmitOrder(results.get(BICConstants.orderNumber));
+			  results.get(BICConstants.emailid), PASSWORD, results.get("agreementNumber"));
 		updateTestingHub(results);
   }
 
