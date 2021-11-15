@@ -76,7 +76,7 @@ public class EDUTestBase {
         break;
     }
 
-    eduPage.clickToSubmit(BICECEConstants.EDU_SUBMIT);
+    eduPage.click(BICECEConstants.EDU_SUBMIT);
 
     // Generate a new user email, name, and password
     String email = BICTestBase.generateUniqueEmailID();
@@ -96,7 +96,7 @@ public class EDUTestBase {
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
 
-    eduPage.clickToSubmit(BICECEConstants.EDU_SUBMIT);
+    eduPage.click(BICECEConstants.EDU_SUBMIT);
 
     if (userType != EDUUserType.MENTOR) {
       // Pick a school called "Broadway"
@@ -118,14 +118,14 @@ public class EDUTestBase {
         pickSelectOption("enrollEndYear", Integer.toString(currentYear + 1));
       }
 
-      eduPage.clickToSubmit(BICECEConstants.EDU_SUBMIT);
+      eduPage.click(BICECEConstants.EDU_SUBMIT);
     }
 
     String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
     results.put(BICConstants.oxid, oxygenId);
 
     eduPage.waitForField("eduComplete", true, 5000);
-    eduPage.clickToSubmit("eduComplete");
+    eduPage.click("eduComplete");
 
     return results;
   }
@@ -145,14 +145,14 @@ public class EDUTestBase {
     // Enter the username and password
     eduPage.waitForField("eduUsername", true, 5000);
     eduPage.populateField("eduUsername", username);
-    eduPage.clickToSubmit("eduUsernameNext");
+    eduPage.click("eduUsernameNext");
 
     eduPage.waitForField("newPassword", true, 5000);
     eduPage.populateField("newPassword", password);
-    eduPage.clickToSubmit("eduSubmit");
+    eduPage.click("eduSubmit");
 
     eduPage.waitForField("eduSkipTFA", true, 5000);
-    eduPage.clickToSubmit("eduSkipTFA");
+    eduPage.click("eduSkipTFA");
   }
 
   /**

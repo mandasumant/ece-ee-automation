@@ -1,25 +1,18 @@
 package com.autodesk.ece.testbase;
+
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
-import com.autodesk.testinghub.core.common.CommonConstants;
-import com.autodesk.testinghub.core.common.services.ApigeeAuthenticationService;
 import com.autodesk.testinghub.core.common.services.OxygenService;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
-import com.autodesk.testinghub.core.soapclient.SOAPService;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.CustomSoftAssert;
 import com.autodesk.testinghub.core.utils.ErrorEnum;
 import com.autodesk.testinghub.core.utils.Util;
-import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,14 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -50,9 +35,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class PortalTestBase {
 
@@ -122,8 +104,7 @@ public class PortalTestBase {
 
         driver.findElement(By.xpath("//button[@id='id-submit']")).click();
         Util.sleep(5000);
-        userSessionID = driver.findElement(By.xpath("//textarea[@id='id-userId']")).getText()
-            .toString();
+        userSessionID = driver.findElement(By.xpath("//textarea[@id='id-userId']")).getText();
       } catch (Exception e) {
         //e.printStackTrace();
         Util.printError(e.getMessage());
@@ -157,248 +138,6 @@ public class PortalTestBase {
     driver.navigate().to(data);
     Util.printInfo("Opened:" + data);
     return true;
-  }
-
-  @Step("Create End-User Account - {1}")
-  private String createAccount(String msg, String[] inputData, String userCategory, String env,
-      HashMap<String, String> data) {
-    String xml = null;
-    String url = null;
-    try {
-      url = "https://enterprise-api-" + env.toLowerCase()
-          + ".autodesk.com/v2/matchaccountcontact/matchaccountcontact";
-      System.out.println("url :: " + url);
-      //  url = data.get("matchAccountContactServiceEndPointURL") + "/matchaccountcontact";
-      String consumerKey = CommonConstants.consumerKey.trim();
-      String consumerSecret = CommonConstants.consumerSecret.trim();
-      String callBackURL = CommonConstants.callbackURL.trim();
-
-      if (userCategory.equalsIgnoreCase("Contact")) {
-        xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ads=\"http://www.autodesk.com/xmlns/AdskGenericMessage\" xmlns:mat=\"http://www.autodesk.com/xmlns/MatchAccountContact\"> <soapenv:Header> <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" soapenv:mustUnderstand=\"1\"> <wsse:UsernameToken xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" wsu:Id=\"UsernameToken-1\"> <wsse:Username>{p_UserName}</wsse:Username> <wsse:Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText\">{p_Password}</wsse:Password> <wsse:Nonce EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\">o9Vv91iqOLxwX4sbXrHwgQ==</wsse:Nonce> <wsu:Created>2009-08-01T08:04:10.578Z</wsu:Created> </wsse:UsernameToken> </wsse:Security> <Header xmlns=\"http://www.autodesk.com/schemas/Technical/Common/RequestHeaderV1.0\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\" xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"> <MessageIdentifier> <MessageName>User</MessageName> <MessageVersion>1</MessageVersion> </MessageIdentifier><RequestingSystem> <RequestingApplicationName>SWS</RequestingApplicationName> </RequestingSystem> <Properties> <CachedDataAccess>false</CachedDataAccess> </Properties> </Header> </soapenv:Header> <soapenv:Body> <ns0:MatchAccountContactRequest xmlns:ns0=\"http://www.autodesk.com/xmlns/MatchAccountContact\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"> <ns0:Request> <ns1:EventName xmlns:ns1=\"http://www.autodesk.com/xmlns/AdskGenericMessage\">MatchContact</ns1:EventName> <ns1:RequestNumber xmlns:ns1=\"http://www.autodesk.com/xmlns/AdskGenericMessage\">Contactglenmaxwell20150706211458@ssttest.net2015-07-06T21:15:17.081-07:00-549560</ns1:RequestNumber><ns1:SessionId xmlns:ns1=\"http://www.autodesk.com/xmlns/AdskGenericMessage\">00DQ000000GKDVx!ARcAQGvsPzCpnrPzU6gPdBMfTAYh1Ec41ftzw4xydpF3g.8SpfhtxQHnq31YmZIAqPtxVQR11j.3QMOSvYyQ0_3vRM.r8kIQ</ns1:SessionId><ns1:Source xmlns:ns1=\"http://www.autodesk.com/xmlns/AdskGenericMessage\">SFDC</ns1:Source></ns0:Request><ns0:RequestContext><ns0:PartnerFunctionForReq>WE</ns0:PartnerFunctionForReq><ns0:PartnerSalesOrg>{p_SalesOrg}</ns0:PartnerSalesOrg><ns0:AccountAction>Account Query</ns0:AccountAction><ns0:ContactAction>Contact MatchWithoutAddress</ns0:ContactAction><ns0:TrilliumOverrideFlag>N</ns0:TrilliumOverrideFlag><ns0:CreateFlag>N</ns0:CreateFlag></ns0:RequestContext><ns0:Account><ns0:CSN>{p_AccountCSN}</ns0:CSN></ns0:Account><ns0:Contact><ns0:ADSKGUID /><ns0:ADSKContactCSN /><ns0:Title /><ns0:FirstName>{p_Firstname}</ns0:FirstName><ns0:MiddleName /><ns0:LastName>{p_Lastname}</ns0:LastName><ns0:ADSKAlternateFirstName /><ns0:ADSKAlternateLastName /><ns0:EmailAddress>{p_EmailId}</ns0:EmailAddress><ns0:ADSKContactLanguage /><ns0:JobTitle /><ns0:ADSKEregDepartment /><ns0:ADSKWorkPhone /><ns0:ADSKWorkPhoneExtension /><ns0:ADSKFaxPhoneNumber /><ns0:ADSKMobileNumber /><ns0:Status>Active</ns0:Status><ns0:SuppressAllCalls>N</ns0:SuppressAllCalls><ns0:SuppressAllEmails>N</ns0:SuppressAllEmails><ns0:SuppressAllMailings>N</ns0:SuppressAllMailings><ns0:SuppressAllFaxes>N</ns0:SuppressAllFaxes></ns0:Contact></ns0:MatchAccountContactRequest></soapenv:Body></soapenv:Envelope>";
-      }
-
-      if (userCategory.equalsIgnoreCase("Account")) {
-        xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
-            + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ads=\"http://www.autodesk.com/xmlns/AdskGenericMessage\" xmlns:mat=\"http://www.autodesk.com/xmlns/MatchAccountContact\">\r\n"
-            + "   <soapenv:Header>\r\n"
-            + "      <Header xmlns=\"http://www.autodesk.com/schemas/Technical/Common/RequestHeaderV1.0\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\" xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n"
-            + "         <MessageIdentifier>\r\n"
-            + "            <MessageName>AutomationQA</MessageName>\r\n"
-            + "            <MessageVersion>1</MessageVersion>\r\n"
-            + "         </MessageIdentifier>\r\n"
-            + "         <RequestingSystem>\r\n"
-            + "            <RequestingApplicationName>POSTMAN</RequestingApplicationName>\r\n"
-            + "         </RequestingSystem>\r\n" + "         <Properties>\r\n"
-            + "            <CachedDataAccess>true</CachedDataAccess>\r\n"
-            + "         </Properties>\r\n"
-            + "      </Header>\r\n" + "   </soapenv:Header>\r\n" + "   <soapenv:Body>\r\n"
-            + "      <ns0:MatchAccountContactRequest xmlns:ns0=\"http://www.autodesk.com/xmlns/MatchAccountContact\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n"
-            + "         <ns0:Request>\r\n"
-            + "            <ns1:EventName xmlns:ns1=\"http://www.autodesk.com/xmlns/AdskGenericMessage\">MatchAccount</ns1:EventName>\r\n"
-            + "            <ns1:RequestNumber xmlns:ns1=\"http://www.autodesk.com/xmlns/AdskGenericMessage\">1</ns1:RequestNumber>\r\n"
-            + "            <ns1:SessionId xmlns:ns1=\"http://www.autodesk.com/xmlns/AdskGenericMessage\">0003757093</ns1:SessionId>\r\n"
-            + "            <ns1:Source xmlns:ns1=\"http://www.autodesk.com/xmlns/AdskGenericMessage\">IORDER</ns1:Source>\r\n"
-            + "         </ns0:Request>\r\n" + "         <ns0:RequestContext>\r\n"
-            + "            <ns0:PartnerFunctionForReq>End User</ns0:PartnerFunctionForReq>\r\n"
-            + "            <ns0:UserType>Partner</ns0:UserType>\r\n"
-            + "            <ns0:PartnerAccountCSN>{p_CSN}</ns0:PartnerAccountCSN>\r\n"
-            + "            <ns0:PartnerUserCSN>{p_CSN}</ns0:PartnerUserCSN>\r\n"
-            + "            <ns0:PartnerSalesOrg>{p_SalesOrg}</ns0:PartnerSalesOrg>\r\n"
-            + "            <ns0:AccountAction>Account Match</ns0:AccountAction>\r\n"
-            + "            <ns0:ContactAction />\r\n"
-            + "            <ns0:TrilliumOverrideFlag>Y</ns0:TrilliumOverrideFlag>\r\n"
-            + "            <ns0:CreateFlag>Y</ns0:CreateFlag>\r\n"
-            + "         </ns0:RequestContext>\r\n"
-            + "         <ns0:Account>\r\n"
-            + "            <ns0:AccountType>End Customer</ns0:AccountType>\r\n"
-            + "            <ns0:Name>{p_newAccountName}</ns0:Name>\r\n"
-            + "            <ns0:ADSKLocalLanguageName />\r\n" + "            <ns0:Address>\r\n"
-            + "               <ns0:IsPrimaryAddress>Y</ns0:IsPrimaryAddress>\r\n"
-            + "               <ns0:AddressName />\r\n"
-            + "               <ns0:Street1>{p_AddressLine1}</ns0:Street1>\r\n"
-            + "               <ns0:Street2 />\r\n" + "               <ns0:Street3 />\r\n"
-            + "               <ns0:City>{p_City}</ns0:City>\r\n"
-            + "               <ns0:State>{p_State}</ns0:State>\r\n"
-            + "               <ns0:Country>{p_Country}</ns0:Country>\r\n"
-            + "               <ns0:PostalCode>{p_PostalCode}</ns0:PostalCode>\r\n"
-            + "            </ns0:Address>\r\n"
-            + "            <ns0:IsPOBOXValidationReqd>Y</ns0:IsPOBOXValidationReqd>\r\n"
-            + "            <ns0:MainPhoneNumber />\r\n"
-            + "            <ns0:UserEnteredAddressFields>\r\n"
-            + "               <ns0:UserEnteredAccountName>QA Automtion</ns0:UserEnteredAccountName>\r\n"
-            + "               <ns0:UserEnteredAddressStreetAddress>{p_AddressLine1}</ns0:UserEnteredAddressStreetAddress>\r\n"
-            + "               <ns0:UserEnteredAddressStreetAddress2 />\r\n"
-            + "               <ns0:UserEnteredAddressStreetAddress3 />\r\n"
-            + "               <ns0:UserEnteredAddressState>{p_State}</ns0:UserEnteredAddressState>\r\n"
-            + "               <ns0:UserEnteredAddressCity>{p_City}</ns0:UserEnteredAddressCity>\r\n"
-            + "               <ns0:UserEnteredAddressCountry>{p_Country}</ns0:UserEnteredAddressCountry>\r\n"
-            + "               <ns0:UserEnteredAddressPostalCode>{p_PostalCode}</ns0:UserEnteredAddressPostalCode>\r\n"
-            + "            </ns0:UserEnteredAddressFields>\r\n"
-            + "            <ns0:TrilliumSuggestedAddressFields>\r\n"
-            + "               <ns0:TrilliumSuggestedMatchedAccountId />\r\n"
-            + "               <ns0:TrilliumSuggestedAccountName>QA Performance</ns0:TrilliumSuggestedAccountName>\r\n"
-            + "               <ns0:TrilliumSuggestedStreetAddress>{p_AddressLine1}</ns0:TrilliumSuggestedStreetAddress>\r\n"
-            + "               <ns0:TrilliumSuggestedStreetAddress2 />\r\n"
-            + "               <ns0:TrilliumSuggestedStreetAddress3 />\r\n"
-            + "               <ns0:TrilliumSuggestedAddressCity>{p_City}</ns0:TrilliumSuggestedAddressCity>\r\n"
-            + "               <ns0:TrilliumSuggestedAddressState>{p_State}</ns0:TrilliumSuggestedAddressState>\r\n"
-            + "               <ns0:TrilliumSuggestedAddressCountry>{p_Country}</ns0:TrilliumSuggestedAddressCountry>\r\n"
-            + "               <ns0:TrilliumSuggestedAddressPostalCode>{p_PostalCode}</ns0:TrilliumSuggestedAddressPostalCode>\r\n"
-            + "            </ns0:TrilliumSuggestedAddressFields>\r\n"
-            + "         </ns0:Account>\r\n"
-            + "      </ns0:MatchAccountContactRequest>\r\n" + "   </soapenv:Body>\r\n"
-            + "</soapenv:Envelope>";
-      }
-
-      xml = inputTestData(xml, inputData);
-      ApigeeAuthenticationService apigeeAuthenticationService = new ApigeeAuthenticationService();
-
-      String timeStamp = apigeeAuthenticationService.getTimeStamp();
-      String signature = apigeeAuthenticationService
-          .getSignature(consumerKey, consumerSecret, callBackURL, timeStamp);
-      String accessTokenUrl = "https://enterprise-api-" + GlobalConstants.getENV().toLowerCase()
-          + ".autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials";
-      String token = apigeeAuthenticationService
-          .getAccessToken(accessTokenUrl, consumerKey, consumerSecret, callBackURL, timeStamp,
-              signature);
-
-      signature = apigeeAuthenticationService
-          .getSignature(token, consumerSecret, callBackURL, timeStamp);
-      SOAPService service = new SOAPService();
-      SOAPMessage message = service.generateSOAPMessage(xml, data.get("macTranscoding"));
-
-      HashMap<String, String> headers = getMeshHeaders(data.get("name"), token, timeStamp,
-          data.get("macHeaderCSN"), signature, data.get("macResponseType"));
-      service.decorateSOAPMessage(message, headers);
-      attachReqSOAPMessage(message);
-
-      SOAPMessage soapResponse = service.getSOAPResponse(message, url);
-      attachResSOAPMessage(soapResponse);
-      if (userCategory.equalsIgnoreCase("Account")) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        soapResponse.writeTo(out);
-        String strMsg = out.toString();
-        String actualADSKAccountCSN = parseXML(strMsg, "ns0:CSN");
-        Util.PrintInfo("Account CSN - " + actualADSKAccountCSN);
-        data.put(TestingHubConstants.enduserCSN, actualADSKAccountCSN);
-      }
-    } catch (NullPointerException n) {
-      n.printStackTrace();
-      AssertUtils.fail("unable to create account: getting NullPointerException " + n.getMessage());
-    } catch (Exception e) {
-      if (e.getMessage().contains("Export")) {
-        try {
-          throw new Exception("The Export Control status is not accepted / null");
-        } catch (Exception e1) {
-          e1.printStackTrace();
-        }
-      }
-      Util.PrintInfo("Unable to create the account - " + e.getMessage());
-      AssertUtils.fail("unable to create the account -" + e.getMessage());
-    }
-    return url;
-  }
-
-  @Step("Request SOAP Message")
-  public void attachReqSOAPMessage(SOAPMessage soapResponse) {
-    try {
-      printSOAPResponse(soapResponse);
-    } catch (Exception e) {
-      Util.PrintInfo("Unable to attach the req SOAP message, Exception -" + e.getMessage());
-      AssertUtils.fail("Unable to attach the req SOAP message, Exception -" + e.getMessage());
-    }
-  }
-
-  public void printSOAPResponse(SOAPMessage soapResponse) {
-    try {
-      StringWriter writer = new StringWriter();
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
-      Transformer transformer = transformerFactory.newTransformer();
-      Source sourceContent = soapResponse.getSOAPPart().getContent();
-      StreamResult result = new StreamResult(writer);
-      transformer.transform(sourceContent, result);
-      String res = writer.toString();
-      System.out.print("\nSOAP Message = " + res + "\n");
-      createPassAttachment(res);
-    } catch (Exception e) {
-      AssertUtils.fail("Unable to parse the file -" + e.getMessage());
-    }
-  }
-
-  @Attachment("Attachments")
-  public String createPassAttachment(String str) {
-    return str;
-  }
-
-  @Step("Response SOAP Message")
-  public void attachResSOAPMessage(SOAPMessage soapResponse) {
-    try {
-      printSOAPResponse(soapResponse);
-    } catch (Exception e) {
-      Util.PrintInfo("Unable to attach the response SOAP message, Exception -" + e.getMessage());
-      AssertUtils.fail("Unable to attach the response SOAP message, Exception -" + e.getMessage());
-    }
-  }
-
-  public String inputTestData(String xml, String... str) {
-    try {
-      for (String inputData : str) {
-        String[] splitData = inputData.split("->");
-        if (splitData.length != 2) {
-          xml = xml.replace(splitData[0], "");
-        } else {
-          xml = xml.replace(splitData[0], splitData[1]);
-        }
-      }
-    } catch (Exception e) {
-      AssertUtils.fail(
-          "unable to replace the values with the XML with the passed data, Exception -" + e
-              .getMessage());
-      return null;
-    }
-    return xml;
-  }
-
-  public HashMap<String, String> getMeshHeaders(String actionName, String token, String timeStamp,
-      String csn, String signature, String type) {
-    HashMap<String, String> headers = new HashMap<>();
-    headers.put("soapaction", actionName);
-    headers.put("Authorization", "Bearer " + token);
-    headers.put("timestamp", timeStamp);
-    headers.put("csn", csn);
-    headers.put("signature", signature);
-    headers.put("Content-Type", "application/xml");
-    return headers;
-  }
-
-  public String parseXML(String xml, String tagName) throws Exception {
-    try {
-      String output = null;
-      DocumentBuilder db = null;
-      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-      Document document = null;
-      try {
-        db = dbf.newDocumentBuilder();
-        InputSource is = new InputSource();
-        is.setCharacterStream(new StringReader(xml));
-        try {
-          document = db.parse(is);
-          System.out.println("Root element: " + document.getDocumentElement().getNodeName());
-          output = document.getElementsByTagName(tagName).item(0).getTextContent();
-        } catch (SAXException e) {
-          // handle SAXException
-        } catch (IOException e) {
-          // handle IOException
-        }
-      } catch (ParserConfigurationException e1) {
-        // handle ParserConfigurationException
-      }
-      return output;
-    } catch (Exception e) {
-      e.printStackTrace();
-      AssertUtils.fail("Unable to parse the XML, Exception -" + e.getMessage());
-      return null;
-    }
   }
 
   public void clickCheckBox(String CheckboxClick) {
@@ -765,14 +504,6 @@ public class PortalTestBase {
     return Long.toString(gmtMilliSeconds / 1000).trim();
   }
 
-  private void debugHTMLPage() {
-    Util.printInfo(BICECEConstants.SEPARATION_LINE +
-        "\n" + " URL :            " + driver.getCurrentUrl() +
-        "\n" + " Page Title :     " + driver.getTitle() +
-        "\n" + " Page source  :   " + driver.getPageSource()
-        + "\n" + BICECEConstants.SEPARATION_LINE);
-  }
-
   private void debugPageUrl(String messageHeader) {
     Util.printInfo("----------" + messageHeader + "-------------------" +
         "\n" + " URL :            " + driver.getCurrentUrl() +
@@ -782,15 +513,15 @@ public class PortalTestBase {
 
   @Step("Adding seat from portal for BIC orders")
   public HashMap<String, String> createAndValidateAddSeatOrderInPortal(String addSeatQty,
-      LinkedHashMap<String, String> testDataForEachMethod,Map<String,String> localeMap) {
+      LinkedHashMap<String, String> testDataForEachMethod, Map<String, String> localeMap) {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<String, String>();
-    orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod,localeMap));
-    orderDetails.putAll(validateAddSeatOrder(orderDetails,addSeatQty));
+    orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod, localeMap));
+    orderDetails.putAll(validateAddSeatOrder(orderDetails, addSeatQty));
     return orderDetails;
   }
 
-  public HashMap<String, String> navigateToSubscriptionAndOrdersTab(Map<String,String> localeMap) {
+  public HashMap<String, String> navigateToSubscriptionAndOrdersTab(Map<String, String> localeMap) {
     Util.printInfo("Navigating to subscriptions and orders tab...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
     Util.sleep(60000);
@@ -890,7 +621,7 @@ public class PortalTestBase {
   }
 
   public HashMap<String, String> createAddSeatOrder(String addSeatQty,
-      LinkedHashMap<String, String> testDataForEachMethod,Map<String,String> localeMap) {
+      LinkedHashMap<String, String> testDataForEachMethod, Map<String, String> localeMap) {
     Util.printInfo("Placing add seat order from portal...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
 
@@ -947,7 +678,6 @@ public class PortalTestBase {
 
       }
 
-
       debugPageUrl("trying to log into portal again");
 
       if (isPortalLoginPageVisible()) {
@@ -981,12 +711,12 @@ public class PortalTestBase {
       String proratedFinalPrice = portalPage.getLinkText("portalASFinalProratedPrice");
       Util.printInfo("Prorated Final Amount : " + proratedFinalPrice);
       orderDetails.put("proratedFinalAmount", proratedFinalPrice);
-     if(!localeMap.get(BICECEConstants.REGION).equals("ENGB")) {
-       Util.printInfo("Capturing Tax details...");
-       String taxAmount = portalPage.getLinkText("portalASTaxDetails");
-       Util.printInfo("Tax amount : " + taxAmount);
-       orderDetails.put("taxAmount", taxAmount);
-     }
+      if (!localeMap.get(BICECEConstants.REGION).equals("ENGB")) {
+        Util.printInfo("Capturing Tax details...");
+        String taxAmount = portalPage.getLinkText("portalASTaxDetails");
+        Util.printInfo("Tax amount : " + taxAmount);
+        orderDetails.put("taxAmount", taxAmount);
+      }
       String subtotalPrice = portalPage.getLinkText("portalASFinalSubtotalAmount");
       Util.printInfo("Subtotal amount : " + subtotalPrice);
       orderDetails.put("subtotalPrice", subtotalPrice);
@@ -1002,7 +732,8 @@ public class PortalTestBase {
     return orderDetails;
   }
 
-  public HashMap<String, String> validateAddSeatOrder(HashMap<String, String> data,String addSeatQty) {
+  public HashMap<String, String> validateAddSeatOrder(HashMap<String, String> data,
+      String addSeatQty) {
     HashMap<String, String> orderDetails = new HashMap<String, String>();
 
     try {
@@ -1016,8 +747,8 @@ public class PortalTestBase {
       String confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
 
       AssertUtils.assertEquals(
-          Double.valueOf(data.get("proratedFinalAmount").substring(1)).doubleValue()  ,
-                Double.valueOf(confirmProratedAmount.substring(1)).doubleValue());
+          Double.valueOf(data.get("proratedFinalAmount").substring(1)).doubleValue(),
+          Double.valueOf(confirmProratedAmount.substring(1)).doubleValue());
 
       Util.printInfo("Clicking on back button...");
       portalPage.clickUsingLowLevelActions("portalBackButton");
@@ -1050,7 +781,8 @@ public class PortalTestBase {
   }
 
   @Step("Reduce seats from portal for BIC orders")
-  public HashMap<String, String> reduceSeatsInPortalAndValidate(Map<String,String> localeMap) throws MetadataException {
+  public HashMap<String, String> reduceSeatsInPortalAndValidate(Map<String, String> localeMap)
+      throws MetadataException {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<>();
     orderDetails.putAll(reduceSeats(localeMap));
@@ -1058,7 +790,8 @@ public class PortalTestBase {
     return orderDetails;
   }
 
-  public HashMap<String, String> reduceSeats(Map<String,String> localeMap) throws MetadataException {
+  public HashMap<String, String> reduceSeats(Map<String, String> localeMap)
+      throws MetadataException {
     HashMap<String, String> orderDetails = new HashMap<>();
     orderDetails.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
 
@@ -1107,7 +840,7 @@ public class PortalTestBase {
 
   @Step("Changing payment from Portal" + GlobalConstants.TAG_TESTINGHUB)
   public void changePaymentMethodAndValidate(HashMap<String, String> data,
-      String[] paymentCardDetails,Map<String,String> localeMap) {
+      String[] paymentCardDetails, Map<String, String> localeMap) {
     Util.printInfo("Changing the payment method from portal...");
     try {
       debugPageUrl("Step 1");
@@ -1120,7 +853,7 @@ public class PortalTestBase {
 
       Util.sleep(60000);
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-          BICECEConstants.PORTAL_PAYMENT_METHOD)
+              BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data, localeMap);
@@ -1149,7 +882,7 @@ public class PortalTestBase {
       Util.printInfo("Clicking on save button");
       portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
 
-      if (data.get(BICECEConstants.PAYMENT_TYPE).toUpperCase()
+      if (data.get(BICECEConstants.PAYMENT_TYPE)
           .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         Util.printInfo("Clicking on madate agreement form...");
         portalPage.waitForFieldPresent("portalDebitMandateAgreement", 5000);
@@ -1479,14 +1212,16 @@ public class PortalTestBase {
     } else {
       selCountry.selectByIndex(0);
     }
-    if(address.get(BICECEConstants.STATE_PROVINCE) != null && !address.get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
+    if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address.get(
+        BICECEConstants.STATE_PROVINCE).isEmpty()) {
       driver.findElement(By.xpath(stateXpath))
           .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
     }
     return status;
   }
 
-  public void validatePaymentDetailsOnPortal(HashMap<String, String> data,Map<String,String> localeMap) {
+  public void validatePaymentDetailsOnPortal(HashMap<String, String> data,
+      Map<String, String> localeMap) {
     Util.printInfo("Validating payment details...");
     data.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
     String paymentDetails = data.get(BICECEConstants.PAYMENT_DETAILS).toLowerCase();
@@ -1676,7 +1411,8 @@ public class PortalTestBase {
     portalPage.waitForPageToLoad();
   }
 
-  @Step("Reporting Tab - Cloud Service Usage validation with check of 100 cloud credits " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Reporting Tab - Cloud Service Usage validation with check of 100 cloud credits "
+      + GlobalConstants.TAG_TESTINGHUB)
   public String reporting_CloudServiceUsageLinkDisplayed() {
     String errorMsg = "";
     try {

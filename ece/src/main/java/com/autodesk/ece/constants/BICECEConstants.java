@@ -76,10 +76,10 @@ public class BICECEConstants extends BICConstants {
   public static final String CREDIT_CARD_NUMBER_FRAME = "creditCardNumberFrame";
   public static final String PAYPAL_ACCEPT_COOKIES_BTN = "paypalAcceptCookiesBtn";
   public static final String SUBMIT_ORDER_BUTTON = "SubmitOrderButton";
-  public static final String CHECKED_ACH_AUTHORIZATION_AGREEMENT_IS_VISIBLE = "Checked ACH Authorization Agreement is visible - ";
-  public static final String ACH_CHECKBOX_HEADER = "achCheckBoxHeader";
-  public static final String CHECKED_BOX_STATUS_FOR_ACH_CHECKBOX = "Checked box status for achCheckBox - ";
-  public static final String ACH_CHECKBOX = "achCheckBox";
+  public static final String CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE = "Checked Mandate Agreement is visible - ";
+  public static final String MANDATE_CHECKBOX_HEADER = "mandateAgreementCheckboxHeader";
+  public static final String CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX = "Checked box status for Mandate Agreement checkbox - ";
+  public static final String MANDATE_AGREEMENT_CHECKBOX = "mandateAgreementCheckbox";
   public static final String ID_MANDATE_AGREEMENT = "//*[@id=\"mandate-agreement\"]";
   public static final String DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK = "document.getElementById('mandate-agreement').click()";
   public static final String JP_ORDER_NUMBER = "//h5[.='注文番号：']/..//p";
