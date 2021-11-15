@@ -137,7 +137,7 @@ public class PortalTestBase {
     driver.manage().deleteAllCookies();
     driver.navigate().to(data);
     Util.printInfo("Opened:" + data);
-    return feynamnLayoutLoaded();
+    return true;
   }
 
   public void clickCheckBox(String CheckboxClick) {
@@ -408,7 +408,7 @@ public class PortalTestBase {
 
   @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
   public boolean validateBICOrderProductInCEP(String cepURL, String portalUserName,
-      String portalPassword, String subscriptionID, Map<String, String> localeDataMap) {
+      String portalPassword, String subscriptionID) {
     boolean status = false, statusPS, statusBO, statusBOC, statusBOS, portalLogin, portalLoad = false;
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {

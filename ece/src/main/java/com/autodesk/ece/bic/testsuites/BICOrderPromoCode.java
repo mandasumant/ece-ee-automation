@@ -122,7 +122,7 @@ public class BICOrderPromoCode extends ECETestBase {
 
     portaltb.validateBICOrderProductInCEP(results.get(TestingHubConstants.cepURL),
         results.get(TestingHubConstants.emailid), "Password1",
-        results.get("getPOReponse_subscriptionId"),localeDataMap.get(locale));
+        results.get("getPOReponse_subscriptionId"));
     updateTestingHub(testResults);
 
     // Validate Create Order
