@@ -94,9 +94,8 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {
-      "bic-changePayment-US"}, description = "Validation of BIC change payment details functionality")
+      "bic-changePayment"}, description = "Validation of BIC change payment details functionality")
   public void validateBICChangePaymentProfile() {
-    Util.printInfo("Gathering payment details...");
     String emailID = System.getProperty(BICECEConstants.EMAIL);
     String password = System.getProperty(BICECEConstants.PASSWORD);
 
@@ -134,7 +133,7 @@ public class BICOrderCreation extends ECETestBase {
     portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails, localeDataMap.get(locale));
   }
 
-  @Test(groups = {"bic-nativeorder-US"}, description = "Validation of Create BIC Hybrid Order")
+  @Test(groups = {"bic-nativeorder"}, description = "Validation of Create BIC Hybrid Order")
   public void validateBicNativeOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
@@ -184,7 +183,7 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {
-      "bic-nativeorder-switch-term-US"}, description = "Validation of Create BIC Hybrid Order")
+      "bic-nativeorder-switch-term"}, description = "Validation of Create BIC Hybrid Order")
   public void validateBicNativeOrderSwitchTerm()  {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
@@ -308,9 +307,8 @@ public class BICOrderCreation extends ECETestBase {
     }
   }
 
-  @Test(groups = {"bic-addseat-native-US"}, description = "Validation of BIC Add Seat Order")
+  @Test(groups = {"bic-addseat-native"}, description = "Validation of BIC Add Seat Order")
   public void validateBicAddSeatNativeOrder() {
-    System.out.println("Version 20th April 2021");
     testDataForEachMethod
         .put(BICECEConstants.PRODUCT_ID, testDataForEachMethod.get("nativeproductID"));
     HashMap<String, String> testResults = new HashMap<String, String>();
@@ -437,7 +435,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"bic-reduceseats-native-US"}, description = "Validation of BIC Reduce Seats")
+  @Test(groups = {"bic-reduceseats-native"}, description = "Validation of BIC Reduce Seats")
   public void validateBicReduceSeats() throws MetadataException {
     testDataForEachMethod
         .put(BICECEConstants.PRODUCT_ID, testDataForEachMethod.get("nativeproductID"));
@@ -502,7 +500,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"bic-flexorder-US"}, description = "Validation of Create BIC Flex Order")
+  @Test(groups = {"bic-flexorder"}, description = "Validation of Create BIC Flex Order")
   public void validateBicFlexOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
@@ -580,7 +578,7 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {
-      "bic-nativeorder-moe-US"}, description = "Validation of Create BIC Order from MOE")
+      "bic-nativeorder-moe"}, description = "Validation of Create BIC Order from MOE")
   public void validateBicNativeOrderMoe() {
     long startTime, stopTime, executionTime;
     HashMap<String, String> testResults = new HashMap<String, String>();
@@ -640,7 +638,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"bic-metaorder-US"}, description = "Validation of Create BIC Meta Order")
+  @Test(groups = {"bic-metaorder"}, description = "Validation of Create BIC Meta Order")
   public void validateBicMetaOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
@@ -754,7 +752,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"bic-returningUser-US"}, description = "Validation of Create BIC Hybrid Order")
+  @Test(groups = {"bic-returningUser"}, description = "Validation of Create BIC Hybrid Order")
   public void validateBicReturningUser() {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
@@ -1011,7 +1009,7 @@ public class BICOrderCreation extends ECETestBase {
    * the subscription for the placed order 3. Manually update the subscription so that it is expired
    * 4. Trigger the renewal job 5. Validate that the subscription next renews in the future
    */
-  @Test(groups = {"renew-bic-order-US"}, description = "Validation of BIC Renewal Order")
+  @Test(groups = {"renew-bic-order"}, description = "Validation of BIC Renewal Order")
   public void validateRenewBicOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
@@ -1092,7 +1090,7 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {
-      "cloudcredit-order-US"}, description = "Validation of Create BIC Cloud credit Order")
+      "cloudcredit-order"}, description = "Validation of Create BIC Cloud credit Order")
   public void validateBicCloudCreditOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
