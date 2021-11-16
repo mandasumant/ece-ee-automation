@@ -350,7 +350,6 @@ public class PelicanTestBase {
 
     } catch (Exception e) {
       e.printStackTrace();
-
     }
     return signature + "::" + timestamp;
   }
