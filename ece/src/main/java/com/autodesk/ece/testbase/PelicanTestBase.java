@@ -28,7 +28,7 @@ import org.testng.Assert;
 
 public class PelicanTestBase {
 
-  private static String productName = "";
+  private String productName = "";
 
   public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
