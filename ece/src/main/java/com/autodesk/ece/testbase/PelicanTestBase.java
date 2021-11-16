@@ -3,14 +3,10 @@ package com.autodesk.ece.testbase;
 import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.bicapiModel.PayloadSpocAUTHToken;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
-import com.autodesk.testinghub.core.common.CommonConstants;
 import com.autodesk.testinghub.core.common.services.ApigeeAuthenticationService;
 import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
@@ -24,7 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -375,56 +370,6 @@ public class PelicanTestBase {
     hash = ApigeeAuthenticationService.getSHA256Hash(secretKey, hashCode);
 
     return hash;
-  }
-
-  public String getSpocAuthToken(LinkedHashMap<String, String> testDataForEachMethod) {
-    String hashedStr = "Basic ";
-    RestAssured.baseURI = CommonConstants.spocAuthTokenUrl;
-    File rawPayload = new File(Util.getCorePayloadPath() + "PayloadSpoc_AUTHToken.json");
-
-    String timeStamp = getSpocTimeStamp();
-    String email = testDataForEachMethod.get(TestingHubConstants.emailid);
-    String o2id = testDataForEachMethod.get(TestingHubConstants.oxygenid);
-    String secretKey = ProtectedConfigFile.decrypt(CommonConstants.spocSecretKey);
-    String spocSignature = getSpocSignature(o2id, email, secretKey, timeStamp);
-    HashMap<String, String> authHeaders = new HashMap<String, String>();
-    authHeaders.put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
-
-    PayloadSpocAUTHToken authJsonClass = null;
-
-    ObjectMapper om = new ObjectMapper();
-    String inputPayload = "";
-    try {
-      authJsonClass = om.readValue(rawPayload, PayloadSpocAUTHToken.class);
-
-      authJsonClass.setEmail(email);
-      authJsonClass.setSignature(spocSignature);
-      authJsonClass.setTimestamp(timeStamp);
-      authJsonClass.setUserExtKey(o2id);
-
-      inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(authJsonClass);
-      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
-    } catch (IOException e1) {
-      e1.printStackTrace();
-      AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
-    }
-
-    Response response = given().headers(authHeaders).body(inputPayload).when().post();
-    String result = response.getBody().asString();
-    JsonPath jp = new JsonPath(result);
-    String sessionId = jp.get("sessionId");
-    String grantToken = jp.get("grantToken");
-
-    String mixCode = sessionId + ":" + grantToken;
-    try {
-      hashedStr = hashedStr
-          + java.util.Base64.getEncoder()
-          .encodeToString(mixCode.getBytes(StandardCharsets.UTF_8.toString()));
-
-    } catch (Exception e) {
-      AssertUtils.fail("Failed to generate BIC Authorization Token");
-    }
-    return hashedStr.trim();
   }
 
   @Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
