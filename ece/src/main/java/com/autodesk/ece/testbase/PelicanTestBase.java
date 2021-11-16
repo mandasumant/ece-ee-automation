@@ -3,31 +3,20 @@ package com.autodesk.ece.testbase;
 import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.bicapiModel.PayloadAddPaymentProfile;
-import com.autodesk.testinghub.core.bicapiModel.PayloadSpocAUTHToken;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
-import com.autodesk.testinghub.core.common.CommonConstants;
-import com.autodesk.testinghub.core.common.services.ApigeeAuthenticationService;
 import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.ErrorEnum;
-import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import io.restassured.config.SSLConfig;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -46,6 +35,7 @@ public class PelicanTestBase {
   }
 
   @SuppressWarnings("unchecked")
+  @Step("Create refund order" + GlobalConstants.TAG_TESTINGHUB)
   public static Response createRefundOrder(String baseUrl, Map<String, String> header) {
 
     JSONObject requestParams = new JSONObject();
@@ -203,6 +193,7 @@ public class PelicanTestBase {
     return patchRestResponse(getPurchaseOrderDetailsUrl, header, inputPayload);
   }
 
+  @Step("Sending Patch Response")
   public HashMap<String, String> patchRestResponse(String baseUrl, HashMap<String, String> header,
       String body) {
     Util.printInfo("Hitting the URL = " + baseUrl);
@@ -256,9 +247,7 @@ public class PelicanTestBase {
     Util.printInfo("js is:" + js);
   }
 
-  // @Step("Validate BIC Order in Pelican" + GlobalConstants.TAG_TESTINGHUB)
-  @SuppressWarnings("unused")
-
+  @Step("Get Pelican Response" + GlobalConstants.TAG_TESTINGHUB)
   public String getPelicanResponse(HashMap<String, String> data) {
     String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsUrl");
     productName = data.get("productName");
@@ -297,6 +286,7 @@ public class PelicanTestBase {
     return result;
   }
 
+  @Step("Create Refund Order" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createRefundOrder(HashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
 
@@ -364,170 +354,6 @@ public class PelicanTestBase {
     return signature + "::" + timestamp;
   }
 
-  public String getSpocTimeStamp() {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-    return sdf.format(new Date());
-  }
-
-  public String getSpocSignature(String o2id, String email, String secretKey, String timeStamp) {
-    String hash = null;
-    String hashCode = null;
-    hashCode = o2id + email + timeStamp;
-    hash = ApigeeAuthenticationService.getSHA256Hash(secretKey, hashCode);
-
-    return hash;
-  }
-
-  public String getSpocAuthToken(LinkedHashMap<String, String> testDataForEachMethod) {
-    String hashedStr = "Basic ";
-    RestAssured.baseURI = CommonConstants.spocAuthTokenUrl;
-    File rawPayload = new File(Util.getCorePayloadPath() + "PayloadSpoc_AUTHToken.json");
-
-    String timeStamp = getSpocTimeStamp();
-    String email = testDataForEachMethod.get(TestingHubConstants.emailid);
-    String o2id = testDataForEachMethod.get(TestingHubConstants.oxygenid);
-    String secretKey = ProtectedConfigFile.decrypt(CommonConstants.spocSecretKey);
-    String spocSignature = getSpocSignature(o2id, email, secretKey, timeStamp);
-    HashMap<String, String> authHeaders = new HashMap<String, String>();
-    authHeaders.put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
-
-    PayloadSpocAUTHToken authJsonClass = null;
-
-    ObjectMapper om = new ObjectMapper();
-    String inputPayload = "";
-    try {
-      authJsonClass = om.readValue(rawPayload, PayloadSpocAUTHToken.class);
-
-      authJsonClass.setEmail(email);
-      authJsonClass.setSignature(spocSignature);
-      authJsonClass.setTimestamp(timeStamp);
-      authJsonClass.setUserExtKey(o2id);
-
-      inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(authJsonClass);
-      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
-    } catch (IOException e1) {
-      e1.printStackTrace();
-      AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
-    }
-
-    Response response = given().headers(authHeaders).body(inputPayload).when().post();
-    String result = response.getBody().asString();
-    JsonPath jp = new JsonPath(result);
-    String sessionId = jp.get("sessionId");
-    String grantToken = jp.get("grantToken");
-
-    String mixCode = sessionId + ":" + grantToken;
-    try {
-      hashedStr = hashedStr
-          + java.util.Base64.getEncoder()
-          .encodeToString(mixCode.getBytes(StandardCharsets.UTF_8.toString()));
-
-    } catch (Exception e) {
-      AssertUtils.fail("Failed to generate BIC Authorization Token");
-    }
-    return hashedStr.trim();
-  }
-
-  public String getPaymentProfileId(LinkedHashMap<String, String> testDataForEachMethod) {
-    String paymentProfileID = "";
-    try {
-      ObjectMapper om = new ObjectMapper();
-      String inputPayload = "";
-      String processor =
-          testDataForEachMethod.get("billingProcessor").equalsIgnoreCase(
-              BICECEConstants.ADYEN) ? BICECEConstants.ADYEN
-              : "bluesnap";
-
-      File jsonFile = ApigeeTestBase.getFile(processor, "PayloadAddPaymentProfile.json");
-      // getUserDetails() Keys => firstNameCEP, lastNameCEP, emailIdCEP, oxid
-      String currency = testDataForEachMethod.get(TestingHubConstants.currencyStore);
-      String city = testDataForEachMethod.get(TestingHubConstants.cityStore);
-      String country = testDataForEachMethod.get(TestingHubConstants.countryStore);
-      String postalCode = testDataForEachMethod.get(TestingHubConstants.postalCodeStore);
-      String stateProvince = testDataForEachMethod.get(TestingHubConstants.stateProvinceStore);
-      String streetAddress = testDataForEachMethod.get(TestingHubConstants.streetAddressStore);
-      String email = testDataForEachMethod.get(TestingHubConstants.emailid);
-      String firstName = testDataForEachMethod.get(TestingHubConstants.firstname);
-      String lastName = testDataForEachMethod.get(TestingHubConstants.lastname);
-      String companyName = "Holla " + lastName;
-      String oxid = testDataForEachMethod.get(TestingHubConstants.oxygenid);
-
-      try {
-        if (processor.equals(BICECEConstants.ADYEN)) {
-          PayloadAddPaymentProfile authJsonClass = om
-              .readValue(jsonFile, PayloadAddPaymentProfile.class);
-          authJsonClass.getUser().setCurrency(currency);
-          authJsonClass.getUser().setEmail(email);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setCity(city);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setCountry(country);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setPostalCode(postalCode);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo()
-              .setStateProvince(stateProvince);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo()
-              .setStreetAddress(streetAddress);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo()
-              .setFirstName(firstName.trim());
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setLastName(lastName);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setCompanyName(companyName);
-          inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(authJsonClass);
-          Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload);
-        } else {
-          PayloadAddPaymentProfile authJsonBluesnapClass = om.readValue(jsonFile,
-              PayloadAddPaymentProfile.class);
-          authJsonBluesnapClass.getUser().setEmail(email);
-          authJsonBluesnapClass.getUser().getPaymentProfile().getBillingInfo()
-              .setFirstName(firstName.trim());
-          authJsonBluesnapClass.getUser().getPaymentProfile().getBillingInfo()
-              .setLastName(lastName);
-          authJsonBluesnapClass.getUser().getPaymentProfile().getBillingInfo()
-              .setCompanyName(companyName);
-          inputPayload = om.writerWithDefaultPrettyPrinter()
-              .writeValueAsString(authJsonBluesnapClass);
-          Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload);
-        }
-      } catch (IOException e1) {
-        e1.printStackTrace();
-        AssertUtils.fail("Error while parsing PayloadAddPaymentProfile.json file");
-      }
-
-      String baseUrl =
-          TestingHubConstants.getCartBaseURL + TestingHubConstants.postAddPaymentProfile + oxid;
-      RestAssured.baseURI = baseUrl;
-
-      HashMap<String, String> authHeaders = new HashMap<String, String>();
-      authHeaders.put("Authorization", getSpocAuthToken(testDataForEachMethod));
-      authHeaders.put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
-
-      Response response = given().headers(authHeaders).body(inputPayload).when().post(baseUrl);
-      String result = response.getBody().asString();
-      if (response.getStatusCode() != 200) {
-        Util.sleep(60000);
-        response = given().headers(authHeaders).body(inputPayload).when().post(baseUrl);
-        result = response.getBody().asString();
-        if (response.getStatusCode() != 200) {
-          Util.printInfo(BICECEConstants.RESULT + result);
-          Util.printTestFailedMessage(
-              "Response code must be 200 but Payment Profle API return " + response
-                  .getStatusCode());
-          AssertUtils.fail(ErrorEnum.GENERIC_RETRY_MSG.geterr());
-        }
-      }
-
-      JsonPath jp = new JsonPath(result);
-      try {
-        paymentProfileID = jp.get("paymentProfiles[0].id") + ":" + companyName;
-      } catch (Exception e) {
-        AssertUtils.fail("Failed to generate payment Profile ID" + e.getMessage());
-      }
-      Util.PrintInfo(" paymentProfileID response :: " + paymentProfileID + "\n");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return paymentProfileID;
-  }
-
   @Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> getPurchaseOrderDetails(String purchaseOrderAPIresponse) {
     HashMap<String, String> results = new HashMap<>();
@@ -583,40 +409,6 @@ public class PelicanTestBase {
 
   public String addTokenInResourceUrl(String resourceUrl, String tokenString) {
     return resourceUrl.replace("passtoken", tokenString);
-  }
-
-  private String getDetails(SSLConfig config, String baseUrl, Map<String, String> header) {
-    String result = null;
-    try {
-      Response response = null;
-      RestAssured.config = RestAssured.config().sslConfig(config);
-      RestAssured.baseURI = baseUrl;
-      response = given().headers(header).when().get(baseUrl);
-      result = response.getBody().asString();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return result;
-  }
-
-  public HashMap<String, String> subscriptionsPelicanAPIHeaders(HashMap<String, String> data) {
-    HashMap<String, String> authHeaders = new HashMap<String, String>();
-    String sig_details = getPriceByPriceIdSignature(data);
-    String hmacSignature = sig_details.split("::")[0];
-    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
-
-    authHeaders.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
-    authHeaders.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
-    authHeaders.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
-    authHeaders.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
-    authHeaders.put("X-Request-Ref", UUID.randomUUID().toString());
-    authHeaders.put(BICECEConstants.ACCEPT, BICECEConstants.APPLICATION_VNDAPI_JSON);
-    authHeaders.put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
-
-    return authHeaders;
   }
 
   public String retryPelicanResponse(HashMap<String, String> results) {

@@ -5,6 +5,7 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.utils.LoadJsonWithValue;
 import com.autodesk.testinghub.core.utils.Util;
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.config.SSLConfig;
 import io.restassured.response.Response;
@@ -44,6 +45,7 @@ public class PayportTestBase {
    *
    * @param results - Results from order and subscription lookups
    */
+  @Step("Renew Purchase" + GlobalConstants.TAG_TESTINGHUB)
   public void renewPurchase(HashMap<String, String> results) {
     String baseUrl = testData.get("payportRenewalURL").replace("USER_ID", results.get(
         "getPOReponse_oxygenID"));
