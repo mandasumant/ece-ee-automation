@@ -119,9 +119,8 @@ public class BICTestBase {
       ba.put(BICECEConstants.PHONE_NUMBER, getRandomMobileNumber());
       ba.put(BICECEConstants.COUNTRY, billingAddress[5]);
 
-      if (region.equalsIgnoreCase("ENUS") || region.equalsIgnoreCase("ENCA") || region
-          .equalsIgnoreCase("ENAU")) {
-        ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
+     if(!driver.findElements(By.xpath("//*[@name=\"state\"]")).isEmpty()){
+         ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
       }
     }
     return ba;

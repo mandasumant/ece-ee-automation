@@ -720,7 +720,7 @@ public class PortalTestBase {
       String proratedFinalPrice = portalPage.getLinkText("portalASFinalProratedPrice");
       Util.printInfo("Prorated Final Amount : " + proratedFinalPrice);
       orderDetails.put("proratedFinalAmount", proratedFinalPrice);
-      if (!localeMap.get(BICECEConstants.REGION).equals("ENGB")) {
+      if (portalPage.checkFieldExistence("portalASTaxDetails")) {
         Util.printInfo("Capturing Tax details...");
         String taxAmount = portalPage.getLinkText("portalASTaxDetails");
         Util.printInfo("Tax amount : " + taxAmount);
