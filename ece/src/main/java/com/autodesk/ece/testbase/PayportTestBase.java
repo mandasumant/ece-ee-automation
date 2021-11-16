@@ -2,7 +2,7 @@ package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.base.GlobalTestBase;
+import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.utils.LoadJsonWithValue;
 import com.autodesk.testinghub.core.utils.Util;
 import io.restassured.RestAssured;
@@ -34,8 +34,8 @@ public class PayportTestBase {
     this.testData = new HashMap<>(testData);
 
     String certificateConfig = "PAYPORT_CERT_" + GlobalConstants.ENV.toUpperCase();
-    String pfxFile = GlobalTestBase.getTestDataDir()
-        + GlobalTestBase.getTestManifest().getProperty(certificateConfig);
+    String pfxFile = EISTestBase.getTestDataDir()
+        + EISTestBase.getTestManifest().getProperty(certificateConfig);
     sslConfig = loadPFXFile(pfxFile);
   }
 
@@ -69,8 +69,9 @@ public class PayportTestBase {
       String payload = LoadJsonWithValue.loadJson(dataSet, jsonFile).toString();
       Map<String, String> header = new HashMap<>();
       header.put("Content-Type", "application/json");
-      RestAssured.config = RestAssured.config().sslConfig(sslConfig);
-      Response response = given().headers(header).body(payload).when().post(baseUrl);
+      Response response = given()
+          .config(RestAssured.config().sslConfig(sslConfig))
+          .headers(header).body(payload).when().post(baseUrl);
       String result = response.getBody().asString();
       Util.printInfo("Result: " + result);
     } catch (Exception e) {

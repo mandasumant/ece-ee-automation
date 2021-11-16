@@ -3,7 +3,6 @@ package com.autodesk.ece.testbase;
 import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.bicapiModel.PayloadAddPaymentProfile;
 import com.autodesk.testinghub.core.bicapiModel.PayloadSpocAUTHToken;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.common.CommonConstants;
@@ -11,13 +10,11 @@ import com.autodesk.testinghub.core.common.services.ApigeeAuthenticationService;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.ErrorEnum;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import io.restassured.config.SSLConfig;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.File;
@@ -39,7 +36,7 @@ import org.testng.Assert;
 
 public class PelicanTestBase {
 
-  private static String productName = "";
+  private String productName = "";
 
   public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
@@ -430,104 +427,6 @@ public class PelicanTestBase {
     return hashedStr.trim();
   }
 
-  public String getPaymentProfileId(LinkedHashMap<String, String> testDataForEachMethod) {
-    String paymentProfileID = "";
-    try {
-      ObjectMapper om = new ObjectMapper();
-      String inputPayload = "";
-      String processor =
-          testDataForEachMethod.get("billingProcessor").equalsIgnoreCase(
-              BICECEConstants.ADYEN) ? BICECEConstants.ADYEN
-              : "bluesnap";
-
-      File jsonFile = ApigeeTestBase.getFile(processor, "PayloadAddPaymentProfile.json");
-      // getUserDetails() Keys => firstNameCEP, lastNameCEP, emailIdCEP, oxid
-      String currency = testDataForEachMethod.get(TestingHubConstants.currencyStore);
-      String city = testDataForEachMethod.get(TestingHubConstants.cityStore);
-      String country = testDataForEachMethod.get(TestingHubConstants.countryStore);
-      String postalCode = testDataForEachMethod.get(TestingHubConstants.postalCodeStore);
-      String stateProvince = testDataForEachMethod.get(TestingHubConstants.stateProvinceStore);
-      String streetAddress = testDataForEachMethod.get(TestingHubConstants.streetAddressStore);
-      String email = testDataForEachMethod.get(TestingHubConstants.emailid);
-      String firstName = testDataForEachMethod.get(TestingHubConstants.firstname);
-      String lastName = testDataForEachMethod.get(TestingHubConstants.lastname);
-      String companyName = "Holla " + lastName;
-      String oxid = testDataForEachMethod.get(TestingHubConstants.oxygenid);
-
-      try {
-        if (processor.equals(BICECEConstants.ADYEN)) {
-          PayloadAddPaymentProfile authJsonClass = om
-              .readValue(jsonFile, PayloadAddPaymentProfile.class);
-          authJsonClass.getUser().setCurrency(currency);
-          authJsonClass.getUser().setEmail(email);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setCity(city);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setCountry(country);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setPostalCode(postalCode);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo()
-              .setStateProvince(stateProvince);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo()
-              .setStreetAddress(streetAddress);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo()
-              .setFirstName(firstName.trim());
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setLastName(lastName);
-          authJsonClass.getUser().getPaymentProfile().getBillingInfo().setCompanyName(companyName);
-          inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(authJsonClass);
-          Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload);
-        } else {
-          PayloadAddPaymentProfile authJsonBluesnapClass = om.readValue(jsonFile,
-              PayloadAddPaymentProfile.class);
-          authJsonBluesnapClass.getUser().setEmail(email);
-          authJsonBluesnapClass.getUser().getPaymentProfile().getBillingInfo()
-              .setFirstName(firstName.trim());
-          authJsonBluesnapClass.getUser().getPaymentProfile().getBillingInfo()
-              .setLastName(lastName);
-          authJsonBluesnapClass.getUser().getPaymentProfile().getBillingInfo()
-              .setCompanyName(companyName);
-          inputPayload = om.writerWithDefaultPrettyPrinter()
-              .writeValueAsString(authJsonBluesnapClass);
-          Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload);
-        }
-      } catch (IOException e1) {
-        e1.printStackTrace();
-        AssertUtils.fail("Error while parsing PayloadAddPaymentProfile.json file");
-      }
-
-      String baseUrl =
-          TestingHubConstants.getCartBaseURL + TestingHubConstants.postAddPaymentProfile + oxid;
-      RestAssured.baseURI = baseUrl;
-
-      HashMap<String, String> authHeaders = new HashMap<String, String>();
-      authHeaders.put("Authorization", getSpocAuthToken(testDataForEachMethod));
-      authHeaders.put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
-
-      Response response = given().headers(authHeaders).body(inputPayload).when().post(baseUrl);
-      String result = response.getBody().asString();
-      if (response.getStatusCode() != 200) {
-        Util.sleep(60000);
-        response = given().headers(authHeaders).body(inputPayload).when().post(baseUrl);
-        result = response.getBody().asString();
-        if (response.getStatusCode() != 200) {
-          Util.printInfo(BICECEConstants.RESULT + result);
-          Util.printTestFailedMessage(
-              "Response code must be 200 but Payment Profle API return " + response
-                  .getStatusCode());
-          AssertUtils.fail(ErrorEnum.GENERIC_RETRY_MSG.geterr());
-        }
-      }
-
-      JsonPath jp = new JsonPath(result);
-      try {
-        paymentProfileID = jp.get("paymentProfiles[0].id") + ":" + companyName;
-      } catch (Exception e) {
-        AssertUtils.fail("Failed to generate payment Profile ID" + e.getMessage());
-      }
-      Util.PrintInfo(" paymentProfileID response :: " + paymentProfileID + "\n");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return paymentProfileID;
-  }
-
   @Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> getPurchaseOrderDetails(String purchaseOrderAPIresponse) {
     HashMap<String, String> results = new HashMap<>();
@@ -583,21 +482,6 @@ public class PelicanTestBase {
 
   public String addTokenInResourceUrl(String resourceUrl, String tokenString) {
     return resourceUrl.replace("passtoken", tokenString);
-  }
-
-  private String getDetails(SSLConfig config, String baseUrl, Map<String, String> header) {
-    String result = null;
-    try {
-      Response response = null;
-      RestAssured.config = RestAssured.config().sslConfig(config);
-      RestAssured.baseURI = baseUrl;
-      response = given().headers(header).when().get(baseUrl);
-      result = response.getBody().asString();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return result;
   }
 
   public HashMap<String, String> subscriptionsPelicanAPIHeaders(HashMap<String, String> data) {

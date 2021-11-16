@@ -589,7 +589,7 @@ public class PortalTestBase {
         Util.printInfo("Street Address : " + streetAddress);
 
         String city = portalPage.getTextFromLink("portalGetUserCityFromSubs")
-            .replaceAll(",", "")
+            .replace(",", "")
             .trim();
         Util.printInfo("City : " + city);
         Util.printInfo("Waiting for portalSubscriptionStateFromSubs");
