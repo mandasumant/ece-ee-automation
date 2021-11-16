@@ -461,7 +461,16 @@ public class PortalTestBase {
 
         clickWithJavaScriptExecutor(javascriptExecutor, "//a[@data-action='ManageRenewal']");
 
-        driver.findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button")).click();
+        try {
+          WebElement editSwitchTermButton = driver
+              .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
+          editSwitchTermButton.click();
+        } catch (org.openqa.selenium.StaleElementReferenceException ex) {
+          WebElement editSwitchTermButton = driver
+              .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
+          editSwitchTermButton.click();
+        }
+
         clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-1-year\"]");
 
         clickWithJavaScriptExecutor(javascriptExecutor, "//button[@data-wat-val=\"continue\"]");
