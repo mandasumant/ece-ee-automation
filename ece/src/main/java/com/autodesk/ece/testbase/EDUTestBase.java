@@ -2,6 +2,7 @@ package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -40,7 +41,7 @@ public class EDUTestBase {
    * @param userType - Whether we want to create a student or educator account
    * @return - Test step results
    */
-  @Step("Register EDU User")
+  @Step("Register EDU User" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> registerUser(EDUUserType userType) {
     HashMap<String, String> results = new HashMap<String, String>();
     int currentYear = Year.now().getValue();
@@ -136,7 +137,7 @@ public class EDUTestBase {
    * @param username - User's email
    * @param password - User's password
    */
-  @Step("Login EDU User")
+  @Step("Login EDU User" + GlobalConstants.TAG_TESTINGHUB)
   public void loginUser(String username, String password) {
     // Navigate to education site and click on "Get Started"
     eduPage.navigateToURL(testData.get("eduLandingPage"));
@@ -160,7 +161,7 @@ public class EDUTestBase {
    *
    * @param oxygenId - Oxygen ID of the user to approve
    */
-  @Step("Mark user as approved")
+  @Step("Mark user as approved" + GlobalConstants.TAG_TESTINGHUB)
   public void verifyUser(String oxygenId) {
     String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
     Response response = given()
@@ -180,7 +181,7 @@ public class EDUTestBase {
     verifyEducationStatus();
   }
 
-  @Step("Accept VSOS terms")
+  @Step("Accept VSOS terms" + GlobalConstants.TAG_TESTINGHUB)
   public void acceptVSOSTerms() {
     eduPage.waitForField("eduSignStarted", true, 5000);
     eduPage.click("eduSignStarted");
@@ -188,13 +189,13 @@ public class EDUTestBase {
     eduPage.click("eduSignSubmit");
   }
 
-  @Step("Dismiss registration success message")
+  @Step("Dismiss registration success message" + GlobalConstants.TAG_TESTINGHUB)
   public void dismissSuccessPopup() {
     eduPage.waitForField("eduSignSuccess", true, 5000);
     eduPage.click("eduSignSuccess");
   }
 
-  @Step("Verify Education Status")
+  @Step("Verify Education Status" + GlobalConstants.TAG_TESTINGHUB)
   public void verifyEducationStatus() {
     String xPath = eduPage.getFirstFieldLocator("eduStatus");
     String status = driver.findElement(By.xpath(xPath)).getText();
@@ -205,6 +206,7 @@ public class EDUTestBase {
   /**
    * On an "Individual" education tab page, download Fusion 360
    */
+  @Step("Download Fusion 360" + GlobalConstants.TAG_TESTINGHUB)
   public void downloadF360Product() {
     // Click on menus to download Fusion 360
     eduPage.click("eduFusionGet");
@@ -230,7 +232,7 @@ public class EDUTestBase {
     driver.switchTo().window(currentTabHandle);
   }
 
-  @Step("Activate Class Fusion Subscription")
+  @Step("Activate Class Fusion Subscription" + GlobalConstants.TAG_TESTINGHUB)
   public void activateFusionAndAssignUsers() throws MetadataException {
     // Activate new subscription model for Fusion 360
     eduPage.clickUsingLowLevelActions("educationClassLabTab");
@@ -244,7 +246,7 @@ public class EDUTestBase {
     eduPage.clickUsingLowLevelActions("assignUsersButton");
   }
 
-  @Step("Verify Fusion in Portal")
+  @Step("Verify Fusion in Portal" + GlobalConstants.TAG_TESTINGHUB)
   public void validateFusionActivation() throws MetadataException {
     // verify that Fusion is visible in a list of products
     eduPage.waitForField("eduFusionProduct", true, 10);
@@ -255,6 +257,7 @@ public class EDUTestBase {
   /**
    * Get a license for Autocad
    */
+  @Step("Verify Seibel Download" + GlobalConstants.TAG_TESTINGHUB)
   public void verifySeibelDownload() {
     try {
       eduPage.clickUsingLowLevelActions("eduAutocadGet");

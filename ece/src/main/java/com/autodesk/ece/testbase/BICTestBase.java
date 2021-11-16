@@ -29,7 +29,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -461,6 +460,7 @@ public class BICTestBase {
     }
   }
 
+  @Step("Populate Billing Details")
   @SuppressWarnings("static-access")
   private boolean populateBillingDetails(Map<String, String> address, String paymentType) {
     boolean status = false;
@@ -559,8 +559,8 @@ public class BICTestBase {
         AssertUtils.fail("Organization_Name not available.");
       }
       driver.findElement(By.xpath(orgNameXpath))
-          .sendKeys( address.get(
-                  BICECEConstants.ORGANIZATION_NAME));
+          .sendKeys(address.get(
+              BICECEConstants.ORGANIZATION_NAME));
 
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       driver.findElement(By.xpath(fullAddrXpath))
@@ -589,17 +589,6 @@ public class BICTestBase {
       AssertUtils.fail("Unable to Populate Billing Details");
     }
     return status;
-  }
-
-  private void clickContinueCartBillingPage() {
-    if (System.getProperty("environment").equalsIgnoreCase("stg")) {
-      try {
-        bicPage.clickUsingLowLevelActions("billingContinue");
-      } catch (MetadataException e) {
-        e.printStackTrace();
-        AssertUtils.fail("Unable to click on continue button under Billing page in BIC-Cart");
-      }
-    }
   }
 
   public String getPaymentDetails(String paymentMethod) {
@@ -841,6 +830,7 @@ public class BICTestBase {
     Util.sleep(20000);
   }
 
+  @Step("Selecting payment profile" + GlobalConstants.TAG_TESTINGHUB)
   public void selectPaymentProfile(HashMap<String, String> data, String[] paymentCardDetails, Map<String,String> address) {
     try {
 
@@ -849,13 +839,13 @@ public class BICTestBase {
       String[] paymentMethods = data.get(BICECEConstants.PAYMENT_METHODS).split(",");
       boolean isValidPaymentType = false;
 
-      for(String paymentMethod : paymentMethods){
-        if(paymentMethod.equals(data.get(BICECEConstants.PAYMENT_TYPE))){
-           isValidPaymentType = true;
-           break;
-         }
+      for (String paymentMethod : paymentMethods) {
+        if (paymentMethod.equals(data.get(BICECEConstants.PAYMENT_TYPE))) {
+          isValidPaymentType = true;
+          break;
+        }
       }
-      if(isValidPaymentType){
+      if (isValidPaymentType) {
         switch (data.get(BICECEConstants.PAYMENT_TYPE).toUpperCase()) {
           case BICConstants.paymentTypePayPal:
             populatePaypalPaymentDetails(data);
@@ -886,6 +876,7 @@ public class BICTestBase {
     }
   }
 
+  @Step("Submitting Order and Retrieving Order Number")
   private String submitGetOrderNumber() {
     clickMandateAgreementCheckbox();
     int count = 0;
@@ -962,7 +953,7 @@ public class BICTestBase {
     debugPageUrl(" Step 3a Check order Number is Null");
     try {
       orderNumber = driver.findElement(By.xpath(
-          "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+              "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
           .getText();
     } catch (Exception e) {
       debugPageUrl(" Step 4 Check order Number is Null");
@@ -982,7 +973,7 @@ public class BICTestBase {
 
       try {
         orderNumber = driver.findElement(By.xpath(
-            "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+                "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
             .getText();
       } catch (Exception e) {
         debugPageUrl(" Step 5 Check order Number is Null");
@@ -1019,12 +1010,6 @@ public class BICTestBase {
     validateBicOrderNumber(orderNumber);
 
     return orderNumber;
-  }
-
-  public void sendKeysAction(String locator, String data) throws MetadataException {
-    Actions act = new Actions(driver);
-    WebElement element = bicPage.getMultipleWebElementsfromField(locator).get(0);
-    act.sendKeys(element, data).perform();
   }
 
   public void printConsole(String Url, String OrderNumber, String emailID,
@@ -1813,6 +1798,7 @@ public class BICTestBase {
     return orderNumber;
   }
 
+  @Step("Select DR payment profile" + GlobalConstants.TAG_TESTINGHUB)
   public void selectPaymentProfileDR(HashMap<String, String> data, String[] paymentCardDetails) {
     try {
       Util.printInfo("Selecting DR payment profile : " + data.get(BICECEConstants.PAYMENT_TYPE));
