@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BiC order with promotion" type="Application" factoryName="Application" folderName="Orders">
+    <option name="ALTERNATIVE_JRE_PATH" value="11" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
+    <module name="ece" />
+    <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -Dapplication=ece -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=&quot;STG&quot; -Duserid=&quot;sudarsan.rao@autodesk.com&quot; -DtestGroup=&quot;bic-promocode-order&quot; -Dclass.name=&quot;com.autodesk.ece.bic.testsuites.BICOrderPromoCode&quot; -Dsku=&quot;default:1&quot; -Dstore=&quot;STORE-NAMER&quot; -Dusertype=&quot;new&quot; -Dpayment=&quot;VISA&quot; -Demail=&quot;&quot; -Dpassword=&quot;&quot; -Dtesttype=&quot;initialorderbic&quot; -Dchannel=&quot;BIC&quot; -Duser.timezone=&quot;America/Montreal&quot;" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ece" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
