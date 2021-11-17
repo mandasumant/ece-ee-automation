@@ -618,13 +618,7 @@ public class BICOrderCreation extends ECETestBase {
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
-    // Validate Submit Order
-    tibcotb.validateSubmitOrder(results.get(BICConstants.orderNumber));
-    updateTestingHub(testResults);
-
     // Validate Create Order
-    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber),
-        BICECEConstants.ORDER_CREATION);
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
     testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
@@ -686,10 +680,6 @@ public class BICOrderCreation extends ECETestBase {
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
 
-    // Validate Submit Order
-    tibcotb.validateSubmitOrder(results.get(BICConstants.orderNumber));
-    updateTestingHub(testResults);
-
     // Portal
     portaltb.validateMetaOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
@@ -697,8 +687,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Validate Create Order
-    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber),
-        BICECEConstants.ORDER_CREATION);
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
     testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
