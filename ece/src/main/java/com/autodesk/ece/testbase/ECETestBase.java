@@ -4,13 +4,16 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.listeners.TestingHubAPIClient;
 import com.autodesk.testinghub.core.database.DBValidations;
-import com.autodesk.testinghub.core.sap.SAPDriverFiori;
-import com.autodesk.testinghub.core.testbase.*;
+import com.autodesk.testinghub.core.testbase.AoeTestBase;
+import com.autodesk.testinghub.core.testbase.DynamoDBValidation;
+import com.autodesk.testinghub.core.testbase.PWSTestBase;
+import com.autodesk.testinghub.core.testbase.RegonceTestBase;
+import com.autodesk.testinghub.core.testbase.SFDCTestBase;
+import com.autodesk.testinghub.core.testbase.SOAPTestBase;
+import com.autodesk.testinghub.core.testbase.SiebelTestBase;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,12 +24,12 @@ public class ECETestBase {
 
   protected static DBValidations dbValtb = null;
   protected SFDCTestBase sfdctb = null;
-  protected TIBCOServiceTestBase tibcotb = null;
   protected SOAPTestBase soaptb = null;
   protected PortalTestBase portaltb = null;
   protected DynamoDBValidation dynamotb = null;
   protected ApigeeTestBase resttb = null;
   protected PelicanTestBase pelicantb = null;
+  LinkedHashMap<String, String> localeConfig;
   private WebDriver webdriver = null;
   private GlobalTestBase testbase = null;
   private AoeTestBase aoetb = null;
@@ -34,12 +37,10 @@ public class ECETestBase {
   private BICTestBase bictb = null;
   private PWSTestBase pwstb = null;
   private RegonceTestBase regoncetb = null;
-  LinkedHashMap<String, String> localeConfig;
   public ECETestBase() {
     System.out.println("into the testing hub. core changes");
     testbase = new GlobalTestBase("ece", "ece", GlobalConstants.BROWSER);
     webdriver = testbase.getdriver();
-    tibcotb = new TIBCOServiceTestBase();
     dbValtb = new DBValidations();
     sfdctb = new SFDCTestBase(webdriver);
     soaptb = new SOAPTestBase();
@@ -85,7 +86,6 @@ public class ECETestBase {
     try {
       Util.printInfo("Closing Webdriver after the end of the test");
       testbase.closeBrowser();
-      tibcotb.tibcoConnectionClose();
     } catch (Exception e) {
       e.printStackTrace();
     }
