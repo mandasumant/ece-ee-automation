@@ -1,26 +1,24 @@
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.testbase.ECETestBase;
+import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.constants.TestingHubConstants;
+import com.autodesk.testinghub.core.testbase.SAPTestBase;
+import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
-import com.autodesk.testinghub.core.testbase.SAPTestBase;
-import com.autodesk.testinghub.core.utils.YamlUtil;
-
 public class IndirectOrderCreation extends ECETestBase {
 
+  private static final String PASSWORD = "Password1";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
-  private static final String PASSWORD = "Password1";
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -63,15 +61,7 @@ public class IndirectOrderCreation extends ECETestBase {
 	HashMap<String, String>  results = saptb.createMetaInitialOrderDynamo(testDataForEachMethod);
 	updateTestingHub(results);
 
-	/* Below code checks Tibco, SAP, GBX and SFDC for validation. Lets keep this for future integration
-	tibcotb.validateSyncOrderInTibcoForFirstOrder(results.get(TestingHubConstants.orderNumber));
-	tibcotb.validatePublishOrderSAPForFirstOrder(results.get(TestingHubConstants.orderNumber));
-	tibcotb.validatePublishOrderGreenboxForFirstOrder(results.get(TestingHubConstants.orderNumber));
-	tibcotb.validateSyncEntitlementFirstOrder(results.get(TestingHubConstants.agreementNumber));
-	dbValtb.validatedAgreementExistSfdc(results.get(TestingHubConstants.agreementNumber));
-	*/
-
-	// In direct Order validation in Portal
+		// In direct Order validation in Portal
 	tb.getPortalTestBase().validateBICOrderProductInCEP(testDataForEachMethod.get(BICConstants.cepURL),
 		results.get(BICConstants.emailid), PASSWORD, results.get("agreementNumber"));
 	updateTestingHub(results);
