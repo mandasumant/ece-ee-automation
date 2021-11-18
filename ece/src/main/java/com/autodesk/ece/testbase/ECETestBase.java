@@ -3,8 +3,17 @@ package com.autodesk.ece.testbase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.listeners.TestingHubAPIClient;
+import com.autodesk.testinghub.core.database.DBValidations;
+import com.autodesk.testinghub.core.testbase.AoeTestBase;
+import com.autodesk.testinghub.core.testbase.DynamoDBValidation;
+import com.autodesk.testinghub.core.testbase.PWSTestBase;
+import com.autodesk.testinghub.core.testbase.RegonceTestBase;
+import com.autodesk.testinghub.core.testbase.SFDCTestBase;
+import com.autodesk.testinghub.core.testbase.SOAPTestBase;
+import com.autodesk.testinghub.core.testbase.SiebelTestBase;
 import com.autodesk.testinghub.core.utils.Util;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,17 +22,32 @@ import org.testng.annotations.AfterTest;
 
 public class ECETestBase {
 
+  protected static DBValidations dbValtb = null;
+  protected SFDCTestBase sfdctb = null;
+  protected SOAPTestBase soaptb = null;
   protected PortalTestBase portaltb = null;
+  protected DynamoDBValidation dynamotb = null;
+  protected ApigeeTestBase resttb = null;
   protected PelicanTestBase pelicantb = null;
+  LinkedHashMap<String, String> localeConfig;
   private WebDriver webdriver = null;
   private GlobalTestBase testbase = null;
+  private AoeTestBase aoetb = null;
+  private SiebelTestBase siebeltb = null;
   private BICTestBase bictb = null;
+  private PWSTestBase pwstb = null;
+  private RegonceTestBase regoncetb = null;
 
   public ECETestBase() {
     System.out.println("into the testing hub. core changes");
     testbase = new GlobalTestBase("ece", "ece", GlobalConstants.BROWSER);
     webdriver = testbase.getdriver();
+    dbValtb = new DBValidations();
+    sfdctb = new SFDCTestBase(webdriver);
+    soaptb = new SOAPTestBase();
     portaltb = new PortalTestBase(testbase);
+    resttb = new ApigeeTestBase();
+    dynamotb = new DynamoDBValidation();
     pelicantb = new PelicanTestBase();
   }
 
