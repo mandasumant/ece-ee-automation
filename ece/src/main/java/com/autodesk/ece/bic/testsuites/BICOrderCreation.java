@@ -505,7 +505,6 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBicFlexOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    testDataForEachMethod.put("productType", "flex");
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);

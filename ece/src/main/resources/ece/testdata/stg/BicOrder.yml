@@ -258,6 +258,7 @@ validateBicRefundOrder:
 validateBicFlexOrder:
   productID: *FlexOrderPriceID
   bicFlexPriceID: *FlexOrderPriceID
+  productType: "flex"
 
 validateBicCloudCreditOrder:
   productID: *bicCloudCreditsPriceId

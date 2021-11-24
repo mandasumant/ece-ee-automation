@@ -1085,12 +1085,11 @@ public class BICTestBase {
     String password = data.get(BICECEConstants.PASSWORD);
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String promoCode = data.get(BICECEConstants.PROMO_CODE);
-    String productType = data.get("productType");
 
     String emailID = generateUniqueEmailID();
 
     String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
-        productName, password, paymentMethod, promoCode, productType);
+        productName, password, paymentMethod, promoCode);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1187,7 +1186,7 @@ public class BICTestBase {
       String guacDotComBaseURL,
       String productName,
       String password,
-      String paymentMethod, String promocode, String productType) throws MetadataException {
+      String paymentMethod, String promocode) throws MetadataException {
     String orderNumber;
 
     String constructGuacDotComURL =
@@ -1200,7 +1199,9 @@ public class BICTestBase {
     disableChatSession();
     checkCartDetailsError();
 
-    if ("flex".equals(productType)) {
+    String productType = data.get("productType");
+
+    if (productType == "flex") {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
