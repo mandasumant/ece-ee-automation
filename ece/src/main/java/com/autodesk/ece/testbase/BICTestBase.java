@@ -1198,14 +1198,15 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
     checkCartDetailsError();
-
     String productType = data.get("productType");
 
     if (productType == "flex") {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
-      selectMonthlySubscription(driver);
+       if(data.get(BICECEConstants.OFFERING_TYPE) != null && !data.get(BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META)) {
+        selectMonthlySubscription(driver);
+      }
       subscribeAndAddToCart(data);
     }
 

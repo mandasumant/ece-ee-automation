@@ -637,14 +637,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
-    String bicOrderO2ID = getPortalTestBase().getOxygenId(results).trim();
-    results.put(BICConstants.oxid, bicOrderO2ID);
-    results.putAll(testDataForEachMethod);
-
-    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-    updateTestingHub(testResults);
-
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
 
@@ -653,6 +645,11 @@ public class BICOrderCreation extends ECETestBase {
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
+
+    //Validate if this is Meta order
+    if(!results.get(BICECEConstants.RESPONSE_OFFERING_TYPE).equals(BICECEConstants.META_SUBSCRIPTION)){
+      AssertUtils.fail("The product is not a meta product . Offering type is  : "+ results.get(BICECEConstants.RESPONSE_OFFERING_TYPE) );
+    }
 
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
@@ -663,8 +660,8 @@ public class BICOrderCreation extends ECETestBase {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICECEConstants.RESPONSE_OFFERING_TYPE, results.get(BICECEConstants.OFFERING_TYPE));
+      testResults.put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
       testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
       testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
@@ -884,7 +881,6 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(240000);
 
     // Get the billing date of the aligned subscription
-
     results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
     results.put(
         BICECEConstants.SUB2_NEXT_BILLING_DATE, results.get(BICECEConstants.NEXT_BILLING_DATE));
