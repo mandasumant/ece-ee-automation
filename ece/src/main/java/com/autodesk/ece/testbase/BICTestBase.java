@@ -1195,7 +1195,9 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
     checkCartDetailsError();
-    selectMonthlySubscription(driver);
+    if(!data.get("offeringType").equals("META")) {
+      selectMonthlySubscription(driver);
+    }
     subscribeAndAddToCart(data);
 
     acceptCookiesAndUSSiteLink();

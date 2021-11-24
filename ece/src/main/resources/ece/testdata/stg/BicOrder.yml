@@ -267,6 +267,8 @@ validateBicCloudCreditOrder:
 validateBicMetaOrder:
   productID: *bicMetaPriceID
   bicNativePriceID: *bicMetaPriceID
+  productName: "infraworks"
+  offeringType: "META"
 
 validateTrialDownloadUI:
   nullTest: "1"
