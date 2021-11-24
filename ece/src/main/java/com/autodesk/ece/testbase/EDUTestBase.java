@@ -102,7 +102,12 @@ public class EDUTestBase {
     if (userType != EDUUserType.MENTOR) {
       // Pick a school called "Broadway"
       eduPage.waitForField("eduSchool", true, 5000);
-      eduPage.populateField("eduSchool", "Broadway");
+      try {
+        eduPage.sendKeysInTextFieldSlowly("eduSchool", "Broadway");
+      } catch (Exception e) {
+        AssertUtils.fail("Failed to search for school");
+        e.printStackTrace();
+      }
       eduPage.waitForField("eduSchoolOption", true, 5000);
 
       try {

@@ -246,9 +246,6 @@ public class PelicanTestBase {
     Util.PrintInfo(BICECEConstants.RESULT + result);
     JsonPath js = new JsonPath(result);
     Util.printInfo("js is:" + js);
-
-
-
   }
 
   @Step("Get Pelican Response" + GlobalConstants.TAG_TESTINGHUB)
