@@ -1200,7 +1200,7 @@ public class BICTestBase {
     disableChatSession();
     checkCartDetailsError();
 
-    if (productType == "flex") {
+    if ("flex".equals(productType)) {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
