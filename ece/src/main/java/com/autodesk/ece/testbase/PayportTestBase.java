@@ -52,6 +52,7 @@ public class PayportTestBase {
 
     LinkedHashMap<String, Object> dataSet = new LinkedHashMap<>();
     dataSet.put("email", results.get("emailid"));
+    dataSet.put("storeExternalKey", results.get("getPOReponse_storeExternalKey"));
     dataSet.put("paymentProfileId", results.get("getPOReponse_storedPaymentProfileId"));
     dataSet.put("paymentProcessor", results.get("getPOReponse_paymentProcessor"));
     dataSet.put("last4Digits", results.get("getPOReponse_last4Digits"));
@@ -63,6 +64,7 @@ public class PayportTestBase {
     dataSet.put("unitPriceWithVAT", results.get("response_nextBillingChargeAmount"));
     dataSet.put("taxCode", results.get("getPOReponse_taxCode"));
     dataSet.put("offerExternalKey", results.get("response_offeringExternalKey"));
+    dataSet.put("priceId", results.get("response_nextBillingPriceId"));
 
     try {
       ClassLoader classLoader = this.getClass().getClassLoader();

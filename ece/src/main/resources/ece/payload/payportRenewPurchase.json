@@ -1,5 +1,6 @@
 {
   "purchase": {
+    "storeExternalKey": "{{storeExternalKey}}",
     "user": {
       "email": "{{email}}",
       "paymentProfile": {
@@ -22,8 +23,8 @@
         "unitPriceAfterDiscountWithVAT": "{{unitPriceWithVAT}}",
         "promoDiscount": "0.0",
         "taxCode": "{{taxCode}}",
-        "offerExternalKey": "{{offerExternalKey}}"
-
+        "offerExternalKey": "{{offerExternalKey}}",
+        "priceId": "{{priceId}}"
       }
     ]
   }
