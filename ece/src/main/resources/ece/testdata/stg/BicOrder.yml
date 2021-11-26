@@ -92,6 +92,7 @@ default:
   getPriceDetails_X_E2_AppFamilyId: "9999"
   getPriceDetails_terceS_ssap: "Autodesk1"
   quantity: "1"
+  productType: "bic"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"

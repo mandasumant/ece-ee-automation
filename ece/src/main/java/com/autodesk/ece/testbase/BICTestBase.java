@@ -1200,11 +1200,12 @@ public class BICTestBase {
     checkCartDetailsError();
     String productType = data.get("productType");
 
-    if (productType == "flex") {
+    if (productType.equals("flex")) {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
-       if(data.get(BICECEConstants.OFFERING_TYPE) != null && !data.get(BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META)) {
+      if (data.get(BICECEConstants.OFFERING_TYPE) != null && !data.get(
+          BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META)) {
         selectMonthlySubscription(driver);
       }
       subscribeAndAddToCart(data);
