@@ -414,7 +414,7 @@ public class PelicanTestBase {
 
   public String retryPelicanResponse(HashMap<String, String> results) {
     String response = "";
-    boolean subScriptionFound = false;
+    boolean subscriptionIdFound = false;
     for (int i = 1; i < 4; i++) {
       response = getPelicanResponse(results);
       int intIndex = response.indexOf("subscriptionId");
@@ -423,11 +423,11 @@ public class PelicanTestBase {
         Util.sleep(300000);
       } else {
         Util.printInfo("Found subscriptionId at index " + intIndex);
-        subScriptionFound = true;
+        subscriptionIdFound = true;
         break;
       }
     }
-    if(!subScriptionFound){
+    if(!subscriptionIdFound){
       AssertUtils.fail("Failed: Could not find the subscription id. Please contact Subscription Service support.");
     }
     return response;
