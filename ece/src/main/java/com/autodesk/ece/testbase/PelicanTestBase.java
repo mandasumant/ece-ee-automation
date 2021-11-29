@@ -428,7 +428,7 @@ public class PelicanTestBase {
       }
     }
     if(!subscriptionIdFound){
-      AssertUtils.fail("Failed: Could not find the subscription id for Order#" + results.get(BICConstants.orderNumber) + ".");
+      AssertUtils.fail("Failed: Could not find the subscription id for Order# " + results.get(BICConstants.orderNumber) + ".");
     }
     return response;
   }
