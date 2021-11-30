@@ -92,7 +92,7 @@ public class BICRefundOrder extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryPelicanResponse(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
