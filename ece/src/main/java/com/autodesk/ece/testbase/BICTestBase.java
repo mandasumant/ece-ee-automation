@@ -911,7 +911,6 @@ public class BICTestBase {
     try {
       bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
       bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-      bicPage.waitForPageToLoad();
     } catch (Exception e) {
       e.printStackTrace();
       debugPageUrl(e.getMessage());
