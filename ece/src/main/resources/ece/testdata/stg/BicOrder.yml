@@ -102,7 +102,7 @@ default:
   bicCloudCreditsPriceId: &bicCloudCreditsPriceId "11043"
   order: "undefined"
   createTrailsAPI: "https://api.pelicanstg.autodesk.com/subscriptions/v3"
-  trialDownloadUrl: "https://www-pt.autodesk.com/products/autocad/overview?us_oa=dotcom-us&us_si=7dbc5a13-abd9-4ec9-9aff-4f4bf480bae7&us_st=AutoCAD&us_pt=ACD"
+  trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview?us_oa=dotcom-us&us_si=05ceeb3d-c765-4154-82da-eb5f01ed56cd&us_st=3ds%20Max%20free%20trial"
 
 STORE-AUS:
   currencyStore: "AUD"
