@@ -72,8 +72,8 @@ public class EDUUserFlows extends ECETestBase {
     }
   }
 
-  @Test(groups = {"activate-fusion-educator"}, description = "Educator activates Fusion 360")
-  public void validateFusionActivationByEducator() throws MetadataException {
+  @Test(groups = {"activate-autocad-educator"}, description = "Educator activates AutoCAD")
+  public void validateAutoCADActivationByEducator() throws MetadataException {
     HashMap<String, String> results = new HashMap<String, String>();
     EDUTestBase eduSetupTB = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
     // Create new user with Educator role
@@ -102,10 +102,10 @@ public class EDUUserFlows extends ECETestBase {
     eduVerifiedTB.verifyEducationStatus();
 
     // Activate product and assign users
-    eduVerifiedTB.activateFusionAndAssignUsers();
+    eduVerifiedTB.activateAutoCADAndAssignUsers();
 
     // Check that we can see fusion product in portal
-    eduVerifiedTB.validateFusionActivation();
+    eduVerifiedTB.validateAutoCADActivation();
   }
 
   @Test(groups = {

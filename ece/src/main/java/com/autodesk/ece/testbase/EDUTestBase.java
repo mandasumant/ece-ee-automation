@@ -21,6 +21,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
 
 public class EDUTestBase {
 
@@ -221,10 +222,7 @@ public class EDUTestBase {
     // Downloading opens a new browser tab, so save the current tab handle and determine the
     // handle of the new tab
     String currentTabHandle = driver.getWindowHandle();
-    Set<String> windowHandles = driver.getWindowHandles();
-    windowHandles.remove(currentTabHandle); // The new tab is the tab that isn't the current one
-    String newTabHandle = windowHandles.iterator().next();
-    driver.switchTo().window(newTabHandle);
+    switchToNextTab();
 
     // Assert that we have successfully downloaded the product
     WebElement downloadTitle = driver.findElement(
@@ -237,26 +235,28 @@ public class EDUTestBase {
     driver.switchTo().window(currentTabHandle);
   }
 
-  @Step("Activate Class Fusion Subscription" + GlobalConstants.TAG_TESTINGHUB)
-  public void activateFusionAndAssignUsers() throws MetadataException {
-    // Activate new subscription model for Fusion 360
+  @Step("Activate AutoCAD Class Subscription" + GlobalConstants.TAG_TESTINGHUB)
+  public void activateAutoCADAndAssignUsers() throws MetadataException {
+    // Activate new subscription model for AutoCAD
     eduPage.clickUsingLowLevelActions("educationClassLabTab");
     eduPage.clickUsingLowLevelActions("subscriptionAcceptButton");
 
     // Assign user
-    eduPage.clickUsingLowLevelActions("activateFusionClassButton");
+    eduPage.clickUsingLowLevelActions("activateAutoCADClassButton");
     eduPage.clickUsingLowLevelActions("educationConfirmButton");
     // Wait time because it takes up to 15 sec sometimes to load assignUsersButton
     Util.sleep(15000);
     eduPage.clickUsingLowLevelActions("assignUsersButton");
   }
 
-  @Step("Verify Fusion in Portal" + GlobalConstants.TAG_TESTINGHUB)
-  public void validateFusionActivation() throws MetadataException {
-    // verify that Fusion is visible in a list of products
-    eduPage.waitForField("eduFusionProduct", true, 10);
-    Util.printInfo("Verify fusion");
-    eduPage.checkIfElementExistsInPage("eduFusionProduct", 10);
+  @Step("Verify AutoCAD in Portal" + GlobalConstants.TAG_TESTINGHUB)
+  public void validateAutoCADActivation() throws MetadataException {
+    switchToNextTab();
+
+    // verify that AutoCAD is visible in a list of products
+    eduPage.waitForField("eduAutoCADProduct", true, 10);
+    Util.printInfo("Verify AutoCAD");
+    Assert.assertTrue(eduPage.checkIfElementExistsInPage("eduAutoCADProduct", 10));
   }
 
   /**
@@ -297,6 +297,17 @@ public class EDUTestBase {
     WebElement element = driver.findElement(By.xpath(xPath));
     Select selectElement = new Select(element);
     selectElement.selectByValue(value);
+  }
+
+  /**
+   * Switch to a neighboring tab
+   */
+  private void switchToNextTab() {
+    String currentTabHandle = driver.getWindowHandle();
+    Set<String> windowHandles = driver.getWindowHandles();
+    windowHandles.remove(currentTabHandle); // The new tab is the tab that isn't the current one
+    String newTabHandle = windowHandles.iterator().next();
+    driver.switchTo().window(newTabHandle);
   }
 
   public enum EDUUserType {
