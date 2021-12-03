@@ -1996,7 +1996,6 @@ public class BICTestBase {
   private void clickOnSaveProfileBtnDR() {
     try {
       Util.printInfo("Clicking on DR save payment profile button...");
-      Util.sleep(10000);
       List<WebElement> eles = bicPage.getMultipleWebElementsfromField("saveMyAccountButtonDR");
       eles.get(0).click();
       bicPage.waitForPageToLoad();
