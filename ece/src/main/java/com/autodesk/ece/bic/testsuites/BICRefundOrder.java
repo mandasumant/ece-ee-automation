@@ -4,6 +4,7 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
+import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
@@ -17,11 +18,11 @@ import org.testng.annotations.Test;
 
 public class BICRefundOrder extends ECETestBase {
 
+  private static String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
   long startTime;
   LinkedHashMap<String, String> testDataForEachMethod = null;
-  private static String defaultLocale = "en_US";
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String,String>> localeDataMap = null;
   String locale = null;
@@ -78,12 +79,12 @@ public class BICRefundOrder extends ECETestBase {
   }
 
   @Test(groups = {"bic-RefundOrder"}, description = "BIC refund order")
-  public void validateBicRefundOrder() {
+  public void validateBicRefundOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
 
     HashMap<String, String> results = getBicTestBase()
-            .createGUACBICOrderDotCom(testDataForEachMethod);
+        .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));
@@ -91,7 +92,7 @@ public class BICRefundOrder extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryPelicanResponse(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));

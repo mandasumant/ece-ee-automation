@@ -717,7 +717,13 @@ public class PortalTestBase {
       portalPage.populateField("portalASQtyTextField", addSeatQty);
       Util.sleep(10000);
       portalPage.waitForFieldPresent("portalASFinalProratedPrice", 5000);
-      String proratedFinalPrice = portalPage.getLinkText("portalASFinalProratedPrice");
+
+      String proratedFinalPrice;
+      if (portalPage.checkIfElementExistsInPage("portalASDiscountedProratedPrice", 10)) {
+        proratedFinalPrice = portalPage.getLinkText("portalASDiscountedProratedPrice");
+      } else {
+        proratedFinalPrice = portalPage.getLinkText("portalASFinalProratedPrice");
+      }
       Util.printInfo("Prorated Final Amount : " + proratedFinalPrice);
       orderDetails.put("proratedFinalAmount", proratedFinalPrice);
       if (portalPage.checkFieldExistence("portalASTaxDetails")) {
@@ -756,8 +762,8 @@ public class PortalTestBase {
       String confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
 
       AssertUtils.assertEquals(
-          Double.valueOf(data.get("proratedFinalAmount").substring(1)).doubleValue(),
-          Double.valueOf(confirmProratedAmount.substring(1)).doubleValue());
+          Double.valueOf(data.get("proratedFinalAmount").substring(1).replace(",", "")),
+          Double.valueOf(confirmProratedAmount.substring(1).replace(",", "")));
 
       Util.printInfo("Clicking on back button...");
       portalPage.clickUsingLowLevelActions("portalBackButton");

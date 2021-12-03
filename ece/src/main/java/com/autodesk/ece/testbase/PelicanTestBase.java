@@ -121,6 +121,7 @@ public class PelicanTestBase {
           js.get("data.lastBillingInfo.purchaseOrderId") != null ? Integer
               .toString(js.get("data.lastBillingInfo.purchaseOrderId")) : null);
       results.put("response_nextBillingDate", js.get("data.nextBillingDate"));
+      results.put("response_offeringType",js.get("data.offeringType"));
       results.put("response_subscriptionQuantity", Integer.toString(js.get("data.quantity")));
       results.put("response_quantityToReduce", Integer.toString(js.get("data.quantityToReduce")));
       results.put("response_offeringExternalKey", js.get("data.offeringExternalKey"));
@@ -413,6 +414,7 @@ public class PelicanTestBase {
 
   public String retryPelicanResponse(HashMap<String, String> results) {
     String response = "";
+    boolean subscriptionIdFound = false;
     for (int i = 1; i < 4; i++) {
       response = getPelicanResponse(results);
       int intIndex = response.indexOf("subscriptionId");
@@ -421,8 +423,12 @@ public class PelicanTestBase {
         Util.sleep(300000);
       } else {
         Util.printInfo("Found subscriptionId at index " + intIndex);
+        subscriptionIdFound = true;
         break;
       }
+    }
+    if(!subscriptionIdFound){
+      AssertUtils.fail("Failed: Could not find the subscription id for Order# " + results.get(BICConstants.orderNumber) + ".");
     }
     return response;
   }

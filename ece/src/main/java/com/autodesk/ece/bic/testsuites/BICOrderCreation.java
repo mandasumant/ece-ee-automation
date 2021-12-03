@@ -95,7 +95,7 @@ public class BICOrderCreation extends ECETestBase {
 
   @Test(groups = {
       "bic-changePayment"}, description = "Validation of BIC change payment details functionality")
-  public void validateBICChangePaymentProfile() {
+  public void validateBICChangePaymentProfile() throws MetadataException {
     String emailID = System.getProperty(BICECEConstants.EMAIL);
     String password = System.getProperty(BICECEConstants.PASSWORD);
 
@@ -134,7 +134,7 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {"bic-nativeorder"}, description = "Validation of Create BIC Hybrid Order")
-  public void validateBicNativeOrder() {
+  public void validateBicNativeOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
@@ -184,7 +184,7 @@ public class BICOrderCreation extends ECETestBase {
 
   @Test(groups = {
       "bic-nativeorder-switch-term"}, description = "Validation of Create BIC Hybrid Order")
-  public void validateBicNativeOrderSwitchTerm()  {
+  public void validateBicNativeOrderSwitchTerm() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
@@ -308,12 +308,13 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {"bic-addseat-native"}, description = "Validation of BIC Add Seat Order")
-  public void validateBicAddSeatNativeOrder() {
+  public void validateBicAddSeatNativeOrder() throws MetadataException {
     testDataForEachMethod
         .put(BICECEConstants.PRODUCT_ID, testDataForEachMethod.get("nativeproductID"));
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     // Trigger Invoice join
@@ -384,7 +385,7 @@ public class BICOrderCreation extends ECETestBase {
 
   @Test(groups = {
       "bic-guac-addseats"}, description = "Validation Add Seats in GAUC with existing user")
-  public void validateBicAddSeats() {
+  public void validateBicAddSeats() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
 
@@ -501,10 +502,11 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {"bic-flexorder"}, description = "Validation of Create BIC Flex Order")
-  public void validateBicFlexOrder() {
+  public void validateBicFlexOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -626,21 +628,14 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {"bic-metaorder"}, description = "Validation of Create BIC Meta Order")
-  public void validateBicMetaOrder() {
+  public void validateBicMetaOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
 
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
-
-    String bicOrderO2ID = getPortalTestBase().getOxygenId(results).trim();
-    results.put(BICConstants.oxid, bicOrderO2ID);
-    results.putAll(testDataForEachMethod);
-
-    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-    updateTestingHub(testResults);
 
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
@@ -651,6 +646,11 @@ public class BICOrderCreation extends ECETestBase {
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 
+    //Validate if this is Meta order
+    if(!results.get(BICECEConstants.RESPONSE_OFFERING_TYPE).equals(BICECEConstants.META_SUBSCRIPTION)){
+      AssertUtils.fail("The product is not a meta product . Offering type is  : "+ results.get(BICECEConstants.RESPONSE_OFFERING_TYPE) );
+    }
+
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
 
@@ -660,8 +660,8 @@ public class BICOrderCreation extends ECETestBase {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICECEConstants.RESPONSE_OFFERING_TYPE, results.get(BICECEConstants.OFFERING_TYPE));
+      testResults.put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
       testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
       testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
@@ -734,14 +734,15 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {"bic-returningUser"}, description = "Validation of Create BIC Hybrid Order")
-  public void validateBicReturningUser() {
+  public void validateBicReturningUser() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     testDataForEachMethod.put(
         BICECEConstants.PRODUCT_ID, testDataForEachMethod.get(BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing initial order.");
 
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     updateTestingHub(testResults);
@@ -830,7 +831,7 @@ public class BICOrderCreation extends ECETestBase {
    * realign the billing dates and assert that the dates match.
    */
   @Test(groups = {"bic-align-billing"}, description = "Validation of align billing")
-  public void validateAlignBilling() {
+  public void validateAlignBilling() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     Util.printInfo("Placing initial order");
@@ -880,7 +881,6 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(240000);
 
     // Get the billing date of the aligned subscription
-
     results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
     results.put(
         BICECEConstants.SUB2_NEXT_BILLING_DATE, results.get(BICECEConstants.NEXT_BILLING_DATE));
@@ -991,7 +991,7 @@ public class BICOrderCreation extends ECETestBase {
    * 4. Trigger the renewal job 5. Validate that the subscription next renews in the future
    */
   @Test(groups = {"renew-bic-order"}, description = "Validation of BIC Renewal Order")
-  public void validateRenewBicOrder() {
+  public void validateRenewBicOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(

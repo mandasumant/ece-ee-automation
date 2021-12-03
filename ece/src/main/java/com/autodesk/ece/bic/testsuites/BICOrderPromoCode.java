@@ -4,6 +4,7 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
+import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
@@ -17,11 +18,11 @@ import org.testng.annotations.Test;
 
 public class BICOrderPromoCode extends ECETestBase {
 
+  private static String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
   long startTime, stopTime, executionTime;
   LinkedHashMap<String, String> testDataForEachMethod = null;
-  private static String defaultLocale = "en_US";
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String,String>> localeDataMap = null;
   String locale = null;
@@ -69,12 +70,12 @@ public class BICOrderPromoCode extends ECETestBase {
   }
 
   @Test(groups = {"bic-promocode-order"}, description = "Validation of Create BIC Hybrid Order")
-  public void promocodeBicOrder() {
+  public void promocodeBicOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
 
-    if(testDataForEachMethod.get("promoCode") == null || testDataForEachMethod.isEmpty()) {
-       testDataForEachMethod.put("promoCode", "GUACPROMO");
+    if (testDataForEachMethod.get("promoCode") == null || testDataForEachMethod.isEmpty()) {
+      testDataForEachMethod.put("promoCode", "GUACPROMO");
     }
 
     HashMap<String, String> results = getBicTestBase()
