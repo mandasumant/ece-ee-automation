@@ -10,7 +10,6 @@ import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.Util;
-import com.google.common.base.Strings;
 import io.qameta.allure.Step;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.util.Strings;
 
 public class BICTestBase {
 
@@ -1675,8 +1675,10 @@ public class BICTestBase {
   private void agreeToTerm() {
     Util.printInfo("Agree Element");
     try {
-       JavascriptExecutor js = (JavascriptExecutor) driver;
-       js.executeScript("document.getElementById('order-agreement').click()");
+      bicPage.selectMainWindow();
+      JavascriptExecutor js = (JavascriptExecutor) driver;
+      String element = "document.getElementById('order-agreement').click()";
+      js.executeScript(element);
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to click on 'order-agreement' checkbox");
     }
