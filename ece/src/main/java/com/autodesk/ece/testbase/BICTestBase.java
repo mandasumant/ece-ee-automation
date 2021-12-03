@@ -1677,8 +1677,7 @@ public class BICTestBase {
     try {
       bicPage.selectMainWindow();
       JavascriptExecutor js = (JavascriptExecutor) driver;
-      String element = "document.getElementById('order-agreement').click()";
-      js.executeScript(element);
+      js.executeScript("document.getElementById('order-agreement').click()");
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to click on 'order-agreement' checkbox");
     }
