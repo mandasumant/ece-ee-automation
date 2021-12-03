@@ -1543,6 +1543,7 @@ public class BICTestBase {
         Util.sleep(20000);
         bicPage.waitForFieldPresent("downloadFreeTrialSignInButtonClick", 1000);
         bicPage.clickUsingLowLevelActions("downloadFreeTrialSignInButtonClick");
+        bicPage.selectMainWindow();
       }
 
       Util.sleep(10000);
