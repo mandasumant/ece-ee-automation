@@ -97,7 +97,7 @@ public class BICTestBase {
         address = "Autodesk@Güntzelstrasse 118@Rorodt@1826 GN@65043235263@Deutschland";
         break;
       case "JAJP":
-        address = "Autodesk@532-0003@Street@81-6-6350-5223";
+        address = "Autodesk@532-0003@Street@Osaka@81-6-6350-5223";
         break;
       default:
         Util.printError("Check the region selected");
@@ -109,7 +109,8 @@ public class BICTestBase {
       ba.put(BICECEConstants.COMPANY_NAME_DR, billingAddress[0]);
       ba.put(BICECEConstants.POSTAL_CODE_DR, billingAddress[1]);
       ba.put(BICECEConstants.ADDRESS_DR, billingAddress[2]);
-      ba.put(BICECEConstants.PHONE_NUMBER_DR, billingAddress[3]);
+      ba.put(BICECEConstants.CITY_DR, billingAddress[3]);
+      ba.put(BICECEConstants.PHONE_NUMBER_DR, billingAddress[4]);
     } else {
       ba = new HashMap<String, String>();
       ba.put(BICECEConstants.ORGANIZATION_NAME, billingAddress[0]);
@@ -1481,13 +1482,7 @@ public class BICTestBase {
       Util.printInfo("Cookies accept box does not appear on the page...");
     }
 
-    try {
-      bicPage.waitForFieldPresent("bicStayOnSameSite",5000);
-      bicPage.clickUsingLowLevelActions("bicStayOnSameSite");
-      Util.printInfo("Clicked on Stay On Same page link...");
-    } catch (Exception e) {
-      Util.printInfo("Stay on US Site link is not displayed...");
-    }
+    clickToStayOnSameSite();
     driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
   }
 
@@ -1768,6 +1763,7 @@ public class BICTestBase {
 
     getUrl(constructGuacDRURL);
     disableChatSession();
+    clickToStayOnSameSite();
     checkCartDetailsError();
 
     Names names = generateFirstAndLastNames();
@@ -1846,7 +1842,6 @@ public class BICTestBase {
           .get(0);
       driver.switchTo().frame(creditCardFrameDR);
       Util.sleep(2000);
-
       String expirationMonthDRXpath = "";
       String expirationYearDRXpath = "";
 
@@ -1929,15 +1924,15 @@ public class BICTestBase {
 
       Util.printInfo("Adding DR billing details...");
 
-      String orgNameXpath = "", fullAddrXpath = "", zipXpath = "", phoneXpath = "", agreementXpath = "";
+      String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "";
 
       switch (paymentType.toUpperCase()) {
         default:
           orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.COMPANY_NAME_DR);
           fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.ADDRESS_DR);
+          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY_DR);
           zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.POSTAL_CODE_DR);
           phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER_DR);
-          agreementXpath = bicPage.getFirstFieldLocator("saveMyAccountCheckboxDR");
           break;
       }
 
@@ -1963,14 +1958,14 @@ public class BICTestBase {
       Util.sleep(1000);
       driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.POSTAL_CODE_DR));
 
+      driver.findElement(By.xpath(cityXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
+      Util.sleep(3000);
+      driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY_DR));
+
       driver.findElement(By.xpath(phoneXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
       Util.sleep(1000);
       driver.findElement(By.xpath(phoneXpath))
           .sendKeys(address.get(BICECEConstants.PHONE_NUMBER_DR));
-
-      Util.sleep(1000);
-      driver.findElement(By.xpath(agreementXpath)).click();
-
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -1991,7 +1986,7 @@ public class BICTestBase {
 
   private String[] getCardPaymentDetails(String paymentMethod, String region) {
     debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
-    if (region == "ja-JP/") {
+    if (region.equals("ja-JP/")) {
       return getPaymentDetailsDR(paymentMethod.toUpperCase()).split("@");
     } else {
       return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
@@ -2001,11 +1996,11 @@ public class BICTestBase {
   private void clickOnSaveProfileBtnDR() {
     try {
       Util.printInfo("Clicking on DR save payment profile button...");
+      Util.sleep(10000);
       List<WebElement> eles = bicPage.getMultipleWebElementsfromField("saveMyAccountButtonDR");
-
       eles.get(0).click();
-
       bicPage.waitForPageToLoad();
+      bicPage.checkIfElementExistsInPage("billingAddressInViewMode", 10);
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to click on DR Save button on billing details page...");
@@ -2057,6 +2052,16 @@ public class BICTestBase {
       AssertUtils.assertEquals(orderNumber, orderNumberInStore);
     } catch (Exception e) {
       AssertUtils.fail("Failed to validate order number from Store");
+    }
+  }
+
+  private void clickToStayOnSameSite() {
+    try {
+      bicPage.waitForFieldPresent("bicStayOnSameSite", 5000);
+      bicPage.clickUsingLowLevelActions("bicStayOnSameSite");
+      Util.printInfo("Clicked on Stay On Same page link...");
+    } catch (Exception e) {
+      Util.printInfo("Stay on US Site link is not displayed...");
     }
   }
 

@@ -240,6 +240,15 @@ STORE-SE:
   postalCodeStore: "400 20"
   priceIDStore: "30740"
 
+STORE-JP:
+  currencyStore: "YEN"
+  streetAddressStore: "Moelndalsvaegen 24"
+  cityStore: "Osaka"
+  countryStore: "JP"
+  stateProvinceStore: "VA"
+  postalCodeStore: "400 20"
+  priceIDStore: "30740"
+
 createGUACBICOrderUS:
   userType: "newUser"
   productID: *NativeOrderPriceID
@@ -312,10 +321,10 @@ validateBicNativeOrderSwitchTerm:
 
 createGUACBICIndirectOrderJP:
   userType: "newUser"
-  productID: "maya"
+  productID: "Maya"
 
 validateBicIndirectOrder:
-  productID: "maya"
+  productID: "Maya"
 
 validateAlignBilling:
   productID: *NativeOrderPriceID

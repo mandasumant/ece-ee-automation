@@ -41,6 +41,7 @@ public class BICECEConstants extends BICConstants {
   public static final String FULFILLMENT_DATE = "getPOReponse_fulfillmentDate";
   public static final String COMPANY_NAME_DR = "companyNameDR";
   public static final String ADDRESS_DR = "addressDR";
+  public static final String CITY_DR = "cityDR";
   public static final String POSTAL_CODE_DR = "postalCodeDR";
   public static final String PHONE_NUMBER_DR = "phoneNumberDR";
   public static final String ORGANIZATION_NAME = "Organization_Name";
