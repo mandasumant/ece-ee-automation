@@ -1999,7 +1999,7 @@ public class BICTestBase {
 
   private String[] getCardPaymentDetails(String paymentMethod, String region) {
     debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
-    if (region == "ja-JP/") {
+    if (region.equals("ja-JP/")) {
       return getPaymentDetailsDR(paymentMethod.toUpperCase()).split("@");
     } else {
       return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
