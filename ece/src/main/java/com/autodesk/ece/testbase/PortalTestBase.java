@@ -246,18 +246,21 @@ public class PortalTestBase {
     boolean status = false;
 
     try {
-      WebElement element = driver.findElement(By.xpath(xPath));
-      if (element != null) {
-        status = true;
+      for (int i = 1; i < 4; i++) {
+        WebElement element = driver.findElement(By.xpath(xPath));
+        if (element == null) {
+          Util.sleep(10000);
+        } else {
+          status = true;
+          return status;
+        }
       }
-
     } catch (ElementNotVisibleException e) {
     }
 
     if (!status) {
       Util.printError("isPortalElementPresentWithXpath :: " + xPath + "" + status);
     }
-
     return status;
   }
 
@@ -868,7 +871,7 @@ public class PortalTestBase {
 
       Util.sleep(60000);
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-              BICECEConstants.PORTAL_PAYMENT_METHOD)
+          BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data, localeMap);
