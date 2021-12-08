@@ -82,10 +82,7 @@ pipeline {
 
         stage ('Regression') {
            when {
-                anyOf {
-                    branch 'master'
-                    triggeredBy 'TimerTrigger'
-                }
+                branch 'master'
            }
             steps {
                 echo 'Initiating Customer Lifecycle Tests'
