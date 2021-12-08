@@ -82,7 +82,7 @@ pipeline {
 
         stage ('Regression') {
            when {
-                anyOf {
+                allOf {
                     branch 'master'
                     triggeredBy 'TimerTrigger'
                 }
