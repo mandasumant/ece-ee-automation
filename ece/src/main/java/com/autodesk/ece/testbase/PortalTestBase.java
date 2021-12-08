@@ -250,6 +250,7 @@ public class PortalTestBase {
         WebElement element = driver.findElement(By.xpath(xPath));
         if (element == null) {
           Util.sleep(10000);
+          driver.navigate().refresh();
         } else {
           status = true;
           return status;
