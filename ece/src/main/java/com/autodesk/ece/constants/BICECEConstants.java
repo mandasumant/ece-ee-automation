@@ -143,4 +143,5 @@ public class BICECEConstants extends BICConstants {
   public static final String TRUE = "true";
   public static final String PAYMENT_TYPE_SEPA = "SEPA";
   public static final String PAYMENT_SEPA_LOWERCASE = "sepa";
+  public static final String PAYMENT_TYPE_ZIP = "ZIP";
 }

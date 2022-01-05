@@ -8,17 +8,24 @@
 
   en_CA:
     region: "ENCA"
-    storeName : "STORE-CA"
+    storeName: "STORE-CA"
     currencyStore: "CAD"
-    countryDomain : ".ca/en"
-    paymentMethods : "CREDITCARD,PAYPAL"
+    countryDomain: ".ca/en"
+    paymentMethods: "CREDITCARD,PAYPAL"
 
   en_GB:
     region: "ENGB"
     storeName: "STORE-UK"
     currencyStore: "GBP"
-    countryDomain : ".co.uk"
-    paymentMethods : "CREDITCARD,PAYPAL,BACS"
+    countryDomain: ".co.uk"
+    paymentMethods: "CREDITCARD,PAYPAL,BACS"
+
+  en_AU:
+    region: "ENAU"
+    storeName: "STORE-NAMER"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
 
   nl_NL:
     region: "NLNL"
