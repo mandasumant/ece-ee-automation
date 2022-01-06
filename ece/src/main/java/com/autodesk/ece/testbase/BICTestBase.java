@@ -782,6 +782,7 @@ public class BICTestBase {
   }
 
   public void zipPayCheckout(HashMap<String, String> data) {
+    bicPage.waitForField("zipPayUsername", true, 5000);
     bicPage.populateField("zipPayUsername", data.get("zipPayUsername"));
     bicPage.populateField("zipPayPassword", data.get("zipPayPassword"));
 
@@ -813,9 +814,11 @@ public class BICTestBase {
     }
 
     if (amountDue > availableBalance) {
-      double amountToRefill = Math.min(Math.min((amountDue - availableBalance) + 200, 500),
-          1000 - availableBalance);
+      double amountToRefill = Math.min(
+          Math.min(Math.round(amountDue - availableBalance) + 200, 500),
+          1000 - Math.round(availableBalance));
       refillZipPayBalance(data, amountToRefill);
+      return;
     }
 
     bicPage.click("zipPayConfirmPayment");
@@ -829,7 +832,7 @@ public class BICTestBase {
     bicPage.waitForField("zipPayDashboardLogin", true, 5000);
     bicPage.click("zipPayDashboardLogin");
 
-    boolean loginFormPresent = bicPage.waitForField("zipPayDashboardUsername", true, 5000);
+    boolean loginFormPresent = bicPage.waitForField("zipPayDashboardUsername", true, 60000);
     if (loginFormPresent) {
       bicPage.populateField("zipPayDashboardUsername", data.get("zipPayUsername"));
       bicPage.populateField("zipPayDashboardPassword", data.get("zipPayPassword"));
@@ -840,6 +843,7 @@ public class BICTestBase {
     //bicPage.click("zipPayMenu");
 
     driver.get("https://account.sandbox.zipmoney.com.au/#/wallet/makePayment");
+    bicPage.waitForField("zipPayOtherAmount", true, 60000);
     try {
       bicPage.clickUsingLowLevelActions("zipPayOtherAmount");
     } catch (MetadataException e) {
@@ -847,11 +851,29 @@ public class BICTestBase {
     }
 
     bicPage.populateField("zipPayPaymentAmount", Double.toString(amount));
+    Util.sleep(1000);
+    bicPage.waitForField("zipPayPaymentSubmit", true, 5000);
     bicPage.click("zipPayPaymentSubmit");
 
     bicPage.waitForField("zipPayPaymentConfirm", true, 5000);
     bicPage.click("zipPayPaymentConfirm");
 
+    bicPage.waitForField("zipPayPaymentSuccess", true, 10000);
+    driver.close();
+    driver.switchTo().window(tabs.get(0));
+
+    bicPage.click("zipPayReturn");
+    bicPage.waitForField("zipPayFailClose", true, 5000);
+    bicPage.click("zipPayFailClose");
+
+    bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
+    try {
+      bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
+
+    zipPayCheckout(data);
   }
 
   @Step("Selecting payment profile" + GlobalConstants.TAG_TESTINGHUB)
