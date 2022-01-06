@@ -781,7 +781,76 @@ public class BICTestBase {
     }
   }
 
-  public void zipPayCheckout() {
+  public void zipPayCheckout(HashMap<String, String> data) {
+    bicPage.populateField("zipPayUsername", data.get("zipPayUsername"));
+    bicPage.populateField("zipPayPassword", data.get("zipPayPassword"));
+
+    bicPage.click("zipPayLogin");
+
+    boolean verificationCodeRequested = bicPage.waitForField("zipPayVerificationCode", true, 10000);
+    if (verificationCodeRequested) {
+      bicPage.populateField("zipPayVerificationCode", data.get("zipPayVerificationCode"));
+      bicPage.click("zipPayVerificationSubmit");
+    }
+
+    bicPage.waitForField("zipPayOption", true, 10000);
+    try {
+      bicPage.clickUsingLowLevelActions("zipPayOption");
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
+
+    String amountDueXPath = bicPage.getFirstFieldLocator("zipPayAmountDue");
+    String availableBalanceXPath = bicPage.getFirstFieldLocator("zipPayBalanceAvailable");
+    WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
+    WebElement availableBalanceElement = driver.findElement(By.xpath(availableBalanceXPath));
+    double amountDue = Double.parseDouble(amountDueElement.getText().replace("$", ""));
+    double availableBalance = Double.parseDouble(
+        availableBalanceElement.getText().replace("$", ""));
+
+    if (amountDue > 1000) {
+      AssertUtils.fail("Zip Pay transaction failed, transaction amount greater than $1000");
+    }
+
+    if (amountDue > availableBalance) {
+      double amountToRefill = Math.min(Math.min((amountDue - availableBalance) + 200, 500),
+          1000 - availableBalance);
+      refillZipPayBalance(data, amountToRefill);
+    }
+
+    bicPage.click("zipPayConfirmPayment");
+  }
+
+  public void refillZipPayBalance(HashMap<String, String> data, double amount) {
+    ((JavascriptExecutor) driver).executeScript("window.open()");
+    ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+    driver.switchTo().window(tabs.get(1));
+    driver.get("https://account.sandbox.zipmoney.com.au/#");
+    bicPage.waitForField("zipPayDashboardLogin", true, 5000);
+    bicPage.click("zipPayDashboardLogin");
+
+    boolean loginFormPresent = bicPage.waitForField("zipPayDashboardUsername", true, 5000);
+    if (loginFormPresent) {
+      bicPage.populateField("zipPayDashboardUsername", data.get("zipPayUsername"));
+      bicPage.populateField("zipPayDashboardPassword", data.get("zipPayPassword"));
+
+      // TODO CLICK LOGIN BUTTON!
+    }
+
+    //bicPage.click("zipPayMenu");
+
+    driver.get("https://account.sandbox.zipmoney.com.au/#/wallet/makePayment");
+    try {
+      bicPage.clickUsingLowLevelActions("zipPayOtherAmount");
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
+
+    bicPage.populateField("zipPayPaymentAmount", Double.toString(amount));
+    bicPage.click("zipPayPaymentSubmit");
+
+    bicPage.waitForField("zipPayPaymentConfirm", true, 5000);
+    bicPage.click("zipPayPaymentConfirm");
 
   }
 
@@ -836,7 +905,7 @@ public class BICTestBase {
   }
 
   @Step("Submitting Order and Retrieving Order Number")
-  private String submitGetOrderNumber(String paymentMethod) {
+  private String submitGetOrderNumber(HashMap<String, String> data) {
     clickMandateAgreementCheckbox();
     int count = 0;
     debugPageUrl(" Step 1 wait for SubmitOrderButton");
@@ -878,8 +947,8 @@ public class BICTestBase {
     }
 
     // Zip Pay
-    if (paymentMethod.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-      zipPayCheckout();
+    if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+      zipPayCheckout(data);
     }
 
     String orderNumber = null;
@@ -1109,7 +1178,7 @@ public class BICTestBase {
 
     enterBillingDetails(data, address, paymentMethod, region);
 
-    orderNumber = submitGetOrderNumber(paymentMethod);
+    orderNumber = submitGetOrderNumber(data);
 
     printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, names.firstName,
         names.lastName,
@@ -1210,7 +1279,7 @@ public class BICTestBase {
 
     enterBillingDetails(data, address, paymentMethod, region);
 
-    orderNumber = submitGetOrderNumber(paymentMethod);
+    orderNumber = submitGetOrderNumber(data);
 
     printConsole(constructGuacDotComURL, orderNumber, emailID, address, names.firstName,
         names.lastName,
@@ -1342,7 +1411,7 @@ public class BICTestBase {
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
-    orderNumber = submitGetOrderNumber(paymentMethod);
+    orderNumber = submitGetOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1368,7 +1437,7 @@ public class BICTestBase {
     Util.sleep(5000);
     skipAddSeats();
 
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.PAYMENT_TYPE));
+    orderNumber = submitGetOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1390,7 +1459,7 @@ public class BICTestBase {
     // Login to an existing account and add seats
     loginAccount(data);
     existingSubscriptionAddSeat(data);
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.PAYMENT_TYPE));
+    orderNumber = submitGetOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1598,7 +1667,7 @@ public class BICTestBase {
     Util.sleep(5000);
     agreeToTerm();
 
-    orderNumber = submitGetOrderNumber(data.get(BICECEConstants.PAYMENT_TYPE));
+    orderNumber = submitGetOrderNumber(data);
 
     printConsole(constructGuacMoeURL, orderNumber, emailID, address, names.firstName,
         names.lastName,
@@ -1762,7 +1831,7 @@ public class BICTestBase {
     agreeToTerm();
     clickOnMakeThisATestOrder();
 
-    orderNumber = submitGetOrderNumber(paymentMethod);
+    orderNumber = submitGetOrderNumber(data);
 
     printConsole(constructGuacDRURL, orderNumber, emailID, address, names.firstName, names.lastName,
         paymentMethod);
