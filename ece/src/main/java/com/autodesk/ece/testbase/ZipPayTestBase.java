@@ -15,6 +15,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class ZipPayTestBase {
+
   private static final String ZIP_PAY_USERNAME_KEY = "zipPayUsername";
   private static final String ZIP_PAY_PASSWORD_KEY = "zipPayPassword";
   private static final String ZIP_PAY_VERIFICATION_CODE_KEY = "zipPayVerificationCode";
@@ -48,9 +49,11 @@ public class ZipPayTestBase {
     zipPage.click("zipPayLogin");
 
     // If an SMS verification code is request, use the provided test code
-    boolean verificationCodeRequested = zipPage.waitForField(ZIP_PAY_VERIFICATION_CODE_KEY, true, 10000);
+    boolean verificationCodeRequested = zipPage.waitForField(ZIP_PAY_VERIFICATION_CODE_KEY, true,
+        10000);
     if (verificationCodeRequested) {
-      zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY, testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
+      zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
+          testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
       zipPage.click("zipPayVerificationSubmit");
     }
 
@@ -67,9 +70,8 @@ public class ZipPayTestBase {
     String availableBalanceXPath = zipPage.getFirstFieldLocator("zipPayBalanceAvailable");
     WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
     WebElement availableBalanceElement = driver.findElement(By.xpath(availableBalanceXPath));
-    double amountDue = Double.parseDouble(amountDueElement.getText().replace("$", ""));
-    double availableBalance = Double.parseDouble(
-        availableBalanceElement.getText().replace("$", ""));
+    double amountDue = parseZipAmount(amountDueElement.getText());
+    double availableBalance = parseZipAmount(availableBalanceElement.getText());
 
     if (amountDue > 1000) {
       AssertUtils.fail("Zip Pay transaction failed, transaction amount greater than $1000");
@@ -90,7 +92,18 @@ public class ZipPayTestBase {
   }
 
   /**
+   * Parse a price string displayed in Zip
+   *
+   * @param amount - Currency string to parse
+   * @return - Amount in dollars
+   */
+  private double parseZipAmount(String amount) {
+    return Double.parseDouble(amount.replace("$", "").replace(",", ""));
+  }
+
+  /**
    * Navigate to the user's zip dashboard and refill their account for a specified amount
+   *
    * @param amount - Amount to refill in dollars
    */
   private void refillZipPayBalance(double amount) {
