@@ -37,11 +37,13 @@ public class BICTestBase {
 
   public static Page_ bicPage = null;
   public WebDriver driver;
+  ZipPayTestBase zipTestBase;
 
   public BICTestBase(WebDriver driver, GlobalTestBase testbase) {
     Util.PrintInfo("BICTestBase from ece");
     this.driver = driver;
     bicPage = testbase.createPage("PAGE_BIC_CART");
+    zipTestBase = new ZipPayTestBase(testbase);
   }
 
   public static void clearTextInputValue(WebElement element) {
@@ -781,101 +783,6 @@ public class BICTestBase {
     }
   }
 
-  public void zipPayCheckout(HashMap<String, String> data) {
-    bicPage.waitForField("zipPayUsername", true, 5000);
-    bicPage.populateField("zipPayUsername", data.get("zipPayUsername"));
-    bicPage.populateField("zipPayPassword", data.get("zipPayPassword"));
-
-    bicPage.click("zipPayLogin");
-
-    boolean verificationCodeRequested = bicPage.waitForField("zipPayVerificationCode", true, 10000);
-    if (verificationCodeRequested) {
-      bicPage.populateField("zipPayVerificationCode", data.get("zipPayVerificationCode"));
-      bicPage.click("zipPayVerificationSubmit");
-    }
-
-    bicPage.waitForField("zipPayOption", true, 10000);
-    try {
-      bicPage.clickUsingLowLevelActions("zipPayOption");
-    } catch (MetadataException e) {
-      e.printStackTrace();
-    }
-
-    String amountDueXPath = bicPage.getFirstFieldLocator("zipPayAmountDue");
-    String availableBalanceXPath = bicPage.getFirstFieldLocator("zipPayBalanceAvailable");
-    WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
-    WebElement availableBalanceElement = driver.findElement(By.xpath(availableBalanceXPath));
-    double amountDue = Double.parseDouble(amountDueElement.getText().replace("$", ""));
-    double availableBalance = Double.parseDouble(
-        availableBalanceElement.getText().replace("$", ""));
-
-    if (amountDue > 1000) {
-      AssertUtils.fail("Zip Pay transaction failed, transaction amount greater than $1000");
-    }
-
-    if (amountDue > availableBalance) {
-      double amountToRefill = Math.min(
-          Math.min(Math.round(amountDue - availableBalance) + 200, 500),
-          1000 - Math.round(availableBalance));
-      refillZipPayBalance(data, amountToRefill);
-      return;
-    }
-
-    bicPage.click("zipPayConfirmPayment");
-  }
-
-  public void refillZipPayBalance(HashMap<String, String> data, double amount) {
-    ((JavascriptExecutor) driver).executeScript("window.open()");
-    ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-    driver.switchTo().window(tabs.get(1));
-    driver.get("https://account.sandbox.zipmoney.com.au/#");
-    bicPage.waitForField("zipPayDashboardLogin", true, 5000);
-    bicPage.click("zipPayDashboardLogin");
-
-    boolean loginFormPresent = bicPage.waitForField("zipPayDashboardUsername", true, 60000);
-    if (loginFormPresent) {
-      bicPage.populateField("zipPayDashboardUsername", data.get("zipPayUsername"));
-      bicPage.populateField("zipPayDashboardPassword", data.get("zipPayPassword"));
-
-      // TODO CLICK LOGIN BUTTON!
-    }
-
-    //bicPage.click("zipPayMenu");
-
-    driver.get("https://account.sandbox.zipmoney.com.au/#/wallet/makePayment");
-    bicPage.waitForField("zipPayOtherAmount", true, 60000);
-    try {
-      bicPage.clickUsingLowLevelActions("zipPayOtherAmount");
-    } catch (MetadataException e) {
-      e.printStackTrace();
-    }
-
-    bicPage.populateField("zipPayPaymentAmount", Double.toString(amount));
-    Util.sleep(1000);
-    bicPage.waitForField("zipPayPaymentSubmit", true, 5000);
-    bicPage.click("zipPayPaymentSubmit");
-
-    bicPage.waitForField("zipPayPaymentConfirm", true, 5000);
-    bicPage.click("zipPayPaymentConfirm");
-
-    bicPage.waitForField("zipPayPaymentSuccess", true, 10000);
-    driver.close();
-    driver.switchTo().window(tabs.get(0));
-
-    bicPage.click("zipPayReturn");
-    bicPage.waitForField("zipPayFailClose", true, 5000);
-    bicPage.click("zipPayFailClose");
-
-    bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
-    try {
-      bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-    } catch (MetadataException e) {
-      e.printStackTrace();
-    }
-
-    zipPayCheckout(data);
-  }
-
   @Step("Selecting payment profile" + GlobalConstants.TAG_TESTINGHUB)
   public void selectPaymentProfile(HashMap<String, String> data, String[] paymentCardDetails,
       Map<String, String> address) {
@@ -970,7 +877,8 @@ public class BICTestBase {
 
     // Zip Pay
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-      zipPayCheckout(data);
+      zipTestBase.setTestData(data);
+      zipTestBase.zipPayCheckout();
     }
 
     String orderNumber = null;
