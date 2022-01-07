@@ -25,7 +25,7 @@
     storeName: "STORE-UK"
     currencyStore: "EUR"
     countryDomain: ".nl"
-    paymentMethods: "CREDITCARD,PAYPAL"
+    paymentMethods: "CREDITCARD,PAYPAL,GIROPAY"
 
   fr_FR:
     region: "FRFR"
@@ -46,7 +46,7 @@
     storeName: "STORE-DE"
     currencyStore: "EUR"
     countryDomain: ".de"
-    paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY"
 
   it_IT:
     region: "ITIT"

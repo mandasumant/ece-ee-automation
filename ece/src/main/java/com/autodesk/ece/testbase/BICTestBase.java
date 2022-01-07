@@ -31,7 +31,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.Action;
 import org.testng.util.Strings;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 
 public class BICTestBase {
 
@@ -405,7 +410,14 @@ public class BICTestBase {
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
         lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME).replace(
             BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-      } else {
+      } else if (data.get(BICECEConstants.PAYMENT_TYPE)
+          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+        lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME).replace(
+            BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+      }
+      else {
         firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
@@ -420,6 +432,7 @@ public class BICTestBase {
       clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
       driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
       status = populateBillingDetails(address, paymentType);
+      Util.printInfo("DOEN GIRO POPLUATE BILLING INFO");
       clickOnContinueBtn(paymentType);
     } catch (Exception e) {
       e.printStackTrace();
@@ -437,22 +450,37 @@ public class BICTestBase {
   }
 
   public void clickOnContinueBtn(String paymentType) {
+    List<WebElement> continueButtonList = null;
     try {
       Util.sleep(2000);
       Util.printInfo("Clicking on Save button...");
-      List<WebElement> continueButton = bicPage.getMultipleWebElementsfromField("continueButton");
+      continueButtonList = bicPage.getMultipleWebElementsfromField("continueButton");
 
       if (paymentType.equalsIgnoreCase(BICConstants.paymentTypePayPal)
           || paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_BACS)
-          || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
-        continueButton.get(1).click();
-      } else {
-        continueButton.get(0).click();
+          || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)
+      ) {
+        continueButtonList.get(1).click();
+      } else if(paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        continueButtonList.get(3).click();
+      }
+      else {
+        continueButtonList.get(0).click();
       }
 
       bicPage.waitForPageToLoad();
-    } catch (MetadataException e) {
+    }
+    catch(ElementNotInteractableException elementNotInteractableException){
+      Util.printInfo("ElementNotInteractableException Found ");
+      Util.sleep(5000);
+      JavascriptExecutor executor = (JavascriptExecutor) driver;
+      executor.executeScript("arguments[0].click();", continueButtonList.get(2));
+      Util.printInfo("Done Continue  ");
+
+      bicPage.waitForPageToLoad();
+    }
+    catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to click on Save button on billing details page...");
     }
@@ -530,6 +558,22 @@ public class BICTestBase {
               BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
           stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
               .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
+          break;
+        case BICECEConstants.PAYMENT_TYPE_GIROPAY:
+          orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
+              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+          fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
+              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
+              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+          zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
+              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+          phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
+              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+          countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY).replace(
+              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+          stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
+              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
           break;
         default:
           orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
@@ -618,6 +662,9 @@ public class BICTestBase {
         break;
       case "SEPA":
         paymentDetails = "DE87123456781234567890@SEPA";
+        break;
+      case "GIROPAY":
+        paymentDetails = "Testbank Fiducia@10@4000@GIROPAY USER@DE36444488881234567890@GIROPAY";
         break;
       default:
         paymentDetails = "4000020000000000@03 - Mar@30@737";
@@ -740,6 +787,80 @@ public class BICTestBase {
     Util.sleep(20000);
   }
 
+  @Step("Populate GiroPay payment details")
+  public void populateGiroPayPaymentDetails(String[] paymentCardDetails, Map<String, String> address,
+      Map<String, String> data) {
+    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
+
+    try {
+
+      Util.printInfo("Clicking on GIROPAY tab.");
+      bicPage.clickUsingLowLevelActions("giroPaymentTab");
+
+      populateBillingAddress(address, data);
+      Util.sleep(20000);
+
+      bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 20000);
+      bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+      Util.sleep(30000);
+      String url = driver.getCurrentUrl();
+      Util.printInfo("Entering Giropay url" + " : " +url);
+
+      AssertUtils.assertTrue(url.toUpperCase().contains(new String("giropay").toUpperCase()),
+          "Current url [" + url + "] does not contains keyword : giropay ");
+
+
+      Util.printInfo("Entering Giropay bank name : " + paymentCardDetails[0]);
+      bicPage.populateField("giroPayBankName", paymentCardDetails[0]);
+      Util.sleep(1000);
+      Util.printInfo("Selecting the bank name :");
+      bicPage.clickUsingLowLevelActions("giroPayBankNameSelection");
+      Util.printInfo("Selected the bank name :");
+
+      Util.sleep(10000);
+      Util.printInfo("Clicking on the continue button");
+      bicPage.clickUsingLowLevelActions("giroPayContinue");
+      Util.sleep(20000);
+      bicPage.clickUsingLowLevelActions("giroPayReject");
+      Util.sleep(10000);
+      Util.printInfo("Clicked on Assume");
+      Util.printInfo("Dismissin popoup on Assume");
+     // WebDriverWait wait = new WebDriverWait(driver, 10 );
+     /* if(wait.until(ExpectedConditions.alertIsPresent())==null){
+        Util.printInfo("alert was not present");
+      }
+      else
+      {
+        driver.switchTo().alert().dismiss();;
+        Util.printInfo("alert was present and accepted");
+      }*/
+      //new WebDriverWait(driver,10).until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='OK']/parent::button"))).click();
+
+      Util.sleep(40000);
+     /* try {
+        Robot robot = new Robot();
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+        robot.delay(200);
+        Util.printInfo("Dismissed popoup on Assume");
+      }catch(Exception e ){
+        Util.printInfo("ERROR WHILE CLICKING CERT POP");
+      }*///bicPage.clickUsingLowLevelActions("giroPayContinue");
+/*      Actions builder = new Actions(driver);
+      builder.keyDown(Keys.RETURN).keyUp(Keys.RETURN).build().perform()*/;
+
+       bicPage.populateField("giroPaySc", paymentCardDetails[1]);
+      bicPage.populateField("giroPayScExtension", paymentCardDetails[2]);
+      bicPage.populateField("giroPayCustomerName", paymentCardDetails[3]);
+      bicPage.populateField("giroPayCustomerAban", paymentCardDetails[4]);
+      bicPage.clickUsingLowLevelActions("giroPaySubmit");
+      Util.sleep(2000);
+    } catch (MetadataException e) {
+      e.printStackTrace();
+      AssertUtils.fail("Unable to enter GIROPAY payment information to make payment");
+    }
+    Util.sleep(20000);
+  }
   @Step("Add Paypal Payment Details")
   public void populatePaypalPaymentDetails(HashMap<String, String> data) {
     Util.printInfo("Switching to latest window...");
@@ -860,6 +981,10 @@ public class BICTestBase {
           case BICECEConstants.PAYMENT_TYPE_SEPA:
             populateSepaPaymentDetails(paymentCardDetails);
             break;
+          case BICECEConstants.PAYMENT_TYPE_GIROPAY:
+            populateGiroPayPaymentDetails(paymentCardDetails, address, data);
+            data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+            break;
           default:
             populatePaymentDetails(paymentCardDetails);
             break;
@@ -909,13 +1034,15 @@ public class BICTestBase {
       Util.printInfo("CONTINUE_CHECKOUT_Modal is not present");
     }
 
-    try {
-      bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
-      bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-    } catch (Exception e) {
-      e.printStackTrace();
-      debugPageUrl(e.getMessage());
-      AssertUtils.fail("Failed to click on Submit button...");
+    if(!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+      try {
+        bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
+        bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+      } catch (Exception e) {
+        e.printStackTrace();
+        debugPageUrl(e.getMessage());
+        AssertUtils.fail("Failed to click on Submit button...");
+      }
     }
     String orderNumber = null;
     debugPageUrl(" Step 3 Check order Number is Null");

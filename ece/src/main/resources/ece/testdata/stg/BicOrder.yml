@@ -65,7 +65,6 @@ default:
   macSALEREPRESENT: "s9999"
   macUser: "testmeshuser"
   macPass: "Password1"
-  cepURL: "https://customer-stg.autodesk.com/"
   getMyPriceURL: "http://tibappst-vip.autodesk.com:4139/Services/Price/SKUPriceService"
   name: "/CustomerBIAs/ApplicationComponents/WebServices/OEAccountContact/Service/OEAccountContact.serviceagent/MatchAccntCntctSOAPEP/MatchAccountContact"
   matchAccountContactServiceEndPointURL: "https://enterprise-api-stg.autodesk.com/v2/matchaccountcontact"
