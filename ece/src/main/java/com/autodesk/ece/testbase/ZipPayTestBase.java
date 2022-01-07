@@ -9,6 +9,7 @@ import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -26,16 +27,16 @@ public class ZipPayTestBase {
   private static final String ZIP_PAY_CONFIRM = "zipPayPaymentConfirm";
   private static final String ZIP_PAY_CLOSE = "zipPayFailClose";
 
-  public static Page_ zipPage = null;
-  public WebDriver driver = null;
-  HashMap<String, String> testData = new HashMap<>();
+  private final Page_ zipPage;
+  private final WebDriver driver;
+  private Map<String, String> testData = new HashMap<>();
 
   public ZipPayTestBase(GlobalTestBase testBase) {
     zipPage = testBase.createPage("PAGE_ZIPPAY");
     this.driver = testBase.getdriver();
   }
 
-  public void setTestData(HashMap<String, String> testData) {
+  public void setTestData(Map<String, String> testData) {
     this.testData = testData;
   }
 
@@ -62,7 +63,7 @@ public class ZipPayTestBase {
     try {
       zipPage.clickUsingLowLevelActions(ZIP_PAY_OPTION);
     } catch (MetadataException e) {
-      e.printStackTrace();
+      AssertUtils.fail("Failed to click on payment option");
     }
 
     // Determine if we have sufficient balance to make the purchase
@@ -121,7 +122,7 @@ public class ZipPayTestBase {
     try {
       zipPage.clickUsingLowLevelActions(ZIP_PAY_OTHER_AMOUNT);
     } catch (MetadataException e) {
-      e.printStackTrace();
+      AssertUtils.fail("Failed to click on other amount button");
     }
 
     // Enter the amount to pay and pay it
