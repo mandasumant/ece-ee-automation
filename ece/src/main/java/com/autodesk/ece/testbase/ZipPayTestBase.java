@@ -49,7 +49,7 @@ public class ZipPayTestBase {
 
     zipPage.click("zipPayLogin");
 
-    // If an SMS verification code is request, use the provided test code
+    // If an SMS verification code is requested, use the provided test code
     boolean verificationCodeRequested = zipPage.waitForField(ZIP_PAY_VERIFICATION_CODE_KEY, true,
         10000);
     if (verificationCodeRequested) {
