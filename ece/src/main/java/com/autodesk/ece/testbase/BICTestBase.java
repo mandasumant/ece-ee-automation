@@ -769,13 +769,13 @@ public class BICTestBase {
     Util.sleep(20000);
   }
 
-  public void populateZipPaymentDetails(HashMap<String, String> data) {
+  @Step("Click on Zip tab")
+  public void populateZipPaymentDetails() {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
 
     try {
-      Util.printInfo("Clicking on Sepa tab.");
+      Util.printInfo("Clicking on Zip tab.");
       bicPage.clickUsingLowLevelActions("zipPaymentTab");
-
 
     } catch (MetadataException e) {
       e.printStackTrace();
@@ -815,7 +815,7 @@ public class BICTestBase {
             populateSepaPaymentDetails(paymentCardDetails);
             break;
           case BICECEConstants.PAYMENT_TYPE_ZIP:
-            populateZipPaymentDetails(data);
+            populateZipPaymentDetails();
             break;
           default:
             populatePaymentDetails(paymentCardDetails);
