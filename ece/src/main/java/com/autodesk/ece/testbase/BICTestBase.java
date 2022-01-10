@@ -1627,7 +1627,7 @@ public class BICTestBase {
     bicPage.click("moeLoginButton");
     bicPage.waitForField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, true, 30000);
     bicPage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
-    bicPage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, "K16PF6LCtnsf99");
+    bicPage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, ";mynFU(,|(97?@`n4X?SPw)s~*|$");
     bicPage.click("moeLoginButton");
     bicPage.waitForPageToLoad();
     Util.printInfo("Successfully logged into MOE");
