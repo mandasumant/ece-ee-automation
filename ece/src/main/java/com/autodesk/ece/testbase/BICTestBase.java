@@ -432,7 +432,6 @@ public class BICTestBase {
       clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
       driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
       status = populateBillingDetails(address, paymentType);
-      Util.printInfo("DOEN GIRO POPLUATE BILLING INFO");
       clickOnContinueBtn(paymentType);
     } catch (Exception e) {
       e.printStackTrace();
@@ -806,50 +805,24 @@ public class BICTestBase {
       String url = driver.getCurrentUrl();
       Util.printInfo("Entering Giropay url" + " : " +url);
 
-      AssertUtils.assertTrue(url.toUpperCase().contains(new String("giropay").toUpperCase()),
-          "Current url [" + url + "] does not contains keyword : giropay ");
-
+      AssertUtils.assertTrue(url.indexOf("giropay") != -1,
+          "Current url [" + url + "] does not contains keyword : giropay");
 
       Util.printInfo("Entering Giropay bank name : " + paymentCardDetails[0]);
       bicPage.populateField("giroPayBankName", paymentCardDetails[0]);
-      Util.sleep(1000);
-      Util.printInfo("Selecting the bank name :");
+      Util.sleep(2000);
+      Util.printInfo("Selecting thDOEN GIRO POPLUATE BILLING INFOe bank name :");
       bicPage.clickUsingLowLevelActions("giroPayBankNameSelection");
       Util.printInfo("Selected the bank name :");
 
-      Util.sleep(10000);
-      Util.printInfo("Clicking on the continue button");
-      bicPage.clickUsingLowLevelActions("giroPayContinue");
-      Util.sleep(20000);
-      bicPage.clickUsingLowLevelActions("giroPayReject");
-      Util.sleep(10000);
-      Util.printInfo("Clicked on Assume");
-      Util.printInfo("Dismissin popoup on Assume");
-     // WebDriverWait wait = new WebDriverWait(driver, 10 );
-     /* if(wait.until(ExpectedConditions.alertIsPresent())==null){
-        Util.printInfo("alert was not present");
-      }
-      else
-      {
-        driver.switchTo().alert().dismiss();;
-        Util.printInfo("alert was present and accepted");
-      }*/
-      //new WebDriverWait(driver,10).until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='OK']/parent::button"))).click();
+      Util.sleep(5000);
+      Util.printInfo("Clicking on the assume button");
+      bicPage.clickUsingLowLevelActions("giroPayAssume");
 
-      Util.sleep(40000);
-     /* try {
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.keyRelease(KeyEvent.VK_ENTER);
-        robot.delay(200);
-        Util.printInfo("Dismissed popoup on Assume");
-      }catch(Exception e ){
-        Util.printInfo("ERROR WHILE CLICKING CERT POP");
-      }*///bicPage.clickUsingLowLevelActions("giroPayContinue");
-/*      Actions builder = new Actions(driver);
-      builder.keyDown(Keys.RETURN).keyUp(Keys.RETURN).build().perform()*/;
+      // Implement the ROBO logic to handle the Chrome popoup . for now manually intersecting to go to the next page
 
-       bicPage.populateField("giroPaySc", paymentCardDetails[1]);
+      Util.sleep(10000);
+      bicPage.populateField("giroPaySc", paymentCardDetails[1]);
       bicPage.populateField("giroPayScExtension", paymentCardDetails[2]);
       bicPage.populateField("giroPayCustomerName", paymentCardDetails[3]);
       bicPage.populateField("giroPayCustomerAban", paymentCardDetails[4]);
