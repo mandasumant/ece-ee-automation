@@ -881,6 +881,17 @@ public class BICTestBase {
       zipTestBase.zipPayCheckout();
     }
 
+   try {
+      if(bicPage.checkIfElementExistsInPage("guacAddSeats", 10)){
+        Util.printInfo("Found Add Seat Modal . Continuing");
+        bicPage.clickUsingLowLevelActions("guacAddSeats");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      debugPageUrl(e.getMessage());
+      AssertUtils.fail("Failed to click on AddS eats Continue button...");
+    }
+
     String orderNumber = null;
     debugPageUrl(" Step 3 Check order Number is Null");
     bicPage.waitForPageToLoad();
@@ -1017,7 +1028,7 @@ public class BICTestBase {
   private void navigateToCart(LinkedHashMap<String, String> data) {
 
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = data.get("productName");
+    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) !=null ? System.getProperty(BICECEConstants.PRODUCT_NAME)  : data.get(BICECEConstants.PRODUCT_NAME);
 
     String constructGuacDotComURL =
         guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
@@ -1041,7 +1052,7 @@ public class BICTestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = data.get(BICECEConstants.PRODUCT_NAME);
+    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) !=null ? System.getProperty(BICECEConstants.PRODUCT_NAME)  : data.get(BICECEConstants.PRODUCT_NAME);
     String term = "";
     String quantity = "";
     String userType = data.get(BICECEConstants.USER_TYPE);
