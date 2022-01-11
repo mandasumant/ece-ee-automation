@@ -866,6 +866,14 @@ public class BICTestBase {
       Util.printInfo("CONTINUE_CHECKOUT_Modal is not present");
     }
 
+    // Zip Pay Verification
+    if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+      String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
+      WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
+      zipTestBase.setTestData(data);
+      zipTestBase.verifyZipBalance(amountDueElement.getText());
+    }
+
     try {
       bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
       bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
@@ -875,7 +883,7 @@ public class BICTestBase {
       AssertUtils.fail("Failed to click on Submit button...");
     }
 
-    // Zip Pay
+    // Zip Pay Checkout
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
       zipTestBase.setTestData(data);
       zipTestBase.zipPayCheckout();
@@ -1182,7 +1190,6 @@ public class BICTestBase {
 
     Names names = generateFirstAndLastNames();
     createBICAccount(names, emailID, password);
-    Util.sleep(20000);
 
     if (data.get(BICECEConstants.REDUCE_SEATS) != null && data.get(BICECEConstants.REDUCE_SEATS)
         .equals(BICECEConstants.TRUE)
@@ -1339,13 +1346,22 @@ public class BICTestBase {
   public HashMap<String, String> createBICReturningUser(LinkedHashMap<String, String> data) {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
-    String region = data.get("US");
+    String region = data.get(BICECEConstants.REGION);
     String paymentMethod = data.get("paymentMethod");
 
     navigateToCart(data);
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
+
+    // If the submit button is disabled, fill the payment information out again
+    List<WebElement> submitButton = driver.findElements(By.cssSelector(
+        "[data-testid=\"order-summary-section\"] .checkout--order-summary-section--submit-order  .checkout--order-summary-section--submit-order--button-container button"));
+    if (submitButton.size() > 0 && !submitButton.get(0).isEnabled()) {
+      Map<String, String> address = getBillingAddress(region);
+      enterBillingDetails(data, address, paymentMethod, region);
+    }
+
     orderNumber = submitGetOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 

@@ -1,6 +1,5 @@
 package com.autodesk.ece.testbase;
 
-import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -10,10 +9,13 @@ import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ZipPayTestBase {
 
@@ -25,7 +27,8 @@ public class ZipPayTestBase {
   private static final String ZIP_PAY_OTHER_AMOUNT = "zipPayOtherAmount";
   private static final String ZIP_PAY_SUBMIT = "zipPayPaymentSubmit";
   private static final String ZIP_PAY_CONFIRM = "zipPayPaymentConfirm";
-  private static final String ZIP_PAY_CLOSE = "zipPayFailClose";
+  private static final String ZIP_PAY_DASHBOARD_USERNAME = "zipPayDashboardUsername";
+  private static final String ZIP_PAY_PAYMENT_SUCCESS = "zipPayPaymentSuccess";
 
   private final Page_ zipPage;
   private final WebDriver driver;
@@ -49,10 +52,18 @@ public class ZipPayTestBase {
 
     zipPage.click("zipPayLogin");
 
+    String verificationCodeXPath = zipPage.getFirstFieldLocator(ZIP_PAY_VERIFICATION_CODE_KEY);
+    String paymentOptionXPath = zipPage.getFirstFieldLocator(ZIP_PAY_OPTION);
+
+    WebDriverWait wait = new WebDriverWait(driver, 10);
+    wait.until(ExpectedConditions.or(
+        ExpectedConditions.presenceOfElementLocated(By.xpath(paymentOptionXPath)),
+        ExpectedConditions.presenceOfElementLocated(By.xpath(verificationCodeXPath))
+    ));
+
     // If an SMS verification code is requested, use the provided test code
-    boolean verificationCodeRequested = zipPage.waitForField(ZIP_PAY_VERIFICATION_CODE_KEY, true,
-        10000);
-    if (verificationCodeRequested) {
+    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+    if (!driver.findElements(By.xpath(verificationCodeXPath)).isEmpty()) {
       zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
           testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
       zipPage.click("zipPayVerificationSubmit");
@@ -66,48 +77,20 @@ public class ZipPayTestBase {
       AssertUtils.fail("Failed to click on payment option");
     }
 
-    // Determine if we have sufficient balance to make the purchase
-    String amountDueXPath = zipPage.getFirstFieldLocator("zipPayAmountDue");
-    String availableBalanceXPath = zipPage.getFirstFieldLocator("zipPayBalanceAvailable");
-    WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
-    WebElement availableBalanceElement = driver.findElement(By.xpath(availableBalanceXPath));
-    double amountDue = parseZipAmount(amountDueElement.getText());
-    double availableBalance = parseZipAmount(availableBalanceElement.getText());
-
-    if (amountDue > 1000) {
-      AssertUtils.fail("Zip Pay transaction failed, transaction amount greater than $1000");
-    }
-
-    // If the balance is insufficient, refill the account
-    if (amountDue > availableBalance) {
-      // Calculate an amount that is slightly higher than the purchase amount, but less than the max
-      // refill amount of $500, and less than the current balance
-      double amountToRefill = Math.min(
-          Math.min(Math.round(amountDue - availableBalance) + 200, 500),
-          1000 - Math.round(availableBalance));
-      refillZipPayBalance(amountToRefill);
-      return;
-    }
-
     zipPage.click("zipPayConfirmPayment");
   }
 
   /**
-   * Parse a price string displayed in Zip
+   * Verify if the user can pay for the request amount, and refill the user's account if necessary
    *
-   * @param amount - Currency string to parse
-   * @return - Amount in dollars
+   * @param balanceRequiredText - Amount to refill as a currency string
    */
-  private double parseZipAmount(String amount) {
-    return Double.parseDouble(amount.replace("$", "").replace(",", ""));
-  }
+  public void verifyZipBalance(String balanceRequiredText) {
+    double balanceRequired = parseZipAmount(balanceRequiredText);
+    if (balanceRequired > 1000) {
+      AssertUtils.fail("Zip Pay transaction failed, transaction amount greater than $1000");
+    }
 
-  /**
-   * Navigate to the user's zip dashboard and refill their account for a specified amount
-   *
-   * @param amount - Amount to refill in dollars
-   */
-  private void refillZipPayBalance(double amount) {
     // Open the user's dashboard in a new tab
     ((JavascriptExecutor) driver).executeScript("window.open()");
     ArrayList<String> tabs = new ArrayList<>(driver.getWindowHandles());
@@ -115,6 +98,29 @@ public class ZipPayTestBase {
     driver.get("https://account.sandbox.zipmoney.com.au/#");
     zipPage.waitForField(ZIP_PAY_DASHBOARD_LOGIN, true, 5000);
     zipPage.click(ZIP_PAY_DASHBOARD_LOGIN);
+
+    // Login to the zip account
+    zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 5000);
+    zipPage.populateField(ZIP_PAY_DASHBOARD_USERNAME, testData.get(ZIP_PAY_USERNAME_KEY));
+    zipPage.populateField("zipPayDashboardPassword", testData.get(ZIP_PAY_PASSWORD_KEY));
+    zipPage.click(ZIP_PAY_SUBMIT);
+
+    String amountXPath = zipPage.getFirstFieldLocator("zipPayDashboardAmountAvailable");
+    VerifySMSOrWaitForField(amountXPath);
+
+    WebElement amountAvailableElement = driver.findElement(By.xpath(amountXPath));
+    double availableBalance = parseZipAmount(amountAvailableElement.getText());
+
+    if (availableBalance > balanceRequired) {
+      // Close the zip pay dashboard
+      driver.close();
+      driver.switchTo().window(tabs.get(0));
+      return;
+    }
+
+    double amountToRefill = Math.min(
+        Math.min(Math.round(balanceRequired - availableBalance) + 200, 500),
+        1000 - Math.round(availableBalance));
 
     // Navigate to the make payment page
     driver.get("https://account.sandbox.zipmoney.com.au/#/wallet/makePayment");
@@ -126,7 +132,7 @@ public class ZipPayTestBase {
     }
 
     // Enter the amount to pay and pay it
-    zipPage.populateField("zipPayPaymentAmount", Double.toString(amount));
+    zipPage.populateField("zipPayPaymentAmount", Double.toString(amountToRefill));
     Util.sleep(1000);
     zipPage.waitForField(ZIP_PAY_SUBMIT, true, 5000);
     zipPage.click(ZIP_PAY_SUBMIT);
@@ -135,24 +141,41 @@ public class ZipPayTestBase {
     zipPage.click(ZIP_PAY_CONFIRM);
 
     // Close the zip pay dashboard
-    zipPage.waitForField("zipPayPaymentSuccess", true, 10000);
+    zipPage.waitForField(ZIP_PAY_PAYMENT_SUCCESS, true, 10000);
     driver.close();
     driver.switchTo().window(tabs.get(0));
+  }
 
-    // Navigate back to GUAC
-    zipPage.click("zipPayReturn");
-    zipPage.waitForField(ZIP_PAY_CLOSE, true, 5000);
-    zipPage.click(ZIP_PAY_CLOSE);
+  private void VerifySMSOrWaitForField(String fieldXPath) {
+    String smsVerificationXPath = zipPage.getFirstFieldLocator("zipPayVerificationTitle");
+    WebDriverWait wait = new WebDriverWait(driver, 30);
+    wait.until(ExpectedConditions.or(
+        ExpectedConditions.presenceOfElementLocated(By.xpath(fieldXPath)),
+        ExpectedConditions.presenceOfElementLocated(By.xpath(smsVerificationXPath))
+    ));
 
-    // Submit the order again
-    zipPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
-    try {
-      zipPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-    } catch (MetadataException e) {
-      e.printStackTrace();
+    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+    // If an SMS verification code is requested, use the provided test code
+    if (!driver.findElements(By.xpath(smsVerificationXPath)).isEmpty()) {
+      zipPage.click(ZIP_PAY_SUBMIT);
+      zipPage.waitForField(ZIP_PAY_VERIFICATION_CODE_KEY, true, 3000);
+      zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
+          testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
+      zipPage.click("zipPayVerificationSubmit");
+      wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(fieldXPath)));
     }
+  }
 
-    // Checkout with zip again
-    zipPayCheckout();
+  /**
+   * Parse a price string displayed in Zip
+   *
+   * @param amount - Currency string to parse
+   * @return - Amount in dollars
+   */
+  private double parseZipAmount(String amount) {
+    return Double.parseDouble(amount
+        .replace("$", "")
+        .replace(",", "")
+        .replace("A", ""));
   }
 }
