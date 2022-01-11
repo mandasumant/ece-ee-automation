@@ -55,8 +55,6 @@ public class PayportTestBase {
     dataSet.put("storeExternalKey", results.get("getPOReponse_storeExternalKey"));
     dataSet.put("paymentProfileId", results.get("getPOReponse_storedPaymentProfileId"));
     dataSet.put("paymentProcessor", results.get("getPOReponse_paymentProcessor"));
-    dataSet.put("last4Digits", results.get("getPOReponse_last4Digits"));
-    dataSet.put("cardType", results.get("paymentType"));
     dataSet.put("currency", results.get("currencyStore"));
     dataSet.put("subscriptionID", results.get("getPOReponse_subscriptionId"));
     dataSet.put("quantity", results.get("response_subscriptionQuantity"));

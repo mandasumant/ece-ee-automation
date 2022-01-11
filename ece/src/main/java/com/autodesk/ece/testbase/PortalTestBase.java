@@ -489,6 +489,9 @@ public class PortalTestBase {
 
         clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
 
+        //close portal window
+        driver.close();
+
       } catch (Exception e) {
         e.printStackTrace();
       }
