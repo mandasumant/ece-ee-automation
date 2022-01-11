@@ -1200,6 +1200,11 @@ public class BICTestBase {
       }
     }
 
+    if (productType.equals("flex")) {
+      Select flexOffers = new Select(driver.findElement(By.id("product-term")));
+      flexOffers.selectByVisibleText("100 Tokens");
+    }
+
     data.putAll(names.getMap());
 
     //Apply promo if exists
