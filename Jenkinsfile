@@ -93,7 +93,7 @@ pipeline {
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"Order Service - Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"CLT - GUAC Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                                                               '{"displayname":"BiC Native Order US","testcasename":"validateBicNativeOrder","description":"BiC Native Order - US ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC Native Order UK","testcasename":"validateBicNativeOrder","description":"BiC Native Order - UK ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"BACS","store":"STORE-UK","sku":"default:1","email":"","locale":"en_GB"},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC Native Order DE","testcasename":"validateBicNativeOrder","description":"BiC Native Order - DE ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"SEPA","store":"STORE-DE","sku":"default:1","email":"","locale":"de_DE"},"notsupportedenv":[],"wiki":""},' +
@@ -125,7 +125,7 @@ pipeline {
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
-                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"Order Service - Account Portal","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"CLT - Account Portal Order","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                                                               '{"displayname":"Add Seats","testcasename":"validateBicAddSeatNativeOrder","description":"Add Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-addseat-native","testMethod":"validateBicAddSeatNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"MASTERCARD","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"Reduce Seats","testcasename":"validateBicReduceSeats","description":"Reduce Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-reduceseats-native","testMethod":"validateBicReduceSeats","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"MASTERCARD","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"Change Payment","testcasename":"validateBICChangePaymentProfile","description":"Change Payment from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-changePayment","testMethod":"validateBICChangePaymentProfile","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
@@ -176,7 +176,7 @@ pipeline {
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"ZIP Regression - Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"ZIP Regression - GUAC Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com", "roshan.nampeli@autodesk.com", "rucha.datar@autodesk.com", "jeong.sohn@autodesk.com"],"testcases":[' +
                                                               '{"displayname":"BiC Native Order US","testcasename":"validateBicNativeOrder","description":"BiC Native Order - US ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"Add seats from GUAC","testcasename":"validateBicAddSeats","description":"Add seats from GUAC","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-guac-addseats","testMethod":"validateBicAddSeats","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC order Flex","testcasename":"validateBicFlexOrder","description":"BiC order Flex","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder","testMethod":"validateBicFlexOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
@@ -190,6 +190,7 @@ pipeline {
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
                         println('Testing Hub API called successfully - estore')
                     } else {
+                        currentBuild.result = 'FAILURE'
                         println('Testing Hub API call failed - estore')
                     }
                 }
@@ -199,7 +200,7 @@ pipeline {
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
-                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"ZIP Regression - Account Portal","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"ZIP Regression - Account Portal Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com", "roshan.nampeli@autodesk.com", "rucha.datar@autodesk.com", "jeong.sohn@autodesk.com"],"testcases":[' +
                                                               '{"displayname":"Add Seats","testcasename":"validateBicAddSeatNativeOrder","description":"Add Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-addseat-native","testMethod":"validateBicAddSeatNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"Reduce Seats","testcasename":"validateBicReduceSeats","description":"Reduce Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-reduceseats-native","testMethod":"validateBicReduceSeats","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"Change Payment","testcasename":"validateBICChangePaymentProfile","description":"Change Payment from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-changePayment","testMethod":"validateBICChangePaymentProfile","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
@@ -210,6 +211,7 @@ pipeline {
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
                         println('Testing Hub API called successfully - accountportal')
                     } else {
+                        currentBuild.result = 'FAILURE'
                         println('Testing Hub API call failed - accountportal')
                     }
                 }
