@@ -806,7 +806,7 @@ public class BICTestBase {
       Util.printInfo("Entering Giropay url" + " : " +url);
 
       AssertUtils.assertTrue(url.indexOf("giropay") != -1,
-          "Current url [" + url + "] does  contain keyword : giropay");
+          "Current url [" + url + "] does contain keyword : giropay");
       Util.printInfo("Entering Giropay bank name : " + paymentCardDetails[0]);
       bicPage.populateField("giroPayBankName", paymentCardDetails[0]);
       Util.sleep(2000);
@@ -822,7 +822,7 @@ public class BICTestBase {
         bicPage.clickUsingLowLevelActions("giroPayAssume");
       }
 
-      //TO DO :  Implement the ROBO logic to handle the Chrome popoup . for now manually intersecting to go to the next page
+      //TO DO :  Implement the ROBO logic to handle the Chrome pop-up . For now manually accepting to go to the next page
 
       Util.sleep(10000);
       bicPage.populateField("giroPaySc", paymentCardDetails[1]);
@@ -830,12 +830,10 @@ public class BICTestBase {
       bicPage.populateField("giroPayCustomerName", paymentCardDetails[3]);
       bicPage.populateField("giroPayCustomerAban", paymentCardDetails[4]);
       bicPage.clickUsingLowLevelActions("giroPaySubmit");
-      Util.sleep(2000);
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter GIROPAY payment information to make payment");
     }
-    Util.sleep(20000);
   }
   @Step("Add Paypal Payment Details")
   public void populatePaypalPaymentDetails(HashMap<String, String> data) {
