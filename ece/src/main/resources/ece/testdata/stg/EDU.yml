@@ -4,3 +4,45 @@ default:
   eduAEMUser: "svc-testing-hub"
   eduAEMPassword: "oS1adpvJ40mwuBQibZBGQize1Oy5DsrW"
   cepURL: "https://customer-stg.autodesk.com/"
+
+
+ACD: # AutoCAD
+  websdkplc: "websdk-autocad"
+  subscriptionPattern: "STU_.+_ACDIST"
+  card: "#card-acdist"
+RVT: # Revit
+  websdkplc: "websdk-revit"
+  subscriptionPattern: "STU_.+_RVT"
+  card: "#card-rvtgd"
+F360: # Fusion 360
+  websdkplc: "websdk-fusion-360"
+  subscriptionPattern: "STU_.+_F360"
+  card: "#card-f360"
+INVNTOR: # Inventor
+  websdkplc: "websdk-invntor"
+  subscriptionPattern: "STU_.+_INVPROSA"
+  card: "#card-invprosa"
+3DSMAX: # 3ds Max
+  websdkplc: "websdk-3ds-max"
+  subscriptionPattern: "STU_.+_3DSMAX"
+  card: "#card-3dsmax"
+MAYA: # Maya
+  websdkplc: "websdk-maya"
+  subscriptionPattern: "STU_.+_MAYA"
+  card: "#card-maya"
+CIV3D: # Civil 3D
+  websdkplc: "websdk-civil-3d"
+  subscriptionPattern: "STU_.+_CIV3D"
+  card: "#card-civ3d"
+ACDLT: # AutoCAD LT
+  websdkplc: "websdk-autocad-lt"
+  subscriptionPattern: "STU_.+_ACDLT"
+  card: "#card-acdlt"
+NAVMAN: # Navisworks Manage
+  websdkplc: "websdk-navisworks-manage"
+  subscriptionPattern: "STU_.+_NAVMAN"
+  card: "#card-navman"
+RSAPRO: # Robot Structural Analysis Professional
+  websdkplc: "websdk-robot-structural-analysis"
+  subscriptionPattern: "STU_.+_RSAPRO"
+  card: "#card-rsapro"

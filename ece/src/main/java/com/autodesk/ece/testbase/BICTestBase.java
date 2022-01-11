@@ -37,11 +37,13 @@ public class BICTestBase {
 
   public static Page_ bicPage = null;
   public WebDriver driver;
+  ZipPayTestBase zipTestBase;
 
   public BICTestBase(WebDriver driver, GlobalTestBase testbase) {
     Util.PrintInfo("BICTestBase from ece");
     this.driver = driver;
     bicPage = testbase.createPage("PAGE_BIC_CART");
+    zipTestBase = new ZipPayTestBase(testbase);
   }
 
   public static void clearTextInputValue(WebElement element) {
@@ -378,41 +380,30 @@ public class BICTestBase {
     boolean status = false;
     try {
       String paymentType = System.getProperty(BICECEConstants.PAYMENT);
-      String firstNameXpath = "";
-      String lastNameXpath = "";
+      String dataPaymentType = data.get(BICECEConstants.PAYMENT_TYPE);
+      String paymentProfile = "";
       Util.sleep(5000);
 
-      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
-        firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-        lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-      } else if (data.get(BICECEConstants.PAYMENT_TYPE)
-          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-        lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME).replace(
-            BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-      } else if (data.get(BICECEConstants.PAYMENT_TYPE)
-          .equalsIgnoreCase(BICECEConstants.PAYMENT_BACS)) {
-        firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-        lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME).replace(
-            BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-      } else if (data.get(BICECEConstants.PAYMENT_TYPE)
-          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
-        firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-        lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME).replace(
-            BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-      } else {
-        firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-        lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
-            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+      switch (dataPaymentType.toUpperCase()) {
+        case BICConstants.paymentTypePayPal:
+        case BICConstants.paymentTypeDebitCard:
+        case BICECEConstants.PAYMENT_BACS:
+        case BICECEConstants.PAYMENT_TYPE_SEPA:
+          paymentProfile = dataPaymentType.toLowerCase();
+          break;
+        case BICECEConstants.PAYMENT_TYPE_ZIP:
+          paymentProfile = "alternate-payment-methods";
+          break;
+        default:
+          paymentProfile = BICECEConstants.CREDIT_CARD;
+          break;
       }
 
-      Util.sleep(1000);
+      String firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
+      String lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
+
       clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
       driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
 
@@ -445,7 +436,8 @@ public class BICTestBase {
       if (paymentType.equalsIgnoreCase(BICConstants.paymentTypePayPal)
           || paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_BACS)
-          || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
+          || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)
+          || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
         continueButton.get(1).click();
       } else {
         continueButton.get(0).click();
@@ -466,88 +458,36 @@ public class BICTestBase {
       Util.printInfo("Adding billing details...");
       String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
           stateXpath = "";
+      String paymentTypeToken;
       switch (paymentType.toUpperCase()) {
         case BICConstants.paymentTypePayPal:
-          orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-          fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-          zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-          phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-          countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-          stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-          break;
         case BICConstants.paymentTypeDebitCard:
-          orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-          fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-          zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-          phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-          countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-          stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-          break;
         case BICECEConstants.PAYMENT_BACS:
-          orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-          fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-          zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-          phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-          countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-          stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_BACS_LOWERCASE);
-          break;
         case BICECEConstants.PAYMENT_TYPE_SEPA:
-          orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-          fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-          zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-          phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-          countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
-          stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_SEPA_LOWERCASE);
+          paymentTypeToken = paymentType.toLowerCase();
+          break;
+        case BICECEConstants.PAYMENT_TYPE_ZIP:
+          paymentTypeToken = "alternate-payment-methods";
           break;
         default:
-          orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-          fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-          zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-          phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-          countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-          stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+          paymentTypeToken = BICECEConstants.CREDIT_CARD;
           break;
       }
+
+      orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
+          BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
+          BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
 
       WebDriverWait wait = new WebDriverWait(driver, 60);
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
@@ -829,6 +769,20 @@ public class BICTestBase {
     Util.sleep(20000);
   }
 
+  @Step("Click on Zip tab")
+  public void populateZipPaymentDetails() {
+    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
+
+    try {
+      Util.printInfo("Clicking on Zip tab.");
+      bicPage.clickUsingLowLevelActions("zipPaymentTab");
+
+    } catch (MetadataException e) {
+      e.printStackTrace();
+      AssertUtils.fail("Unable to enter Zip details to make payment...");
+    }
+  }
+
   @Step("Selecting payment profile" + GlobalConstants.TAG_TESTINGHUB)
   public void selectPaymentProfile(HashMap<String, String> data, String[] paymentCardDetails,
       Map<String, String> address) {
@@ -860,6 +814,9 @@ public class BICTestBase {
           case BICECEConstants.PAYMENT_TYPE_SEPA:
             populateSepaPaymentDetails(paymentCardDetails);
             break;
+          case BICECEConstants.PAYMENT_TYPE_ZIP:
+            populateZipPaymentDetails();
+            break;
           default:
             populatePaymentDetails(paymentCardDetails);
             break;
@@ -877,7 +834,7 @@ public class BICTestBase {
   }
 
   @Step("Submitting Order and Retrieving Order Number")
-  private String submitGetOrderNumber() {
+  private String submitGetOrderNumber(HashMap<String, String> data) {
     clickMandateAgreementCheckbox();
     int count = 0;
     debugPageUrl(" Step 1 wait for SubmitOrderButton");
@@ -917,6 +874,13 @@ public class BICTestBase {
       debugPageUrl(e.getMessage());
       AssertUtils.fail("Failed to click on Submit button...");
     }
+
+    // Zip Pay
+    if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+      zipTestBase.setTestData(data);
+      zipTestBase.zipPayCheckout();
+    }
+
     String orderNumber = null;
     debugPageUrl(" Step 3 Check order Number is Null");
     bicPage.waitForPageToLoad();
@@ -1144,7 +1108,7 @@ public class BICTestBase {
 
     enterBillingDetails(data, address, paymentMethod, region);
 
-    orderNumber = submitGetOrderNumber();
+    orderNumber = submitGetOrderNumber(data);
 
     printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, names.firstName,
         names.lastName,
@@ -1236,6 +1200,11 @@ public class BICTestBase {
       }
     }
 
+    if (productType.equals("flex")) {
+      Select flexOffers = new Select(driver.findElement(By.id("product-term")));
+      flexOffers.selectByVisibleText("100 Tokens");
+    }
+
     data.putAll(names.getMap());
 
     //Apply promo if exists
@@ -1245,7 +1214,7 @@ public class BICTestBase {
 
     enterBillingDetails(data, address, paymentMethod, region);
 
-    orderNumber = submitGetOrderNumber();
+    orderNumber = submitGetOrderNumber(data);
 
     printConsole(constructGuacDotComURL, orderNumber, emailID, address, names.firstName,
         names.lastName,
@@ -1377,7 +1346,7 @@ public class BICTestBase {
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
-    orderNumber = submitGetOrderNumber();
+    orderNumber = submitGetOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1403,7 +1372,7 @@ public class BICTestBase {
     Util.sleep(5000);
     skipAddSeats();
 
-    orderNumber = submitGetOrderNumber();
+    orderNumber = submitGetOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1425,7 +1394,7 @@ public class BICTestBase {
     // Login to an existing account and add seats
     loginAccount(data);
     existingSubscriptionAddSeat(data);
-    orderNumber = submitGetOrderNumber();
+    orderNumber = submitGetOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1633,7 +1602,7 @@ public class BICTestBase {
     Util.sleep(5000);
     agreeToTerm();
 
-    orderNumber = submitGetOrderNumber();
+    orderNumber = submitGetOrderNumber(data);
 
     printConsole(constructGuacMoeURL, orderNumber, emailID, address, names.firstName,
         names.lastName,
@@ -1663,7 +1632,7 @@ public class BICTestBase {
     bicPage.click("moeLoginButton");
     bicPage.waitForField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, true, 30000);
     bicPage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
-    bicPage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, "K16PF6LCtnsf99");
+    bicPage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, ";mynFU(,|(97?@`n4X?SPw)s~*|$");
     bicPage.click("moeLoginButton");
     bicPage.waitForPageToLoad();
     Util.printInfo("Successfully logged into MOE");
@@ -1797,7 +1766,7 @@ public class BICTestBase {
     agreeToTerm();
     clickOnMakeThisATestOrder();
 
-    orderNumber = submitGetOrderNumber();
+    orderNumber = submitGetOrderNumber(data);
 
     printConsole(constructGuacDRURL, orderNumber, emailID, address, names.firstName, names.lastName,
         paymentMethod);

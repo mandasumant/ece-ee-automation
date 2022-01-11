@@ -20,8 +20,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import org.testng.Assert;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class EDUTestBase {
 
@@ -235,28 +236,74 @@ public class EDUTestBase {
     driver.switchTo().window(currentTabHandle);
   }
 
-  @Step("Activate AutoCAD Class Subscription" + GlobalConstants.TAG_TESTINGHUB)
-  public void activateAutoCADAndAssignUsers() throws MetadataException {
-    // Activate new subscription model for AutoCAD
+  /**
+   * Download an education product by webdsk ID
+   *
+   * @param websdk - Product websdk ID
+   */
+  public void downloadProduct(String websdk) {
+    // Activate the product
+    WebElement getProductButton = driver.findElement(
+        By.xpath("//a[@websdk-plc=\"" + websdk + "\"]"));
+    getProductButton.click();
+
+    // Wait for the download button to appear
+    WebDriverWait wait = new WebDriverWait(driver, 20);
+    wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id(websdk)));
+
+    // Click on the download button
+    WebElement downloadButton = driver.findElement(By.id(websdk))
+        .findElement(By.cssSelector(".downloadWidget button.websdkButton"));
+    downloadButton.click();
+  }
+
+  /**
+   * Activate an educator subscription for a product and open the subscription in Portal. If the
+   * activation fails, it will retry up to 5 times
+   *
+   * @param productLink - The anchor of the product to activate
+   * @throws MetadataException
+   */
+  @Step("Activate Product Class Subscription" + GlobalConstants.TAG_TESTINGHUB)
+  public void activateProductAndAssignUsers(String productLink) throws MetadataException {
     eduPage.clickUsingLowLevelActions("educationClassLabTab");
     eduPage.clickUsingLowLevelActions("subscriptionAcceptButton");
 
-    // Assign user
-    eduPage.clickUsingLowLevelActions("activateAutoCADClassButton");
-    eduPage.clickUsingLowLevelActions("educationConfirmButton");
-    // Wait time because it takes up to 15 sec sometimes to load assignUsersButton
-    Util.sleep(15000);
+    boolean assignmentSuccess = false;
+    int assignmentAttemptCount = 0;
+
+    while (!assignmentSuccess) {
+      // Assign user
+      WebElement activateButton = driver.findElement(
+          By.cssSelector(".edu-activate-cta [href=\"" + productLink + "\"]"));
+      activateButton.click();
+      eduPage.clickUsingLowLevelActions("educationConfirmButton");
+
+      // Wait time because it takes up to 15 sec sometimes to load assignUsersButton
+      WebDriverWait wait = new WebDriverWait(driver, 15);
+      wait.until(
+          ExpectedConditions.invisibilityOfElementLocated(By.className("model-body--loading")));
+
+      // Check if there was an error assigning users, and attempt to click on the retry button
+      WebElement errorModal = driver.findElement(
+          By.xpath(eduPage.getFirstFieldLocator("eduAssignmentError")));
+      if (errorModal.isDisplayed()) {
+        Util.printWarning("Seat assignment failed, retrying");
+        WebElement closeButton = driver.findElement(
+            By.cssSelector(".modal-footer--issues .close-btn"));
+        closeButton.click();
+        assignmentAttemptCount++;
+
+        if (assignmentAttemptCount > 5) {
+          AssertUtils.fail("Failed to assign seats to educator");
+          assignmentSuccess = true;
+        }
+      } else {
+        assignmentSuccess = true;
+      }
+    }
+
     eduPage.clickUsingLowLevelActions("assignUsersButton");
-  }
-
-  @Step("Verify AutoCAD in Portal" + GlobalConstants.TAG_TESTINGHUB)
-  public void validateAutoCADActivation() throws MetadataException {
-    switchToNextTab();
-
-    // verify that AutoCAD is visible in a list of products
-    eduPage.waitForField("eduAutoCADProduct", true, 10);
-    Util.printInfo("Verify AutoCAD");
-    Assert.assertTrue(eduPage.checkIfElementExistsInPage("eduAutoCADProduct", 10));
   }
 
   /**
@@ -302,7 +349,7 @@ public class EDUTestBase {
   /**
    * Switch to a neighboring tab
    */
-  private void switchToNextTab() {
+  public void switchToNextTab() {
     String currentTabHandle = driver.getWindowHandle();
     Set<String> windowHandles = driver.getWindowHandles();
     windowHandles.remove(currentTabHandle); // The new tab is the tab that isn't the current one
