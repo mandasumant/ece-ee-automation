@@ -1035,17 +1035,6 @@ public class BICTestBase {
     checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
 
-    try {
-      if(bicPage.checkIfElementExistsInPage("guacAddSeats", 10)){
-        Util.printInfo("Found Add Seat Modal . Continuing");
-        bicPage.clickUsingLowLevelActions("guacAddSeats");
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      debugPageUrl(e.getMessage());
-      AssertUtils.fail("Failed to click on AddS eats Continue button...");
-    }
-
   }
 
   @SuppressWarnings({"static-access", "unused"})
