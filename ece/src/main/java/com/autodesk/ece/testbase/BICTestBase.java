@@ -1034,7 +1034,6 @@ public class BICTestBase {
 
     checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
-
   }
 
   @SuppressWarnings({"static-access", "unused"})
