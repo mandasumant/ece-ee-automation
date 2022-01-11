@@ -752,6 +752,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("paypalAgreeAndContBtn");
       Util.sleep(10000);
 
+
       driver.switchTo().window(parentWindow);
       Util.sleep(5000);
       Util.printInfo(
@@ -879,17 +880,6 @@ public class BICTestBase {
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
       zipTestBase.setTestData(data);
       zipTestBase.zipPayCheckout();
-    }
-
-   try {
-      if(bicPage.checkIfElementExistsInPage("guacAddSeats", 10)){
-        Util.printInfo("Found Add Seat Modal . Continuing");
-        bicPage.clickUsingLowLevelActions("guacAddSeats");
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      debugPageUrl(e.getMessage());
-      AssertUtils.fail("Failed to click on AddS eats Continue button...");
     }
 
     String orderNumber = null;
@@ -1044,6 +1034,18 @@ public class BICTestBase {
 
     checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
+
+    try {
+      if(bicPage.checkIfElementExistsInPage("guacAddSeats", 10)){
+        Util.printInfo("Found Add Seat Modal . Continuing");
+        bicPage.clickUsingLowLevelActions("guacAddSeats");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      debugPageUrl(e.getMessage());
+      AssertUtils.fail("Failed to click on AddS eats Continue button...");
+    }
+
   }
 
   @SuppressWarnings({"static-access", "unused"})
