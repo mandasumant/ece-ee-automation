@@ -806,20 +806,23 @@ public class BICTestBase {
       Util.printInfo("Entering Giropay url" + " : " +url);
 
       AssertUtils.assertTrue(url.indexOf("giropay") != -1,
-          "Current url [" + url + "] does not contains keyword : giropay");
-
+          "Current url [" + url + "] does  contain keyword : giropay");
       Util.printInfo("Entering Giropay bank name : " + paymentCardDetails[0]);
       bicPage.populateField("giroPayBankName", paymentCardDetails[0]);
       Util.sleep(2000);
-      Util.printInfo("Selecting thDOEN GIRO POPLUATE BILLING INFOe bank name :");
+      Util.printInfo("Selecting the bank name :");
       bicPage.clickUsingLowLevelActions("giroPayBankNameSelection");
-      Util.printInfo("Selected the bank name :");
+
+      Util.printInfo("Clicking Continue ");
+      bicPage.clickUsingLowLevelActions("giroPayContinue");
 
       Util.sleep(5000);
-      Util.printInfo("Clicking on the assume button");
-      bicPage.clickUsingLowLevelActions("giroPayAssume");
+      if (bicPage.checkIfElementExistsInPage("giroPayAssume", 10)) {
+        Util.printInfo("Clicking on the assume button");
+        bicPage.clickUsingLowLevelActions("giroPayAssume");
+      }
 
-      // Implement the ROBO logic to handle the Chrome popoup . for now manually intersecting to go to the next page
+      //TO DO :  Implement the ROBO logic to handle the Chrome popoup . for now manually intersecting to go to the next page
 
       Util.sleep(10000);
       bicPage.populateField("giroPaySc", paymentCardDetails[1]);
