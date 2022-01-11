@@ -471,11 +471,11 @@ public class BICTestBase {
       bicPage.waitForPageToLoad();
     }
     catch(ElementNotInteractableException elementNotInteractableException){
-      Util.printInfo("ElementNotInteractableException Found ");
+      Util.printInfo("ElementNotInteractableException Found");
       Util.sleep(5000);
       JavascriptExecutor executor = (JavascriptExecutor) driver;
       executor.executeScript("arguments[0].click();", continueButtonList.get(2));
-      Util.printInfo("Done Continue  ");
+      Util.printInfo("Done Continue.");
 
       bicPage.waitForPageToLoad();
     }
