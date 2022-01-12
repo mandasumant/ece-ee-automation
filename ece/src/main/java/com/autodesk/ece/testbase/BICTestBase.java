@@ -1176,7 +1176,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
-      if (data.get(BICECEConstants.OFFERING_TYPE) == null || !data.get(
+      if (data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
           BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META)) {
         selectMonthlySubscription(driver);
       }
