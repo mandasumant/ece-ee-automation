@@ -62,13 +62,13 @@ public class ZipPayTestBase {
     ));
 
     // If an SMS verification code is requested, use the provided test code
-    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+    /*driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
     if (!driver.findElements(By.xpath(verificationCodeXPath)).isEmpty()) {
       zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
           testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
       zipPage.click("zipPayVerificationSubmit");
     }
-
+*/
     // Click on pay with Zip pay
     zipPage.waitForField(ZIP_PAY_OPTION, true, 10000);
     try {
