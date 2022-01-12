@@ -28,6 +28,7 @@ public class ZipPayTestBase {
   private static final String ZIP_PAY_SUBMIT = "zipPayPaymentSubmit";
   private static final String ZIP_PAY_CONFIRM = "zipPayPaymentConfirm";
   private static final String ZIP_PAY_DASHBOARD_USERNAME = "zipPayDashboardUsername";
+  private static final String ZIP_PAY_DASHBOARD_VERIFY = "zipPayDashboardVerify";
   private static final String ZIP_PAY_PAYMENT_SUCCESS = "zipPayPaymentSuccess";
 
   private final Page_ zipPage;
@@ -62,13 +63,13 @@ public class ZipPayTestBase {
     ));
 
     // If an SMS verification code is requested, use the provided test code
-    /*driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
     if (!driver.findElements(By.xpath(verificationCodeXPath)).isEmpty()) {
       zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
           testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
       zipPage.click("zipPayVerificationSubmit");
     }
-*/
+
     // Click on pay with Zip pay
     zipPage.waitForField(ZIP_PAY_OPTION, true, 10000);
     try {
@@ -119,7 +120,7 @@ public class ZipPayTestBase {
     }
 
     double amountToRefill = Math.min(
-        Math.min(Math.round(balanceRequired - availableBalance) + 200, 500),
+        Math.max(Math.round(balanceRequired - availableBalance) + 200, 500),
         1000 - Math.round(availableBalance));
 
     // Navigate to the make payment page
@@ -158,10 +159,10 @@ public class ZipPayTestBase {
     // If an SMS verification code is requested, use the provided test code
     if (!driver.findElements(By.xpath(smsVerificationXPath)).isEmpty()) {
       zipPage.click(ZIP_PAY_SUBMIT);
-      zipPage.waitForField(ZIP_PAY_VERIFICATION_CODE_KEY, true, 3000);
-      zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
+      zipPage.waitForField(ZIP_PAY_DASHBOARD_VERIFY, true, 3000);
+      zipPage.populateField(ZIP_PAY_DASHBOARD_VERIFY,
           testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
-      zipPage.click("zipPayVerificationSubmit");
+      zipPage.click(ZIP_PAY_SUBMIT);
       wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(fieldXPath)));
     }
   }

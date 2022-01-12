@@ -710,7 +710,7 @@ public class BICTestBase {
 
       String title = driver.getTitle();
 
-      AssertUtils.assertTrue(title.toUpperCase().contains(new String("Log In").toUpperCase()),
+      AssertUtils.assertTrue(title.toUpperCase().contains("Log In".toUpperCase()),
           "Current title [" + title + "] does not contains keyword : PayPal Login");
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
@@ -904,7 +904,7 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-          "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
         Util.printWarning(
             "Export compliance issue is present. Checking for order number in the Pelican response");
@@ -924,7 +924,7 @@ public class BICTestBase {
     debugPageUrl(" Step 3a Check order Number is Null");
     try {
       orderNumber = driver.findElement(By.xpath(
-          "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+              "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
           .getText();
     } catch (Exception e) {
       debugPageUrl(" Step 4 Check order Number is Null");
@@ -944,7 +944,7 @@ public class BICTestBase {
 
       try {
         orderNumber = driver.findElement(By.xpath(
-            "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+                "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
             .getText();
       } catch (Exception e) {
         debugPageUrl(" Step 5 Check order Number is Null");
@@ -1836,7 +1836,7 @@ public class BICTestBase {
 
     try {
       WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField(
-          BICECEConstants.CREDIT_CARD_FRAME_DR)
+              BICECEConstants.CREDIT_CARD_FRAME_DR)
           .get(0);
       driver.switchTo().frame(creditCardFrameDR);
       Util.sleep(2000);
@@ -1883,7 +1883,7 @@ public class BICTestBase {
 
     try {
       WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField(
-          BICECEConstants.CREDIT_CARD_FRAME_DR)
+              BICECEConstants.CREDIT_CARD_FRAME_DR)
           .get(0);
       driver.switchTo().frame(creditCardFrameDR);
 
@@ -1916,7 +1916,7 @@ public class BICTestBase {
 
     try {
       WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField(
-          BICECEConstants.CREDIT_CARD_FRAME_DR)
+              BICECEConstants.CREDIT_CARD_FRAME_DR)
           .get(0);
       driver.switchTo().frame(creditCardFrameDR);
 
