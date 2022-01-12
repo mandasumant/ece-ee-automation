@@ -107,14 +107,14 @@ public class ZipPayTestBase {
     zipPage.click(ZIP_PAY_SUBMIT);
 
     String amountXPath = zipPage.getFirstFieldLocator("zipPayDashboardAmountAvailable");
-    VerifySMSOrWaitForField(amountXPath);
 
     WebElement amountAvailableElement;
     try {
+      VerifySMSOrWaitForField(amountXPath);
       amountAvailableElement = driver.findElement(By.xpath(amountXPath));
     } catch (Exception ex) {
-      Util.printLog("Failed to get amount balance");
-      Util.printLog(driver.getPageSource());
+      Util.printWarning("Failed to get amount balance");
+      Util.printWarning(driver.getPageSource());
       AssertUtils.fail("Failed to get amount balance");
       return;
     }
@@ -158,7 +158,7 @@ public class ZipPayTestBase {
 
   private void VerifySMSOrWaitForField(String fieldXPath) {
     String smsVerificationXPath = zipPage.getFirstFieldLocator("zipPayVerificationTitle");
-    WebDriverWait wait = new WebDriverWait(driver, 30);
+    WebDriverWait wait = new WebDriverWait(driver, 60);
     wait.until(ExpectedConditions.or(
         ExpectedConditions.presenceOfElementLocated(By.xpath(fieldXPath)),
         ExpectedConditions.presenceOfElementLocated(By.xpath(smsVerificationXPath))
