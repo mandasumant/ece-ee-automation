@@ -109,7 +109,16 @@ public class ZipPayTestBase {
     String amountXPath = zipPage.getFirstFieldLocator("zipPayDashboardAmountAvailable");
     VerifySMSOrWaitForField(amountXPath);
 
-    WebElement amountAvailableElement = driver.findElement(By.xpath(amountXPath));
+    WebElement amountAvailableElement;
+    try {
+      amountAvailableElement = driver.findElement(By.xpath(amountXPath));
+    } catch (Exception ex) {
+      Util.printLog("Failed to get amount balance");
+      Util.printLog(driver.getPageSource());
+      AssertUtils.fail("Failed to get amount balance");
+      return;
+    }
+
     double availableBalance = parseZipAmount(amountAvailableElement.getText());
 
     if (availableBalance > balanceRequired) {
