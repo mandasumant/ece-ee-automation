@@ -773,13 +773,13 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
-    String bicOrderO2ID = "";
-    OxygenService os = new OxygenService();
-    try {
-      bicOrderO2ID = os.getOxygenID(results.get(BICConstants.emailid), results.get(PASSWORD));
-      results.put(BICConstants.oxid, bicOrderO2ID);
-    } catch (Exception e1) {
-    }
+//    String bicOrderO2ID = "";
+//    OxygenService os = new OxygenService();
+//    try {
+//      bicOrderO2ID = os.getOxygenID(results.get(BICConstants.emailid), results.get(PASSWORD));
+//      results.put(BICConstants.oxid, bicOrderO2ID);
+//    } catch (Exception e1) {
+//    }
 
     results.putAll(testDataForEachMethod);
 

@@ -283,6 +283,7 @@ public class BICTestBase {
   @Step("Skip add seats modal")
   public void skipAddSeats() {
     Util.printInfo("Finding the skip Button");
+    Util.sleep(5000);
 
     try {
       int count = 0;
