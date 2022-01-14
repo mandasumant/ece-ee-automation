@@ -1,5 +1,6 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -44,7 +45,7 @@ public class ZipPayTestBase {
     this.testData = testData;
   }
 
-  @Step("Go through Zip checkout")
+  @Step("Go through Zip checkout" + GlobalConstants.TAG_TESTINGHUB)
   public void zipPayCheckout() {
     // Login to the zip account
     zipPage.waitForField(ZIP_PAY_USERNAME_KEY, true, 5000);
@@ -70,8 +71,18 @@ public class ZipPayTestBase {
       zipPage.click("zipPayVerificationSubmit");
     }
 
-    // Click on pay with Zip pay
     zipPage.waitForField(ZIP_PAY_OPTION, true, 10000);
+
+    // Double check that we have sufficient balance to pay for the product
+    double availableAmount = getElementAmount("zipPayOptionAmountAvailable");
+    double amountDue = getElementAmount("zipPayAmountDue");
+
+    if (amountDue > availableAmount) {
+      AssertUtils.fail(
+          "Insufficient balance to checkout with zip. Another test or automation may have used up the allocated balance.");
+    }
+
+    // Click on pay with Zip pay
     try {
       zipPage.clickUsingLowLevelActions(ZIP_PAY_OPTION);
     } catch (MetadataException e) {
@@ -86,6 +97,7 @@ public class ZipPayTestBase {
    *
    * @param balanceRequiredText - Amount to refill as a currency string
    */
+  @Step("Verify and refill zip balance" + GlobalConstants.TAG_TESTINGHUB)
   public void verifyZipBalance(String balanceRequiredText) {
     double balanceRequired = parseZipAmount(balanceRequiredText);
     if (balanceRequired > 1000) {
@@ -187,5 +199,17 @@ public class ZipPayTestBase {
         .replace("$", "")
         .replace(",", "")
         .replace("A", ""));
+  }
+
+  /**
+   * Parse the currency value of the text for a locator
+   *
+   * @param field - The page locator with the dollar amount
+   * @return - The locator's value in dollars
+   */
+  private double getElementAmount(String field) {
+    String locator = zipPage.getFirstFieldLocator(field);
+    String amount = driver.findElement(By.xpath(locator)).getText();
+    return parseZipAmount(amount);
   }
 }
