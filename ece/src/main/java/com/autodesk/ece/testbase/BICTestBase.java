@@ -779,9 +779,9 @@ public class BICTestBase {
   @Step("Click on Zip tab")
   public void populateZipPaymentDetails() {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
-
     try {
       Util.printInfo("Clicking on Zip tab.");
+      bicPage.waitForFieldPresent("zipPaymentTab",10000);
       bicPage.clickUsingLowLevelActions("zipPaymentTab");
 
     } catch (MetadataException e) {
