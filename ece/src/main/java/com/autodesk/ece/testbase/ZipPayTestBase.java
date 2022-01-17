@@ -29,6 +29,7 @@ public class ZipPayTestBase {
   private static final String ZIP_PAY_SUBMIT = "zipPayPaymentSubmit";
   private static final String ZIP_PAY_CONFIRM = "zipPayPaymentConfirm";
   private static final String ZIP_PAY_DASHBOARD_USERNAME = "zipPayDashboardUsername";
+  private static final String ZIP_PAY_DASHBOARD_PASSWORD = "zipPayDashboardPassword";
   private static final String ZIP_PAY_DASHBOARD_VERIFY = "zipPayDashboardVerify";
   private static final String ZIP_PAY_PAYMENT_SUCCESS = "zipPayPaymentSuccess";
 
@@ -109,14 +110,20 @@ public class ZipPayTestBase {
     ArrayList<String> tabs = new ArrayList<>(driver.getWindowHandles());
     driver.switchTo().window(tabs.get(1));
     driver.get("https://account.sandbox.zipmoney.com.au/#");
-    zipPage.waitForField(ZIP_PAY_DASHBOARD_LOGIN, true, 5000);
-    zipPage.click(ZIP_PAY_DASHBOARD_LOGIN);
 
-    // Login to the zip account
-    zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 5000);
-    zipPage.populateField(ZIP_PAY_DASHBOARD_USERNAME, testData.get(ZIP_PAY_USERNAME_KEY));
-    zipPage.populateField("zipPayDashboardPassword", testData.get(ZIP_PAY_PASSWORD_KEY));
-    zipPage.click(ZIP_PAY_SUBMIT);
+    try{
+     if(zipPage.checkIfElementExistsInPage(ZIP_PAY_DASHBOARD_LOGIN, 10)){
+      zipPage.click(ZIP_PAY_DASHBOARD_LOGIN);
+
+      // Login to the zip account
+      zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 5000);
+      zipPage.populateField(ZIP_PAY_DASHBOARD_USERNAME, testData.get(ZIP_PAY_USERNAME_KEY));
+      zipPage.populateField(ZIP_PAY_DASHBOARD_PASSWORD, testData.get(ZIP_PAY_PASSWORD_KEY));
+      zipPage.click(ZIP_PAY_SUBMIT);
+     }
+    } catch (MetadataException e) {
+      AssertUtils.fail("Error while checking zip login page");
+   }
 
     String amountXPath = zipPage.getFirstFieldLocator("zipPayDashboardAmountAvailable");
 
@@ -126,7 +133,6 @@ public class ZipPayTestBase {
       amountAvailableElement = driver.findElement(By.xpath(amountXPath));
     } catch (Exception ex) {
       Util.printWarning("Failed to get amount balance");
-      Util.printWarning(driver.getPageSource());
       AssertUtils.fail("Failed to get amount balance");
       return;
     }

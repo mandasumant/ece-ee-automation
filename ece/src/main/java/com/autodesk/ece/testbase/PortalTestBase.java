@@ -41,12 +41,15 @@ public class PortalTestBase {
   public static Page_ portalPage = null;
   public static Page_ studentPage = null;
   public WebDriver driver = null;
+  ZipPayTestBase zipTestBase;
 
   public PortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
     portalPage = testbase.createPage("PAGE_PORTAL");
     studentPage = testbase.createCommonPage("PAGE_STUDENT");
     new BICTestBase(driver, testbase);
+    zipTestBase = new ZipPayTestBase(testbase);
+
   }
 
   public static String timestamp() {
@@ -651,7 +654,7 @@ public class PortalTestBase {
       Util.printInfo("Clicking on Add Seat button...");
       String currentURL = driver.getCurrentUrl();
       Util.printInfo("currentURL1 before clicking on Add seat : " + currentURL);
-
+      String zipPaySubscriptionUrl = currentURL;
       portalPage.waitForFieldPresent(BICECEConstants.PORTAL_ADD_SEAT_BUTTON, 10000);
       portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_ADD_SEAT_BUTTON);
 
@@ -742,16 +745,53 @@ public class PortalTestBase {
       String subtotalPrice = portalPage.getLinkText("portalASFinalSubtotalAmount");
       Util.printInfo("Subtotal amount : " + subtotalPrice);
       orderDetails.put("subtotalPrice", subtotalPrice);
-      Util.printInfo("Clicking on Submit Order button...");
 
+      Util.printInfo("Clicking on Save button...");
+      clickOnContinueBtn();
+
+      // Zip Pay Verification
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
+          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+        zipTestBase.setTestData(testDataForEachMethod);
+        zipTestBase.verifyZipBalance(proratedFinalPrice);
+      }
+
+      Util.printInfo("Clicking on Submit Order button...");
       portalPage.waitForFieldPresent("portalASSubmitOrderBtn", 5000);
       portalPage.clickUsingLowLevelActions("portalASSubmitOrderBtn");
+
+      // Zip Pay Checkout
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
+          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+        Util.printInfo("Going to Zip Pay Checkout");
+        zipTestBase.setTestData(testDataForEachMethod);
+        zipTestBase.zipPayCheckout();
+        Util.sleep(2000);
+        orderDetails.put("zipPaySubscriptionUrl", zipPaySubscriptionUrl);
+      }
 
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to place add seat order from portal...");
     }
     return orderDetails;
+  }
+
+  public void clickOnContinueBtn() {
+    List<WebElement> continueButtonList = null;
+
+    try {
+      Util.sleep(2000);
+      continueButtonList = portalPage.getMultipleWebElementsfromField("portalAddSeatSaveButton");
+
+      if (continueButtonList.size() > 1) {
+        continueButtonList.get(1).click();
+      }
+
+    } catch (MetadataException e) {
+      e.printStackTrace();
+      AssertUtils.fail("Failed to click on Save button on billing details page...");
+    }
   }
 
   public HashMap<String, String> validateAddSeatOrder(HashMap<String, String> data,
@@ -761,25 +801,39 @@ public class PortalTestBase {
     try {
       Util.waitForElement(portalPage.getFirstFieldLocator("portalASOrderConfirmationHead"),
           "Order confirmation page");
-      String addSeatOrderNumber = portalPage.getLinkText("portalASOrderNumberText");
-      orderDetails.put(TestingHubConstants.addSeatOrderNumber, addSeatOrderNumber);
-      Util.printInfo("Add Seat Order number : " + addSeatOrderNumber);
-
+      Util.sleep(10000);
+      if (portalPage.checkIfElementExistsInPage("portalASOrderNumberText", 10)) {
+        String addSeatOrderNumber = portalPage.getLinkText("portalASOrderNumberText");
+        orderDetails.put(TestingHubConstants.addSeatOrderNumber, addSeatOrderNumber);
+        Util.printInfo("Add Seat Order number : " + addSeatOrderNumber);
+      } else {
+        Util.printInfo("Add Seat Order number can not be displayed due to Export Compliance.");
+      }
       Util.printInfo("Validating prorated amount on confirmation page...");
       String confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
 
       AssertUtils.assertEquals(
-          Double.valueOf(data.get("proratedFinalAmount").substring(1).replace(",", "")),
-          Double.valueOf(confirmProratedAmount.substring(1).replace(",", "")));
+          Double.valueOf(data.get("proratedFinalAmount")
+              .substring(data.get("proratedFinalAmount").indexOf("$") + 1).replace(",", "")),
+          Double.valueOf(confirmProratedAmount.substring(confirmProratedAmount.indexOf("$") + 1)
+              .replace(",", "")));
 
-      Util.printInfo("Clicking on back button...");
-      portalPage.clickUsingLowLevelActions("portalBackButton");
+      Util.printInfo("ZIP Pay subscription URL " + data.get("zipPaySubscriptionUrl"));
 
       Util.sleep(5000);
+      if (data.get("zipPaySubscriptionUrl") != null) {
+        Util.printInfo("Calling "+ data.get("zipPaySubscriptionUrl"));
+        driver.get(data.get("zipPaySubscriptionUrl"));
+      } else {
+        Util.sleep(5000);
+        Util.printInfo("Clicking on back button...");
+        portalPage.clickUsingLowLevelActions("portalBackButton");
+      }
+
       driver.switchTo().defaultContent();
       Util.printInfo("Refreshing the page...");
       driver.navigate().refresh();
-      Util.sleep(65000);
+      Util.sleep(5000);
 
       Util.waitForElement(portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_ADD_SEAT_BUTTON),
           "Add Seat button");
@@ -875,7 +929,7 @@ public class PortalTestBase {
 
       Util.sleep(60000);
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-              BICECEConstants.PORTAL_PAYMENT_METHOD)
+          BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data, localeMap);
