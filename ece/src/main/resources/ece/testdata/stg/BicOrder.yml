@@ -82,6 +82,10 @@ default:
   paypalUser: "Paypal-buyer-namer@ssttest.net"
   paypalSsap: "Password1"
   paypalPaymentType: "CREDIT UNION 1"
+  zipPayUsername: "zippayau01@mailinator.com"
+  zipPayPassword: "Test1234"
+  zipPayVerificationCode: "123456"
+
   getPriceByPriceID: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/price/"
   getPurchaseOrderDetailsUrl: "https://api.pelicanstg.autodesk.com/orders/v3/filters"
   putPelicanRefundOrderUrl: "https://api.pelicanstg.autodesk.com/orders/v3/passtoken"
@@ -277,7 +281,7 @@ validateBicCloudCreditOrder:
 validateBicMetaOrder:
   productID: *bicMetaPriceID
   bicNativePriceID: *bicMetaPriceID
-  productName: "infraworks"
+  productName: "RECAP"
   offeringType: "META"
 
 validateTrialDownloadUI:

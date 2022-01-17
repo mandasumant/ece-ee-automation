@@ -69,7 +69,6 @@ public class BICECEConstants extends BICConstants {
   public static final String FIRSTNAME = "firstname";
   public static final String PAYPAL = "paypal";
   public static final String PAYMENT_BACS = "BACS";
-  public static final String PAYMENT_BACS_LOWERCASE = "bacs";
   public static final String PAYMENT_ACH_LOWERCASE = "ach";
   public static final String ACCOUNT = "account";
   public static final String PAYMENT_PROFILE = "<PAYMENTPROFILE>";
@@ -145,4 +144,5 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYMENT_SEPA_LOWERCASE = "sepa";
   public static final String PAYMENT_TYPE_GIROPAY = "GIROPAY";
   public static final String PAYMENT_GIROPAY_LOWERCASE = "giropay";
+  public static final String PAYMENT_TYPE_ZIP = "ZIP";
 }

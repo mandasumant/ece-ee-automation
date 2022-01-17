@@ -4,6 +4,7 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.EDUTestBase;
 import com.autodesk.ece.testbase.EDUTestBase.EDUUserType;
+import com.autodesk.ece.testbase.PortalTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -14,7 +15,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -23,6 +23,8 @@ public class EDUUserFlows extends ECETestBase {
 
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
+  LinkedHashMap<String, String> testDataForProduct = null;
+  String testProductKey;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -34,6 +36,11 @@ public class EDUUserFlows extends ECETestBase {
   @SuppressWarnings("unchecked")
   public void beforeTestMethod(Method name) {
     testDataForEachMethod = (LinkedHashMap<String, String>) loadYaml.get("default");
+    testProductKey = System.getProperty("externalKey");
+    if (testProductKey == null || testProductKey.isEmpty()) {
+      testProductKey = "F360";
+    }
+    testDataForProduct = (LinkedHashMap<String, String>) loadYaml.get(testProductKey);
   }
 
   @Test(groups = {"validate-student-subscription"}, description = "Register EDU User")
@@ -50,15 +57,19 @@ public class EDUUserFlows extends ECETestBase {
     // Accept VSOS terms
     edutb.signUpUser();
 
-    // Download Fusion 360
-    edutb.downloadF360Product();
+    if (testProductKey.equals("F360")) {
+      // Download Fusion 360
+      edutb.downloadF360Product();
+    } else {
+      edutb.downloadProduct(testDataForProduct.get("websdkplc"));
+    }
 
     // Sleep 3 minutes to wait for subscription to show up in portal
     Util.sleep(180000);
 
     // Validate that the user has a subscription to Fusion 360 in portal
-    results.putAll(portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL),
-        Pattern.compile("STU_.+_F360")));
+    portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
+    results.putAll(portaltb.verifyProductVisible(testDataForProduct.get("subscriptionPattern")));
 
     HashMap<String, String> testResults = new HashMap<>();
     try {
@@ -72,8 +83,8 @@ public class EDUUserFlows extends ECETestBase {
     }
   }
 
-  @Test(groups = {"activate-autocad-educator"}, description = "Educator activates AutoCAD")
-  public void validateAutoCADActivationByEducator() throws MetadataException {
+  @Test(groups = {"activate-product-educator"}, description = "Educator activates product")
+  public void validateProductActivationByEducator() throws MetadataException {
     HashMap<String, String> results = new HashMap<String, String>();
     EDUTestBase eduSetupTB = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
     // Create new user with Educator role
@@ -92,6 +103,7 @@ public class EDUUserFlows extends ECETestBase {
     EISTestBase.driver.quit();
     ECETestBase tb = new ECETestBase();
     EDUTestBase eduVerifiedTB = new EDUTestBase(tb.getTestBase(), testDataForEachMethod);
+    PortalTestBase verifiedPortalTB = new PortalTestBase(tb.getTestBase());
 
     // Login as the previously registered user
     eduVerifiedTB.loginUser(results.get(BICConstants.emailid), results.get("password"));
@@ -102,10 +114,24 @@ public class EDUUserFlows extends ECETestBase {
     eduVerifiedTB.verifyEducationStatus();
 
     // Activate product and assign users
-    eduVerifiedTB.activateAutoCADAndAssignUsers();
+    eduVerifiedTB.activateProductAndAssignUsers(testDataForProduct.get("card"));
 
-    // Check that we can see fusion product in portal
-    eduVerifiedTB.validateAutoCADActivation();
+    // Check that we can see the product in portal
+    eduVerifiedTB.switchToNextTab();
+    verifiedPortalTB.clickALLPSLink();
+    results.putAll(
+        verifiedPortalTB.verifyProductVisible(testDataForProduct.get("subscriptionPattern")));
+
+    HashMap<String, String> testResults = new HashMap<>();
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
+      testResults.put(BICECEConstants.PRODUCT_PE_ID, results.get(BICECEConstants.PRODUCT_PE_ID));
+
+      updateTestingHub(testResults);
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
   }
 
   @Test(groups = {
@@ -142,15 +168,19 @@ public class EDUUserFlows extends ECETestBase {
     // Create new user with Mentor role
     results.putAll(edutb.registerUser(EDUUserType.MENTOR));
 
-    // Download Fusion 360
-    edutb.downloadF360Product();
+    if (testProductKey.equals("F360")) {
+      // Download Fusion 360
+      edutb.downloadF360Product();
+    } else {
+      edutb.downloadProduct(testDataForProduct.get("websdkplc"));
+    }
 
     // Sleep 3 minutes to wait for subscription to show up in portal
     Util.sleep(180000);
 
     // Validate that the user has a subscription to Fusion 360 in portal
-    results.putAll(portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL),
-        Pattern.compile("STU_.+_F360")));
+    portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
+    results.putAll(portaltb.verifyProductVisible(testDataForProduct.get("subscriptionPattern")));
 
     HashMap<String, String> testResults = new HashMap<>();
     try {

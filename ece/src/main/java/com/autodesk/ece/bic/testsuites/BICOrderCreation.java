@@ -96,6 +96,7 @@ public class BICOrderCreation extends ECETestBase {
   @Test(groups = {
       "bic-changePayment"}, description = "Validation of BIC change payment details functionality")
   public void validateBICChangePaymentProfile() throws MetadataException {
+
     String emailID = System.getProperty(BICECEConstants.EMAIL);
     String password = System.getProperty(BICECEConstants.PASSWORD);
 
@@ -108,8 +109,14 @@ public class BICOrderCreation extends ECETestBase {
       updateTestingHub(results);
       results.putAll(testDataForEachMethod);
 
+      // Getting a PurchaseOrder details from pelican
+      results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+
       // Trigger Invoice join
       pelicantb.postInvoicePelicanAPI(results);
+
+      results.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      updateTestingHub(results);
     }
 
 
@@ -766,13 +773,13 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
-    String bicOrderO2ID = "";
-    OxygenService os = new OxygenService();
-    try {
-      bicOrderO2ID = os.getOxygenID(results.get(BICConstants.emailid), results.get(PASSWORD));
-      results.put(BICConstants.oxid, bicOrderO2ID);
-    } catch (Exception e1) {
-    }
+//    String bicOrderO2ID = "";
+//    OxygenService os = new OxygenService();
+//    try {
+//      bicOrderO2ID = os.getOxygenID(results.get(BICConstants.emailid), results.get(PASSWORD));
+//      results.put(BICConstants.oxid, bicOrderO2ID);
+//    } catch (Exception e1) {
+//    }
 
     results.putAll(testDataForEachMethod);
 
@@ -973,6 +980,9 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
     results.put("autoRenewEnabled", results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED));
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
+
+    testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(testResults);
 
     Assert.assertNull(results.get(BICECEConstants.RESPONSE_END_DATE), "End date is null.");
     AssertUtils.assertEquals("Auto renew is on.", results.get(

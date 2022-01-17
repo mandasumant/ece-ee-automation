@@ -489,6 +489,9 @@ public class PortalTestBase {
 
         clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
 
+        //close portal window
+        driver.close();
+
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -872,7 +875,7 @@ public class PortalTestBase {
 
       Util.sleep(60000);
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-          BICECEConstants.PORTAL_PAYMENT_METHOD)
+              BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data, localeMap);
@@ -1344,33 +1347,32 @@ public class PortalTestBase {
   }
 
   /**
-   * Navigate to the all products page and validate that the latest product purchased matched a
-   * pattern
+   * Navigate to the all products page in portal
    *
-   * @param cepURL      - URL of portal to visit
-   * @param peIdPattern - Pattern of the pe ID to validate
-   * @return - Results data
+   * @param cepURL - URL of portal to visit
    */
-  public HashMap<String, String> validateProductByName(String cepURL, Pattern peIdPattern) {
+  public void validateProductByName(String cepURL) {
     openPortalBICLaunch(cepURL);
     clickALLPSLink();
-    HashMap<String, String> results = new HashMap<>();
-    results.put(BICECEConstants.PRODUCT_PE_ID, verifyProductVisible(peIdPattern));
-    return results;
   }
 
   /**
    * Find the last purchased product and determine if it's peId matches the provided pattern
    *
-   * @param peIdPattern - Pattern to match
+   * @param peIdPattern - Regex pattern to match
    * @return - Full pe ID found
    */
-  private String verifyProductVisible(Pattern peIdPattern) {
+  public HashMap<String, String> verifyProductVisible(String peIdPattern) {
+    Pattern pattern = Pattern.compile(peIdPattern);
     String lastProductXPath = portalPage.getFirstFieldLocator("lastPurchasedProduct");
+
     WebElement lastProduct = driver.findElement(By.xpath(lastProductXPath));
     String subscriptionID = lastProduct.getAttribute("data-pe-id");
-    AssertUtils.assertTrue(peIdPattern.matcher(subscriptionID).find());
-    return subscriptionID;
+    AssertUtils.assertTrue(pattern.matcher(subscriptionID).find());
+
+    HashMap<String, String> results = new HashMap<>();
+    results.put(BICECEConstants.PRODUCT_PE_ID, subscriptionID);
+    return results;
   }
 
   @Step("Portal : Cancel subscription")
