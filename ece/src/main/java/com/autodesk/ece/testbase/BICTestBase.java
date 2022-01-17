@@ -396,6 +396,7 @@ public class BICTestBase {
         case BICConstants.paymentTypeDebitCard:
         case BICECEConstants.PAYMENT_BACS:
         case BICECEConstants.PAYMENT_TYPE_SEPA:
+        case BICECEConstants.PAYMENT_TYPE_GIROPAY:
           paymentProfile = dataPaymentType.toLowerCase();
           break;
         case BICECEConstants.PAYMENT_TYPE_ZIP:
@@ -446,6 +447,8 @@ public class BICTestBase {
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
         continueButton.get(1).click();
+      } else if(paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        continueButton.get(3).click();
       } else {
         continueButton.get(0).click();
       }
@@ -465,32 +468,17 @@ public class BICTestBase {
       Util.printInfo("Adding billing details...");
       String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
           stateXpath = "";
-      String paymentTypeToken;
+      String paymentTypeToken = null;
       switch (paymentType.toUpperCase()) {
         case BICConstants.paymentTypePayPal:
         case BICConstants.paymentTypeDebitCard:
         case BICECEConstants.PAYMENT_BACS:
         case BICECEConstants.PAYMENT_TYPE_SEPA:
+        case BICECEConstants.PAYMENT_TYPE_GIROPAY:
           paymentTypeToken = paymentType.toLowerCase();
           break;
         case BICECEConstants.PAYMENT_TYPE_ZIP:
-          paymentTypeToken = "alternate-payment-methods";
-          break;
-        case BICECEConstants.PAYMENT_TYPE_GIROPAY:
-          orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
-          fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
-          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
-          zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
-          phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
-          countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY).replace(
-              BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
-          stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_GIROPAY_LOWERCASE);
+          paymentTypeToken = BICECEConstants.ALTERNATE_PAYMENT_METHODS;
           break;
         default:
           paymentTypeToken = BICECEConstants.CREDIT_CARD;
@@ -755,6 +743,7 @@ public class BICTestBase {
       AssertUtils.fail("Unable to enter GIROPAY payment information to make payment");
     }
   }
+
   @Step("Add Paypal Payment Details")
   public void populatePaypalPaymentDetails(HashMap<String, String> data) {
     Util.printInfo("Switching to latest window...");
@@ -954,6 +943,7 @@ public class BICTestBase {
         debugPageUrl(e.getMessage());
         AssertUtils.fail("Failed to click on Submit button...");
       }
+    }
 
     // Zip Pay Verification
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
