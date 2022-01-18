@@ -32,7 +32,7 @@
     storeName: "STORE-UK"
     currencyStore: "EUR"
     countryDomain: ".nl"
-    paymentMethods: "CREDITCARD,PAYPAL,GIROPAY"
+    paymentMethods: "CREDITCARD,PAYPAL,IDEAL"
 
   fr_FR:
     region: "FRFR"

@@ -11,6 +11,10 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -400,7 +404,7 @@ public class BICTestBase {
           paymentProfile = dataPaymentType.toLowerCase();
           break;
         case BICECEConstants.PAYMENT_TYPE_ZIP:
-          paymentProfile = "alternate-payment-methods";
+          paymentProfile = BICECEConstants.ALTERNATE_PAYMENT_METHODS;
           break;
         default:
           paymentProfile = BICECEConstants.CREDIT_CARD;
@@ -700,7 +704,6 @@ public class BICTestBase {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
 
     try {
-
       Util.printInfo("Clicking on GIROPAY tab.");
       bicPage.clickUsingLowLevelActions("giroPaymentTab");
 
@@ -724,21 +727,35 @@ public class BICTestBase {
       Util.printInfo("Clicking Continue ");
       bicPage.clickUsingLowLevelActions("giroPayContinue");
 
-      Util.sleep(5000);
+      Robot rb = new Robot();
+
+      driver.manage().window().maximize();
+      org.openqa.selenium.Dimension dimension = driver.manage().window().getSize();
+
+      int x = (int) ((dimension.getWidth()/2)+20);
+      int y = (int) ((dimension.getHeight()/10)+50);
+
+      Util.sleep(2000);
       if (bicPage.checkIfElementExistsInPage("giroPayAssume", 10)) {
         Util.printInfo("Clicking on the assume button");
         bicPage.clickUsingLowLevelActions("giroPayAssume");
       }
 
-      //TO DO :  Implement the ROBO logic to handle the Chrome pop-up . For now manually accepting to go to the next page
-
+      Util.sleep(4000);
+      rb.mouseMove(x,y);
+      rb.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+      rb.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+      Util.sleep(2000);
+      rb.keyPress(KeyEvent.VK_ENTER);
+      rb.keyRelease(KeyEvent.VK_ENTER);
       Util.sleep(10000);
+
       bicPage.populateField("giroPaySc", paymentCardDetails[1]);
       bicPage.populateField("giroPayScExtension", paymentCardDetails[2]);
       bicPage.populateField("giroPayCustomerName", paymentCardDetails[3]);
       bicPage.populateField("giroPayCustomerAban", paymentCardDetails[4]);
       bicPage.clickUsingLowLevelActions("giroPaySubmit");
-    } catch (MetadataException e) {
+    } catch (MetadataException | AWTException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter GIROPAY payment information to make payment");
     }
@@ -750,7 +767,6 @@ public class BICTestBase {
     String parentWindow = driver.getWindowHandle();
 
     try {
-
       Util.printInfo("Clicking on Paypal payments tab...");
       bicPage.clickUsingLowLevelActions("paypalPaymentTab");
       Util.printInfo("Clicking on Paypal checkout tab...");
@@ -934,10 +950,12 @@ public class BICTestBase {
       Util.printInfo("CONTINUE_CHECKOUT_Modal is not present");
     }
 
+    boolean isOrderSubmitted = false;
     if(!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
       try {
         bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
         bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+        isOrderSubmitted = true;
       } catch (Exception e) {
         e.printStackTrace();
         debugPageUrl(e.getMessage());
@@ -954,13 +972,15 @@ public class BICTestBase {
     }
 
     try {
-      bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
-      bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+      if(bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON,10)){
+        bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+      }
     } catch (Exception e) {
       e.printStackTrace();
       debugPageUrl(e.getMessage());
       AssertUtils.fail("Failed to click on Submit button...");
     }
+
 
     // Zip Pay Checkout
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
