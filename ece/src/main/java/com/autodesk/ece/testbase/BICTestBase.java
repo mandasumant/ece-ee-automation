@@ -11,6 +11,10 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -396,10 +400,11 @@ public class BICTestBase {
         case BICConstants.paymentTypeDebitCard:
         case BICECEConstants.PAYMENT_BACS:
         case BICECEConstants.PAYMENT_TYPE_SEPA:
+        case BICECEConstants.PAYMENT_TYPE_GIROPAY:
           paymentProfile = dataPaymentType.toLowerCase();
           break;
         case BICECEConstants.PAYMENT_TYPE_ZIP:
-          paymentProfile = "alternate-payment-methods";
+          paymentProfile = BICECEConstants.ALTERNATE_PAYMENT_METHODS;
           break;
         default:
           paymentProfile = BICECEConstants.CREDIT_CARD;
@@ -446,6 +451,8 @@ public class BICTestBase {
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
         continueButton.get(1).click();
+      } else if(paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        continueButton.get(3).click();
       } else {
         continueButton.get(0).click();
       }
@@ -465,16 +472,17 @@ public class BICTestBase {
       Util.printInfo("Adding billing details...");
       String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
           stateXpath = "";
-      String paymentTypeToken;
+      String paymentTypeToken = null;
       switch (paymentType.toUpperCase()) {
         case BICConstants.paymentTypePayPal:
         case BICConstants.paymentTypeDebitCard:
         case BICECEConstants.PAYMENT_BACS:
         case BICECEConstants.PAYMENT_TYPE_SEPA:
+        case BICECEConstants.PAYMENT_TYPE_GIROPAY:
           paymentTypeToken = paymentType.toLowerCase();
           break;
         case BICECEConstants.PAYMENT_TYPE_ZIP:
-          paymentTypeToken = "alternate-payment-methods";
+          paymentTypeToken = BICECEConstants.ALTERNATE_PAYMENT_METHODS;
           break;
         default:
           paymentTypeToken = BICECEConstants.CREDIT_CARD;
@@ -565,6 +573,9 @@ public class BICTestBase {
         break;
       case "SEPA":
         paymentDetails = "DE87123456781234567890@SEPA";
+        break;
+      case "GIROPAY":
+        paymentDetails = "Testbank Fiducia@10@4000@GIROPAY USER@DE36444488881234567890@GIROPAY";
         break;
       default:
         paymentDetails = "4000020000000000@03 - Mar@30@737";
@@ -687,13 +698,75 @@ public class BICTestBase {
     Util.sleep(20000);
   }
 
+  @Step("Populate GiroPay payment details")
+  public void populateGiroPayPaymentDetails(String[] paymentCardDetails, Map<String, String> address,
+      Map<String, String> data) {
+    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
+
+    try {
+      Util.printInfo("Clicking on GIROPAY tab.");
+      bicPage.clickUsingLowLevelActions("giroPaymentTab");
+
+      populateBillingAddress(address, data);
+      Util.sleep(20000);
+
+      bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 20000);
+      bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+      Util.sleep(30000);
+      String url = driver.getCurrentUrl();
+      Util.printInfo("Entering Giropay url" + " : " +url);
+
+      AssertUtils.assertTrue(url.indexOf("giropay") != -1,
+          "Current url [" + url + "] does contain keyword : giropay");
+      Util.printInfo("Entering Giropay bank name : " + paymentCardDetails[0]);
+      bicPage.populateField("giroPayBankName", paymentCardDetails[0]);
+      Util.sleep(2000);
+      Util.printInfo("Selecting the bank name :");
+      bicPage.clickUsingLowLevelActions("giroPayBankNameSelection");
+
+      Util.printInfo("Clicking Continue ");
+      bicPage.clickUsingLowLevelActions("giroPayContinue");
+
+      Robot rb = new Robot();
+
+      driver.manage().window().maximize();
+      org.openqa.selenium.Dimension dimension = driver.manage().window().getSize();
+
+      int x = (int) ((dimension.getWidth()/2)+20);
+      int y = (int) ((dimension.getHeight()/10)+50);
+
+      Util.sleep(2000);
+      if (bicPage.checkIfElementExistsInPage("giroPayAssume", 10)) {
+        Util.printInfo("Clicking on the assume button");
+        bicPage.clickUsingLowLevelActions("giroPayAssume");
+      }
+
+      Util.sleep(4000);
+      rb.mouseMove(x,y);
+      rb.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+      rb.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+      Util.sleep(2000);
+      rb.keyPress(KeyEvent.VK_ENTER);
+      rb.keyRelease(KeyEvent.VK_ENTER);
+      Util.sleep(10000);
+
+      bicPage.populateField("giroPaySc", paymentCardDetails[1]);
+      bicPage.populateField("giroPayScExtension", paymentCardDetails[2]);
+      bicPage.populateField("giroPayCustomerName", paymentCardDetails[3]);
+      bicPage.populateField("giroPayCustomerAban", paymentCardDetails[4]);
+      bicPage.clickUsingLowLevelActions("giroPaySubmit");
+    } catch (MetadataException | AWTException e) {
+      e.printStackTrace();
+      AssertUtils.fail("Unable to enter GIROPAY payment information to make payment");
+    }
+  }
+
   @Step("Add Paypal Payment Details")
   public void populatePaypalPaymentDetails(HashMap<String, String> data) {
     Util.printInfo("Switching to latest window...");
     String parentWindow = driver.getWindowHandle();
 
     try {
-
       Util.printInfo("Clicking on Paypal payments tab...");
       bicPage.clickUsingLowLevelActions("paypalPaymentTab");
       Util.printInfo("Clicking on Paypal checkout tab...");
@@ -821,6 +894,10 @@ public class BICTestBase {
           case BICECEConstants.PAYMENT_TYPE_SEPA:
             populateSepaPaymentDetails(paymentCardDetails);
             break;
+          case BICECEConstants.PAYMENT_TYPE_GIROPAY:
+            populateGiroPayPaymentDetails(paymentCardDetails, address, data);
+            data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+            break;
           case BICECEConstants.PAYMENT_TYPE_ZIP:
             populateZipPaymentDetails();
             break;
@@ -873,6 +950,19 @@ public class BICTestBase {
       Util.printInfo("CONTINUE_CHECKOUT_Modal is not present");
     }
 
+    boolean isOrderSubmitted = false;
+    if(!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+      try {
+        bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
+        bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+        isOrderSubmitted = true;
+      } catch (Exception e) {
+        e.printStackTrace();
+        debugPageUrl(e.getMessage());
+        AssertUtils.fail("Failed to click on Submit button...");
+      }
+    }
+
     // Zip Pay Verification
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
       String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
@@ -882,13 +972,15 @@ public class BICTestBase {
     }
 
     try {
-      bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
-      bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+      if(bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON,10)){
+        bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+      }
     } catch (Exception e) {
       e.printStackTrace();
       debugPageUrl(e.getMessage());
       AssertUtils.fail("Failed to click on Submit button...");
     }
+
 
     // Zip Pay Checkout
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
