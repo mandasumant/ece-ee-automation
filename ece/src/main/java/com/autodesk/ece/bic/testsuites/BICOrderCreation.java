@@ -4,7 +4,6 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PayportTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.common.services.OxygenService;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -21,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -30,13 +30,13 @@ public class BICOrderCreation extends ECETestBase {
 
   private static final String EMAIL = System.getProperty("email");
   private static final String PASSWORD = "Password1";
-  private static String defaultLocale = "en_US";
+  private static final String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   long startTime, stopTime, executionTime;
   Map<?, ?> localeConfigYaml = null;
-  LinkedHashMap<String, Map<String,String>> localeDataMap = null;
+  LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
 
   @BeforeClass(alwaysRun = true)
@@ -45,7 +45,7 @@ public class BICOrderCreation extends ECETestBase {
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String restFileKey = "REST_" + GlobalConstants.ENV.toUpperCase();
     loadRestYaml = YamlUtil.loadYmlUsingTestManifest(restFileKey);
-    String localeConfigFile= "LOCALE_CONFIG_" + GlobalConstants.ENV.toUpperCase();
+    String localeConfigFile = "LOCALE_CONFIG_" + GlobalConstants.ENV.toUpperCase();
     localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
   }
 
@@ -63,24 +63,25 @@ public class BICOrderCreation extends ECETestBase {
     defaultvalues.putAll(restdefaultvalues);
     testDataForEachMethod = defaultvalues;
 
-    if(locale == null || locale.trim().isEmpty()){
+    if (locale == null || locale.trim().isEmpty()) {
       locale = defaultLocale;
     }
-    testDataForEachMethod.put("locale",locale);
+    testDataForEachMethod.put("locale", locale);
 
-    localeDataMap = (LinkedHashMap<String, Map<String,String>>) localeConfigYaml
+    localeDataMap = (LinkedHashMap<String, Map<String, String>>) localeConfigYaml
         .get(BICECEConstants.LOCALE_CONFIG);
     testDataForEachMethod.putAll(localeDataMap.get(locale));
 
-    Util.printInfo("Validating the store for the locale :"+locale +" Store: "+System.getProperty(BICECEConstants.STORE));
+    Util.printInfo(
+        "Validating the store for the locale :" + locale + " Store: " + System.getProperty(
+            BICECEConstants.STORE));
 
-    boolean isValidStore = false;
-    if(testDataForEachMethod.get(BICECEConstants.STORE_NAME).equals(System.getProperty(BICECEConstants.STORE))){
-      isValidStore = true;
-    }
+    boolean isValidStore = testDataForEachMethod.get(BICECEConstants.STORE_NAME)
+        .equals(System.getProperty(BICECEConstants.STORE));
 
-    if(!isValidStore){
-      AssertUtils.fail("The store  is not supported for the given country/locale : "+ locale + ". Supported stores  are "
+    if (!isValidStore) {
+      AssertUtils.fail("The store  is not supported for the given country/locale : " + locale
+          + ". Supported stores  are "
           + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
 
@@ -119,10 +120,10 @@ public class BICOrderCreation extends ECETestBase {
       updateTestingHub(results);
     }
 
-
     String paymentType = System.getProperty("payment");
     Util.printInfo("Current Payment Type is : " + paymentType);
-    String[] paymentTypes = localeDataMap.get(locale).get(BICECEConstants.PAYMENT_METHODS).split(",");
+    String[] paymentTypes = localeDataMap.get(locale).get(BICECEConstants.PAYMENT_METHODS)
+        .split(",");
     ArrayList<String> payments = new ArrayList<>(Arrays.asList(paymentTypes));
     payments.remove(paymentType);
     int index = (int) Util.randomNumber(payments.size());
@@ -137,7 +138,8 @@ public class BICOrderCreation extends ECETestBase {
     }
     String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentType.toUpperCase())
         .split("@");
-    portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails, localeDataMap.get(locale));
+    portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails,
+        localeDataMap.get(locale));
   }
 
   @Test(groups = {"bic-nativeorder"}, description = "Validation of Create BIC Hybrid Order")
@@ -345,7 +347,7 @@ public class BICOrderCreation extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-            BICECEConstants.ADD_SEAT_QTY),
+                BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod, localeDataMap.get(locale)));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
@@ -404,14 +406,14 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
     results.remove(BICConstants.orderNumber);
     testDataForEachMethod.putAll(results);
-    getBicTestBase().driver.quit();
 
-    ECETestBase tb = new ECETestBase();
+    resetDriver();
+
     testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get(
         BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing second order for the returning user");
 
-    results = tb.getBicTestBase().createBic_ReturningUserAddSeat(testDataForEachMethod);
+    results = getBicTestBase().createBic_ReturningUserAddSeat(testDataForEachMethod);
     results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
     results.putAll(testDataForEachMethod);
 
@@ -654,8 +656,10 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getSubscriptionById(results));
 
     //Validate if this is Meta order
-    if(!results.get(BICECEConstants.RESPONSE_OFFERING_TYPE).equals(BICECEConstants.META_SUBSCRIPTION)){
-      AssertUtils.fail("The product is not a meta product . Offering type is  : "+ results.get(BICECEConstants.RESPONSE_OFFERING_TYPE) );
+    if (!results.get(BICECEConstants.RESPONSE_OFFERING_TYPE)
+        .equals(BICECEConstants.META_SUBSCRIPTION)) {
+      AssertUtils.fail("The product is not a meta product . Offering type is  : " + results.get(
+          BICECEConstants.RESPONSE_OFFERING_TYPE));
     }
 
     // Trigger Invoice join
@@ -667,8 +671,10 @@ public class BICOrderCreation extends ECETestBase {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults.put(BICECEConstants.RESPONSE_OFFERING_TYPE, results.get(BICECEConstants.OFFERING_TYPE));
-      testResults.put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICECEConstants.RESPONSE_OFFERING_TYPE,
+          results.get(BICECEConstants.OFFERING_TYPE));
+      testResults.put(BICConstants.fulfillmentStatus,
+          results.get(BICECEConstants.FULFILLMENT_STATUS));
       testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
       testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
@@ -758,14 +764,14 @@ public class BICOrderCreation extends ECETestBase {
     results.remove(BICConstants.orderNumber);
     updateTestingHub(results);
     testDataForEachMethod.putAll(results);
-    getBicTestBase().driver.quit();
 
-    ECETestBase tb = new ECETestBase();
+    resetDriver();
+
     testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get(
         BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing second order for the returning user.");
 
-    results = tb.getBicTestBase().createBICReturningUser(testDataForEachMethod);
+    results = getBicTestBase().createBICReturningUser(testDataForEachMethod);
     results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
@@ -818,7 +824,7 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(60000);
 
     // Initial order validation in Portal
-    tb.getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+    getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid), PASSWORD,
         results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
@@ -918,7 +924,8 @@ public class BICOrderCreation extends ECETestBase {
   public void validateRestartSubscription() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(
+        testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -955,7 +962,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get(
-            BICECEConstants.RESPONSE_END_DATE),
+                BICECEConstants.RESPONSE_END_DATE),
             results.get(BICECEConstants.NEXT_BILLING_DATE));
     Assert.assertEquals(results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "false",
         "Auto renew is off.");
@@ -1126,4 +1133,12 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  /**
+   * Delete all cookies, localStorage, and sessionStorage in the current driver
+   */
+  private void resetDriver() {
+    getBicTestBase().driver.manage().deleteAllCookies();
+    JavascriptExecutor js = (JavascriptExecutor) getBicTestBase().driver;
+    js.executeScript("localStorage.clear();sessionStorage.clear();");
+  }
 }
