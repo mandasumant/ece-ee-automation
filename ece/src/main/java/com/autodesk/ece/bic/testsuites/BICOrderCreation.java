@@ -1087,52 +1087,6 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(300000);
   }
 
-  @Test(groups = {
-      "cloudcredit-order"}, description = "Validation of Create BIC Cloud credit Order")
-  public void validateBicCloudCreditOrder() {
-    HashMap<String, String> testResults = new HashMap<String, String>();
-    startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase().createGUACBICOrderUS(testDataForEachMethod);
-
-    results.putAll(testDataForEachMethod);
-
-    testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));
-    testResults.put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
-    updateTestingHub(testResults);
-
-    // Getting a PurchaseOrder details
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
-
-    portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
-
-    if (!(Strings.isNullOrEmpty(EMAIL))) {
-      portaltb.portalLogin(EMAIL, PASSWORD);
-    }
-    portaltb.reporting_CloudServiceUsageLinkDisplayed();
-
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
-      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
-      testResults.put(BICConstants.subscriptionId, "NA");
-      testResults.put(BICConstants.subscriptionPeriodStartDate, "NA");
-      testResults.put(BICConstants.subscriptionPeriodEndDate, "NA");
-      testResults.put(BICConstants.nextBillingDate, "NA");
-      testResults
-          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
-
-    stopTime = System.nanoTime();
-    executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
-    updateTestingHub(testResults);
-  }
-
   /**
    * Delete all cookies, localStorage, and sessionStorage in the current driver
    */

@@ -9,7 +9,7 @@ The ece ee automation project includes validation for:
 - Checkout workflow with:
     - BiC & Meta subscription
     - Promotion Code
-    - Flex, Cloud credits...
+    - Flex
     - Add/Reduce seat workflow
     - Trial Downloads workflow
     - Change payment method (Billing manager)
