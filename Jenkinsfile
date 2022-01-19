@@ -23,6 +23,11 @@ pipeline {
         timestamps()
     }
 
+    parameters {
+        booleanParam(name: 'CJT', defaultValue: false, description: 'Run CJT Regression ?')
+        booleanParam(name: 'ZIP', defaultValue: false, description: 'Run ZIP Regression ?')
+    }
+
     stages {
         stage ('Prepare environment') {
             when {
@@ -82,7 +87,12 @@ pipeline {
 
         stage ('Regression') {
             when {
-                branch 'master'
+                allOf {
+                    branch 'master'
+                    expression {
+                        params.CJT
+                    }
+                }
             }
             steps {
                 echo 'Initiating Customer Lifecycle Tests'
@@ -165,7 +175,12 @@ pipeline {
 
         stage ('ZIP Regression') {
             when {
-                branch 'master'
+                allOf {
+                    branch 'master'
+                    expression {
+                        params.ZIP
+                    }
+                }
             }
             steps {
                 echo 'Initiating ZIP UAT Regression'
