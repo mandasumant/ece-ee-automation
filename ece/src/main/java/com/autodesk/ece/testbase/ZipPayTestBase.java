@@ -9,6 +9,7 @@ import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
@@ -48,12 +49,7 @@ public class ZipPayTestBase {
 
   @Step("Go through Zip checkout" + GlobalConstants.TAG_TESTINGHUB)
   public void zipPayCheckout() {
-    // Login to the zip account
-    zipPage.waitForField(ZIP_PAY_USERNAME_KEY, true, 5000);
-    zipPage.populateField(ZIP_PAY_USERNAME_KEY, testData.get(ZIP_PAY_USERNAME_KEY));
-    zipPage.populateField(ZIP_PAY_PASSWORD_KEY, testData.get(ZIP_PAY_PASSWORD_KEY));
-
-    zipPage.click("zipPayLogin");
+    attemptZipPayCheckoutLogin();
 
     String verificationCodeXPath = zipPage.getFirstFieldLocator(ZIP_PAY_VERIFICATION_CODE_KEY);
     String paymentOptionXPath = zipPage.getFirstFieldLocator(ZIP_PAY_OPTION);
@@ -91,6 +87,41 @@ public class ZipPayTestBase {
     }
 
     zipPage.click("zipPayConfirmPayment");
+  }
+
+  private void attemptZipPayCheckoutLogin() {
+    int loginAttempts = 0;
+    String loginXPath = zipPage.getFirstFieldLocator("zipPayLogin");
+    boolean loggedInSuccessfully = false;
+
+    // Login to the zip account
+    zipPage.waitForField(ZIP_PAY_USERNAME_KEY, true, 5000);
+    zipPage.populateField(ZIP_PAY_USERNAME_KEY, testData.get(ZIP_PAY_USERNAME_KEY));
+    zipPage.populateField(ZIP_PAY_PASSWORD_KEY, testData.get(ZIP_PAY_PASSWORD_KEY));
+
+    while (loginAttempts < 5) {
+      zipPage.click("zipPayLogin");
+
+      try {
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(loginXPath)));
+      } catch (Exception e) {
+        Util.printWarning("Zip login button still present after login attempt");
+      }
+
+      List<WebElement> loginButton = driver.findElements(By.xpath(loginXPath));
+      if (loginButton.isEmpty()) {
+        loggedInSuccessfully = true;
+        break;
+      } else {
+        Util.printWarning("Login failed on attempt #" + (loginAttempts + 1));
+        loginAttempts++;
+      }
+    }
+
+    if (!loggedInSuccessfully) {
+      AssertUtils.fail("Failed to log into Zip after 5 attempts");
+    }
   }
 
   /**
@@ -149,6 +180,10 @@ public class ZipPayTestBase {
     double amountToRefill = Math.min(
         Math.max(Math.round(balanceRequired - availableBalance) + 200, 500),
         1000 - Math.round(availableBalance));
+
+    Util.printInfo(String.format(
+        "Will attempt to pay $%.2f on a balance of $%.2f to buy a product worth $%.2f",
+        amountToRefill, 1000 - availableBalance, balanceRequired));
 
     // Navigate to the make payment page
     driver.get("https://account.sandbox.zipmoney.com.au/#/wallet/makePayment");
