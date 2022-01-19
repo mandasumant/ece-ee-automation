@@ -1485,37 +1485,4 @@ public class PortalTestBase {
     portalPage.clickUsingLowLevelActions(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION);
     portalPage.waitForPageToLoad();
   }
-
-  @Step("Reporting Tab - Cloud Service Usage validation with check of 100 cloud credits "
-      + GlobalConstants.TAG_TESTINGHUB)
-  public String reporting_CloudServiceUsageLinkDisplayed() {
-    String errorMsg = "";
-    try {
-      if (!portalPage.checkIfElementExistsInPage("portalReportCSULink", 20)) {
-        //AssertUtils.fail(ErrorEnum.REPORTINGTAB_CSU_LINK.geterr());
-        errorMsg = ErrorEnum.REPORTINGTAB_CSU_LINK.geterr();
-        return errorMsg;
-      }
-      portalPage.clickUsingLowLevelActions("portalReportCSULink");
-      Util.sleep(15000);
-      portalPage.clickUsingLowLevelActions("report_CloudServiceMyUsage");
-      if (!portalPage.checkIfElementExistsInPage("report_CloudServiceIndUsage", 20)) {
-        errorMsg = ErrorEnum.REPORTINGTAB_CSU_LINK.geterr();
-        return errorMsg;
-      }
-
-      if (!portalPage.checkIfElementExistsInPage("report_CloudServiceIndCC", 20)) {
-        errorMsg = ErrorEnum.REPORTINGTAB_CSU_LINK.geterr();
-        return errorMsg;
-      }
-
-      if (!portalPage.checkIfElementExistsInPage("reportCloudServiceCC100", 20)) {
-        errorMsg = ErrorEnum.REPORTINGTAB_CSU_CC100.geterr();
-        return errorMsg;
-      }
-    } catch (Exception e) {
-      errorMsg = ErrorEnum.GENERIC_EXPECTION_ACTION.geterr();
-    }
-    return errorMsg;
-  }
 }
