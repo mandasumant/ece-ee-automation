@@ -650,7 +650,16 @@ public class BICOrderCreation extends ECETestBase {
     pelicantb.postInvoicePelicanAPI(results);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryPelicanResponse(results)));
+    String pelicanResponse = pelicantb.retryPelicanResponse(results, true);
+
+    if (!pelicanResponse.contains("subscriptionId")) {
+      Util.printWarning("Failed to get subscription for Meta order, skipping rest of test");
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put("Subscription Created", "False");
+      updateTestingHub(testResults);
+      return;
+    }
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -669,6 +678,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put("Subscription Created", "True");
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults.put(BICECEConstants.RESPONSE_OFFERING_TYPE,

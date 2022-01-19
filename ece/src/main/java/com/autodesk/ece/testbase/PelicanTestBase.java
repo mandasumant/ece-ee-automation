@@ -412,7 +412,14 @@ public class PelicanTestBase {
     return resourceUrl.replace("passtoken", tokenString);
   }
 
-  public String retryPelicanResponse(HashMap<String, String> results) {
+  /**
+   * Retry a pelican call upto 3 times to find a subscription id
+   *
+   * @param results - Data hashmap
+   * @param silent  - Whether a failure 3 times in a row causes the testcase to fail
+   * @return - Pelican response
+   */
+  public String retryPelicanResponse(HashMap<String, String> results, boolean silent) {
     String response = "";
     boolean subscriptionIdFound = false;
     for (int i = 1; i < 4; i++) {
@@ -427,9 +434,20 @@ public class PelicanTestBase {
         break;
       }
     }
-    if(!subscriptionIdFound){
-      AssertUtils.fail("Failed: Could not find the subscription id for Order# " + results.get(BICConstants.orderNumber) + ".");
+    if (!subscriptionIdFound && !silent) {
+      AssertUtils.fail("Failed: Could not find the subscription id for Order # " + results.get(
+          BICConstants.orderNumber) + ".");
     }
     return response;
+  }
+
+  /**
+   * Retry a pelican call up to 3 times to find a subscription id
+   *
+   * @param results - Data hashmap
+   * @return - Pelican response
+   */
+  public String retryPelicanResponse(HashMap<String, String> results) {
+    return retryPelicanResponse(results, false);
   }
 }
