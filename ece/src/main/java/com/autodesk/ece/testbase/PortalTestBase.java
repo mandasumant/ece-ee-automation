@@ -1429,7 +1429,7 @@ public class PortalTestBase {
     return results;
   }
 
-  @Step("Portal : Cancel subscription")
+  @Step("Portal : Cancel subscription" + GlobalConstants.TAG_TESTINGHUB)
   public void cancelSubscription(String portalUserName, String portalPassword)
       throws MetadataException {
     if (isPortalLoginPageVisible()) {
@@ -1439,6 +1439,7 @@ public class PortalTestBase {
     openSubscriptionsLink();
     clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
+    closeAlertBanner();
     closeSubscriptionTermPopup();
 
     Util.printInfo("Going through cancel flow");
@@ -1453,7 +1454,20 @@ public class PortalTestBase {
   @Step("Close Subscription Term Popup")
   private void closeSubscriptionTermPopup() throws MetadataException {
     if (portalPage.checkIfElementExistsInPage("portalSubscriptionTermPopup", 10)) {
+      Util.printInfo("Closing subscription popup");
       portalPage.clickUsingLowLevelActions("portalCloseButton");
+    } else {
+      Util.printInfo("Subscription popup not present");
+    }
+  }
+
+  @Step("Close Portal Banner")
+  private void closeAlertBanner() throws MetadataException {
+    if (portalPage.checkIfElementExistsInPage("portalBannerAlert", 10)) {
+      Util.printInfo("Closing portal banner");
+      portalPage.clickUsingLowLevelActions("portalBannerClose");
+    } else {
+      Util.printInfo("Portal banner not present");
     }
   }
 
@@ -1464,7 +1478,7 @@ public class PortalTestBase {
     listEle.get(indexOfElement).click();
   }
 
-  @Step("Portal : Turn On Auto Renew")
+  @Step("Portal : Turn On Auto Renew" + GlobalConstants.TAG_TESTINGHUB)
   public void restartSubscription()
       throws MetadataException {
     Util.printInfo("Turn on subscription auto renew.");
@@ -1477,7 +1491,7 @@ public class PortalTestBase {
     }
   }
 
-  @Step("Click on Subscription")
+  @Step("Click on Subscription" + GlobalConstants.TAG_TESTINGHUB)
   private void clickOnSubscriptionRow() throws MetadataException {
     Util.waitforPresenceOfElement(
         portalPage.getFirstFieldLocator(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION));
