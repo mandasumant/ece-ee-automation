@@ -32,7 +32,13 @@ pipeline {
         stage ('Prepare environment') {
             when {
                 not {
-                    triggeredBy 'TimerTrigger'
+                    anyOf {
+                        expression {
+                            triggeredBy 'TimerTrigger' ||
+                            params.CJT == true ||
+                            params.ZIP == true
+                        }
+                    }
                 }
             }
             steps {
@@ -48,7 +54,13 @@ pipeline {
         stage('Build Maven Project') {
             when {
                 not {
-                    triggeredBy 'TimerTrigger'
+                    anyOf {
+                        expression {
+                            triggeredBy 'TimerTrigger' ||
+                            params.CJT == true ||
+                            params.ZIP == true
+                        }
+                    }
                 }
             }
             agent {
@@ -68,7 +80,13 @@ pipeline {
         stage ('SonarQube code quality scan') {
             when {
                 not {
-                    triggeredBy 'TimerTrigger'
+                    anyOf {
+                        expression {
+                            triggeredBy 'TimerTrigger' ||
+                            params.CJT == true ||
+                            params.ZIP == true
+                        }
+                    }
                 }
             }
             agent {
