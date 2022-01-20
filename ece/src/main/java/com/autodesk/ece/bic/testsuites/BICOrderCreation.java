@@ -20,7 +20,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -1101,8 +1105,15 @@ public class BICOrderCreation extends ECETestBase {
    * Delete all cookies, localStorage, and sessionStorage in the current driver
    */
   private void resetDriver() {
-    getBicTestBase().driver.manage().deleteAllCookies();
-    JavascriptExecutor js = (JavascriptExecutor) getBicTestBase().driver;
+    Util.printInfo("Resetting browser data");
+    WebDriver driver = getBicTestBase().driver;
+    driver.manage().deleteAllCookies();
+    JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("localStorage.clear();sessionStorage.clear();");
+    Util.sleep(2000);
+    driver.get("chrome://settings/clearBrowserData");
+    driver.findElement(By.xpath("//settings-ui")).sendKeys(Keys.ENTER);
+    WebDriverWait wait = new WebDriverWait(driver, 5);
+    Util.sleep(2000);
   }
 }
