@@ -239,15 +239,9 @@ public class BICTestBase {
   }
 
   private void switchToBICCartLoginPage() {
-    try {
-      List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
-      WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
-      driver.switchTo().frame(element);
-    } catch (Exception ex) {
-      Util.printWarning("Failed find login iframe");
-      Util.printWarning(driver.getPageSource());
-      AssertUtils.fail("Failed find login iframe");
-    }
+    List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
+    WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
+    driver.switchTo().frame(element);
   }
 
   @Step("Login BIC account")

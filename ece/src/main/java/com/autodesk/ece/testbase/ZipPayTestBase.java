@@ -33,6 +33,7 @@ public class ZipPayTestBase {
   private static final String ZIP_PAY_DASHBOARD_PASSWORD = "zipPayDashboardPassword";
   private static final String ZIP_PAY_DASHBOARD_VERIFY = "zipPayDashboardVerify";
   private static final String ZIP_PAY_PAYMENT_SUCCESS = "zipPayPaymentSuccess";
+  private static final String ZIP_PAY_DASHBOARD_AMOUNT = "zipPayDashboardAmountAvailable";
 
   private final Page_ zipPage;
   private final WebDriver driver;
@@ -146,27 +147,25 @@ public class ZipPayTestBase {
      if(zipPage.checkIfElementExistsInPage(ZIP_PAY_DASHBOARD_LOGIN, 10)){
       zipPage.click(ZIP_PAY_DASHBOARD_LOGIN);
 
-      // Login to the zip account
-      zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 5000);
-      zipPage.populateField(ZIP_PAY_DASHBOARD_USERNAME, testData.get(ZIP_PAY_USERNAME_KEY));
-      zipPage.populateField(ZIP_PAY_DASHBOARD_PASSWORD, testData.get(ZIP_PAY_PASSWORD_KEY));
-      zipPage.click(ZIP_PAY_SUBMIT);
+       // Login to the zip account
+       zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 5000);
+       zipPage.populateField(ZIP_PAY_DASHBOARD_USERNAME, testData.get(ZIP_PAY_USERNAME_KEY));
+       zipPage.populateField(ZIP_PAY_DASHBOARD_PASSWORD, testData.get(ZIP_PAY_PASSWORD_KEY));
+       zipPage.click(ZIP_PAY_SUBMIT);
      }
     } catch (MetadataException e) {
       AssertUtils.fail("Error while checking zip login page");
-   }
-
-    String amountXPath = zipPage.getFirstFieldLocator("zipPayDashboardAmountAvailable");
-
-    WebElement amountAvailableElement;
-    try {
-      VerifySMSOrWaitForField(amountXPath);
-      amountAvailableElement = driver.findElement(By.xpath(amountXPath));
-    } catch (Exception ex) {
-      Util.printWarning("Failed to get amount balance");
-      AssertUtils.fail("Failed to get amount balance");
-      return;
     }
+
+    try {
+      VerifySMSOrWaitForField();
+    } catch (Exception e) {
+      e.printStackTrace();
+      AssertUtils.fail("Failed to get amount balance");
+    }
+
+    String amountXPath = zipPage.getFirstFieldLocator(ZIP_PAY_DASHBOARD_AMOUNT);
+    WebElement amountAvailableElement = driver.findElement(By.xpath(amountXPath));
 
     double availableBalance = parseZipAmount(amountAvailableElement.getText());
 
@@ -209,11 +208,13 @@ public class ZipPayTestBase {
     driver.switchTo().window(tabs.get(0));
   }
 
-  private void VerifySMSOrWaitForField(String fieldXPath) {
+  private void VerifySMSOrWaitForField() {
     String smsVerificationXPath = zipPage.getFirstFieldLocator("zipPayVerificationTitle");
+    String amountXPath = zipPage.getFirstFieldLocator(ZIP_PAY_DASHBOARD_AMOUNT);
+
     WebDriverWait wait = new WebDriverWait(driver, 60);
     wait.until(ExpectedConditions.or(
-        ExpectedConditions.presenceOfElementLocated(By.xpath(fieldXPath)),
+        ExpectedConditions.presenceOfElementLocated(By.xpath(amountXPath)),
         ExpectedConditions.presenceOfElementLocated(By.xpath(smsVerificationXPath))
     ));
 
@@ -225,7 +226,7 @@ public class ZipPayTestBase {
       zipPage.populateField(ZIP_PAY_DASHBOARD_VERIFY,
           testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
       zipPage.click(ZIP_PAY_SUBMIT);
-      wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(fieldXPath)));
+      wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(amountXPath)));
     }
   }
 
