@@ -87,10 +87,11 @@ pipeline {
 
         stage ('Regression') {
             when {
-                allOf {
-                    branch 'master'
+                branch 'master'
+                anyOf {
+                    triggeredBy 'TimerTrigger'
                     expression {
-                        params.CJT
+                        params.CJT == true
                     }
                 }
             }
@@ -175,10 +176,11 @@ pipeline {
 
         stage ('ZIP Regression') {
             when {
-                allOf {
-                    branch 'master'
+                branch 'master'
+                anyOf {
+                    triggeredBy 'TimerTrigger'
                     expression {
-                        params.ZIP
+                        params.ZIP == true
                     }
                 }
             }
