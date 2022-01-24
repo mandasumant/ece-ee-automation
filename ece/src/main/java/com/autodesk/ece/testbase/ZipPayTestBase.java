@@ -96,7 +96,11 @@ public class ZipPayTestBase {
     boolean loggedInSuccessfully = false;
 
     // Login to the zip account
-    zipPage.waitForField(ZIP_PAY_USERNAME_KEY, true, 5000);
+    boolean usernameFound = zipPage.waitForField(ZIP_PAY_USERNAME_KEY, true, 30000);
+    if (!usernameFound) {
+      AssertUtils.fail("Login form failed to load after 30 seconds");
+    }
+
     zipPage.populateField(ZIP_PAY_USERNAME_KEY, testData.get(ZIP_PAY_USERNAME_KEY));
     zipPage.populateField(ZIP_PAY_PASSWORD_KEY, testData.get(ZIP_PAY_PASSWORD_KEY));
 
