@@ -33,8 +33,8 @@ pipeline {
             when {
                 not {
                     anyOf {
+                        triggeredBy 'TimerTrigger'
                         expression {
-                            triggeredBy 'TimerTrigger' ||
                             params.CJT == true ||
                             params.ZIP == true
                         }
@@ -55,8 +55,8 @@ pipeline {
             when {
                 not {
                     anyOf {
+                        triggeredBy 'TimerTrigger'
                         expression {
-                            triggeredBy 'TimerTrigger' ||
                             params.CJT == true ||
                             params.ZIP == true
                         }
@@ -81,8 +81,8 @@ pipeline {
             when {
                 not {
                     anyOf {
+                        triggeredBy 'TimerTrigger'
                         expression {
-                            triggeredBy 'TimerTrigger' ||
                             params.CJT == true ||
                             params.ZIP == true
                         }
