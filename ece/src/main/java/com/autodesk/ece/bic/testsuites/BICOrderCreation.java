@@ -720,46 +720,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"bic-indirectorder-JP"}, description = "Validation of Create BIC Indirect Order")
-  public void validateBicIndirectOrder() {
-    HashMap<String, String> testResults = new HashMap<String, String>();
-    startTime = System.nanoTime();
-    HashMap<String, String> results = getBicTestBase()
-        .createGUACBICIndirectOrderJP(testDataForEachMethod);
-    Util.sleep(60000);
-    results.putAll(testDataForEachMethod);
-
-    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-    updateTestingHub(testResults);
-
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
-      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
-      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
-      testResults
-          .put(BICConstants.subscriptionPeriodEndDate, results.get(
-              BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
-      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-      testResults
-          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
-    updateTestingHub(testResults);
-
-    stopTime = System.nanoTime();
-    executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
-    updateTestingHub(testResults);
-  }
-
   @Test(groups = {"bic-returningUser"}, description = "Validation of Create BIC Hybrid Order")
   public void validateBicReturningUser() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
@@ -792,14 +752,6 @@ public class BICOrderCreation extends ECETestBase {
 
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
-
-//    String bicOrderO2ID = "";
-//    OxygenService os = new OxygenService();
-//    try {
-//      bicOrderO2ID = os.getOxygenID(results.get(BICConstants.emailid), results.get(PASSWORD));
-//      results.put(BICConstants.oxid, bicOrderO2ID);
-//    } catch (Exception e1) {
-//    }
 
     results.putAll(testDataForEachMethod);
 

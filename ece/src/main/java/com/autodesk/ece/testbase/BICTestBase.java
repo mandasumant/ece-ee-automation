@@ -16,7 +16,6 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,7 +34,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.util.Strings;
 
 public class BICTestBase {
 
@@ -110,26 +108,18 @@ public class BICTestBase {
     }
 
     String[] billingAddress = address.split("@");
-    if (region.equalsIgnoreCase("jajp")) {
-      ba = new HashMap<String, String>();
-      ba.put(BICECEConstants.COMPANY_NAME_DR, billingAddress[0]);
-      ba.put(BICECEConstants.POSTAL_CODE_DR, billingAddress[1]);
-      ba.put(BICECEConstants.ADDRESS_DR, billingAddress[2]);
-      ba.put(BICECEConstants.CITY_DR, billingAddress[3]);
-      ba.put(BICECEConstants.PHONE_NUMBER_DR, billingAddress[4]);
-    } else {
-      ba = new HashMap<String, String>();
-      ba.put(BICECEConstants.ORGANIZATION_NAME, billingAddress[0]);
-      ba.put(BICECEConstants.FULL_ADDRESS, billingAddress[1]);
-      ba.put(BICECEConstants.CITY, billingAddress[2]);
-      ba.put(BICECEConstants.ZIPCODE, billingAddress[3]);
-      ba.put(BICECEConstants.PHONE_NUMBER, getRandomMobileNumber());
-      ba.put(BICECEConstants.COUNTRY, billingAddress[5]);
+    ba = new HashMap<String, String>();
+    ba.put(BICECEConstants.ORGANIZATION_NAME, billingAddress[0]);
+    ba.put(BICECEConstants.FULL_ADDRESS, billingAddress[1]);
+    ba.put(BICECEConstants.CITY, billingAddress[2]);
+    ba.put(BICECEConstants.ZIPCODE, billingAddress[3]);
+    ba.put(BICECEConstants.PHONE_NUMBER, getRandomMobileNumber());
+    ba.put(BICECEConstants.COUNTRY, billingAddress[5]);
 
-      if (!driver.findElements(By.xpath("//*[@name=\"state\"]")).isEmpty()) {
-        ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
-      }
+    if (!driver.findElements(By.xpath("//*[@name=\"state\"]")).isEmpty()) {
+      ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
     }
+
     return ba;
   }
 
@@ -1798,274 +1788,6 @@ public class BICTestBase {
     Util.printInfo("Successfully logged in");
   }
 
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place DR Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACBICIndirectOrderJP(LinkedHashMap<String, String> data) {
-    String orderNumber = null;
-    String emailID = null;
-    HashMap<String, String> results = new HashMap<>();
-    String guacDRBaseURL = data.get("guacDRBaseURL");
-    String productID = "";
-    String quantity = "";
-    String guacDRResourceURL = data.get("guacDRResourceURL");
-    String userType = data.get(BICECEConstants.USER_TYPE);
-    String region = data.get("languageStoreDR");
-    String password = data.get(BICECEConstants.PASSWORD);
-    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-
-    if (System.getProperty("sku").contains("default")) {
-      productID = data.get("productID");
-    } else {
-      String sku = System.getProperty("sku");
-      productID = sku.split(":")[0];
-      quantity = "&quantity=" + sku.split(":")[1];
-    }
-
-    if (!(Strings.isNullOrEmpty(System.getProperty("email")))) {
-      emailID = System.getProperty("email");
-      String O2ID = getO2ID(data, emailID);
-      // New user to be created
-      if ((Strings.isNullOrEmpty(O2ID))) {
-        orderNumber = createBicIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity,
-            guacDRResourceURL,
-            region, password, paymentMethod);
-      }
-    } else {
-      String timeStamp = new RandomStringUtils().random(12, true, false);
-      emailID = generateUniqueEmailID();
-      orderNumber = createBicIndirectOrder(data, emailID, guacDRBaseURL, productID, quantity,
-          guacDRResourceURL, region,
-          password, paymentMethod);
-    }
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
-  }
-
-  private String createBicIndirectOrder(LinkedHashMap<String, String> data, String emailID,
-      String guacDRBaseURL,
-      String productID, String quantity, String guacDRResourceURL, String region, String password,
-      String paymentMethod) {
-    String orderNumber;
-    String constructGuacDRURL = guacDRBaseURL + region + guacDRResourceURL + productID + quantity;
-    System.out.println("constructGuacDRURL " + constructGuacDRURL);
-
-    getUrl(constructGuacDRURL);
-    disableChatSession();
-    clickToStayOnSameSite();
-    checkCartDetailsError();
-
-    Names names = generateFirstAndLastNames();
-    createBICAccount(names, emailID, password);
-
-    data.putAll(names.getMap());
-
-    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod, region);
-    selectPaymentProfileDR(data, paymentCardDetails);
-
-    Map<String, String> address = getBillingAddress(region);
-
-    // Enter billing details
-    debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
-    populateBillingAddressDR(address, data);
-    debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
-
-    agreeToTerm();
-    clickOnMakeThisATestOrder();
-
-    orderNumber = submitGetOrderNumber(data);
-
-    printConsole(constructGuacDRURL, orderNumber, emailID, address, names.firstName, names.lastName,
-        paymentMethod);
-
-    clickOnViewInvoiceLink();
-
-    return orderNumber;
-  }
-
-  @Step("Select DR payment profile" + GlobalConstants.TAG_TESTINGHUB)
-  public void selectPaymentProfileDR(HashMap<String, String> data, String[] paymentCardDetails) {
-    try {
-      Util.printInfo("Selecting DR payment profile : " + data.get(BICECEConstants.PAYMENT_TYPE));
-      switch (data.get(BICECEConstants.PAYMENT_TYPE).toUpperCase()) {
-        default:
-          populatePaymentDetailsDR(paymentCardDetails);
-          break;
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      AssertUtils.fail("Failed to select DR payment profile...");
-    }
-  }
-
-  public String getPaymentDetailsDR(String paymentMethod) {
-
-    String paymentDetails = null;
-
-    switch (paymentMethod.toUpperCase()) {
-      case "MASTERCARD":
-        paymentDetails = "5168441223630339@3月@2025@456";
-        break;
-      case "AMEX":
-        paymentDetails = "371642190784801@3月@2025@7456";
-        break;
-      case "JCB":
-        paymentDetails = "3538684728624673@3月@2025@456";
-        break;
-      default:
-        paymentDetails = "4111111111111111@3月@2025@456";
-    }
-    return paymentDetails;
-  }
-
-  @Step("Populate DR payment details")
-  public void populatePaymentDetailsDR(String[] paymentCardDetails) {
-    Util.printInfo("Enter card details to make payment");
-
-    bicPage.waitForField(BICECEConstants.CREDIT_CARD_FRAME_DR, true, 30000);
-    bicPage.executeJavascript("window.scrollBy(0,600);");
-
-    try {
-      WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField(
-              BICECEConstants.CREDIT_CARD_FRAME_DR)
-          .get(0);
-      driver.switchTo().frame(creditCardFrameDR);
-      Util.sleep(2000);
-      String expirationMonthDRXpath = "";
-      String expirationYearDRXpath = "";
-
-      expirationMonthDRXpath = bicPage.getFirstFieldLocator("expirationMonthDR");
-      expirationYearDRXpath = bicPage.getFirstFieldLocator("expirationYearDR");
-
-      Util.printInfo("Entering DR card number : " + paymentCardDetails[0]);
-      bicPage.waitForField("cardNumberDR", true, 10000);
-      bicPage.click("cardNumberDR");
-      bicPage.executeJavascript(
-          "document.getElementById('ccNum').value='" + paymentCardDetails[0] + "'");
-      Util.sleep(1000);
-
-      WebElement monthEle = driver.findElement(By.xpath(expirationMonthDRXpath));
-      Select selMonth = new Select(monthEle);
-      selMonth.selectByVisibleText(paymentCardDetails[1]);
-      Util.sleep(1000);
-
-      WebElement yearEle = driver.findElement(By.xpath(expirationYearDRXpath));
-      Select selYear = new Select(yearEle);
-      selYear.selectByVisibleText(paymentCardDetails[2]);
-      Util.sleep(1000);
-
-      Util.printInfo("Entering security code : " + paymentCardDetails[3]);
-      bicPage.click("cardSecurityCodeDR");
-      bicPage.executeJavascript(
-          "document.getElementById('cardSecurityCode').value='" + paymentCardDetails[3] + "'");
-      Util.sleep(1000);
-
-      driver.switchTo().defaultContent();
-    } catch (MetadataException e) {
-      e.printStackTrace();
-      AssertUtils.fail("Unable to enter Card details to make payment");
-    }
-  }
-
-  @Step("Populate DR billing address")
-  public boolean populateBillingAddressDR(Map<String, String> address,
-      HashMap<String, String> data) {
-    boolean status = false;
-
-    try {
-      WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField(
-              BICECEConstants.CREDIT_CARD_FRAME_DR)
-          .get(0);
-      driver.switchTo().frame(creditCardFrameDR);
-
-      String paymentType = System.getProperty(BICECEConstants.PAYMENT);
-      String firstNameXpath = "";
-      String lastNameXpath = "";
-
-      firstNameXpath = bicPage.getFirstFieldLocator("firstNameDR");
-      lastNameXpath = bicPage.getFirstFieldLocator("lastNameDR");
-
-      driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
-      driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
-      driver.switchTo().defaultContent();
-
-      status = populateBillingDetailsDR(address, paymentType);
-
-      clickOnSaveProfileBtnDR();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      debugPageUrl(e.getMessage());
-      AssertUtils.fail("Unable to populate the Billing Address details");
-    }
-    return status;
-  }
-
-  @SuppressWarnings("static-access")
-  public boolean populateBillingDetailsDR(Map<String, String> address, String paymentType) {
-    boolean status = false;
-
-    try {
-      WebElement creditCardFrameDR = bicPage.getMultipleWebElementsfromField(
-              BICECEConstants.CREDIT_CARD_FRAME_DR)
-          .get(0);
-      driver.switchTo().frame(creditCardFrameDR);
-
-      Util.printInfo("Adding DR billing details...");
-
-      String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "";
-
-      switch (paymentType.toUpperCase()) {
-        default:
-          orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.COMPANY_NAME_DR);
-          fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.ADDRESS_DR);
-          cityXpath = bicPage.getFirstFieldLocator(BICECEConstants.CITY_DR);
-          zipXpath = bicPage.getFirstFieldLocator(BICECEConstants.POSTAL_CODE_DR);
-          phoneXpath = bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER_DR);
-          break;
-      }
-
-      WebDriverWait wait = new WebDriverWait(driver, 60);
-      wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
-      status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
-
-      if (status == false) {
-        AssertUtils.fail("Organization_Name not available.");
-      }
-
-      driver.findElement(By.xpath(orgNameXpath)).click();
-      Util.sleep(1000);
-      driver.findElement(By.xpath(orgNameXpath))
-          .sendKeys(new RandomStringUtils().random(5, true, true) + address.get(
-              BICECEConstants.COMPANY_NAME_DR));
-
-      driver.findElement(By.xpath(fullAddrXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-      Util.sleep(1000);
-      driver.findElement(By.xpath(fullAddrXpath)).sendKeys(address.get(BICECEConstants.ADDRESS_DR));
-
-      driver.findElement(By.xpath(zipXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-      Util.sleep(1000);
-      driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.POSTAL_CODE_DR));
-
-      driver.findElement(By.xpath(cityXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-      Util.sleep(3000);
-      driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY_DR));
-
-      driver.findElement(By.xpath(phoneXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-      Util.sleep(1000);
-      driver.findElement(By.xpath(phoneXpath))
-          .sendKeys(address.get(BICECEConstants.PHONE_NUMBER_DR));
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      Util.printTestFailedMessage("populateBillingDetailsDR");
-      AssertUtils.fail("Unable to Populate DR Billing Details");
-    }
-    return status;
-  }
-
   private Names generateFirstAndLastNames() {
     String randomString = RandomStringUtils.random(6, true, false);
     String firstName = "FN" + randomString;
@@ -2077,72 +1799,7 @@ public class BICTestBase {
 
   private String[] getCardPaymentDetails(String paymentMethod, String region) {
     debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
-    if (region.equals("ja-JP/")) {
-      return getPaymentDetailsDR(paymentMethod.toUpperCase()).split("@");
-    } else {
-      return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-    }
-  }
-
-  private void clickOnSaveProfileBtnDR() {
-    try {
-      Util.printInfo("Clicking on DR save payment profile button...");
-      List<WebElement> eles = bicPage.getMultipleWebElementsfromField("saveMyAccountButtonDR");
-      eles.get(0).click();
-      bicPage.waitForPageToLoad();
-      bicPage.checkIfElementExistsInPage("billingAddressInViewMode", 10);
-    } catch (MetadataException e) {
-      e.printStackTrace();
-      AssertUtils.fail("Failed to click on DR Save button on billing details page...");
-    }
-  }
-
-  private void clickOnMakeThisATestOrder() {
-    try {
-      Util.printInfo("Clicking on DR test order link...");
-      driver.findElement(By.linkText("Make this a test order")).click();
-      Util.sleep(2000);
-    } catch (Exception e) {
-      AssertUtils.fail("Failed to click on 'Make this a test order' link");
-    }
-
-    try {
-      String alertMessage = "";
-      driver.switchTo().alert();
-      alertMessage = driver.switchTo().alert().getText();
-      Util.printInfo("Alert text found: " + alertMessage);
-      if (alertMessage.contains("Success")) {
-        Util.printInfo("Closing DR purchase alert!");
-        driver.switchTo().alert().accept();
-      } else {
-        Util.printInfo("Unable to make a test order");
-      }
-    } catch (Exception e) {
-      AssertUtils.fail("Failed to make a test order");
-    }
-  }
-
-  private void clickOnViewInvoiceLink() {
-    try {
-      String orderNumber = "";
-      String orderNumberInStore = "";
-
-      orderNumber = driver.findElement(By.xpath(BICECEConstants.JP_ORDER_NUMBER)).getText();
-      Util.printInfo("Find DR order number: " + orderNumber);
-
-      driver.findElement(By.linkText("請求書を表示する")).click();
-      Util.sleep(10000);
-
-      ArrayList<String> tab = new ArrayList<>(driver.getWindowHandles());
-      driver.switchTo().window(tab.get(1));
-
-      orderNumberInStore = driver.findElement(By.xpath("//*[@id='dr_orderNumber']//span"))
-          .getText();
-      Util.printInfo("Find DR order number from store: " + orderNumberInStore);
-      AssertUtils.assertEquals(orderNumber, orderNumberInStore);
-    } catch (Exception e) {
-      AssertUtils.fail("Failed to validate order number from Store");
-    }
+    return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
   }
 
   private void clickToStayOnSameSite() {
