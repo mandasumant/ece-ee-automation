@@ -320,13 +320,6 @@ validateBicNativeOrderSwitchTerm:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 
-createGUACBICIndirectOrderJP:
-  userType: "newUser"
-  productID: "Maya"
-
-validateBicIndirectOrder:
-  productID: "Maya"
-
 validateAlignBilling:
   productID: *NativeOrderPriceID
 
