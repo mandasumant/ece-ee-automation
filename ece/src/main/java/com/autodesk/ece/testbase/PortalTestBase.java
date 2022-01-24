@@ -1416,6 +1416,7 @@ public class PortalTestBase {
    * @param peIdPattern - Regex pattern to match
    * @return - Full pe ID found
    */
+  @Step("Verify product is visible in Portal " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> verifyProductVisible(String peIdPattern) {
     Pattern pattern = Pattern.compile(peIdPattern);
     String lastProductXPath = portalPage.getFirstFieldLocator("lastPurchasedProduct");
