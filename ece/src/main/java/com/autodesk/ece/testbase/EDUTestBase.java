@@ -4,16 +4,21 @@ import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
+import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
-import io.restassured.response.Response;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
@@ -26,14 +31,18 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class EDUTestBase {
 
-  public static Page_ eduPage = null;
-  public WebDriver driver = null;
-  LinkedHashMap<String, String> testData = null;
+  private static final String EDU_SIGNUP_SUBMIT = "eduSignSubmit";
+  private static final String EDU_GET_STARTED = "eduSignStarted";
+  private static final String EDU_NEW_PASSWORD = "newPassword";
+
+  private final Page_ eduPage;
+  private final WebDriver driver;
+  private final Map<String, String> testData;
 
   public EDUTestBase(GlobalTestBase testbase, LinkedHashMap<String, String> testData) {
     Util.PrintInfo("EDUTestBase from ece");
     eduPage = testbase.createPage("PAGE_EDU");
-    this.driver = testbase.getdriver();
+    driver = testbase.getdriver();
     this.testData = testData;
   }
 
@@ -44,8 +53,8 @@ public class EDUTestBase {
    * @return - Test step results
    */
   @Step("Register EDU User" + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> registerUser(EDUUserType userType) {
-    HashMap<String, String> results = new HashMap<String, String>();
+  public Map<String, String> registerUser(EDUUserType userType) {
+    HashMap<String, String> results = new HashMap<>();
     int currentYear = Year.now().getValue();
 
     // Navigate to education site and click on "Get Started"
@@ -55,7 +64,7 @@ public class EDUTestBase {
     eduPage.click("createAccountEDU");
 
     // Fill out country, role, education role
-    pickSelectOption("eduCountry", "US");
+    pickSelectOption("eduCountry", "GB");
     pickSelectOption("eduType", "1"); // "1" is "High School/Secondary"
 
     switch (userType) {
@@ -93,7 +102,7 @@ public class EDUTestBase {
     eduPage.populateField("lastname", lastName);
     eduPage.populateField("newEmail", email);
     eduPage.populateField("newConfirmEmail", email);
-    eduPage.populateField("newPassword", "Password1");
+    eduPage.populateField(EDU_NEW_PASSWORD, "Password1");
     results.put("password", "Password1");
 
     JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -105,7 +114,7 @@ public class EDUTestBase {
       // Pick a school called "Broadway"
       eduPage.waitForField("eduSchool", true, 5000);
       try {
-        eduPage.sendKeysInTextFieldSlowly("eduSchool", "Broadway");
+        eduPage.sendKeysInTextFieldSlowly("eduSchool", "Saint");
       } catch (Exception e) {
         AssertUtils.fail("Failed to search for school");
         e.printStackTrace();
@@ -139,13 +148,87 @@ public class EDUTestBase {
   }
 
   /**
+   * Mark a user as an approved education user in the EDU database
+   *
+   * @param oxygenId - Oxygen ID of the user to approve
+   */
+  @Step("Mark user as approved" + GlobalConstants.TAG_TESTINGHUB)
+  public void verifyUser(String oxygenId) {
+    String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
+    given().auth().basic(testData.get("eduAEMUser"), testData.get("eduAEMPassword")).when()
+        .get(baseUrl);
+  }
+
+  /**
+   * From the main education landing page with a logged in user, click through the flow to accept
+   * VSOS (student verification) terms
+   */
+  public void signUpUser(String username, String password) {
+    acceptVSOSTerms();
+
+    // Clear session storage cache and login again
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("window.sessionStorage.clear()");
+    eduPage.refresh();
+    loginUser(username, password);
+
+    dismissSuccessPopup();
+    Util.sleep(5000);
+    eduPage.refresh();
+    verifyEducationStatus();
+  }
+
+  @Step("Accept VSOS terms" + GlobalConstants.TAG_TESTINGHUB)
+  private void acceptVSOSTerms() {
+    try {
+      eduPage.waitForField(EDU_GET_STARTED, true, 5000);
+      eduPage.click(EDU_GET_STARTED);
+      eduPage.waitForField(EDU_SIGNUP_SUBMIT, true, 5000);
+      eduPage.click(EDU_SIGNUP_SUBMIT);
+      eduPage.click(EDU_SIGNUP_SUBMIT);
+
+      String sheerUploadLocator = eduPage.getFirstFieldLocator("sheerUpload");
+      String signupSuccessLocator = eduPage.getFirstFieldLocator("eduSignSuccess");
+
+      WebDriverWait wait = new WebDriverWait(driver, 60);
+      wait.until(ExpectedConditions.or(
+          ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(sheerUploadLocator)),
+          ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(signupSuccessLocator))
+      ));
+
+      // If we're requested to upload a document, upload the testing ID for SheerID
+      if (!driver.findElements(By.xpath(sheerUploadLocator)).isEmpty()) {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        String sheerIDImage = EISTestBase.getTestDataDir()
+            + EISTestBase.getTestManifest().getProperty("EDU_SHEER_ID_APPROVE");
+        URL resource = classLoader.getResource(sheerIDImage);
+        assert resource != null;
+        String sheerIDImagePath = Paths.get(resource.toURI()).toFile().getPath();
+
+        // Make the upload button interactable
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("document.getElementById('vsos-file-upload-input').style.opacity = 1");
+
+        // Upload the tesing ID file
+        WebElement sheerUpload = driver.findElement(By.xpath(sheerUploadLocator));
+        sheerUpload.sendKeys(sheerIDImagePath);
+        eduPage.click(EDU_SIGNUP_SUBMIT);
+        eduPage.click("eduUploadClose");
+      }
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+      AssertUtils.fail("Failed to sign VSOS terms");
+    }
+  }
+
+  /**
    * Login as a user on the EDU landing page
    *
    * @param username - User's email
    * @param password - User's password
    */
   @Step("Login EDU User" + GlobalConstants.TAG_TESTINGHUB)
-  public void loginUser(String username, String password) {
+  private void loginUser(String username, String password) {
     // Navigate to education site and click on "Get Started"
     eduPage.navigateToURL(testData.get("eduLandingPage"));
     eduPage.click("getStarted");
@@ -155,57 +238,27 @@ public class EDUTestBase {
     eduPage.populateField("eduUsername", username);
     eduPage.click("eduUsernameNext");
 
-    eduPage.waitForField("newPassword", true, 5000);
-    eduPage.populateField("newPassword", password);
+    eduPage.waitForField(EDU_NEW_PASSWORD, true, 5000);
+    eduPage.populateField(EDU_NEW_PASSWORD, password);
     eduPage.click("eduSubmit");
 
     eduPage.waitForField("eduSkipTFA", true, 5000);
     eduPage.click("eduSkipTFA");
   }
 
-  /**
-   * Mark a user as an approved education user in the EDU database
-   *
-   * @param oxygenId - Oxygen ID of the user to approve
-   */
-  @Step("Mark user as approved" + GlobalConstants.TAG_TESTINGHUB)
-  public void verifyUser(String oxygenId) {
-    String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
-    Response response = given()
-        .auth().basic(testData.get("eduAEMUser"), testData.get("eduAEMPassword"))
-        .when().get(baseUrl);
-  }
-
-  /**
-   * From the main education landing page with a logged in user, click through the flow to accept
-   * VSOS (student verification) terms
-   */
-  public void signUpUser() {
-    acceptVSOSTerms();
-    dismissSuccessPopup();
-    Util.sleep(5000);
-    eduPage.refresh();
-    verifyEducationStatus();
-  }
-
-  @Step("Accept VSOS terms" + GlobalConstants.TAG_TESTINGHUB)
-  public void acceptVSOSTerms() {
-    eduPage.waitForField("eduSignStarted", true, 5000);
-    eduPage.click("eduSignStarted");
-    eduPage.waitForField("eduSignSubmit", true, 5000);
-    eduPage.click("eduSignSubmit");
-  }
-
   @Step("Dismiss registration success message" + GlobalConstants.TAG_TESTINGHUB)
-  public void dismissSuccessPopup() {
+  private void dismissSuccessPopup() {
     eduPage.waitForField("eduSignSuccess", true, 5000);
     eduPage.click("eduSignSuccess");
   }
 
   @Step("Verify Education Status" + GlobalConstants.TAG_TESTINGHUB)
-  public void verifyEducationStatus() {
+  private void verifyEducationStatus() {
     String xPath = eduPage.getFirstFieldLocator("eduStatus");
+    WebDriverWait wait = new WebDriverWait(driver, 30);
+    wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
     String status = driver.findElement(By.xpath(xPath)).getText();
+    Util.printInfo("Current status: " + status);
     AssertUtils.assertTrue(
         status.contains("Your educational access to Autodesk products is valid"));
   }
@@ -285,9 +338,9 @@ public class EDUTestBase {
           ExpectedConditions.invisibilityOfElementLocated(By.className("model-body--loading")));
 
       // Check if there was an error assigning users, and attempt to click on the retry button
-      WebElement errorModal = driver.findElement(
+      List<WebElement> errorModal = driver.findElements(
           By.xpath(eduPage.getFirstFieldLocator("eduAssignmentError")));
-      if (errorModal.isDisplayed()) {
+      if (!errorModal.isEmpty() && errorModal.get(0).isDisplayed()) {
         Util.printWarning("Seat assignment failed, retrying");
         WebElement closeButton = driver.findElement(
             By.cssSelector(".modal-footer--issues .close-btn"));
