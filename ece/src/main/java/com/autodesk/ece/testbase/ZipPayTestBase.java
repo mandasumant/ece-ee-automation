@@ -64,9 +64,7 @@ public class ZipPayTestBase {
     // If an SMS verification code is requested, use the provided test code
     driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
     if (!driver.findElements(By.xpath(verificationCodeXPath)).isEmpty()) {
-      zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
-          testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
-      zipPage.click("zipPayVerificationSubmit");
+      attemptZipPayVerification();
     }
 
     zipPage.waitForField(ZIP_PAY_OPTION, true, 10000);
@@ -93,10 +91,13 @@ public class ZipPayTestBase {
   private void attemptZipPayCheckoutLogin() {
     int loginAttempts = 0;
     String loginXPath = zipPage.getFirstFieldLocator("zipPayLogin");
-    boolean loggedInSuccessfully = false;
 
     // Login to the zip account
-    zipPage.waitForField(ZIP_PAY_USERNAME_KEY, true, 5000);
+    boolean usernameFound = zipPage.waitForField(ZIP_PAY_USERNAME_KEY, true, 30000);
+    if (!usernameFound) {
+      AssertUtils.fail("Login form failed to load after 30 seconds");
+    }
+
     zipPage.populateField(ZIP_PAY_USERNAME_KEY, testData.get(ZIP_PAY_USERNAME_KEY));
     zipPage.populateField(ZIP_PAY_PASSWORD_KEY, testData.get(ZIP_PAY_PASSWORD_KEY));
 
@@ -112,17 +113,45 @@ public class ZipPayTestBase {
 
       List<WebElement> loginButton = driver.findElements(By.xpath(loginXPath));
       if (loginButton.isEmpty()) {
-        loggedInSuccessfully = true;
-        break;
+        return;
       } else {
         Util.printWarning("Login failed on attempt #" + (loginAttempts + 1));
+        Util.sleep(3000);
         loginAttempts++;
       }
     }
 
-    if (!loggedInSuccessfully) {
-      AssertUtils.fail("Failed to log into Zip after 5 attempts");
+    AssertUtils.fail("Failed to log into Zip after 5 attempts");
+  }
+
+  private void attemptZipPayVerification() {
+    int verificationAttempts = 0;
+    String verifyXPath = zipPage.getFirstFieldLocator("zipPayVerificationSubmit");
+
+    zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
+        testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
+
+    while (verificationAttempts < 5) {
+      zipPage.click("zipPayVerificationSubmit");
+
+      try {
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(verifyXPath)));
+      } catch (Exception e) {
+        Util.printWarning("Zip verify button still present after verify attempt");
+      }
+
+      List<WebElement> verifyButton = driver.findElements(By.xpath(verifyXPath));
+      if (verifyButton.isEmpty()) {
+        return;
+      } else {
+        Util.printWarning("Login failed on attempt #" + (verificationAttempts + 1));
+        Util.sleep(3000);
+        verificationAttempts++;
+      }
     }
+
+    AssertUtils.fail("Failed to verify SMS after 5 attempts");
   }
 
   /**
