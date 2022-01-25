@@ -407,7 +407,17 @@ public class BICTestBase {
       clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
       driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
       status = populateBillingDetails(address, paymentType);
-      clickOnContinueBtn(paymentType);
+
+      try {
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
+        WebElement element = driver
+            .findElement(By.xpath("//*[@id=\"usi_content\"]"));
+        executor.executeScript("arguments[0].click();", element);
+      }catch (Exception e){
+        Util.printInfo("Can not find the skip button and click ");
+      }
+
+       clickOnContinueBtn(paymentType);
     } catch (Exception e) {
       e.printStackTrace();
       debugPageUrl(e.getMessage());
@@ -772,6 +782,7 @@ public class BICTestBase {
       bicPage.waitForPageToLoad();
       bicPage.waitForElementToDisappear("paypalPageLoader", 30);
 
+      Util.sleep(10000);
       String title = driver.getTitle();
 
       AssertUtils.assertTrue(title.toUpperCase().contains("Log In".toUpperCase()),
@@ -811,12 +822,9 @@ public class BICTestBase {
       if (bicPage.checkFieldExistence("paypalContinueButton")) {
         bicPage.clickUsingLowLevelActions("paypalContinueButton");
       }
-      Util.printInfo("Clicking on agree and continue button...");
-      bicPage.waitForFieldPresent("paypalAgreeAndContBtn", 10000);
-      bicPage.clickUsingLowLevelActions("paypalAgreeAndContBtn");
-      Util.sleep(10000);
 
       driver.switchTo().window(parentWindow);
+
       Util.sleep(5000);
       Util.printInfo(
           "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
