@@ -3,6 +3,7 @@ package com.autodesk.ece.testbase;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
+import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.common.services.OxygenService;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -409,15 +410,19 @@ public class BICTestBase {
       status = populateBillingDetails(address, paymentType);
 
       try {
-        JavascriptExecutor executor = (JavascriptExecutor) driver;
-        WebElement element = driver
-            .findElement(By.xpath("//*[@id=\"usi_content\"]"));
-        executor.executeScript("arguments[0].click();", element);
-      }catch (Exception e){
-        Util.printInfo("Can not find the skip button and click ");
-      }
+          driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
+          JavascriptExecutor executor = (JavascriptExecutor) driver;
+          WebElement element = driver
+              .findElement(By.xpath("//*[@id=\"usi_content\"]"));
+          executor.executeScript("arguments[0].click();", element);
+        } catch (Exception e) {
+          Util.printInfo("Can not find the skip button and click");
+        } finally {
+          driver.manage().timeouts().implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
+        }
 
-       clickOnContinueBtn(paymentType);
+      clickOnContinueBtn(paymentType);
+
     } catch (Exception e) {
       e.printStackTrace();
       debugPageUrl(e.getMessage());
