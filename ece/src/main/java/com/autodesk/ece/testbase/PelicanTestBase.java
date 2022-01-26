@@ -68,10 +68,17 @@ public class PelicanTestBase {
     try {
       Util.printInfo("Hitting the URL = " + baseUrl);
       RestAssured.baseURI = baseUrl;
-      if(requestJson != null) {
-        response = given().headers(header).body(requestJson).when().post();
-      }else{
-        response = given().headers(header).when().get();
+      for (int i = 0; i <= 2; i++) {
+        if (requestJson != null) {
+          response = given().headers(header).body(requestJson).when().post();
+        } else {
+          response = given().headers(header).when().get();
+        }
+
+        //few Pelican API return 302 for POST/PUT hence 399
+        if(response.getStatusCode() < 399) {
+          break;
+        }
       }
       String result = response.getBody().asString();
       Util.printInfo("results from the url-" + result);
@@ -249,7 +256,7 @@ public class PelicanTestBase {
   }
 
   @Step("Get Pelican Response" + GlobalConstants.TAG_TESTINGHUB)
-  public String getPelicanResponse(HashMap<String, String> data) {
+  public String getPurchaseOrder(HashMap<String, String> data) {
     String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsUrl");
     productName = data.get("productName");
 
@@ -419,11 +426,11 @@ public class PelicanTestBase {
    * @param silent  - Whether a failure 3 times in a row causes the testcase to fail
    * @return - Pelican response
    */
-  public String retryPelicanResponse(HashMap<String, String> results, boolean silent) {
+  public String retryGetPurchaseOrder(HashMap<String, String> results, boolean silent) {
     String response = "";
     boolean subscriptionIdFound = false;
     for (int i = 1; i < 4; i++) {
-      response = getPelicanResponse(results);
+      response = getPurchaseOrder(results);
       int intIndex = response.indexOf("subscriptionId");
       if (intIndex == -1) {
         Util.printInfo("SubscriptionId not found. Retry #" + i);
@@ -447,7 +454,7 @@ public class PelicanTestBase {
    * @param results - Data hashmap
    * @return - Pelican response
    */
-  public String retryPelicanResponse(HashMap<String, String> results) {
-    return retryPelicanResponse(results, false);
+  public String retryGetPurchaseOrder(HashMap<String, String> results) {
+    return retryGetPurchaseOrder(results, false);
   }
 }
