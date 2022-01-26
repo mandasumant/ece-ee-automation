@@ -79,6 +79,7 @@ public class PelicanTestBase {
         if(response.getStatusCode() < 399) {
           break;
         }
+        Util.sleep(3000);
       }
       String result = response.getBody().asString();
       Util.printInfo("results from the url-" + result);
