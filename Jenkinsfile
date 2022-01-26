@@ -24,8 +24,8 @@ pipeline {
     }
 
     parameters {
-        booleanParam(name: 'CJT', defaultValue: false, description: 'Run CJT Regression ?')
-        booleanParam(name: 'ZIP', defaultValue: false, description: 'Run ZIP Regression ?')
+        booleanParam(name: 'CJT' , defaultValue: false, description: 'Run CJT Regression ?')
+        booleanParam(name: 'LIFT', defaultValue: false, description: 'Run LIFT Regression ?')
     }
 
     stages {
@@ -36,7 +36,7 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.ZIP == true
+                            params.LIFT == true
                         }
                     }
                 }
@@ -58,7 +58,7 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.ZIP == true
+                            params.LIFT == true
                         }
                     }
                 }
@@ -84,7 +84,7 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.ZIP == true
+                            params.LIFT == true
                         }
                     }
                 }
@@ -127,6 +127,7 @@ pipeline {
                                                               '{"displayname":"BiC Native Order UK","testcasename":"validateBicNativeOrder","description":"BiC Native Order - UK ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"BACS","store":"STORE-UK","sku":"default:1","email":"","locale":"en_GB"},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC Native Order DE  SEPA","testcasename":"validateBicNativeOrder","description":"BiC Native Order - DE - SEPA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"SEPA","store":"STORE-DE","sku":"default:1","email":"","locale":"de_DE"},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC Native Order DE  GIROPAY","testcasename":"validateBicNativeOrder","description":"BiC Native Order - DE - GIROPAY","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"GIROPAY","store":"STORE-DE","sku":"default:1","email":"","locale":"de_DE"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order AUS  ZIP","testcasename":"validateBicNativeOrder","description":"BiC Native Order - AUS - ZIP","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU"},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"Add seats from GUAC","testcasename":"validateBicAddSeats","description":"Add seats from GUAC","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-guac-addseats","testMethod":"validateBicAddSeats","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC order Flex","testcasename":"validateBicFlexOrder","description":"BiC order Flex","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder","testMethod":"validateBicFlexOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"META order","testcasename":"validateBicMetaOrder","description":"META order","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-metaorder","testMethod":"validateBicMetaOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
@@ -190,18 +191,18 @@ pipeline {
             }
         }
 
-        stage ('ZIP Regression') {
+        stage ('LiftForward Regression') {
             when {
                 branch 'master'
                 anyOf {
-                    triggeredBy 'TimerTrigger'
+                    //triggeredBy 'TimerTrigger'
                     expression {
-                        params.ZIP == true
+                        params.LIFT == true
                     }
                 }
             }
             steps {
-                echo 'Initiating ZIP UAT Regression'
+                echo 'Initiating LiftForward UAT Regression'
 
                 script {
                     println("Building Testing Hub API Input Map - estore")
@@ -209,14 +210,14 @@ pipeline {
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"ZIP Regression - GUAC Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-                                                              '{"displayname":"BiC Native Order AU","testcasename":"validateBicNativeOrder","description":"BiC Native Order - AU ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"Add seats from GUAC","testcasename":"validateBicAddSeats","description":"Add seats from GUAC","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-guac-addseats","testMethod":"validateBicAddSeats","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"BiC order Flex","testcasename":"validateBicFlexOrder","description":"BiC order Flex","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder","testMethod":"validateBicFlexOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"META order","testcasename":"validateBicMetaOrder","description":"META order","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-metaorder","testMethod":"validateBicMetaOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"BiC refund order ZIP","testcasename":"validateBicRefundOrder","description":"BiC refund order - ZIP","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"BiC order with existing user","testcasename":"validateBicReturningUser","description":"BiC order with existing user","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-returningUser","testMethod":"validateBicReturningUser","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"BiC PromoCode order","testcasename":"promocodeBicOrder","description":"BiC Order with PromoCoder","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderPromoCode","testGroup":"bic-promocode-order","testMethod":"promocodeBicOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""}' +
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"LiftForward Regression - GUAC Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                                                              '{"displayname":"BiC Native Order AU","testcasename":"validateBicNativeOrder","description":"BiC Native Order - AU ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"Add seats from GUAC","testcasename":"validateBicAddSeats","description":"Add seats from GUAC","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-guac-addseats","testMethod":"validateBicAddSeats","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC order Flex","testcasename":"validateBicFlexOrder","description":"BiC order Flex","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder","testMethod":"validateBicFlexOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"META order","testcasename":"validateBicMetaOrder","description":"META order","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-metaorder","testMethod":"validateBicMetaOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC refund order LIFT","testcasename":"validateBicRefundOrder","description":"BiC refund order - LIFT","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC order with existing user","testcasename":"validateBicReturningUser","description":"BiC order with existing user","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-returningUser","testMethod":"validateBicReturningUser","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC PromoCode order","testcasename":"promocodeBicOrder","description":"BiC Order with PromoCoder","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderPromoCode","testGroup":"bic-promocode-order","testMethod":"promocodeBicOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""}' +
                                                               '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore")
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
@@ -232,12 +233,12 @@ pipeline {
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
-                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"ZIP Regression - Account Portal Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-                                                              '{"displayname":"Add Seats","testcasename":"validateBicAddSeatNativeOrder","description":"Add Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-addseat-native","testMethod":"validateBicAddSeatNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"Reduce Seats","testcasename":"validateBicReduceSeats","description":"Reduce Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-reduceseats-native","testMethod":"validateBicReduceSeats","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"Change Payment","testcasename":"validateBICChangePaymentProfile","description":"Change Payment from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-changePayment","testMethod":"validateBICChangePaymentProfile","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"Restart Subscription","testcasename":"validateRestartSubscription","description":"Restart a Canceled Subscription","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-restart-subscription","testMethod":"validateRestartSubscription","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"Align Billing","testcasename":"validateAlignBilling","description":"Align 2 Subscriptions to same Renewal from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-align-billing","testMethod":"validateAlignBilling","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""}],"workstreamname":"dclecjt"}'
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"LIFT Regression - Account Portal Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                                                              '{"displayname":"Add Seats","testcasename":"validateBicAddSeatNativeOrder","description":"Add Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-addseat-native","testMethod":"validateBicAddSeatNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"Reduce Seats","testcasename":"validateBicReduceSeats","description":"Reduce Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-reduceseats-native","testMethod":"validateBicReduceSeats","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"Change Payment","testcasename":"validateBICChangePaymentProfile","description":"Change Payment from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-changePayment","testMethod":"validateBICChangePaymentProfile","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"Restart Subscription","testcasename":"validateRestartSubscription","description":"Restart a Canceled Subscription","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-restart-subscription","testMethod":"validateRestartSubscription","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"Align Billing","testcasename":"validateAlignBilling","description":"Align 2 Subscriptions to same Renewal from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-align-billing","testMethod":"validateAlignBilling","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LIFT","store":"STORE-NAMER","sku":"default:1","email":"","productName":"MUDBOX"},"notsupportedenv":[],"wiki":""}],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - accountportal")
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
                         println('Testing Hub API called successfully - accountportal')
