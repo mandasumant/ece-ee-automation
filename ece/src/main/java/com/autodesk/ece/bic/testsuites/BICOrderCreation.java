@@ -115,7 +115,7 @@ public class BICOrderCreation extends ECETestBase {
       results.putAll(testDataForEachMethod);
 
       // Getting a PurchaseOrder details from pelican
-      results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+      results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
       // Trigger Invoice join
       pelicantb.postInvoicePelicanAPI(results);
@@ -159,7 +159,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -209,7 +209,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -340,7 +340,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
@@ -360,7 +360,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -422,7 +422,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -465,7 +465,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
@@ -527,7 +527,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -599,7 +599,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -654,7 +654,7 @@ public class BICOrderCreation extends ECETestBase {
     pelicantb.postInvoicePelicanAPI(results);
 
     // Getting a PurchaseOrder details from pelican
-    String pelicanResponse = pelicantb.retryPelicanResponse(results, true);
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
 
     if (!pelicanResponse.contains("subscriptionId")) {
       Util.printWarning("Failed to get subscription for Meta order, skipping rest of test");
@@ -763,7 +763,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -825,7 +825,7 @@ public class BICOrderCreation extends ECETestBase {
 
     // Get the subscription id for the first order
     results.putAll(pelicantb
-        .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
+        .getPurchaseOrderDetails(pelicantb.getPurchaseOrder(testDataForEachMethod)));
     results.put(BICECEConstants.SUB1_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
     // Get the original billing date for the first subscription
@@ -844,7 +844,7 @@ public class BICOrderCreation extends ECETestBase {
     // Get the subscription id for the second subscription
     testDataForEachMethod.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     results.putAll(pelicantb
-        .getPurchaseOrderDetails(pelicantb.getPelicanResponse(testDataForEachMethod)));
+        .getPurchaseOrderDetails(pelicantb.getPurchaseOrder(testDataForEachMethod)));
     results.put(BICECEConstants.SUB2_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
     // Forcefully update the second subscription's billing date to make it unaligned from the first subscription
@@ -899,7 +899,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -986,7 +986,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPelicanResponse(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
