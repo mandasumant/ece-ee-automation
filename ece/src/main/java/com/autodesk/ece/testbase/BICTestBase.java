@@ -279,17 +279,21 @@ public class BICTestBase {
       while (driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
           .isDisplayed()) {
 
+        Util.printInfo("Finding the Skip button. Attempt # 1");
         driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
         count++;
         Util.sleep(1000);
         if (count == 3) {
-          break;
+          Util.printInfo("Finding the Skip button. Tried 3 times. Exiting.");
+          AssertUtils.fail("Failed to find or click on Skip Add seats button.");
         }
         if (count == 2) {
+          Util.printInfo("Finding the Skip button. Attempt # 3");
           driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
               .sendKeys(Keys.ESCAPE);
         }
         if (count == 1) {
+          Util.printInfo("Finding the Skip button. Attempt # 2");
           driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
               .sendKeys(Keys.PAGE_DOWN);
         }
@@ -297,6 +301,7 @@ public class BICTestBase {
       }
     } catch (Exception e) {
       e.printStackTrace();
+      AssertUtils.fail("Failed to find or click on Skip Add seats button.");
     }
   }
 
@@ -349,6 +354,7 @@ public class BICTestBase {
   @Step("Add a seat from the existing subscription popup")
   public void existingSubscriptionAddSeat(HashMap<String, String> data) {
     // Wait for add seats popup
+    Util.printInfo("Wait for add seats popup.");
     bicPage.waitForField("guacAddSeats", true, 3000);
     bicPage.clickToSubmit("guacAddSeats", 3000);
     bicPage.waitForPageToLoad();
@@ -1152,28 +1158,6 @@ public class BICTestBase {
     }
   }
 
-  private String createBICOrder(LinkedHashMap<String, String> data, String emailID, String region,
-      String password, String paymentMethod) {
-    String orderNumber;
-
-    Names names = generateFirstAndLastNames();
-    data.putAll(names.getMap());
-
-    createBICAccount(names, emailID, password);
-
-    Map<String, String> address = getBillingAddress(region);
-
-    enterBillingDetails(data, address, paymentMethod, region);
-
-    orderNumber = submitGetOrderNumber(data);
-
-    printConsole(driver.getCurrentUrl(), orderNumber, emailID, address, names.firstName,
-        names.lastName,
-        paymentMethod);
-
-    return orderNumber;
-  }
-
   private void clickMandateAgreementCheckbox() {
     try {
       if (System.getProperty(BICECEConstants.PAYMENT)
@@ -1457,7 +1441,10 @@ public class BICTestBase {
 
     // Login to an existing account and add seats
     loginAccount(data);
+    Util.printInfo("Waiting for Add seats modal.");
+    Util.sleep(5000);
     existingSubscriptionAddSeat(data);
+    Util.printInfo("Successfully added seats.");
     orderNumber = submitGetOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
