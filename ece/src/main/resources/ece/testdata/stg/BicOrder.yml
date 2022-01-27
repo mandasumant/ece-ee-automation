@@ -252,11 +252,6 @@ STORE-JP:
   postalCodeStore: "400 20"
   priceIDStore: "30740"
 
-createGUACBICOrderUS:
-  userType: "newUser"
-  productID: *NativeOrderPriceID
-  bicNativePriceID: *bicNativePriceID
-
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
