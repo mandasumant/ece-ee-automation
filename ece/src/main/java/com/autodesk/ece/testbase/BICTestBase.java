@@ -1080,31 +1080,6 @@ public class BICTestBase {
     Util.printInfo("*************************************************************");
   }
 
-  private void navigateToGUAC(LinkedHashMap<String, String> data, String region) {
-    String guacBaseURL = data.get("guacBaseURL");
-    String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
-    String productID = "";
-    String quantity = "";
-
-    if (System.getProperty("sku").contains("default")) {
-      productID = data.get("productID");
-      quantity = data.get("quantity");
-    } else {
-      String sku = System.getProperty("sku");
-      productID = sku.split(":")[0];
-      quantity = sku.split(":")[1];
-    }
-
-    String constructGuacURL =
-        guacBaseURL + region + guacResourceURL + productID + "[qty:" + quantity + "]";
-    System.out.println("constructGuacURL " + constructGuacURL);
-
-    getUrl(constructGuacURL);
-    disableChatSession();
-    checkCartDetailsError();
-    acceptCookiesAndUSSiteLink();
-  }
-
   private void navigateToCart(LinkedHashMap<String, String> data) {
 
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
@@ -1145,28 +1120,6 @@ public class BICTestBase {
 
     String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
         productName, password, paymentMethod, promoCode);
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
-  }
-
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACBICOrderUS(LinkedHashMap<String, String> data) {
-    HashMap<String, String> results = new HashMap<>();
-
-    String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
-    String userType = data.get(BICECEConstants.USER_TYPE);
-    String password = data.get(BICECEConstants.PASSWORD);
-    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-    String region = data.get(BICECEConstants.LANGUAGE_STORE);
-
-    navigateToGUAC(data, region);
-
-    String emailID = generateUniqueEmailID();
-    String orderNumber = createBICOrder(data, emailID, region, password, paymentMethod);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1485,7 +1438,6 @@ public class BICTestBase {
       LinkedHashMap<String, String> data) {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
-    String region = data.get("US");
 
     // Go to checkout with a product that was already added
     navigateToCart(data);
