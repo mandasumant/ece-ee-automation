@@ -146,5 +146,6 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYMENT_GIROPAY_LOWERCASE = "giropay";
   public static final String PAYMENT_TYPE_ZIP = "ZIP";
   public static final String ALTERNATE_PAYMENT_METHODS = "alternate-payment-methods";
+  public static final String PAYMENT_TYPE_FINANCING = "FINANCING";
 }
 

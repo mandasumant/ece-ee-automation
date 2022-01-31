@@ -4,7 +4,7 @@
     storeName : "STORE-NAMER"
     currency    : "USD"
     countryDomain: ".com"
-    paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH"
+    paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH,FINANCING"
 
   en_CA:
     region: "ENCA"
