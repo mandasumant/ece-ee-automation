@@ -376,6 +376,7 @@ public class PelicanTestBase {
     try {
 
       results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
+      results.put("getPOReponse_orderId", jp.get("content[0].id").toString());
       results
           .put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
       results.put("getPOReponse_storedPaymentProfileId",

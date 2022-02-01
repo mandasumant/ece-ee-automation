@@ -1187,7 +1187,6 @@ public class BICTestBase {
       financingTestBase.completeFinancingApplication();
     }
 
-
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
 

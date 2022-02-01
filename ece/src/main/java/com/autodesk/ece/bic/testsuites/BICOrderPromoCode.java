@@ -87,6 +87,9 @@ public class BICOrderPromoCode extends ECETestBase {
     testResults.put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
     updateTestingHub(testResults);
 
+    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
+    }
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
