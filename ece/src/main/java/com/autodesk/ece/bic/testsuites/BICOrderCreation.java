@@ -157,9 +157,9 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
-    Util.sleep(100000);
 
-    if(!testResults.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    Util.sleep(120000);
+
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
@@ -195,7 +195,7 @@ public class BICOrderCreation extends ECETestBase {
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
-   }
+
   }
 
   @Test(groups = {
@@ -756,7 +756,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
-    results.putAll(testDataForEachMethod);
 
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);

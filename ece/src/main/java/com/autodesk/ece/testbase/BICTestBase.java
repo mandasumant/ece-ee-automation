@@ -775,7 +775,7 @@ public class BICTestBase {
   }
 
   @Step("Populate Financing payment details")
-  public void populateFinancingPaymentDetails(String[] paymentCardDetails, Map<String, String> address,
+  public void populateFinancingPaymentDetails( Map<String, String> address,
       Map<String, String> data) {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
 
@@ -793,7 +793,7 @@ public class BICTestBase {
 
     } catch (MetadataException e) {
       e.printStackTrace();
-      AssertUtils.fail("Unable to enter GIROPAY payment information to make payment");
+      AssertUtils.fail("Unable to enter Financing  information to make payment");
     }
   }
 
@@ -933,7 +933,7 @@ public class BICTestBase {
             data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
             break;
           case BICECEConstants.PAYMENT_TYPE_FINANCING:
-            populateFinancingPaymentDetails(null, address, data);
+            populateFinancingPaymentDetails( address, data);
             data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
             break;
           case BICECEConstants.PAYMENT_TYPE_ZIP:
@@ -1177,9 +1177,16 @@ public class BICTestBase {
     String promoCode = data.get(BICECEConstants.PROMO_CODE);
 
     String emailID = generateUniqueEmailID();
+    data.put(BICECEConstants.emailid,emailID);
 
     String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
         productName, password, paymentMethod, promoCode);
+
+    if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      financingTestBase.setTestData(data);
+      financingTestBase.completeFinancingApplication();
+    }
+
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);

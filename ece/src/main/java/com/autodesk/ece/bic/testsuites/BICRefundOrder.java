@@ -102,7 +102,7 @@ public class BICRefundOrder extends ECETestBase {
 
     Util.sleep(60000);
     // Refund PurchaseOrder details from pelican
-    testResults.putAll(pelicantb.createRefundOrder(results));
+      testResults.putAll(pelicantb.createRefundOrder(results));
 
     try {
       testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));

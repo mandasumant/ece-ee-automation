@@ -1,9 +1,9 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
@@ -35,7 +35,7 @@ public class FinancingTestBase {
      Util.sleep(2000);
 
      Util.printInfo("current URL : " + driver.getCurrentUrl());
-     finacingPage.populateField("financingEmailId",testData.get(BICConstants.emailid));
+     finacingPage.populateField("financingEmailId",testData.get(BICECEConstants.emailid));
      finacingPage.clickUsingLowLevelActions("financingApplicationContinue");
      Util.sleep(2000);
 
@@ -75,12 +75,12 @@ public class FinancingTestBase {
      finacingPage.clickUsingLowLevelActions("financingSubmit");
      Util.sleep(2000);
      Util.printInfo("current URL : " + driver.getCurrentUrl());
-     AssertUtils.assertEquals(driver.getCurrentUrl().contains("thanks"),"Successfully submitted the application to liftForward");
+     AssertUtils.assertTrue(driver.getCurrentUrl().contains("thanks"),"Successfully submitted the application to LiftForward");
 
      finacingPage.waitForFieldPresent("financingApplicationConfirmation", 5000);
      boolean downloadStarted = finacingPage.isFieldVisible("financingApplicationConfirmation");
      Util.sleep(2000);
-     AssertUtils.assertEquals(downloadStarted, true, "Successfully submitted the application to liftForward");
+     AssertUtils.assertEquals(downloadStarted, true, "Successfully submitted the application to LiftForward");
 
    }catch (MetadataException e ){
      e.printStackTrace();
