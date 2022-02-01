@@ -91,9 +91,12 @@ public class BICRefundOrder extends ECETestBase {
     testResults.put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
     updateTestingHub(testResults);
 
+    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
+    }
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
-
+    results.put(BICECEConstants.orderNumber,results.get("getPOReponse_orderId"));
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 

@@ -264,12 +264,18 @@ public class PelicanTestBase {
     //Generate the input JSON
     JSONObject filters = new JSONObject();
     JSONArray array = new JSONArray();
-    array.put(data.get(BICConstants.orderNumber));
-    JSONObject orders = new JSONObject();
-    orders.put("orderIds", array);
-    filters.put("filters", orders);
-    String requestJSon = filters.toJSONString();
+    if(data.get(BICConstants.orderNumber) != null) {
+      array.put(data.get(BICConstants.orderNumber));
+      JSONObject orders = new JSONObject();
+      orders.put("orderIds", array);
+      filters.put("filters", orders);
+    } else {
+      JSONObject emailId = new JSONObject();
+      emailId.put("emailId", data.get(BICECEConstants.emailid));
+      filters.put("filters", emailId);
+    }
 
+    String requestJson = filters.toJSONString();
     data.put("pelican_getPurchaseOrderDetailsUrl", getPurchaseOrderDetailsUrl);
     HashMap<String, String> results = new HashMap<String, String>();
     Util.printInfo("getPurchaseOrderDetailsUrl : " + getPurchaseOrderDetailsUrl);
@@ -288,7 +294,7 @@ public class PelicanTestBase {
     header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
-    Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, requestJSon);
+    Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, requestJson);
     String result = response.getBody().asString();
     Util.PrintInfo(BICECEConstants.RESULT + result);
 
@@ -370,6 +376,7 @@ public class PelicanTestBase {
     try {
 
       results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
+      results.put("getPOReponse_orderId", jp.get("content[0].id").toString());
       results
           .put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
       results.put("getPOReponse_storedPaymentProfileId",
