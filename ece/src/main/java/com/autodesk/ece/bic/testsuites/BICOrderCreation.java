@@ -162,8 +162,9 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
-    Util.sleep(120000);
-
+    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
+    }
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
