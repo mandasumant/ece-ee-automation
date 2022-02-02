@@ -112,7 +112,7 @@ public class EDUTestBase {
 
     if (userType != EDUUserType.MENTOR) {
       // Pick a school called "Broadway"
-      eduPage.waitForField("eduSchool", true, 5000);
+      eduPage.waitForField("eduSchool", true, 10000);
       try {
         eduPage.sendKeysInTextFieldSlowly("eduSchool", "Saint");
       } catch (Exception e) {
@@ -138,10 +138,11 @@ public class EDUTestBase {
       eduPage.click(BICECEConstants.EDU_SUBMIT);
     }
 
+    eduPage.waitForField("eduComplete", true, 10000);
+
     String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
     results.put(BICConstants.oxid, oxygenId);
 
-    eduPage.waitForField("eduComplete", true, 5000);
     eduPage.click("eduComplete");
 
     return results;
