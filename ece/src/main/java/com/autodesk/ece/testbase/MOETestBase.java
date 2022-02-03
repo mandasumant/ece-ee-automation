@@ -11,7 +11,6 @@ import io.qameta.allure.Step;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.WebDriver;
 
 public class MOETestBase extends ECETestBase {
@@ -44,7 +43,7 @@ public class MOETestBase extends ECETestBase {
     Util.printInfo("THE REGION " + data.get(BICECEConstants.LOCALE));
     getBicTestBase().navigateToCart(data);
 
-    String emailID = generateUniqueEmailID();
+    String emailID = getBicTestBase().generateUniqueEmailID();
     String orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, guacMoeResourceURL,
         data.get(BICECEConstants.LOCALE), password, paymentMethod, cepURL);
 
@@ -52,6 +51,49 @@ public class MOETestBase extends ECETestBase {
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
+  }
+
+  @Step("Navigate to MOE page with OpptyID" + GlobalConstants.TAG_TESTINGHUB)
+  public String createBasicMoeOpptyOrder(LinkedHashMap<String, String> data) {
+    Map<String, String> address = null;
+    //construct moe URL with opptyId
+    String guacBaseURL = data.get("guacBaseURL");
+    String guacMoeResourceURL = "guacMoeResourceURL";
+
+    String constructMoeURLWithOpptyId =
+        guacBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + guacMoeResourceURL;
+
+    System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
+
+    //navigate to Url
+    getBicTestBase().getUrl(constructMoeURLWithOpptyId);
+
+    // Validate that the correct locale has been loaded i.e. the locale on GUAC MOE matches the
+    // country value that's in the Opportunity in Salesforce
+    //to do
+
+    // login with test user who has sale agent permissions
+    loginToMoe();
+
+    //Complete account lookup in 'customer details' section i.e. the customer's email address will show as 'account not found'.
+    // Follow through on sending invite email to customer.
+    emulateNewUser();
+
+    //Validate that the product that's added by default to GUAC MOE cart matches with the line items
+    // that are part of the Opportunity (passed to GUAC as part of get Opty call)
+    // To do
+
+    // Validate that the address fields that are pre-filled in the payment section matches the address
+    // that's in the Opportunity in salesforce (passed to GUAC as part of get Opty call)
+    //to do
+
+    //Populate Billing info and save payment profile
+    address = getBicTestBase().getBillingAddress(data.get(BICECEConstants.REGION));
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentMethod.toUpperCase())
+        .split("@");
+
+    return savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
   }
 
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
@@ -102,7 +144,7 @@ public class MOETestBase extends ECETestBase {
     return orderNumber;
   }
 
-  public void loginToMoe() {
+  private void loginToMoe() {
     Util.sleep(60000);
     Util.printInfo("MOE - Re-Login");
     if (moePage.isFieldVisible("moeReLoginLink")) {
@@ -123,66 +165,6 @@ public class MOETestBase extends ECETestBase {
     moePage.click("moeLoginButton");
     moePage.waitForPageToLoad();
     Util.printInfo("Successfully logged into MOE");
-  }
-
-  @Step("Navigate to MOE page with OpptyID" + GlobalConstants.TAG_TESTINGHUB)
-  public String createBasicMoeOpptyOrder(LinkedHashMap<String, String> data) {
-    Map<String, String> address = null;
-    //construct moe URL with opptyId
-    String guacBaseURL = data.get("guacBaseURL");
-    String guacMoeResourceURL = "guacMoeResourceURL";
-
-    String constructMoeURLWithOpptyId =
-        guacBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + guacMoeResourceURL;
-
-    System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
-
-    //navigate to Url
-    getBicTestBase().getUrl(constructMoeURLWithOpptyId);
-
-    // Validate that the correct locale has been loaded i.e. the locale on GUAC MOE matches the
-    // country value that's in the Opportunity in Salesforce
-    //to do
-
-    // login with test user who has sale agent permissions
-    loginToMoe();
-
-    //Complete account lookup in 'customer details' section i.e. the customer's email address will show as 'account not found'.
-    // Follow through on sending invite email to customer.
-    emulateNewUser();
-
-    //Validate that the product that's added by default to GUAC MOE cart matches with the line items
-    // that are part of the Opportunity (passed to GUAC as part of get Opty call)
-    // To do
-
-    // Validate that the address fields that are pre-filled in the payment section matches the address
-    // that's in the Opportunity in salesforce (passed to GUAC as part of get Opty call)
-    //to do
-
-    //Populate Billing info and save payment profile
-    address = getBicTestBase().getBillingAddress(data.get(BICECEConstants.REGION));
-    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-    String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentMethod.toUpperCase())
-        .split("@");
-
-    return savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
-  }
-
-  @Step("Generate email id")
-  public String generateUniqueEmailID() {
-    String storeKey = System.getProperty("store").replace("-", "");
-    String sourceName = "thub";
-    String emailDomain = "letscheck.pw";
-
-    String timeStamp = new RandomStringUtils().random(12, true, false);
-    String strDate = null;
-    String stk = storeKey.replace("-", "");
-    if (storeKey.contains("NAMER")) {
-      stk = "NAMER";
-    }
-    strDate = sourceName + stk + timeStamp + "@" + emailDomain;
-
-    return strDate.toLowerCase();
   }
 
   private String savePaymentProfileAndSubmitOrder(LinkedHashMap<String, String> data,
@@ -213,7 +195,7 @@ public class MOETestBase extends ECETestBase {
   }
 
   private void emulateNewUser() {
-    String emailID = generateUniqueEmailID();
+    String emailID = getBicTestBase().generateUniqueEmailID();
     Util.printInfo("MOE - Emulate User");
     moePage.click("moeAccountLookupEmail");
     moePage.populateField("moeAccountLookupEmail", emailID);

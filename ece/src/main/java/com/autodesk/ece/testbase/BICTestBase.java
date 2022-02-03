@@ -63,7 +63,7 @@ public class BICTestBase {
   }
 
   @Step("Generate email id")
-  public static String generateUniqueEmailID() {
+  public String generateUniqueEmailID() {
     String storeKey = System.getProperty("store").replace("-", "");
     String sourceName = "thub";
     String emailDomain = "letscheck.pw";
