@@ -29,7 +29,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class EDUTestBase {
+public class EDUTestBase extends ECETestBase {
 
   private static final String EDU_SIGNUP_SUBMIT = "eduSignSubmit";
   private static final String EDU_GET_STARTED = "eduSignStarted";
@@ -91,7 +91,7 @@ public class EDUTestBase {
     eduPage.click(BICECEConstants.EDU_SUBMIT);
 
     // Generate a new user email, name, and password
-    String email = BICTestBase.generateUniqueEmailID();
+    String email = getBicTestBase().generateUniqueEmailID();
     results.put(BICConstants.emailid, email);
     String randomString = RandomStringUtils.random(6, true, false);
     String firstName = "FN" + randomString;
