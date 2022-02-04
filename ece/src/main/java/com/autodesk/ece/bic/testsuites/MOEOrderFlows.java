@@ -5,6 +5,7 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.MOETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
@@ -85,7 +86,7 @@ public class MOEOrderFlows extends ECETestBase {
 
   @Test(groups = {
       "bic-nativeorder-moe"}, description = "Validation of Create BIC Order from MOE")
-  public void validateBicNativeOrderMoe() {
+  public void validateBicNativeOrderMoe() throws MetadataException {
     long startTime, stopTime, executionTime;
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
@@ -141,18 +142,51 @@ public class MOEOrderFlows extends ECETestBase {
 
   @Test(groups = {
       "bic-basicflow-moe"}, description = "Basic flow for MOE with Opportunity ID")
-  public void validateMoeOpportunityFlow() {
+  public void validateMoeOpportunityFlow() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    System.nanoTime();
     HashMap<String, String> results = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
-    //Create order using OpptyId for user not found scenario
     moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
 
-    // Order confirmation page should be successfull shown with order number
-    //To do
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
 
-    //Order is successfully placed in backend systems. Validate that the order origin for this order is GUAC_MOE_DIRECT
-    //To do
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
 
+    // Get find Subscription ById
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // Trigger Invoice join
+    pelicantb.postInvoicePelicanAPI(results);
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put("orderNumber_SAP", results.get(BICConstants.orderNumberSAP));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+    updateTestingHub(testResults);
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(testResults);
   }
 
 }

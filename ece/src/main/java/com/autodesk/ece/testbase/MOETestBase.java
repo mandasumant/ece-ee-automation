@@ -6,6 +6,7 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.util.HashMap;
@@ -28,7 +29,8 @@ public class MOETestBase extends ECETestBase {
 
   @SuppressWarnings({"static-access", "unused"})
   @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createBicOrderMoe(LinkedHashMap<String, String> data) {
+  public HashMap<String, String> createBicOrderMoe(LinkedHashMap<String, String> data)
+      throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
     String productID = "";
@@ -54,38 +56,39 @@ public class MOETestBase extends ECETestBase {
   }
 
   @Step("Navigate to MOE page with OpptyID" + GlobalConstants.TAG_TESTINGHUB)
-  public String createBasicMoeOpptyOrder(LinkedHashMap<String, String> data) {
+  public String createBasicMoeOpptyOrder(LinkedHashMap<String, String> data)
+      throws MetadataException {
     Map<String, String> address = null;
-    //construct moe URL with opptyId
+    // construct MOE URL with opptyId
     String guacBaseURL = data.get("guacBaseURL");
-    String guacMoeResourceURL = "guacMoeResourceURL";
+    String guacMoeResourceURL = data.get("guacMoeResourceURL");
+    String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
+    ;
 
     String constructMoeURLWithOpptyId =
-        guacBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + guacMoeResourceURL;
+        guacBaseURL + locale + "/"
+            + guacMoeResourceURL;
 
     System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
 
     //navigate to Url
     getBicTestBase().getUrl(constructMoeURLWithOpptyId);
 
-    // Validate that the correct locale has been loaded i.e. the locale on GUAC MOE matches the
-    // country value that's in the Opportunity in Salesforce
-    //to do
+    // TODO: Validate that the correct locale has been loaded i.e. the locale on GUAC MOE matches the country value that's in the Opportunity in Salesforce.
 
-    // login with test user who has sale agent permissions
     loginToMoe();
 
-    //Complete account lookup in 'customer details' section i.e. the customer's email address will show as 'account not found'.
-    // Follow through on sending invite email to customer.
-    emulateNewUser();
+    //Perform account lookup for the customer's email address that will show as 'account not found'.
+    String emailID = getBicTestBase().generateUniqueEmailID();
+    emulateUser(emailID);
 
-    //Validate that the product that's added by default to GUAC MOE cart matches with the line items
-    // that are part of the Opportunity (passed to GUAC as part of get Opty call)
-    // To do
+    // TODO: Follow through on sending invite email to customer.
 
-    // Validate that the address fields that are pre-filled in the payment section matches the address
-    // that's in the Opportunity in salesforce (passed to GUAC as part of get Opty call)
-    //to do
+    //TODO: Validate that the product that's added by default to GUAC MOE cart matches with the line items that are part of the Opportunity (passed to GUAC as part of get Opty call).
+
+    // TODO: Validate that the address fields that are pre-filled in the payment section matches the address that's in the Opportunity in salesforce (passed to GUAC as part of get Opty call).
+
+    // TODO: Order is successfully placed in backend systems. Validate that the order origin for this order is GUAC_MOE_DIRECT
 
     //Populate Billing info and save payment profile
     address = getBicTestBase().getBillingAddress(data.get(BICECEConstants.REGION));
@@ -94,11 +97,14 @@ public class MOETestBase extends ECETestBase {
         .split("@");
 
     return savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
+
+    // Order confirmation page should be successfull shown with order number
+    //To do
   }
 
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
       String guacBaseURL, String guacMoeResourceURL, String locale, String password,
-      String paymentMethod, String cepURL) {
+      String paymentMethod, String cepURL) throws MetadataException {
     locale = locale.replace("_", "-");
     String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
     System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
@@ -182,8 +188,7 @@ public class MOETestBase extends ECETestBase {
     return getBicTestBase().submitGetOrderNumber(data);
   }
 
-  //the following two methods can be combined to address different user lookup scenarios
-  private void emulateUser(String emailID) {
+  private void emulateUser(String emailID) throws MetadataException {
     Util.printInfo("MOE - Emulate User");
     moePage.click("moeAccountLookupEmail");
     moePage.populateField("moeAccountLookupEmail", emailID);
@@ -191,9 +196,20 @@ public class MOETestBase extends ECETestBase {
     moePage.waitForPageToLoad();
     moePage.click("moeContinueBtn");
     moePage.waitForPageToLoad();
+    if (moePage.checkIfElementExistsInPage("moeContinueBtn", 10)) {
+      moePage.click("moeContinueBtn");
+      moePage.waitForPageToLoad();
+    } else {
+      //click send account setup invite
+      moePage.click("moeSendSetupInviteBtn");
+      moePage.waitForPageToLoad();
+      //close account setup invite sent  popup modal
+      moePage.click("moeModalCloseBtn");
+    }
     Util.printInfo("Successfully emulated user");
   }
 
+  /*
   private void emulateNewUser() {
     String emailID = getBicTestBase().generateUniqueEmailID();
     Util.printInfo("MOE - Emulate User");
@@ -208,4 +224,6 @@ public class MOETestBase extends ECETestBase {
     moePage.click("moeModalCloseBtn");
     Util.printInfo("Successfully emulated user");
   }
+
+   */
 }
