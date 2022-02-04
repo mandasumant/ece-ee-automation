@@ -145,9 +145,9 @@ public class MOEOrderFlows extends ECETestBase {
   public void validateMoeOpportunityFlow() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     System.nanoTime();
-    HashMap<String, String> results = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
-    moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
+    HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));

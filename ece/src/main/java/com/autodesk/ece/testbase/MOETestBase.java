@@ -56,8 +56,9 @@ public class MOETestBase extends ECETestBase {
   }
 
   @Step("Navigate to MOE page with OpptyID" + GlobalConstants.TAG_TESTINGHUB)
-  public String createBasicMoeOpptyOrder(LinkedHashMap<String, String> data)
+  public HashMap<String, String> createBasicMoeOpptyOrder(LinkedHashMap<String, String> data)
       throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
     Map<String, String> address = null;
     // construct MOE URL with opptyId
     String guacBaseURL = data.get("guacBaseURL");
@@ -96,10 +97,15 @@ public class MOETestBase extends ECETestBase {
     String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
 
-    return savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
+    String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
-    // Order confirmation page should be successfull shown with order number
+    // Order confirmation page should be successfully shown with order number
     //To do
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
   }
 
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
@@ -151,7 +157,7 @@ public class MOETestBase extends ECETestBase {
   }
 
   private void loginToMoe() {
-    Util.sleep(60000);
+    Util.sleep(6000);
     Util.printInfo("MOE - Re-Login");
     if (moePage.isFieldVisible("moeReLoginLink")) {
       try {
@@ -194,12 +200,13 @@ public class MOETestBase extends ECETestBase {
     moePage.populateField("moeAccountLookupEmail", emailID);
     moePage.click("moeAccountLookupBtn");
     moePage.waitForPageToLoad();
-    moePage.click("moeContinueBtn");
-    moePage.waitForPageToLoad();
     if (moePage.checkIfElementExistsInPage("moeContinueBtn", 10)) {
       moePage.click("moeContinueBtn");
       moePage.waitForPageToLoad();
     } else {
+      // enter first and last names
+      moePage.populateField("moeUserFirstNameField", "Test");
+      moePage.populateField("moeUserLastNameField", "Test");
       //click send account setup invite
       moePage.click("moeSendSetupInviteBtn");
       moePage.waitForPageToLoad();
@@ -208,22 +215,4 @@ public class MOETestBase extends ECETestBase {
     }
     Util.printInfo("Successfully emulated user");
   }
-
-  /*
-  private void emulateNewUser() {
-    String emailID = getBicTestBase().generateUniqueEmailID();
-    Util.printInfo("MOE - Emulate User");
-    moePage.click("moeAccountLookupEmail");
-    moePage.populateField("moeAccountLookupEmail", emailID);
-    moePage.click("moeAccountLookupBtn");
-    moePage.waitForPageToLoad();
-    //click send account setup invite
-    moePage.click("moeSendSetupInviteBtn");
-    moePage.waitForPageToLoad();
-    //close account setup invite sent  popup modal
-    moePage.click("moeModalCloseBtn");
-    Util.printInfo("Successfully emulated user");
-  }
-
-   */
 }

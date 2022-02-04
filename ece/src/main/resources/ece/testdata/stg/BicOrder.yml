@@ -15,7 +15,7 @@ default:
   guacDotComBaseURL: "https://www-pt.autodesk"
   guacResourceURL: "checkout?priceIds="
   productsPath: "/products/"
-  guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
+  guacMoeResourceURL: "manual-order-entry?optyId=A-1776440"
   productName: "3ds-max"
   US: "en-US/"
   CANADA_FRENCH: "fr-CA/"
