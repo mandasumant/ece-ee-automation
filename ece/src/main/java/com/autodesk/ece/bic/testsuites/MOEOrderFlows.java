@@ -93,6 +93,13 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     validateTestResults(testResults, results);
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(testResults);
+
+    validateCreateOrder(testResults);
   }
 
   @Test(groups = {
@@ -104,13 +111,12 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     validateTestResults(testResults, results);
+
+    validateCreateOrder(testResults);
   }
 
   private void validateTestResults(HashMap<String, String> testResults,
       HashMap<String, String> results) {
-    long startTime, stopTime, executionTime;
-    startTime = System.nanoTime();
-
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
 
@@ -145,13 +151,11 @@ public class MOEOrderFlows extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
+  }
 
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-    updateTestingHub(testResults);
-
-    // Validate Create Order
+  private void validateCreateOrder(HashMap<String, String> testResults) {
+    long startTime, stopTime, executionTime;
+    startTime = System.nanoTime();
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
     testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));

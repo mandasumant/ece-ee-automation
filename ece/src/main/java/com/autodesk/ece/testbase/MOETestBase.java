@@ -14,16 +14,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.openqa.selenium.WebDriver;
 
-public class MOETestBase extends ECETestBase {
+public class MOETestBase {
 
   private final Page_ moePage;
   private final Map<String, String> testData;
   public WebDriver driver;
+  BICTestBase bicTestBase;
 
   public MOETestBase(GlobalTestBase testbase, LinkedHashMap<String, String> testData) {
     Util.PrintInfo("MOETestBase from ece");
     moePage = testbase.createPage("PAGE_MOE");
     driver = testbase.getdriver();
+    bicTestBase = new BICTestBase(driver, testbase);
     this.testData = testData;
   }
 
@@ -37,17 +39,16 @@ public class MOETestBase extends ECETestBase {
     String quantity = "";
     String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
     String guacMoeResourceURL = data.get("guacMoeResourceURL");
-    String cepURL = data.get("cepURL");
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
     String password = data.get(BICECEConstants.PASSWORD);
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     Util.printInfo("THE REGION " + data.get(BICECEConstants.LOCALE));
-    getBicTestBase().navigateToCart(data);
+    bicTestBase.navigateToCart(data);
 
-    String emailID = getBicTestBase().generateUniqueEmailID();
+    String emailID = bicTestBase.generateUniqueEmailID();
     String orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, guacMoeResourceURL,
-        data.get(BICECEConstants.LOCALE), password, paymentMethod, cepURL);
+        data.get(BICECEConstants.LOCALE), password, paymentMethod);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -64,7 +65,6 @@ public class MOETestBase extends ECETestBase {
     String guacBaseURL = data.get("guacBaseURL");
     String guacMoeResourceURL = data.get("guacMoeResourceURL");
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
-    ;
 
     String constructMoeURLWithOpptyId =
         guacBaseURL + locale + "/"
@@ -73,17 +73,16 @@ public class MOETestBase extends ECETestBase {
     System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
 
     //navigate to Url
-    getBicTestBase().getUrl(constructMoeURLWithOpptyId);
+    bicTestBase.getUrl(constructMoeURLWithOpptyId);
 
     // TODO: Validate that the correct locale has been loaded i.e. the locale on GUAC MOE matches the country value that's in the Opportunity in Salesforce.
 
     loginToMoe();
 
     //Perform account lookup for the customer's email address that will show as 'account not found'.
-    String emailID = getBicTestBase().generateUniqueEmailID();
-    emulateUser(emailID);
-
-    // TODO: Follow through on sending invite email to customer.
+    Names names = bicTestBase.generateFirstAndLastNames();
+    String emailID = bicTestBase.generateUniqueEmailID();
+    emulateUser(emailID, names);
 
     //TODO: Validate that the product that's added by default to GUAC MOE cart matches with the line items that are part of the Opportunity (passed to GUAC as part of get Opty call).
 
@@ -92,15 +91,14 @@ public class MOETestBase extends ECETestBase {
     // TODO: Order is successfully placed in backend systems. Validate that the order origin for this order is GUAC_MOE_DIRECT
 
     //Populate Billing info and save payment profile
-    address = getBicTestBase().getBillingAddress(data.get(BICECEConstants.REGION));
+    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-    String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentMethod.toUpperCase())
+    String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
 
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
-    // Order confirmation page should be successfully shown with order number
-    //To do
+    // TODO: Order confirmation page should be successfully shown with order number
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -110,54 +108,50 @@ public class MOETestBase extends ECETestBase {
 
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
       String guacBaseURL, String guacMoeResourceURL, String locale, String password,
-      String paymentMethod, String cepURL) throws MetadataException {
+      String paymentMethod) throws MetadataException {
     locale = locale.replace("_", "-");
     String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
     System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
-    String constructPortalUrl = cepURL;
     Map<String, String> address = null;
 
-    address = getBicTestBase().getBillingAddress(data.get(BICECEConstants.REGION));
+    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION));
 
-    Names names = getBicTestBase().generateFirstAndLastNames();
-    getBicTestBase().createBICAccount(names, emailID, password);
+    Names names = bicTestBase.generateFirstAndLastNames();
+    bicTestBase.createBICAccount(names, emailID, password);
 
     data.putAll(names.getMap());
 
-    String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentMethod.toUpperCase())
+    String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
-    getBicTestBase().debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
+    bicTestBase.debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
 
     // Get Payment details
-    getBicTestBase().selectPaymentProfile(data, paymentCardDetails, address);
+    bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
 
     // Enter billing details
     if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
-      getBicTestBase().debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
-      getBicTestBase().populateBillingAddress(address, data);
-      getBicTestBase().debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
+      bicTestBase.debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
+      bicTestBase.populateBillingAddress(address, data);
+      bicTestBase.debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
 
-    getBicTestBase().getUrl(constructGuacMoeURL);
+    bicTestBase.getUrl(constructGuacMoeURL);
     loginToMoe();
-    emulateUser(emailID);
+    emulateUser(emailID, names);
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
-    getBicTestBase()
+    bicTestBase
         .printConsole(constructGuacMoeURL, orderNumber, emailID, address, names.firstName,
             names.lastName,
             paymentMethod);
 
-    // Navigate to Portal, logout from service account session and log back in with user account
-    getBicTestBase().getUrl(constructPortalUrl);
-    getBicTestBase().loginToOxygen(emailID, password);
+    loginToPortalWithUserAccount(data, emailID, password);
 
     return orderNumber;
   }
 
   private void loginToMoe() {
-    //Util.sleep(6000);
     Util.printInfo("MOE - Re-Login");
     if (moePage.isFieldVisible("moeReLoginLink")) {
       try {
@@ -169,11 +163,13 @@ public class MOETestBase extends ECETestBase {
     Util.sleep(20000);
     moePage.waitForField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, true, 30000);
     moePage.click(BICECEConstants.MOE_LOGIN_USERNAME_FIELD);
-    moePage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, "svc_s_guac@autodesk.com");
+    moePage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD,
+        "svc_s_platform_autob@autodesk.com");
     moePage.click("moeLoginButton");
     moePage.waitForField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, true, 30000);
     moePage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
-    moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, ";mynFU(,|(97?@`n4X?SPw)s~*|$");
+    moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD,
+        "EM5AhbaOir5DnLhlP@$iialVOX7ypvBBKys");
     moePage.click("moeLoginButton");
     moePage.waitForPageToLoad();
     Util.printInfo("Successfully logged into MOE");
@@ -181,20 +177,20 @@ public class MOETestBase extends ECETestBase {
 
   private String savePaymentProfileAndSubmitOrder(LinkedHashMap<String, String> data,
       Map<String, String> address, String[] paymentCardDetails) {
-    getBicTestBase().populateBillingAddress(address, data);
-    getBicTestBase().selectPaymentProfile(data, paymentCardDetails, address);
+    bicTestBase.populateBillingAddress(address, data);
+    bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
     try {
       moePage.clickUsingLowLevelActions("savePaymentProfile");
     } catch (Exception e) {
       e.printStackTrace();
     }
     Util.sleep(5000);
-    getBicTestBase().agreeToTerm();
+    bicTestBase.agreeToTerm();
 
-    return getBicTestBase().submitGetOrderNumber(data);
+    return bicTestBase.submitGetOrderNumber(data);
   }
 
-  private void emulateUser(String emailID) throws MetadataException {
+  private void emulateUser(String emailID, Names names) throws MetadataException {
     Util.printInfo("MOE - Emulate User");
     moePage.click("moeAccountLookupEmail");
     moePage.populateField("moeAccountLookupEmail", emailID);
@@ -205,8 +201,8 @@ public class MOETestBase extends ECETestBase {
       moePage.waitForPageToLoad();
     } else {
       // enter first and last names
-      moePage.populateField("moeUserFirstNameField", "Test");
-      moePage.populateField("moeUserLastNameField", "Test");
+      moePage.populateField("moeUserFirstNameField", names.firstName);
+      moePage.populateField("moeUserLastNameField", names.lastName);
       //click send account setup invite
       moePage.click("moeSendSetupInviteBtn");
       moePage.waitForPageToLoad();
@@ -214,5 +210,13 @@ public class MOETestBase extends ECETestBase {
       moePage.click("moeModalCloseBtn");
     }
     Util.printInfo("Successfully emulated user");
+  }
+
+  private void loginToPortalWithUserAccount(LinkedHashMap<String, String> data, String emailID,
+      String password) {
+    // Navigate to Portal, logout from service account session and log back in with user account
+    String constructPortalUrl = data.get("cepURL");
+    bicTestBase.getUrl(constructPortalUrl);
+    bicTestBase.loginToOxygen(emailID, password);
   }
 }
