@@ -41,24 +41,25 @@ public class IndirectOrderCreation extends ECETestBase {
   public void validateBICIndirectSAPOrder() {
 	ECETestBase tb = new ECETestBase();
 	SAPTestBase saptb = new SAPTestBase();
-	String email = "thubsrd1629665792@letscheck.pw"; //call the getuser() method once its moved to core to fetch new/existing contacts
-	String endusercsn = "5151567993";
+	
 	String sku = System.getProperty(TestingHubConstants.sku);
 	String[] skuList = sku.split(":");
 	String skus = skuList[0];
 	String quantity = skuList[1];
 	String skuDetails = "sku=" + skus + ",qty=" + quantity + ",hgvlt=";
-	testDataForEachMethod.put(TestingHubConstants.emailid, email);
-	testDataForEachMethod.put(TestingHubConstants.enduserCSN, endusercsn);
 	testDataForEachMethod.put("skuDetails", skuDetails);
 
+	saptb.sapConnector.connectSAPBAPI();
 	if ( System.getProperty(TestingHubConstants.contractStartDate) != null) {
 	  testDataForEachMethod.put(TestingHubConstants.contractStartDate, System.getProperty(TestingHubConstants.contractStartDate));
 	} else {
 	  testDataForEachMethod.put(TestingHubConstants.contractStartDate, "");
 	}
 
-	HashMap<String, String>  results = saptb.createMetaInitialOrderDynamo(testDataForEachMethod);
+	HashMap<String, String> userDetails = thutil.getUserDetailsNew(testDataForEachMethod);
+	testDataForEachMethod.putAll(userDetails);
+	
+	HashMap<String, String>  results = saptb.createMetaInitialOrder(testDataForEachMethod);
 	updateTestingHub(results);
 
 		// In direct Order validation in Portal
