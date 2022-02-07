@@ -16,7 +16,6 @@ import org.openqa.selenium.WebDriver;
 
 public class MOETestBase extends ECETestBase {
 
-  private static final String PASSWORD = "Password1";
   private final Page_ moePage;
   private final Map<String, String> testData;
   public WebDriver driver;
@@ -107,58 +106,6 @@ public class MOETestBase extends ECETestBase {
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
-  }
-
-  public void validateTestResults(HashMap<String, String> testResults,
-      HashMap<String, String> results) {
-    long startTime, stopTime, executionTime;
-    startTime = System.nanoTime();
-
-    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-
-    updateTestingHub(testResults);
-
-    // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
-
-    // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
-
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("orderNumber_SAP", results.get(BICConstants.orderNumberSAP));
-      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
-      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
-      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
-      testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
-      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-      testResults
-          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
-    updateTestingHub(testResults);
-
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-    updateTestingHub(testResults);
-
-    // Validate Create Order
-    stopTime = System.nanoTime();
-    executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
-    updateTestingHub(testResults);
   }
 
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
