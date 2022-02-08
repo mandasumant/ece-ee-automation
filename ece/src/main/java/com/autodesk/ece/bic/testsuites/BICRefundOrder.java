@@ -8,6 +8,7 @@ import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
+import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -91,9 +92,8 @@ public class BICRefundOrder extends ECETestBase {
     testResults.put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
     updateTestingHub(testResults);
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
-      Util.sleep(120000);
-    }
+    Util.sleep(120000);
+
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
     results.put(BICECEConstants.orderNumber,results.get("getPOReponse_orderId"));
@@ -103,9 +103,24 @@ public class BICRefundOrder extends ECETestBase {
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
 
-    Util.sleep(60000);
     // Refund PurchaseOrder details from pelican
-    testResults.putAll(pelicantb.createRefundOrder(results));
+    pelicantb.createRefundOrder(results);
+
+    Util.sleep(120000);
+
+    // Getting a PurchaseOrder details from pelican
+    JsonPath jp = new JsonPath(pelicantb.retryGetPurchaseOrder(results));
+    results.put("refund_orderState", jp.get("content[0].orderState").toString());
+    results.put("refund_fulfillmentStatus", jp.get("content[0].fulfillmentStatus"));
+    results.put("refund_paymentMethodType", jp.get("content[0].billingInfo.paymentMethodType"));
+    results.put("refund_finalExportControlStatus", jp.get("content[0].finalExportControlStatus"));
+    results.put("refund_uiInitiatedGetOrders", Boolean.toString(jp.get("content[0].uiInitiatedGetOrders")));
+    results.put("refund_lineItemState", jp.get("content[0].lineItems[0].lineItemState"));
+
+    // Verify that Order status is Refunded
+    AssertUtils.assertEquals("Order status is NOT REFUNDED",
+            results.get("refund_orderState"), "REFUNDED");
+
 
     try {
       testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));
