@@ -7,12 +7,20 @@ import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
+import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 public class MOETestBase {
 
@@ -106,6 +114,34 @@ public class MOETestBase {
     return results;
   }
 
+
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Navigate to MOE, add Quote and place Order" + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createBicOrderMoeWithQuote(LinkedHashMap<String, String> data)
+      throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    String guacBaseURL = data.get("guacBaseURL");
+    String productID = "";
+    String quantity = "";
+    String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
+    String guacMoeResourceURL = data.get("guacMoeResourceURL");
+    String userType = data.get(BICECEConstants.USER_TYPE);
+    String region = data.get(BICECEConstants.REGION);
+    String password = data.get(BICECEConstants.PASSWORD);
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    Util.printInfo("THE REGION " + data.get(BICECEConstants.LOCALE));
+    bicTestBase.navigateToCart(data);
+
+    String emailID = bicTestBase.generateUniqueEmailID();
+    String orderNumber = getBicOrderMoeWithQuote(data, emailID, guacBaseURL, guacMoeResourceURL,
+        data.get(BICECEConstants.LOCALE), password, paymentMethod);
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
       String guacBaseURL, String guacMoeResourceURL, String locale, String password,
       String paymentMethod) throws MetadataException {
@@ -139,6 +175,64 @@ public class MOETestBase {
     bicTestBase.getUrl(constructGuacMoeURL);
     loginToMoe();
     emulateUser(emailID, names);
+    String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
+
+    bicTestBase
+        .printConsole(constructGuacMoeURL, orderNumber, emailID, address, names.firstName,
+            names.lastName,
+            paymentMethod);
+
+    loginToPortalWithUserAccount(data, emailID, password);
+
+    return orderNumber;
+  }
+
+  private String getBicOrderMoeWithQuote(LinkedHashMap<String, String> data, String emailID,
+      String guacBaseURL, String guacMoeResourceURL, String locale, String password,
+      String paymentMethod) throws MetadataException {
+    locale = locale.replace("_", "-");
+    String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
+    System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
+    Map<String, String> address = null;
+
+    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION));
+
+    Names names = bicTestBase.generateFirstAndLastNames();
+    bicTestBase.createBICAccount(names, emailID, password);
+
+    data.putAll(names.getMap());
+
+    String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
+        .split("@");
+    bicTestBase.debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
+
+    // Get Payment details
+    bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
+
+    // Enter billing details
+    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+      bicTestBase.debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
+      bicTestBase.populateBillingAddress(address, data);
+      bicTestBase.debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
+    }
+
+    bicTestBase.getUrl(constructGuacMoeURL);
+    loginToMoe();
+    emulateUser(emailID, names);
+
+    validateOrderDefaultView();
+
+    sendQuoteCustomerContactInformation(emailID);
+
+    validateQuoteReadOnlyView();
+
+    // open Order section
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript(
+        "document.querySelector('input[aria-labelledby=\"quote-toggle-off\"]').click()");
+    Util.sleep(5000);
+
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
     bicTestBase
@@ -210,6 +304,101 @@ public class MOETestBase {
       moePage.click("moeModalCloseBtn");
     }
     Util.printInfo("Successfully emulated user");
+  }
+
+  private void validateOrderDefaultView() {
+    Util.printInfo("MOE - Order view");
+    try {
+      AssertUtils.assertTrue(driver
+          .findElement(By.xpath(".//h5[contains(text(),\"3ds Max\")]"))
+          .isDisplayed());
+      AssertUtils.assertFalse(driver
+          .findElement(By.xpath(".//select[@id=\"moe-quotes\"]"))
+          .isDisplayed());
+      driver.findElement(By.xpath("//input[@aria-labelledby=\"quote-toggle-off\"]"))
+          .getAttribute("aria-checked")
+          .contains("true");
+      driver.findElement(By.xpath("//input[@aria-labelledby=\"quote-toggle-on\"]"))
+          .getAttribute("aria-checked")
+          .contains("false");
+      AssertUtils.assertTrue(driver
+          .findElement(By.xpath("//div[@data-testid=\"payment-section\"]"))
+          .isDisplayed());
+    } catch (Exception e) {
+      Util.printInfo("MOE - Web element not found!");
+    }
+  }
+
+  private void validateQuoteReadOnlyView() {
+    // TODO: Validate that the read-only view of the contact is visible
+    // TODO: Validate that the quote details is visible
+    // TODO: Validate that the CTA 'Resend quote' is visible
+    Util.printInfo("MOE - Quote Read Only View");
+    try {
+      AssertUtils.assertTrue(driver
+          .findElement(By.xpath(".//h5[contains(text(),\"3ds Max\")]"))
+          .isDisplayed());
+      AssertUtils.assertTrue(driver
+          .findElement(By.xpath("//h4[contains(text(),\"Quote contact information\")]"))
+          .isDisplayed());
+      AssertUtils.assertTrue(driver
+          .findElement(By.xpath("//button/span[contains(text(),\"Resend quote\")]"))
+          .isDisplayed());
+    } catch (Exception e) {
+      Util.printInfo("MOE - Web element not found!");
+    }
+  }
+
+  private void sendQuoteCustomerContactInformation(String emailID) {
+    Util.printInfo("MOE - Send Quote");
+
+    // open Quote section
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("document.getElementById('quote-radio').click()");
+    moePage.waitForPageToLoad();
+
+    AssertUtils.assertTrue(driver
+        .findElement(By.xpath("//h3[contains(text(),\"Quote contact information\")]"))
+        .isDisplayed());
+
+    // enter data
+    moePage.populateField("moeQuoteFirstNameField", "Test");
+    moePage.populateField("moeQuoteLastNameField", "Test");
+    moePage.populateField("moeQuoteAddressField", "149 Penn Rd");
+    moePage.populateField("moeQuoteCityField", "Silverdale");
+    moePage.populateField("moeQuoteStateField", "WA");
+    moePage.populateField("moeQuotePostalCodeField", "98315");
+    moePage.populateField("moeQuotePhoneNumberField", "1234567890");
+    moePage.populateField("moeQuoteCompanyField", "Autodesk Quote");
+
+    moeQuoteEnterExpirationData();
+
+    moePage.populateField("moeQuoteSecondaryEmail", "test-" + emailID);
+
+    moePage.click("moeSendQuote");
+    moePage.waitForPageToLoad();
+
+    Util.printInfo("MOE - Quote sent");
+  }
+
+  private void moeQuoteEnterExpirationData() {
+    Util.printInfo("MOE - Enter Expiration date");
+
+    DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
+    Date date1 = new Date();
+    String currentYear = dateFormat1.format(date1);
+
+    DateFormat dateFormat2 = new SimpleDateFormat("MMdd");
+    Date date2 = new Date();
+    String currentMonthDay = dateFormat2.format(date2);
+
+    Util.sleep(2000);
+    WebElement webElement = driver.findElement(
+        By.xpath("//input[@id=\"moe--quote--expiration-date\"]"));
+    webElement.sendKeys(currentYear);
+    webElement.sendKeys(Keys.TAB);
+    webElement.sendKeys(currentMonthDay);
+    Util.sleep(2000);
   }
 
   private void loginToPortalWithUserAccount(LinkedHashMap<String, String> data, String emailID,
