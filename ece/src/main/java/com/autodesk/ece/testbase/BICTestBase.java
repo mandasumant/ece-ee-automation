@@ -241,7 +241,7 @@ public class BICTestBase {
 
   @Step("Login BIC account")
   public void loginBICAccount(HashMap<String, String> data) {
-    System.out.println(bicPage.isFieldPresent(BICECEConstants.AUTODESK_ID));
+    Util.printInfo(BICECEConstants.AUTODESK_ID + " is Present " + bicPage.isFieldPresent(BICECEConstants.AUTODESK_ID));
     bicPage.click(BICECEConstants.AUTODESK_ID);
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, data.get(BICConstants.emailid));
@@ -451,7 +451,7 @@ public class BICTestBase {
     return status;
   }
 
-  private void debugPageUrl(String message) {
+  public void debugPageUrl(String message) {
     Util.printInfo("-------------" + message + "----------------" +
         "\n" + " URL :            " + driver.getCurrentUrl() + "\n" +
         "\n" + " Page Title :     " + driver.getTitle() + "\n" +
@@ -722,7 +722,8 @@ public class BICTestBase {
   }
 
   @Step("Populate GiroPay payment details")
-  public void populateGiroPayPaymentDetails(String[] paymentCardDetails, Map<String, String> address,
+  public void populateGiroPayPaymentDetails(String[] paymentCardDetails,
+      Map<String, String> address,
       Map<String, String> data) {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
 
@@ -966,7 +967,7 @@ public class BICTestBase {
   }
 
   @Step("Submitting Order and Retrieving Order Number")
-  private String submitGetOrderNumber(HashMap<String, String> data) {
+  public String submitGetOrderNumber(HashMap<String, String> data) {
     clickMandateAgreementCheckbox();
     int count = 0;
     debugPageUrl(" Step 1 wait for SubmitOrderButton");
@@ -1030,7 +1031,6 @@ public class BICTestBase {
       debugPageUrl(e.getMessage());
       AssertUtils.fail("Failed to click on Submit button...");
     }
-
 
     // Zip Pay Checkout
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
@@ -1146,7 +1146,7 @@ public class BICTestBase {
     Util.printInfo("*************************************************************");
   }
 
-  private void navigateToCart(LinkedHashMap<String, String> data) {
+  public void navigateToCart(LinkedHashMap<String, String> data) {
 
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
     String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
@@ -1155,7 +1155,7 @@ public class BICTestBase {
         guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
             .get(BICECEConstants.PRODUCTS_PATH) + productName;
 
-    System.out.println("constructGuacURL " + constructGuacDotComURL);
+    Util.printInfo("constructGuacURL " + constructGuacDotComURL);
 
     getUrl(constructGuacDotComURL);
     disableChatSession();
@@ -1183,7 +1183,8 @@ public class BICTestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
+    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System
+        .getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
     String term = "";
     String quantity = "";
     String userType = data.get(BICECEConstants.USER_TYPE);
@@ -1218,7 +1219,6 @@ public class BICTestBase {
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       e2.printStackTrace();
-      System.out.println("test");
     }
   }
 
@@ -1262,7 +1262,7 @@ public class BICTestBase {
         guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
             .get(BICECEConstants.PRODUCTS_PATH) + productName;
 
-    System.out.println("constructGuacDotComURL " + constructGuacDotComURL);
+    Util.printInfo("constructGuacDotComURL " + constructGuacDotComURL);
     Map<String, String> address = null;
     getUrl(constructGuacDotComURL);
     disableChatSession();
@@ -1418,7 +1418,7 @@ public class BICTestBase {
       bicPage.waitForElementVisible(bicPage.getMultipleWebElementsfromField("bicSections").get(0),
           10);
       if (driver.findElement(By.xpath("//*[@data-testid=\"sections\"")).isDisplayed()) {
-        System.out.println("Page is loaded");
+        Util.printInfo("Page is loaded");
       } else if (driver
           .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
           .isDisplayed()) {
@@ -1447,9 +1447,10 @@ public class BICTestBase {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
     String region = data.get(BICECEConstants.REGION);
-    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    String paymentMethod = data.get("paymentMethod");
 
     navigateToCart(data);
+
     switchToBICCartLoginPage();
     loginBICAccount(data);
 
@@ -1519,7 +1520,7 @@ public class BICTestBase {
     return results;
   }
 
-  private void getUrl(String URL) {
+  public void getUrl(String URL) {
     try {
       driver.manage().deleteAllCookies();
       driver.get(URL);
@@ -1533,7 +1534,7 @@ public class BICTestBase {
     }
   }
 
-  private void retryLoadingURL(String URL) {
+  public void retryLoadingURL(String URL) {
     int count = 0;
     do {
       driver.get(URL);
@@ -1558,12 +1559,12 @@ public class BICTestBase {
   public String getRandomIntString() {
     Date date = new Date();
     long time = date.getTime();
-    System.out.println("Time in Milliseconds: " + time);
+    Util.printInfo("Time in Milliseconds: " + time);
     Timestamp ts = new Timestamp(time);
     String num = ts.toString().replaceAll("[^0-9]", "");
-    System.out.println("num :: " + num);
-    System.out.println("option select :: " + num.charAt(12));
-    System.out.println(String.valueOf(num.charAt(12)).trim());
+    Util.printInfo("num :: " + num);
+    Util.printInfo("option select :: " + num.charAt(12));
+    Util.printInfo(String.valueOf(num.charAt(12)).trim());
     String option = String.valueOf(num.charAt(12)).trim();
 
     return option;
@@ -1589,7 +1590,7 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<String, String>();
 
     try {
-      System.out.println("Entering -> testCjtTrialDownloadUI ");
+      Util.printInfo("Entering -> testCjtTrialDownloadUI ");
       getUrl(data.get("trialDownloadUrl"));
 
       bicPage.clickUsingLowLevelActions("downloadFreeTrialLink");
@@ -1648,125 +1649,7 @@ public class BICTestBase {
     return results;
   }
 
-  @SuppressWarnings({"static-access", "unused"})
-  @Step("Guac: Place Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createBicOrderMoe(LinkedHashMap<String, String> data) {
-    HashMap<String, String> results = new HashMap<>();
-    String guacBaseURL = data.get("guacBaseURL");
-    String productID = "";
-    String quantity = "";
-    String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
-    String guacMoeResourceURL = data.get("guacMoeResourceURL");
-    String cepURL = data.get("cepURL");
-    String userType = data.get(BICECEConstants.USER_TYPE);
-    String region = data.get(BICECEConstants.REGION);
-    String password = data.get(BICECEConstants.PASSWORD);
-    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-    Util.printInfo("THE REGION " + data.get(BICECEConstants.LOCALE));
-    navigateToCart(data);
-
-    String emailID = generateUniqueEmailID();
-    String orderNumber = getBicOrderMoe(data, emailID, guacBaseURL, guacMoeResourceURL,
-        data.get(BICECEConstants.LOCALE), password, paymentMethod, cepURL);
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
-
-    return results;
-  }
-
-  private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
-      String guacBaseURL, String guacMoeResourceURL, String locale, String password,
-      String paymentMethod, String cepURL) {
-    String orderNumber;
-    locale = locale.replace("_", "-");
-    String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
-    System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
-    String constructPortalUrl = cepURL;
-    Map<String, String> address = null;
-
-    address = getBillingAddress(data.get(BICECEConstants.REGION));
-
-    Names names = generateFirstAndLastNames();
-    createBICAccount(names, emailID, password);
-
-    data.putAll(names.getMap());
-
-    String[] paymentCardDetails = getPaymentDetails(paymentMethod.toUpperCase()).split("@");
-    debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
-
-    // Get Payment details
-    selectPaymentProfile(data, paymentCardDetails, address);
-
-    // Enter billing details
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
-        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
-      debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
-      populateBillingAddress(address, data);
-      debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
-    }
-
-    getUrl(constructGuacMoeURL);
-    loginToMoe();
-    emulateUser(emailID);
-    populateBillingAddress(address, data);
-    selectPaymentProfile(data, paymentCardDetails, address);
-    try {
-      bicPage.clickUsingLowLevelActions("savePaymentProfile");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    Util.sleep(5000);
-    agreeToTerm();
-
-    orderNumber = submitGetOrderNumber(data);
-
-    printConsole(constructGuacMoeURL, orderNumber, emailID, address, names.firstName,
-        names.lastName,
-        paymentMethod);
-
-    // Navigate to Portal, logout from service account session and log back in with user account
-    getUrl(constructPortalUrl);
-    loginToOxygen(emailID, password);
-
-    return orderNumber;
-  }
-
-  private void loginToMoe() {
-    Util.sleep(60000);
-    Util.printInfo("MOE - Re-Login");
-    if (bicPage.isFieldVisible("moeReLoginLink")) {
-      try {
-        bicPage.clickUsingLowLevelActions("moeReLoginLink");
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    Util.sleep(20000);
-    bicPage.waitForField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, true, 30000);
-    bicPage.click(BICECEConstants.MOE_LOGIN_USERNAME_FIELD);
-    bicPage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, "svc_s_guac@autodesk.com");
-    bicPage.click("moeLoginButton");
-    bicPage.waitForField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, true, 30000);
-    bicPage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
-    bicPage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, ";mynFU(,|(97?@`n4X?SPw)s~*|$");
-    bicPage.click("moeLoginButton");
-    bicPage.waitForPageToLoad();
-    Util.printInfo("Successfully logged into MOE");
-  }
-
-  private void emulateUser(String emailID) {
-    Util.printInfo("MOE - Emulate User");
-    bicPage.click("moeAccountLookupEmail");
-    bicPage.populateField("moeAccountLookupEmail", emailID);
-    bicPage.click("moeAccountLookupBtn");
-    bicPage.waitForPageToLoad();
-    bicPage.click("moeContinueBtn");
-    bicPage.waitForPageToLoad();
-    Util.printInfo("Successfully emulated user");
-  }
-
-  private void agreeToTerm() {
+  public void agreeToTerm() {
     Util.printInfo("Agree Element");
     try {
       bicPage.selectMainWindow();
@@ -1778,7 +1661,7 @@ public class BICTestBase {
     Util.sleep(1000);
   }
 
-  private void loginToOxygen(String emailID, String password) {
+  public void loginToOxygen(String emailID, String password) {
     bicPage.waitForPageToLoad();
     Util.sleep(60000);
     try {
@@ -1806,7 +1689,7 @@ public class BICTestBase {
     Util.printInfo("Successfully logged in");
   }
 
-  private Names generateFirstAndLastNames() {
+  public Names generateFirstAndLastNames() {
     String randomString = RandomStringUtils.random(6, true, false);
     String firstName = "FN" + randomString;
     Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
@@ -1830,17 +1713,17 @@ public class BICTestBase {
     }
   }
 
-  private static class Names {
+  public static class Names {
 
-    private final String firstName;
-    private final String lastName;
+    public final String firstName;
+    public final String lastName;
 
-    private Names(String firstName, String lastName) {
+    public Names(String firstName, String lastName) {
       this.firstName = firstName;
       this.lastName = lastName;
     }
 
-    private HashMap<String, String> getMap() {
+    public HashMap<String, String> getMap() {
       return new HashMap<String, String>() {{
         put(BICECEConstants.FIRSTNAME, firstName);
         put(BICECEConstants.LASTNAME, lastName);
