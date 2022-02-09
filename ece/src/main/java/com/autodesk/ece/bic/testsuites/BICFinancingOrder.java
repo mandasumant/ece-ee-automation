@@ -122,7 +122,7 @@ public class BICFinancingOrder extends ECETestBase {
     HashMap<String, String> results = null;
     HashMap<String, String> testResults = new HashMap<String, String>();
 
-    if (Strings.isNullOrEmpty(EMAIL)) {
+    if (Strings.isNullOrEmpty(emailID)) {
       results = getBicTestBase()
           .createGUACBICOrderDotCom(testDataForEachMethod);
       emailID = results.get(BICConstants.emailid);
@@ -131,9 +131,7 @@ public class BICFinancingOrder extends ECETestBase {
       updateTestingHub(results);
       results.putAll(testDataForEachMethod);
 
-      if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
-        Util.sleep(120000);
-      }
+      Util.sleep(120000);
 
       // Getting a PurchaseOrder details from pelican
       results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));

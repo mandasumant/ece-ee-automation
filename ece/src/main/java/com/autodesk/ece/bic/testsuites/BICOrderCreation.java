@@ -114,7 +114,7 @@ public class BICOrderCreation extends ECETestBase {
       updateTestingHub(results);
       results.putAll(testDataForEachMethod);
 
-      if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
         Util.sleep(120000);
       }
 
@@ -162,7 +162,7 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
       Util.sleep(120000);
     }
     // Getting a PurchaseOrder details from pelican
@@ -467,7 +467,7 @@ public class BICOrderCreation extends ECETestBase {
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
       Util.sleep(120000);
     }
 
@@ -694,7 +694,7 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     updateTestingHub(testResults);
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
       Util.sleep(120000);
     }
 
@@ -786,7 +786,7 @@ public class BICOrderCreation extends ECETestBase {
     testDataForEachMethod.putAll(results);
     getBicTestBase().driver.manage().deleteAllCookies();
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
       Util.sleep(120000);
     }
 

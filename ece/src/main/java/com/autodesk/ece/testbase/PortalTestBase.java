@@ -961,21 +961,17 @@ public class PortalTestBase {
       }
 
       populateBillingAddress(data, data.get("userType"));
+      Util.printInfo("Clicking on save button");
+      portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
 
-      if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
         if(data.get(BICECEConstants.PAYMENT_TYPE)
             .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-          Util.printInfo("Clicking on mandate agreement form...");
+        Util.printInfo("Clicking on madate agreement form...");
           portalPage.waitForFieldPresent("portalDebitMandateAgreement", 5000);
           portalPage.clickUsingLowLevelActions("portalDebitMandateAgreement");
           portalPage.waitForFieldPresent(BICECEConstants.PORTAL_CARD_SAVE_BTN, 5000);
-          Util.printInfo("Clicking on save button");
-          portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
-        }else{
-          Util.printInfo("Clicking on save button");
           portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
         }
-      }
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to select payment profile...");
