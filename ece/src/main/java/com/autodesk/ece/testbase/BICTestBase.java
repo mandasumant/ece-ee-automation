@@ -63,7 +63,7 @@ public class BICTestBase {
   }
 
   @Step("Generate email id")
-  public static String generateUniqueEmailID() {
+  public String generateUniqueEmailID() {
     String storeKey = System.getProperty("store").replace("-", "");
     String sourceName = "thub";
     String emailDomain = "letscheck.pw";
@@ -394,6 +394,7 @@ public class BICTestBase {
 
     boolean status = false;
     try {
+      String paymentType = System.getProperty(BICECEConstants.PAYMENT);
       String dataPaymentType = data.get(BICECEConstants.PAYMENT_TYPE);
       String paymentProfile = "";
       Util.sleep(5000);
@@ -426,21 +427,21 @@ public class BICTestBase {
       Util.sleep(1000);
       clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
       driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
-      status = populateBillingDetails(address, dataPaymentType);
+      status = populateBillingDetails(address, paymentType);
 
       try {
-          driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
-          JavascriptExecutor executor = (JavascriptExecutor) driver;
-          WebElement element = driver
-              .findElement(By.xpath("//*[@id=\"usi_content\"]"));
-          executor.executeScript("arguments[0].click();", element);
-        } catch (Exception e) {
-          Util.printInfo("Can not find the skip button and click");
-        } finally {
+        driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
+        WebElement element = driver
+            .findElement(By.xpath("//*[@id=\"usi_content\"]"));
+        executor.executeScript("arguments[0].click();", element);
+      } catch (Exception e) {
+        Util.printInfo("Can not find the skip button and click");
+      } finally {
           driver.manage().timeouts().implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
-        }
+      }
 
-      clickOnContinueBtn(dataPaymentType);
+      clickOnContinueBtn(paymentType);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -468,13 +469,13 @@ public class BICTestBase {
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_BACS)
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)
           || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)
-          ) {
+      ) {
         continueButton.get(1).click();
-      } else if(paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+      } else if (paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
         continueButton.get(3).click();
-      } else if(paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      } else if (paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
         continueButton.get(2).click();
-      }else {
+      } else {
         continueButton.get(0).click();
       }
 
@@ -487,7 +488,7 @@ public class BICTestBase {
 
   @Step("Populate Billing Details")
   @SuppressWarnings("static-access")
-  public boolean populateBillingDetails(Map<String, String> address, String paymentType) {
+  private boolean populateBillingDetails(Map<String, String> address, String paymentType) {
     boolean status = false;
     try {
       Util.printInfo("Adding billing details...");
@@ -736,7 +737,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
       Util.sleep(30000);
       String url = driver.getCurrentUrl();
-      Util.printInfo("Entering Giropay url" + " : " +url);
+      Util.printInfo("Entering Giropay url" + " : " + url);
 
       AssertUtils.assertTrue(url.indexOf("giropay") != -1,
           "Current url [" + url + "] does contain keyword : giropay");
@@ -754,8 +755,8 @@ public class BICTestBase {
       driver.manage().window().maximize();
       org.openqa.selenium.Dimension dimension = driver.manage().window().getSize();
 
-      int x = (int) ((dimension.getWidth()/2)+20);
-      int y = (int) ((dimension.getHeight()/10)+50);
+      int x = (int) ((dimension.getWidth() / 2) + 20);
+      int y = (int) ((dimension.getHeight() / 10) + 50);
 
       Util.sleep(2000);
       if (bicPage.checkIfElementExistsInPage("giroPayAssume", 10)) {
@@ -764,7 +765,7 @@ public class BICTestBase {
       }
 
       Util.sleep(4000);
-      rb.mouseMove(x,y);
+      rb.mouseMove(x, y);
       rb.mousePress(InputEvent.BUTTON1_DOWN_MASK);
       rb.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
       Util.sleep(2000);
@@ -784,7 +785,7 @@ public class BICTestBase {
   }
 
   @Step("Populate Financing payment details")
-  public void populateFinancingPaymentDetails( Map<String, String> address,
+  public void populateFinancingPaymentDetails(Map<String, String> address,
       Map<String, String> data) {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
 
@@ -897,7 +898,7 @@ public class BICTestBase {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
     try {
       Util.printInfo("Clicking on Zip tab.");
-      bicPage.waitForFieldPresent("zipPaymentTab",10000);
+      bicPage.waitForFieldPresent("zipPaymentTab", 10000);
       bicPage.clickUsingLowLevelActions("zipPaymentTab");
 
     } catch (MetadataException e) {
@@ -942,7 +943,7 @@ public class BICTestBase {
             data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
             break;
           case BICECEConstants.PAYMENT_TYPE_FINANCING:
-            populateFinancingPaymentDetails( address, data);
+            populateFinancingPaymentDetails(address, data);
             data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
             break;
           case BICECEConstants.PAYMENT_TYPE_ZIP:
@@ -967,8 +968,6 @@ public class BICTestBase {
   @Step("Submitting Order and Retrieving Order Number")
   private String submitGetOrderNumber(HashMap<String, String> data) {
     clickMandateAgreementCheckbox();
-    debugPageUrl(" Checking for Financing Page Url");
-
     int count = 0;
     debugPageUrl(" Step 1 wait for SubmitOrderButton");
     while (!bicPage.waitForField(BICECEConstants.SUBMIT_ORDER_BUTTON, true, 60000)) {
@@ -1000,8 +999,9 @@ public class BICTestBase {
     }
 
     boolean isOrderSubmitted = false;
-    if(!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY) ||
-        !System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY) ||
+        !System.getProperty(BICECEConstants.PAYMENT)
+            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       try {
         bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
         bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
@@ -1022,7 +1022,7 @@ public class BICTestBase {
     }
 
     try {
-      if(bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON,10)){
+      if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)) {
         bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
       }
     } catch (Exception e) {
@@ -1032,13 +1032,11 @@ public class BICTestBase {
     }
 
 
-      // Zip Pay Checkout
-      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-        zipTestBase.setTestData(data);
-        zipTestBase.zipPayCheckout();
-      }
-
-
+    // Zip Pay Checkout
+    if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+      zipTestBase.setTestData(data);
+      zipTestBase.zipPayCheckout();
+    }
 
     String orderNumber = null;
     debugPageUrl(" Step 3 Check order Number is Null");
@@ -1055,7 +1053,7 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+          "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
         Util.printWarning(
             "Export compliance issue is present. Checking for order number in the Pelican response");
@@ -1075,7 +1073,7 @@ public class BICTestBase {
     debugPageUrl(" Step 3a Check order Number is Null");
     try {
       orderNumber = driver.findElement(By.xpath(
-              "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+          "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
           .getText();
     } catch (Exception e) {
       debugPageUrl(" Step 4 Check order Number is Null");
@@ -1095,7 +1093,7 @@ public class BICTestBase {
 
       try {
         orderNumber = driver.findElement(By.xpath(
-                "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+            "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
             .getText();
       } catch (Exception e) {
         debugPageUrl(" Step 5 Check order Number is Null");
@@ -1162,7 +1160,7 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
 
-    if(System.getProperty("payment").equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       selectYearlySubscription(driver);
     }else{
       selectMonthlySubscription(driver);
@@ -1195,12 +1193,13 @@ public class BICTestBase {
     String promoCode = data.get(BICECEConstants.PROMO_CODE);
 
     String emailID = generateUniqueEmailID();
-    data.put(BICECEConstants.emailid,emailID);
+    data.put(BICECEConstants.emailid, emailID);
 
     String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
         productName, password, paymentMethod, promoCode);
 
-    if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if (data.get(BICECEConstants.PAYMENT_TYPE)
+        .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       financingTestBase.setTestData(data);
       financingTestBase.completeFinancingApplication();
     }
@@ -1257,7 +1256,7 @@ public class BICTestBase {
       String productName,
       String password,
       String paymentMethod, String promocode) throws MetadataException {
-      String orderNumber = null;
+    String orderNumber = null;
 
     String constructGuacDotComURL =
         guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
@@ -1275,8 +1274,9 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
-        if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
-          BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META))) {
+     if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
+          data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
+              BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META))) {
         selectMonthlySubscription(driver);
       }
       subscribeAndAddToCart(data);
@@ -1320,7 +1320,7 @@ public class BICTestBase {
 
     enterBillingDetails(data, address, paymentMethod, region);
 
-    if(!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       orderNumber = submitGetOrderNumber(data);
       printConsole(constructGuacDotComURL, orderNumber, emailID, address, names.firstName,
           names.lastName,
@@ -1447,7 +1447,8 @@ public class BICTestBase {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
     String region = data.get(BICECEConstants.REGION);
-    String paymentMethod = System.getProperty("payment");
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+
     navigateToCart(data);
     switchToBICCartLoginPage();
     loginBICAccount(data);

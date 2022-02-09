@@ -38,11 +38,13 @@ public class EDUTestBase {
   private final Page_ eduPage;
   private final WebDriver driver;
   private final Map<String, String> testData;
+  BICTestBase bicTestBase;
 
   public EDUTestBase(GlobalTestBase testbase, LinkedHashMap<String, String> testData) {
     Util.PrintInfo("EDUTestBase from ece");
     eduPage = testbase.createPage("PAGE_EDU");
     driver = testbase.getdriver();
+    bicTestBase = new BICTestBase(driver, testbase);
     this.testData = testData;
   }
 
@@ -91,7 +93,7 @@ public class EDUTestBase {
     eduPage.click(BICECEConstants.EDU_SUBMIT);
 
     // Generate a new user email, name, and password
-    String email = BICTestBase.generateUniqueEmailID();
+    String email = bicTestBase.generateUniqueEmailID();
     results.put(BICConstants.emailid, email);
     String randomString = RandomStringUtils.random(6, true, false);
     String firstName = "FN" + randomString;

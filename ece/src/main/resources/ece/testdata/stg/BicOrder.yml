@@ -12,12 +12,10 @@ default:
   cepURL: "https://customer-stg.autodesk.com/"
   url: "https://cart.bicstg.autodesk.com/r?storeKey=@@@@@@&productIds=******"
   guacBaseURL: "https://checkout-pt.autodesk.com/"
-  guacDRBaseURL: "https://commerce-stg.autodesk.com/"
   guacDotComBaseURL: "https://www-pt.autodesk"
   guacResourceURL: "checkout?priceIds="
   productsPath: "/products/"
-  guacDRResourceURL: "checkout?plc="
-  guacMoeResourceURL: "manual-order-entry?optyId=A-15088994"
+  guacMoeResourceURL: "manual-order-entry?optyId=A-1776440"
   productName: "3ds-max"
   US: "en-US/"
   CANADA_FRENCH: "fr-CA/"
@@ -76,7 +74,6 @@ default:
   payportRenewalURL: "https://payport.bicstg.autodesk.com/services/v1/user/USER_ID/renewalPurchase"
   payportCertificatePassphrase: "BuyACAD&25"
   languageStore: "en-US/"
-  languageStoreDR: "ja-JP/"
   priceIDStore: "108261"      # need to check which price ID is this
   billingProcessor: "adyen" ##adyen   bluesnap
   paypalUser: "Paypal-buyer-namer@ssttest.net"
@@ -313,6 +310,10 @@ createBicOrderMoe:
   bicNativePriceID: *bicNativePriceID
 
 validateBicNativeOrderMoe:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+
+validateMoeOpportunityFlow:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 
