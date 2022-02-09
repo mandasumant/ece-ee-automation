@@ -26,6 +26,7 @@ pipeline {
     parameters {
         booleanParam(name: 'CJT' , defaultValue: false, description: 'Run CJT Regression ?')
         booleanParam(name: 'LIFT', defaultValue: false, description: 'Run LIFT Regression ?')
+        booleanParam(name: 'MOE',  defaultValue: false, description: 'Run MOE Regression ?')
     }
 
     stages {
@@ -36,7 +37,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true ||
+                            params.MOE == true
                         }
                     }
                 }
@@ -58,7 +60,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true  ||
+                            params.MOE == true
                         }
                     }
                 }
@@ -84,7 +87,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true ||
+                            params.MOE == true
                         }
                     }
                 }
@@ -131,7 +135,7 @@ pipeline {
                                                               '{"displayname":"Add seats from GUAC","testcasename":"validateBicAddSeats","description":"Add seats from GUAC","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-guac-addseats","testMethod":"validateBicAddSeats","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC order Flex","testcasename":"validateBicFlexOrder","description":"BiC order Flex","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder","testMethod":"validateBicFlexOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"META order","testcasename":"validateBicMetaOrder","description":"META order","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-metaorder","testMethod":"validateBicMetaOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname": "MOE order", "testcasename": "validateBicNativeOrderMoe", "description": "MOE order", "os": "windows", "testClass": "com.autodesk.ece.bic.testsuites.BICOrderCreation", "testGroup": "bic-nativeorder-moe", "testMethod": "validateBicNativeOrderMoe", "parameters": { "application": "ece" }, "testdata": { "usertype": "new", "password": "", "payment": "VISA", "store": "STORE-NAMER", "sku": "default:1", "email": "" }, "notsupportedenv": [], "wiki": "" },' +
+                                                              '{"displayname": "MOE order", "testcasename": "validateBicNativeOrderMoe", "description": "MOE order", "os": "windows", "testClass": "com.autodesk.ece.bic.testsuites.MOEOrderFlows", "testGroup": "bic-nativeorder-moe", "testMethod": "validateBicNativeOrderMoe", "parameters": { "application": "ece" }, "testdata": { "usertype": "new", "password": "", "payment": "VISA", "store": "STORE-NAMER", "sku": "default:1", "email": "" }, "notsupportedenv": [], "wiki": "" },' +
                                                               '{"displayname":"BiC refund order ACH","testcasename":"validateBicRefundOrder","description":"BiC refund order - ACH","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ACH","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC refund order PAYPAL","testcasename":"validateBicRefundOrder","description":"BiC refund order - PAYPAL","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"PAYPAL","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC refund order VISA","testcasename":"validateBicRefundOrder","description":"BiC refund order - VISA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
@@ -186,6 +190,38 @@ pipeline {
                     } else {
                         currentBuild.result = 'FAILURE'
                         println('Testing Hub API call failed - EDU Tests')
+                    }
+                }
+            }
+        }
+
+        stage ('GUAC MOE Regression') {
+            when {
+                branch 'master'
+                anyOf {
+//                     triggeredBy 'TimerTrigger'
+                    expression {
+                        params.MOE == true
+                    }
+                }
+            }
+            steps {
+                echo 'Initiating GUAC MOE UAT Regression'
+
+                script {
+                    def testingHubInputMap = [:]
+                    testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
+                    testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+                    testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"GAUC MOE Regression - GUAC Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                            '{"displayname": "MOE order", "testcasename": "validateBicNativeOrderMoe", "description": "MOE order", "os": "windows", "testClass": "com.autodesk.ece.bic.testsuites.MOEOrderFlows", "testGroup": "bic-nativeorder-moe", "testMethod": "validateBicNativeOrderMoe", "parameters": { "application": "ece" }, "testdata": { "usertype": "new", "password": "", "payment": "VISA", "store": "STORE-NAMER", "sku": "default:1", "email": "" }, "notsupportedenv": [], "wiki": "" }' +
+                            '],"workstreamname":"dclecjt"}'
+                    println("Starting Testing Hub API Call")
+                    if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
+                        println('Testing Hub API called successfully')
+                    } else {
+                        currentBuild.result = 'FAILURE'
+                        println('Testing Hub API call failed')
                     }
                 }
             }
