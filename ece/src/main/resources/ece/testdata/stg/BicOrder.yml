@@ -43,8 +43,8 @@ default:
   version: "Y"
   distributionChannel: "02"
   streetAddress: "1550 Wewatta Street"
-  addressCity: "Denver"
-  country: "US"
+  City: "Denver"
+  Country: "US"
   language: "EN"
   postalCode: "80202"
   region: "Col"
@@ -270,7 +270,7 @@ validateBicFlexOrder:
 validateBicMetaOrder:
   productID: *bicMetaPriceID
   bicNativePriceID: *bicMetaPriceID
-  productName: "RECAP"
+  productName: "INFRAWORKS"
   offeringType: "META"
 
 validateTrialDownloadUI:
@@ -287,6 +287,11 @@ validateBicAddSeats:
   productID: *NativeOrderPriceID
 
 validateBicAddSeatNativeOrder:
+  metaproductID: *bicMetaPriceID
+  nativeproductID: *bicNativePriceID
+  addSeatQty: "2"
+
+validateBICAddSeatsFinancing:
   metaproductID: *bicMetaPriceID
   nativeproductID: *bicNativePriceID
   addSeatQty: "2"
@@ -332,3 +337,7 @@ validateRenewBicOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
+
+validateBicNativeFinancingDeclinedOrder:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID

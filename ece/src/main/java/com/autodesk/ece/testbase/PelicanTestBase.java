@@ -271,7 +271,7 @@ public class PelicanTestBase {
       filters.put("filters", orders);
     } else {
       JSONObject emailId = new JSONObject();
-      emailId.put("emailId", data.get(BICECEConstants.emailid));
+      emailId.put("email", data.get(BICECEConstants.emailid));
       filters.put("filters", emailId);
     }
 

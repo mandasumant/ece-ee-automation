@@ -233,6 +233,7 @@ public class BICTestBase {
   }
 
   private void switchToBICCartLoginPage() {
+    Util.sleep(10000);
     List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
     driver.switchTo().frame(element);
@@ -372,6 +373,15 @@ public class BICTestBase {
     Util.sleep(2000);
   }
 
+  @Step("Selecting Yearly Subscription")
+  public void selectYearlySubscription(WebDriver driver) {
+    JavascriptExecutor executor = (JavascriptExecutor) driver;
+    WebElement element = driver
+        .findElement(By.xpath("//terms-container/div/div[4]/term-element[2]"));
+    executor.executeScript("arguments[0].click();", element);
+    Util.sleep(2000);
+  }
+
   @Step("Adding to cart")
   public void subscribeAndAddToCart(HashMap<String, String> data) {
     bicPage.waitForField("guacAddToCart", true, 3000);
@@ -384,7 +394,6 @@ public class BICTestBase {
 
     boolean status = false;
     try {
-      String paymentType = System.getProperty(BICECEConstants.PAYMENT);
       String dataPaymentType = data.get(BICECEConstants.PAYMENT_TYPE);
       String paymentProfile = "";
       Util.sleep(5000);
@@ -417,7 +426,7 @@ public class BICTestBase {
       Util.sleep(1000);
       clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
       driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
-      status = populateBillingDetails(address, paymentType);
+      status = populateBillingDetails(address, dataPaymentType);
 
       try {
           driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
@@ -431,7 +440,7 @@ public class BICTestBase {
           driver.manage().timeouts().implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
         }
 
-      clickOnContinueBtn(paymentType);
+      clickOnContinueBtn(dataPaymentType);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -478,7 +487,7 @@ public class BICTestBase {
 
   @Step("Populate Billing Details")
   @SuppressWarnings("static-access")
-  private boolean populateBillingDetails(Map<String, String> address, String paymentType) {
+  public boolean populateBillingDetails(Map<String, String> address, String paymentType) {
     boolean status = false;
     try {
       Util.printInfo("Adding billing details...");
@@ -1153,9 +1162,18 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
 
-    selectMonthlySubscription(driver);
+    if(System.getProperty("payment").equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      selectYearlySubscription(driver);
+    }else{
+      selectMonthlySubscription(driver);
+    }
 
     subscribeAndAddToCart(data);
+
+    if(driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
+        .isDisplayed()) {
+      driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
+    }
 
     checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
@@ -1257,7 +1275,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
-        if (! paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
+        if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
           BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META))) {
         selectMonthlySubscription(driver);
       }
@@ -1429,10 +1447,8 @@ public class BICTestBase {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
     String region = data.get(BICECEConstants.REGION);
-    String paymentMethod = data.get("paymentMethod");
-
+    String paymentMethod = System.getProperty("payment");
     navigateToCart(data);
-
     switchToBICCartLoginPage();
     loginBICAccount(data);
 

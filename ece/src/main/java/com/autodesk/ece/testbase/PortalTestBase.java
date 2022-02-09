@@ -42,14 +42,14 @@ public class PortalTestBase {
   public static Page_ studentPage = null;
   public WebDriver driver = null;
   ZipPayTestBase zipTestBase;
-
+  BICTestBase bicTestBase;
   public PortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
     portalPage = testbase.createPage("PAGE_PORTAL");
     studentPage = testbase.createCommonPage("PAGE_STUDENT");
     new BICTestBase(driver, testbase);
     zipTestBase = new ZipPayTestBase(testbase);
-
+    bicTestBase = new BICTestBase(driver,testbase);
   }
 
   public static String timestamp() {
@@ -748,7 +748,6 @@ public class PortalTestBase {
 
       Util.printInfo("Clicking on Save button...");
       clickOnContinueBtn();
-
       // Zip Pay Verification
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
           .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
@@ -789,8 +788,8 @@ public class PortalTestBase {
       }
 
     } catch (MetadataException e) {
-      e.printStackTrace();
-      AssertUtils.fail("Failed to click on Save button on billing details page...");
+        e.printStackTrace();
+        AssertUtils.fail("Failed to click on Save button on billing details page...");
     }
   }
 
@@ -872,7 +871,7 @@ public class PortalTestBase {
     orderDetails.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
 
     Util.printInfo("Reducing seats.");
-
+    Util.sleep(10000);
     closeSubscriptionTermPopup();
     portalPage.waitForFieldPresent(BICECEConstants.PORTAL_REDUCE_SEATS_BUTTON, 5000);
     portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_REDUCE_SEATS_BUTTON);
@@ -887,7 +886,7 @@ public class PortalTestBase {
     portalPage.clickUsingLowLevelActions("portalConfirmationOkButton");
     Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
         BICECEConstants.PORTAL_ORDER_SEAT_COUNT));
-    String renewingSeatsCount = portalPage.getTextFromLink("portalRenewingSeatsCount");
+    String renewingSeatsCount = portalPage.getTextFromLink(BICECEConstants.PORTAL_ORDER_SEAT_COUNT);
     String reducedSeatQty = renewingSeatsCount.split(" ")[0];
     Util.printInfo("Recording new seats count.");
     orderDetails.put("reducedSeatQty", reducedSeatQty);
@@ -898,11 +897,20 @@ public class PortalTestBase {
     portalPage.checkIfElementExistsInPage(BICECEConstants.PORTAL_REDUCE_SEATS_BUTTON, 10);
     String newSeatsTotal = data.get("reducedSeatQty");
     String initialOrderQty = data.get(BICECEConstants.INITIAL_ORDER_QTY);
-    if (!newSeatsTotal.equals(initialOrderQty)) {
-      Util.printInfo("Seats reduced successfully.");
-    } else {
-      AssertUtils.fail("Failed to reduce seats. Initial order seat : " + initialOrderQty
-          + " total number of seats : " + newSeatsTotal + " are same");
+    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      if (newSeatsTotal.equals(initialOrderQty)) {
+        Util.printInfo("Seats reduced successfully. New seats will be in effect after next renewal");
+      } else {
+        AssertUtils.fail("Error while reducing seats. Initial order seat : " + initialOrderQty
+            + " total number of seats : " + newSeatsTotal + " should be same");
+      }
+    } else{
+      if (!newSeatsTotal.equals(initialOrderQty)) {
+        Util.printInfo("Seats reduced successfully.");
+      } else {
+        AssertUtils.fail("Failed to reduce seats. Initial order seat : " + initialOrderQty
+            + " total number of seats : " + newSeatsTotal + " are same");
+      }
     }
   }
 
@@ -926,8 +934,6 @@ public class PortalTestBase {
       portalPage.waitForFieldPresent("portalChangePaymentBtn", 10000);
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
-
-      Util.sleep(60000);
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
           BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
@@ -955,16 +961,20 @@ public class PortalTestBase {
       }
 
       populateBillingAddress(data, data.get("userType"));
-      Util.printInfo("Clicking on save button");
-      portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
 
-      if (data.get(BICECEConstants.PAYMENT_TYPE)
-          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        Util.printInfo("Clicking on madate agreement form...");
-        portalPage.waitForFieldPresent("portalDebitMandateAgreement", 5000);
-        portalPage.clickUsingLowLevelActions("portalDebitMandateAgreement");
-        portalPage.waitForFieldPresent(BICECEConstants.PORTAL_CARD_SAVE_BTN, 5000);
-        portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
+      if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        if(data.get(BICECEConstants.PAYMENT_TYPE)
+            .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+          Util.printInfo("Clicking on mandate agreement form...");
+          portalPage.waitForFieldPresent("portalDebitMandateAgreement", 5000);
+          portalPage.clickUsingLowLevelActions("portalDebitMandateAgreement");
+          portalPage.waitForFieldPresent(BICECEConstants.PORTAL_CARD_SAVE_BTN, 5000);
+          Util.printInfo("Clicking on save button");
+          portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
+        }else{
+          Util.printInfo("Clicking on save button");
+          portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -1158,11 +1168,9 @@ public class PortalTestBase {
     driver.findElement(By.xpath(firstNameXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
     Util.sleep(2000);
     driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get("firstname"));
-
     driver.findElement(By.xpath(lastNameXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
     Util.sleep(2000);
     driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get("lastname"));
-
     if (data.size() == 6) {
       status = populateEMEABillingDetails(data);
       BICTestBase.bicPage.waitForPageToLoad();
