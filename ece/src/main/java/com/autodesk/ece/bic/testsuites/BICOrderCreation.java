@@ -876,7 +876,7 @@ public class BICOrderCreation extends ECETestBase {
         .put(BICECEConstants.SUBSCRIPTION_END_DATE, results.get(BICECEConstants.RESPONSE_END_DATE));
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
 
-    if(!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if(!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Assert.assertNull(results.get(BICECEConstants.RESPONSE_END_DATE), "End date is null.");
     }
 
