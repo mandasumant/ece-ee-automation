@@ -121,29 +121,28 @@ public class BICFinancingOrder extends ECETestBase {
     String password = System.getProperty(BICECEConstants.PASSWORD);
     HashMap<String, String> results = null;
     HashMap<String, String> testResults = new HashMap<String, String>();
-
-    if (Strings.isNullOrEmpty(emailID)) {
-      results = getBicTestBase()
-          .createGUACBICOrderDotCom(testDataForEachMethod);
-      emailID = results.get(BICConstants.emailid);
-      password = PASSWORD;
-
-      updateTestingHub(results);
-      results.putAll(testDataForEachMethod);
-
-      Util.sleep(120000);
-
-      // Getting a PurchaseOrder details from pelican
-      results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
-
-      // Trigger Invoice join
-      pelicantb.postInvoicePelicanAPI(results);
-
-      results.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      updateTestingHub(results);
-    }
-
     String paymentType = System.getProperty("payment");
+
+    results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
+    emailID = results.get(BICConstants.emailid);
+    password = PASSWORD;
+
+    updateTestingHub(results);
+    results.putAll(testDataForEachMethod);
+
+    Util.sleep(120000);
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+
+    // Trigger Invoice join
+    pelicantb.postInvoicePelicanAPI(results);
+
+    results.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(results);
+
+
     Util.printInfo("Current Payment Type is : " + paymentType);
     String[] paymentTypes = localeDataMap.get(locale).get(BICECEConstants.PAYMENT_METHODS)
         .split(",");
@@ -171,8 +170,7 @@ public class BICFinancingOrder extends ECETestBase {
             BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod, localeDataMap.get(locale)));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
-    // testResults.put("addSeatPerSeatGrossAmount",
-    // results.get("perSeatGrossAmount"));
+
     testResults.put(BICECEConstants.ADD_SEAT_QTY, results.get(BICECEConstants.ADD_SEAT_QTY));
     updateTestingHub(testResults);
 
@@ -205,7 +203,6 @@ public class BICFinancingOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
-    Util.sleep(60000);
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
