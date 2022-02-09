@@ -11,6 +11,7 @@ import com.autodesk.testinghub.core.testbase.RegonceTestBase;
 import com.autodesk.testinghub.core.testbase.SFDCTestBase;
 import com.autodesk.testinghub.core.testbase.SOAPTestBase;
 import com.autodesk.testinghub.core.testbase.SiebelTestBase;
+import com.autodesk.testinghub.core.testbase.TestinghubUtil;
 import com.autodesk.testinghub.core.utils.Util;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,11 +33,8 @@ public class ECETestBase {
   LinkedHashMap<String, String> localeConfig;
   private WebDriver webdriver = null;
   private GlobalTestBase testbase = null;
-  private AoeTestBase aoetb = null;
-  private SiebelTestBase siebeltb = null;
   private BICTestBase bictb = null;
-  private PWSTestBase pwstb = null;
-  private RegonceTestBase regoncetb = null;
+  protected static TestinghubUtil thutil = null;
 
   public ECETestBase() {
     System.out.println("into the testing hub. core changes");
@@ -49,18 +47,11 @@ public class ECETestBase {
     resttb = new ApigeeTestBase();
     dynamotb = new DynamoDBValidation();
     pelicantb = new PelicanTestBase();
+    thutil = new TestinghubUtil(testbase);
   }
 
   public static void updateTestingHub(HashMap<String, String> results) {
-    Set<String> keySet = results.keySet();
-    JSONArray data = new JSONArray();
-    for (String key : keySet) {
-      JSONObject newValidation = new JSONObject();
-      newValidation.put("name", key);
-      newValidation.put("value", results.get(key));
-      data.add(newValidation);
-    }
-    TestingHubAPIClient.updateTestData(data);
+    TestinghubUtil.updateTestingHub(results);
   }
 
   public GlobalTestBase getTestBase() {
