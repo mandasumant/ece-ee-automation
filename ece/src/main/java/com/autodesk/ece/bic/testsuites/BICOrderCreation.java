@@ -114,7 +114,7 @@ public class BICOrderCreation extends ECETestBase {
       updateTestingHub(results);
       results.putAll(testDataForEachMethod);
 
-      if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
         Util.sleep(120000);
       }
 
@@ -162,7 +162,7 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
       Util.sleep(120000);
     }
     // Getting a PurchaseOrder details from pelican
@@ -199,7 +199,6 @@ public class BICOrderCreation extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
-
 
   }
 
@@ -468,6 +467,10 @@ public class BICOrderCreation extends ECETestBase {
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
+    }
+
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
@@ -603,6 +606,10 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
+    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
+    }
+
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
 
@@ -686,6 +693,10 @@ public class BICOrderCreation extends ECETestBase {
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     updateTestingHub(testResults);
+
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
+    }
 
     results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
     results.remove(BICConstants.orderNumber);
@@ -775,6 +786,10 @@ public class BICOrderCreation extends ECETestBase {
     testDataForEachMethod.putAll(results);
     getBicTestBase().driver.manage().deleteAllCookies();
 
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
+    }
+
     // Get the subscription id for the first order
     results.putAll(pelicantb
         .getPurchaseOrderDetails(pelicantb.getPurchaseOrder(testDataForEachMethod)));
@@ -860,7 +875,11 @@ public class BICOrderCreation extends ECETestBase {
     results
         .put(BICECEConstants.SUBSCRIPTION_END_DATE, results.get(BICECEConstants.RESPONSE_END_DATE));
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
-    Assert.assertNull(results.get(BICECEConstants.RESPONSE_END_DATE), "End date is null.");
+
+    if(!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Assert.assertNull(results.get(BICECEConstants.RESPONSE_END_DATE), "End date is null.");
+    }
+
     AssertUtils
         .assertEquals("Status is Active.", results.get(BICECEConstants.RESPONSE_STATUS),
             "ACTIVE");

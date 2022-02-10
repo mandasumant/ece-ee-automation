@@ -233,6 +233,7 @@ public class BICTestBase {
   }
 
   private void switchToBICCartLoginPage() {
+    Util.sleep(10000);
     List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
     driver.switchTo().frame(element);
@@ -240,7 +241,7 @@ public class BICTestBase {
 
   @Step("Login BIC account")
   public void loginBICAccount(HashMap<String, String> data) {
-    System.out.println(bicPage.isFieldPresent(BICECEConstants.AUTODESK_ID));
+    Util.printInfo(BICECEConstants.AUTODESK_ID + " is Present " + bicPage.isFieldPresent(BICECEConstants.AUTODESK_ID));
     bicPage.click(BICECEConstants.AUTODESK_ID);
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, data.get(BICConstants.emailid));
@@ -372,6 +373,15 @@ public class BICTestBase {
     Util.sleep(2000);
   }
 
+  @Step("Selecting Yearly Subscription")
+  public void selectYearlySubscription(WebDriver driver) {
+    JavascriptExecutor executor = (JavascriptExecutor) driver;
+    WebElement element = driver
+        .findElement(By.xpath("//terms-container/div/div[4]/term-element[2]"));
+    executor.executeScript("arguments[0].click();", element);
+    Util.sleep(2000);
+  }
+
   @Step("Adding to cart")
   public void subscribeAndAddToCart(HashMap<String, String> data) {
     bicPage.waitForField("guacAddToCart", true, 3000);
@@ -428,8 +438,7 @@ public class BICTestBase {
       } catch (Exception e) {
         Util.printInfo("Can not find the skip button and click");
       } finally {
-        driver.manage().timeouts()
-            .implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
+          driver.manage().timeouts().implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
       }
 
       clickOnContinueBtn(paymentType);
@@ -960,8 +969,6 @@ public class BICTestBase {
   @Step("Submitting Order and Retrieving Order Number")
   public String submitGetOrderNumber(HashMap<String, String> data) {
     clickMandateAgreementCheckbox();
-    debugPageUrl(" Checking for Financing Page Url");
-
     int count = 0;
     debugPageUrl(" Step 1 wait for SubmitOrderButton");
     while (!bicPage.waitForField(BICECEConstants.SUBMIT_ORDER_BUTTON, true, 60000)) {
@@ -1142,21 +1149,29 @@ public class BICTestBase {
   public void navigateToCart(LinkedHashMap<String, String> data) {
 
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System
-        .getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
+    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
 
     String constructGuacDotComURL =
         guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
             .get(BICECEConstants.PRODUCTS_PATH) + productName;
 
-    System.out.println("constructGuacURL " + constructGuacDotComURL);
+    Util.printInfo("constructGuacURL " + constructGuacDotComURL);
 
     getUrl(constructGuacDotComURL);
     disableChatSession();
 
-    selectMonthlySubscription(driver);
+    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      selectYearlySubscription(driver);
+    }else{
+      selectMonthlySubscription(driver);
+    }
 
     subscribeAndAddToCart(data);
+
+    if(driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
+        .isDisplayed()) {
+      driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
+    }
 
     checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
@@ -1204,7 +1219,6 @@ public class BICTestBase {
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       e2.printStackTrace();
-      System.out.println("test");
     }
   }
 
@@ -1248,7 +1262,7 @@ public class BICTestBase {
         guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
             .get(BICECEConstants.PRODUCTS_PATH) + productName;
 
-    System.out.println("constructGuacDotComURL " + constructGuacDotComURL);
+    Util.printInfo("constructGuacDotComURL " + constructGuacDotComURL);
     Map<String, String> address = null;
     getUrl(constructGuacDotComURL);
     disableChatSession();
@@ -1260,7 +1274,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
-      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
+     if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
           data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
               BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META))) {
         selectMonthlySubscription(driver);
@@ -1404,7 +1418,7 @@ public class BICTestBase {
       bicPage.waitForElementVisible(bicPage.getMultipleWebElementsfromField("bicSections").get(0),
           10);
       if (driver.findElement(By.xpath("//*[@data-testid=\"sections\"")).isDisplayed()) {
-        System.out.println("Page is loaded");
+        Util.printInfo("Page is loaded");
       } else if (driver
           .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
           .isDisplayed()) {
@@ -1545,12 +1559,12 @@ public class BICTestBase {
   public String getRandomIntString() {
     Date date = new Date();
     long time = date.getTime();
-    System.out.println("Time in Milliseconds: " + time);
+    Util.printInfo("Time in Milliseconds: " + time);
     Timestamp ts = new Timestamp(time);
     String num = ts.toString().replaceAll("[^0-9]", "");
-    System.out.println("num :: " + num);
-    System.out.println("option select :: " + num.charAt(12));
-    System.out.println(String.valueOf(num.charAt(12)).trim());
+    Util.printInfo("num :: " + num);
+    Util.printInfo("option select :: " + num.charAt(12));
+    Util.printInfo(String.valueOf(num.charAt(12)).trim());
     String option = String.valueOf(num.charAt(12)).trim();
 
     return option;
@@ -1576,7 +1590,7 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<String, String>();
 
     try {
-      System.out.println("Entering -> testCjtTrialDownloadUI ");
+      Util.printInfo("Entering -> testCjtTrialDownloadUI ");
       getUrl(data.get("trialDownloadUrl"));
 
       bicPage.clickUsingLowLevelActions("downloadFreeTrialLink");
