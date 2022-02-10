@@ -1149,7 +1149,7 @@ public class BICTestBase {
         guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
             .get(BICECEConstants.PRODUCTS_PATH) + productName;
 
-    System.out.println("constructGuacURL " + constructGuacDotComURL);
+    Util.printInfo("constructGuacURL " + constructGuacDotComURL);
 
     getUrl(constructGuacDotComURL);
     disableChatSession();

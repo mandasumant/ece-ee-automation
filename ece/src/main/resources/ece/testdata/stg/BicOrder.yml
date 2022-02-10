@@ -103,6 +103,9 @@ default:
   createTrailsAPI: "https://api.pelicanstg.autodesk.com/subscriptions/v3"
   trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview?us_oa=dotcom-us&us_si=05ceeb3d-c765-4154-82da-eb5f01ed56cd&us_st=3ds%20Max%20free%20trial"
 
+  account: "yfds91WdxydZM"
+  emailid: "acdisttest1801@letscheck.pw"
+
 STORE-AUS:
   currencyStore: "AUD"
   streetAddressStore: "259-261 Colchester Rd"
@@ -333,7 +336,3 @@ validateRenewBicOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
-
-createGuacMOEOrder:
-  account: "yfds91WdxydZM"
-  emailid: "acdisttest1801@letscheck.pw"

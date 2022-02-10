@@ -162,7 +162,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults = sfdctb.createGUACMoeOpty(optyName, account, stage, projectCloseDate, fulfillment);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
-    
+
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
