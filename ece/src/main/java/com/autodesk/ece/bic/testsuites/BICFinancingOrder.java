@@ -97,10 +97,8 @@ public class BICFinancingOrder extends ECETestBase {
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     updateTestingHub(testResults);
 
-    if (System.getProperty(BICECEConstants.PAYMENT)
-        .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-      Util.sleep(120000);
-    }
+    Util.sleep(120000);
+
     // Getting a PurchaseOrder details from pelican
     String purchaseOrderAPIResponse = pelicantb.getPurchaseOrder(results);
     JsonPath jp = new JsonPath(purchaseOrderAPIResponse);
