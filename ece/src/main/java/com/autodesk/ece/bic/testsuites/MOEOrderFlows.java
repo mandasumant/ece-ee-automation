@@ -5,6 +5,7 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.MOETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
@@ -13,9 +14,11 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.util.Strings;
 
 
 public class MOEOrderFlows extends ECETestBase {
@@ -28,6 +31,7 @@ public class MOEOrderFlows extends ECETestBase {
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
+  String optyName, stage, fulfillment, account, projectCloseDate,email ="";
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -82,6 +86,47 @@ public class MOEOrderFlows extends ECETestBase {
 
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
+
+    if (Strings.isNullOrEmpty(System.getProperty("account"))){
+      account = testDataForEachMethod.get("account");
+    } else {
+      account = System.getProperty("account");
+    }
+
+    if (Strings.isNullOrEmpty(System.getProperty("projectCloseDate"))) {
+      projectCloseDate = Util.getDateFirstDayNextMonth("MM/dd/yyyy");
+      Util.printInfo("project close date : "+ projectCloseDate);
+    } else {
+      projectCloseDate = System.getProperty("projectCloseDate");
+    }
+
+    if (Strings.isNullOrEmpty(System.getProperty("email"))) {
+      email = testDataForEachMethod.get(TestingHubConstants.emailid);
+      Util.printInfo("email : "+ email);
+    } else {
+      email = System.getProperty("email");
+    }
+
+    optyName = "MOE Opty"+ Util.generateRandom(3).toLowerCase();
+    stage = "Stage 1";
+    fulfillment = "Direct";
+
+    testDataForEachMethod.put("optyName", optyName);
+    testDataForEachMethod.put("stage", stage);
+    testDataForEachMethod.put("fulfillment", fulfillment);
+    testDataForEachMethod.put("account", account.trim());
+    testDataForEachMethod.put("projectCloseDate", projectCloseDate);
+    testDataForEachMethod.put("guacMoeUserEmail", email);
+  }
+
+  @AfterMethod(alwaysRun = true)
+  public void afterTestMethod(Method name) {
+    optyName = null;
+    stage = null;
+    fulfillment = null;
+    account = null;
+    projectCloseDate = null;
+    email = null;
   }
 
   @Test(groups = {
@@ -89,14 +134,19 @@ public class MOEOrderFlows extends ECETestBase {
   public void validateBicNativeOrderMoe() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
-    HashMap<String, String> results = moetb.createBicOrderMoe(testDataForEachMethod);
-    results.putAll(testDataForEachMethod);
 
-    validateTestResults(testResults, results);
+    sfdctb.loginSfdcLightningView();
+    sfdctb.clickOnCreateMOEOpty();
+    HashMap<String, String> sfdcResults = sfdctb.createGUACMoeOpty(optyName, account, stage, projectCloseDate, fulfillment);
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    HashMap<String, String> moeResults = moetb.createBicOrderMoe(testDataForEachMethod);
+    moeResults.putAll(testDataForEachMethod);
+
+    validateTestResults(testResults, moeResults);
+
+    portaltb.validateBICOrderProductInCEP(moeResults.get(BICConstants.cepURL),
+        moeResults.get(BICConstants.emailid), PASSWORD, moeResults.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
     validateCreateOrder(testResults);
@@ -107,6 +157,12 @@ public class MOEOrderFlows extends ECETestBase {
   public void validateMoeOpportunityFlow() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+
+    sfdctb.loginSfdcLightningView();
+    sfdctb.clickOnCreateMOEOpty();
+    HashMap<String, String> sfdcResults = sfdctb.createGUACMoeOpty(optyName, account, stage, projectCloseDate, fulfillment);
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+    
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 

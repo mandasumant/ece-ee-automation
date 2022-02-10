@@ -38,12 +38,11 @@ public class MOETestBase {
     String productID = "";
     String quantity = "";
     String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
-    String guacMoeResourceURL = data.get("guacMoeResourceURL");
+    String guacMoeResourceURL = data.get("guacMoeResourceURL") + data.get("guacMoeOptyId");
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
     String password = data.get(BICECEConstants.PASSWORD);
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-    Util.printInfo("THE REGION " + data.get(BICECEConstants.LOCALE));
     bicTestBase.navigateToCart(data);
 
     String emailID = bicTestBase.generateUniqueEmailID();
@@ -63,14 +62,12 @@ public class MOETestBase {
     Map<String, String> address = null;
     // construct MOE URL with opptyId
     String guacBaseURL = data.get("guacBaseURL");
-    String guacMoeResourceURL = data.get("guacMoeResourceURL");
+    String guacMoeResourceURL = data.get("guacMoeResourceURL") + data.get("guacMoeOptyId");
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
 
-    String constructMoeURLWithOpptyId =
-        guacBaseURL + locale + "/"
-            + guacMoeResourceURL;
+    String constructMoeURLWithOpptyId = guacBaseURL + locale + "/" + guacMoeResourceURL;
 
-    System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
+    Util.printInfo("constructMoeURL " + constructMoeURLWithOpptyId);
 
     //navigate to Url
     bicTestBase.getUrl(constructMoeURLWithOpptyId);
@@ -111,7 +108,7 @@ public class MOETestBase {
       String paymentMethod) throws MetadataException {
     locale = locale.replace("_", "-");
     String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
-    System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
+    Util.printInfo("GuacMoeURL: " + constructGuacMoeURL);
     Map<String, String> address = null;
 
     address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION));

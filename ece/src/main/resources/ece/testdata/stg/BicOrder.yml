@@ -15,7 +15,7 @@ default:
   guacDotComBaseURL: "https://www-pt.autodesk"
   guacResourceURL: "checkout?priceIds="
   productsPath: "/products/"
-  guacMoeResourceURL: "manual-order-entry?optyId=A-1776440"
+  guacMoeResourceURL: "manual-order-entry?optyId="
   productName: "3ds-max"
   US: "en-US/"
   CANADA_FRENCH: "fr-CA/"
@@ -333,3 +333,7 @@ validateRenewBicOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
+
+createGuacMOEOrder:
+  account: "yfds91WdxydZM"
+  emailid: "acdisttest1801@letscheck.pw"
