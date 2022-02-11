@@ -1147,9 +1147,10 @@ public class BICTestBase {
   }
 
   public void navigateToCart(LinkedHashMap<String, String> data) {
-
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
+    String productName =
+        System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
+            BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
 
     String constructGuacDotComURL =
         guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
@@ -1160,18 +1161,13 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if (System.getProperty(BICECEConstants.PAYMENT)
+        .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       selectYearlySubscription(driver);
-    }else{
+    } else {
       selectMonthlySubscription(driver);
     }
-
     subscribeAndAddToCart(data);
-
-    if(driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-        .isDisplayed()) {
-      driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
-    }
 
     checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
@@ -1257,7 +1253,6 @@ public class BICTestBase {
       String password,
       String paymentMethod, String promocode) throws MetadataException {
     String orderNumber = null;
-
     String constructGuacDotComURL =
         guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
             .get(BICECEConstants.PRODUCTS_PATH) + productName;

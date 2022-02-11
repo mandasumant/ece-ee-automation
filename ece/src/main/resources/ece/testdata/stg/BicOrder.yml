@@ -317,6 +317,10 @@ validateMoeOpportunityFlow:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 
+validateMoeQuoteOrderFlow:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+
 validateBicNativeOrderSwitchTerm:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
