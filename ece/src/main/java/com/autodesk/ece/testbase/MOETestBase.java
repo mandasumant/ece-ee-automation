@@ -254,9 +254,7 @@ public class MOETestBase {
 
     validateProductNameDefault();
 
-    // Toggle off Quote section
-    moePage.clickUsingLowLevelActions("moeRadioButtonOrder");
-    Util.sleep(2000);
+    validateQuoteDropdownFromOrderView();
 
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
@@ -283,10 +281,6 @@ public class MOETestBase {
     moePage.clickUsingLowLevelActions("moeDtcContinueBtn");
 
     addProductFromSearchResult();
-    // Search for product from the Search bar in cart section and add the product to cart.
-    //moePage.waitForField("moeSearchBar", true, 1000);
-    // moePage.populateField("moeSearchBar", "3ds Max");
-    //moePage.clickUsingLowLevelActions("moe3dsMaxMonthly");
 
     // Sales agent should see the toggle that allows them to switch between 'Order' and 'Quote' view
     validateOrderDefaultViewDtc();
@@ -326,6 +320,7 @@ public class MOETestBase {
         quoteNumber);
   }
 
+  @Step("Login to MOE")
   private void loginToMoe() {
     Util.printInfo("Re-Login");
     if (moePage.isFieldVisible("moeReLoginLink")) {
@@ -387,91 +382,6 @@ public class MOETestBase {
     }
     moePage.waitForPageToLoad();
     Util.printInfo("Successfully emulated user");
-  }
-
-  private void validateOrderDefaultViewDtc() {
-    Util.printInfo("MOE - Order view");
-    try {
-      AssertUtils.assertTrue(driver
-          .findElement(By.xpath(".//h5[contains(text(),\"3ds Max\")]"))
-          .isDisplayed());
-      driver.findElement(By.xpath("//input[@aria-labelledby=\"quote-toggle-off\"]"))
-          .getAttribute("aria-checked")
-          .contains("true");
-      driver.findElement(By.xpath("//input[@aria-labelledby=\"quote-toggle-on\"]"))
-          .getAttribute("aria-checked")
-          .contains("false");
-    } catch (Exception e) {
-      AssertUtils.fail("MOE - Web element not found!");
-    }
-  }
-
-  private String populateCustomerInfoAndSendQuoteDTC(String emailID, Names names) {
-    Util.printInfo("MOE - Send Quote");
-
-    // Ppen Quote section
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    js.executeScript("document.getElementById('quote-radio').click()");
-    moePage.waitForPageToLoad();
-
-    AssertUtils.assertTrue(driver
-        .findElement(By.xpath("//h3[contains(text(),\"Quote contact information\")]"))
-        .isDisplayed());
-
-    // Clean first and last name fields due to bug then enter data
-    String firstNameXpath = moePage.getFirstFieldLocator("moeQuoteFirstNameField");
-    String lastNameXpath = moePage.getFirstFieldLocator("moeQuoteLastNameField");
-
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
-    driver.findElement(By.xpath(firstNameXpath)).sendKeys(names.firstName);
-
-    Util.sleep(1000);
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
-    driver.findElement(By.xpath(lastNameXpath)).sendKeys(names.lastName);
-
-    moePage.populateField("moeQuoteAddressField", "149 Penn Rd");
-    moePage.populateField("moeQuoteCityField", "Silverdale");
-    moePage.populateField("moeQuoteStateField", "WA");
-    moePage.populateField("moeQuotePostalCodeField", "98315");
-    moePage.populateField("moeQuotePhoneNumberField", "1234567890");
-    moePage.populateField("moeQuoteCompanyField", "Autodesk Quote");
-
-    moeQuoteEnterExpirationData();
-
-    moePage.populateField("moeQuotePrimaryEmail", emailID);
-    moePage.populateField("moeQuoteSecondaryEmail", "test-" + emailID);
-
-    moePage.click("moeSendQuote");
-
-    // Get quote number from the page
-    String quoteNumber = moePage.getValueFromGUI("moeQuoteNumber");
-    Util.printInfo("Quote number is: " + quoteNumber);
-
-    moePage.waitForPageToLoad();
-
-    Util.printInfo("MOE - Quote sent");
-
-    return quoteNumber;
-  }
-
-  private void moeQuoteEnterExpirationData() {
-    Util.printInfo("MOE - Enter Expiration date");
-
-    DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
-    Date date1 = new Date();
-    String currentYear = dateFormat1.format(date1);
-
-    DateFormat dateFormat2 = new SimpleDateFormat("MMdd");
-    Date date2 = new Date();
-    String currentMonthDay = dateFormat2.format(date2);
-
-    Util.sleep(2000);
-    WebElement webElement = driver.findElement(
-        By.xpath("//input[@id=\"moe--quote--expiration-date\"]"));
-    webElement.sendKeys(currentYear);
-    webElement.sendKeys(Keys.TAB);
-    webElement.sendKeys(currentMonthDay);
-    Util.sleep(2000);
   }
 
   private void validateProductNameDefault() {
@@ -638,6 +548,102 @@ public class MOETestBase {
     validateProductNameNew();
 
     validateQuoteReadOnlyView();
+  }
+
+  @Step("Validate Quote dropdown list from Order view")
+  private void validateQuoteDropdownFromOrderView() throws MetadataException {
+    moePage.clickUsingLowLevelActions("moeRadioButtonOrder");
+    Util.sleep(2000);
+    Select selection = new Select(driver.findElement(By.id("moe-quotes")));
+    int size = selection.getOptions().size();
+    Util.printInfo("Number of items: " + size);
+    AssertUtils.assertTrue(3 == size);
+  }
+
+  @Step("Login to Portal with user account")
+  private void validateOrderDefaultViewDtc() {
+    Util.printInfo("MOE - Order view");
+    try {
+      AssertUtils.assertTrue(driver
+          .findElement(By.xpath(".//h5[contains(text(),\"3ds Max\")]"))
+          .isDisplayed());
+      driver.findElement(By.xpath("//input[@aria-labelledby=\"quote-toggle-off\"]"))
+          .getAttribute("aria-checked")
+          .contains("true");
+      driver.findElement(By.xpath("//input[@aria-labelledby=\"quote-toggle-on\"]"))
+          .getAttribute("aria-checked")
+          .contains("false");
+    } catch (Exception e) {
+      AssertUtils.fail("MOE - Web element not found!");
+    }
+  }
+
+  private String populateCustomerInfoAndSendQuoteDTC(String emailID, Names names) {
+    Util.printInfo("MOE - Send Quote");
+
+    // Ppen Quote section
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("document.getElementById('quote-radio').click()");
+    moePage.waitForPageToLoad();
+
+    AssertUtils.assertTrue(driver
+        .findElement(By.xpath("//h3[contains(text(),\"Quote contact information\")]"))
+        .isDisplayed());
+
+    // Clean first and last name fields due to bug then enter data
+    String firstNameXpath = moePage.getFirstFieldLocator("moeQuoteFirstNameField");
+    String lastNameXpath = moePage.getFirstFieldLocator("moeQuoteLastNameField");
+
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
+    driver.findElement(By.xpath(firstNameXpath)).sendKeys(names.firstName);
+
+    Util.sleep(1000);
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
+    driver.findElement(By.xpath(lastNameXpath)).sendKeys(names.lastName);
+
+    moePage.populateField("moeQuoteAddressField", "149 Penn Rd");
+    moePage.populateField("moeQuoteCityField", "Silverdale");
+    moePage.populateField("moeQuoteStateField", "WA");
+    moePage.populateField("moeQuotePostalCodeField", "98315");
+    moePage.populateField("moeQuotePhoneNumberField", "1234567890");
+    moePage.populateField("moeQuoteCompanyField", "Autodesk Quote");
+
+    moeQuoteEnterExpirationData();
+
+    moePage.populateField("moeQuotePrimaryEmail", emailID);
+    moePage.populateField("moeQuoteSecondaryEmail", "test-" + emailID);
+
+    moePage.click("moeSendQuote");
+
+    // Get quote number from the page
+    String quoteNumber = moePage.getValueFromGUI("moeQuoteNumber");
+    Util.printInfo("Quote number is: " + quoteNumber);
+
+    moePage.waitForPageToLoad();
+
+    Util.printInfo("MOE - Quote sent");
+
+    return quoteNumber;
+  }
+
+  private void moeQuoteEnterExpirationData() {
+    Util.printInfo("MOE - Enter Expiration date");
+
+    DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
+    Date date1 = new Date();
+    String currentYear = dateFormat1.format(date1);
+
+    DateFormat dateFormat2 = new SimpleDateFormat("MMdd");
+    Date date2 = new Date();
+    String currentMonthDay = dateFormat2.format(date2);
+
+    Util.sleep(2000);
+    WebElement webElement = driver.findElement(
+        By.xpath("//input[@id=\"moe--quote--expiration-date\"]"));
+    webElement.sendKeys(currentYear);
+    webElement.sendKeys(Keys.TAB);
+    webElement.sendKeys(currentMonthDay);
+    Util.sleep(2000);
   }
 
   @Step("Login to Portal with user account")
