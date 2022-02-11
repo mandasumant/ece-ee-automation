@@ -39,13 +39,17 @@ public class PelicanTestBase {
   public static Response createRefundOrder(String baseUrl, Map<String, String> header) {
 
     JSONObject requestParams = new JSONObject();
-    requestParams.put("orderEvent", "REFUND");
-
-    Response response = RestAssured.given().headers(header).body(requestParams).put(baseUrl);
+    requestParams.put("requestedBy", "462719");
+    requestParams.put("event", "REFUND_REQUEST");
+    requestParams.put("operation", "ORDER_UPDATED");
+    requestParams.put("subOperation", "REFUND_REQUEST_PROCESSED");
+    Util.printInfo("Refund URL: " + baseUrl);
+    Util.printInfo("Request Body: " + requestParams.toJSONString());
+    Response response = RestAssured.given().headers(header).body(requestParams.toJSONString()).post(baseUrl);
     Util.printInfo(response.asString());
 
     int statusCode = response.getStatusCode();
-    if (statusCode != 200) {
+    if (statusCode != 201) {
       String result = response.getBody().asString();
       Util.PrintInfo(BICECEConstants.RESULT + result);
       JsonPath js = new JsonPath(result);
@@ -271,7 +275,7 @@ public class PelicanTestBase {
       filters.put("filters", orders);
     } else {
       JSONObject emailId = new JSONObject();
-      emailId.put("emailId", data.get(BICECEConstants.emailid));
+      emailId.put("email", data.get(BICECEConstants.emailid));
       filters.put("filters", emailId);
     }
 
@@ -302,7 +306,7 @@ public class PelicanTestBase {
   }
 
   @Step("Create Refund Order" + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createRefundOrder(HashMap<String, String> data) {
+  public void createRefundOrder(HashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
 
     String purchaseOrderDetailsUrl = data.get("putPelicanRefundOrderUrl");
@@ -329,16 +333,6 @@ public class PelicanTestBase {
     Response response = createRefundOrder(getPurchaseOrderDetailsUrl, header);
     String result = response.getBody().asString();
     Util.PrintInfo(BICECEConstants.RESULT + result);
-    JsonPath js = new JsonPath(result);
-
-    results.put("refund_orderState", js.get("orderState"));
-    results.put("refund_fulfillmentStatus", js.get("fulfillmentStatus"));
-    results.put("refund_paymentMethodType", js.get("billingInfo.paymentMethodType"));
-    results.put("refund_finalExportControlStatus", js.get("finalExportControlStatus"));
-    results.put("refund_uiInitiatedGetOrders", Boolean.toString(js.get("uiInitiatedGetOrders")));
-    results.put("refund_lineItemState", js.get("lineItems[0].lineItemState"));
-
-    return results;
   }
 
   private String getPriceByPriceIdSignature(HashMap<String, String> data) {
@@ -383,38 +377,27 @@ public class PelicanTestBase {
           jp.get("content[0].payments[0].paymentProfileId").toString());
       results.put("getPOReponse_fulfillmentStatus",
           jp.get("content[0].lineItems[0].fulfillmentStatus").toString());
-
-      if (!productName.equals(BICECEConstants.CLDCR_PLC)) {
-        results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
-        results.put("getPOReponse_storeExternalKey",
-            jp.get("content[0].storeExternalKey").toString());
-        results.put("getPOReponse_orderState", jp.get("content[0].orderState").toString());
-        results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
-            jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionId").toString());
-        results.put("getPOReponse_subscriptionPeriodStartDate",
-            jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodStartDate")
-                .toString());
-        results.put("getPOReponse_subscriptionPeriodEndDate",
-            jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodEndDate")
-                .toString());
-        results.put("getPOReponse_fulfillmentDate",
-            jp.get("content[0].lineItems[0].fulfillmentDate").toString());
-        results.put("getPOResponse_promotionDiscount",
-            jp.get("content[0].lineItems[0].lineItemTotals.promotionDiscount").toString());
-        results.put("getPOReponse_paymentProcessor",
-            jp.get("content[0].payments[0].paymentProcessor").toString());
-        results.put("getPOReponse_last4Digits",
-            jp.get("content[0].billingInfo.lastDigits"));
-        results.put("getPOReponse_taxCode",
-            jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey")
-                .toString());
-        results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
-      } else {
-        results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID, "NA");
-        results.put("getPOReponse_subscriptionPeriodStartDate", "NA");
-        results.put("getPOReponse_subscriptionPeriodEndDate", "NA");
-        results.put("getPOReponse_fulfillmentDate", "NA");
-      }
+      results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
+      results.put("getPOReponse_storeExternalKey",
+          jp.get("content[0].storeExternalKey").toString());
+      results.put("getPOReponse_orderState", jp.get("content[0].orderState").toString());
+      results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+          jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionId").toString());
+      results.put("getPOReponse_subscriptionPeriodStartDate",
+          jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodStartDate").toString());
+      results.put("getPOReponse_subscriptionPeriodEndDate",
+          jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodEndDate").toString());
+      results.put("getPOReponse_fulfillmentDate",
+          jp.get("content[0].lineItems[0].fulfillmentDate").toString());
+      results.put("getPOResponse_promotionDiscount",
+          jp.get("content[0].lineItems[0].lineItemTotals.promotionDiscount").toString());
+      results.put("getPOReponse_paymentProcessor",
+          jp.get("content[0].payments[0].paymentProcessor").toString());
+      results.put("getPOReponse_last4Digits",
+          jp.get("content[0].billingInfo.lastDigits"));
+      results.put("getPOReponse_taxCode",
+          jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey").toString());
+      results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
 
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details");

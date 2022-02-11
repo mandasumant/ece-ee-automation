@@ -26,6 +26,7 @@ pipeline {
     parameters {
         booleanParam(name: 'CJT' , defaultValue: false, description: 'Run CJT Regression ?')
         booleanParam(name: 'LIFT', defaultValue: false, description: 'Run LIFT Regression ?')
+        booleanParam(name: 'MOE',  defaultValue: false, description: 'Run MOE Regression ?')
     }
 
     stages {
@@ -36,7 +37,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true ||
+                            params.MOE == true
                         }
                     }
                 }
@@ -58,7 +60,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true  ||
+                            params.MOE == true
                         }
                     }
                 }
@@ -84,7 +87,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true ||
+                            params.MOE == true
                         }
                     }
                 }
@@ -131,7 +135,7 @@ pipeline {
                                                               '{"displayname":"Add seats from GUAC","testcasename":"validateBicAddSeats","description":"Add seats from GUAC","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-guac-addseats","testMethod":"validateBicAddSeats","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC order Flex","testcasename":"validateBicFlexOrder","description":"BiC order Flex","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder","testMethod":"validateBicFlexOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"META order","testcasename":"validateBicMetaOrder","description":"META order","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-metaorder","testMethod":"validateBicMetaOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname": "MOE order", "testcasename": "validateBicNativeOrderMoe", "description": "MOE order", "os": "windows", "testClass": "com.autodesk.ece.bic.testsuites.BICOrderCreation", "testGroup": "bic-nativeorder-moe", "testMethod": "validateBicNativeOrderMoe", "parameters": { "application": "ece" }, "testdata": { "usertype": "new", "password": "", "payment": "VISA", "store": "STORE-NAMER", "sku": "default:1", "email": "" }, "notsupportedenv": [], "wiki": "" },' +
+                                                              '{"displayname": "MOE order", "testcasename": "validateBicNativeOrderMoe", "description": "MOE order", "os": "windows", "testClass": "com.autodesk.ece.bic.testsuites.MOEOrderFlows", "testGroup": "bic-nativeorder-moe", "testMethod": "validateBicNativeOrderMoe", "parameters": { "application": "ece" }, "testdata": { "usertype": "new", "password": "", "payment": "VISA", "store": "STORE-NAMER", "sku": "default:1", "email": "" }, "notsupportedenv": [], "wiki": "" },' +
                                                               '{"displayname":"BiC refund order ACH","testcasename":"validateBicRefundOrder","description":"BiC refund order - ACH","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"ACH","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC refund order PAYPAL","testcasename":"validateBicRefundOrder","description":"BiC refund order - PAYPAL","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"PAYPAL","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC refund order VISA","testcasename":"validateBicRefundOrder","description":"BiC refund order - VISA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
@@ -191,6 +195,38 @@ pipeline {
             }
         }
 
+        stage ('GUAC MOE Regression') {
+            when {
+                branch 'master'
+                anyOf {
+//                     triggeredBy 'TimerTrigger'
+                    expression {
+                        params.MOE == true
+                    }
+                }
+            }
+            steps {
+                echo 'Initiating GUAC MOE UAT Regression'
+
+                script {
+                    def testingHubInputMap = [:]
+                    testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
+                    testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+                    testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"GAUC MOE Regression - GUAC Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                            '{"displayname": "MOE order", "testcasename": "validateBicNativeOrderMoe", "description": "MOE order", "os": "windows", "testClass": "com.autodesk.ece.bic.testsuites.MOEOrderFlows", "testGroup": "bic-nativeorder-moe", "testMethod": "validateBicNativeOrderMoe", "parameters": { "application": "ece" }, "testdata": { "usertype": "new", "password": "", "payment": "VISA", "store": "STORE-NAMER", "sku": "default:1", "email": "" }, "notsupportedenv": [], "wiki": "" }' +
+                            '],"workstreamname":"dclecjt"}'
+                    println("Starting Testing Hub API Call")
+                    if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
+                        println('Testing Hub API called successfully')
+                    } else {
+                        currentBuild.result = 'FAILURE'
+                        println('Testing Hub API call failed')
+                    }
+                }
+            }
+        }
+
         stage ('LiftForward Financing Regression') {
             when {
                 branch 'master'
@@ -211,12 +247,12 @@ pipeline {
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
                     testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"LiftForward Financing Regression - GUAC Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-                                                              '{"displayname":"BiC Native Order Financing","testcasename":"validateBicNativeOrder","description":"BiC Native Order - AU ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order Financing","testcasename":"validateBicNativeOrder","description":"BiC Native Order - US ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Financing Declined Order","testcasename":"validateBicNativeFinancingDeclinedOrder","description":"BiC Financing Order Declined ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICFinancingOrder","testGroup":"bic-financing-declined","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC PromoCode order","testcasename":"promocodeBicOrder","description":"BiC Order with PromoCoder","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderPromoCode","testGroup":"bic-promocode-order","testMethod":"promocodeBicOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"META order Financing","testcasename":"validateBicMetaOrder","description":"META order","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-metaorder","testMethod":"validateBicMetaOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC refund order Financing","testcasename":"validateBicRefundOrder","description":"BiC refund order - LIFT","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
                                                               '{"displayname":"BiC order with existing user Financing","testcasename":"validateBicReturningUser","description":"BiC order with existing user","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-returningUser","testMethod":"validateBicReturningUser","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"BiC PromoCode order Financing","testcasename":"promocodeBicOrder","description":"BiC Order with PromoCoder","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderPromoCode","testGroup":"bic-promocode-order","testMethod":"promocodeBicOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""}' +
                                                               '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore")
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
@@ -232,9 +268,10 @@ pipeline {
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
-                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"LIFT Regression - Account Portal Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-                                                              '{"displayname":"Change Payment","testcasename":"validateBICChangePaymentProfile","description":"Change Payment from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-changePayment","testMethod":"validateBICChangePaymentProfile","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
-                                                              '{"displayname":"Align Billing","testcasename":"validateAlignBilling","description":"Align 2 Subscriptions to same Renewal from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-align-billing","testMethod":"validateAlignBilling","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""}],"workstreamname":"dclecjt"}'
+                    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"LiftForward Financing - Account Portal Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                                                              '{"displayname":"Add Seats","testcasename":"validateBicAddSeatNativeOrder","description":"Add Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-addseat-native","testMethod":"validateBicAddSeatNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"MASTERCARD","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"Reduce Seats","testcasename":"validateBicReduceSeats","description":"Reduce Seats from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-reduceseats-native","testMethod":"validateBicReduceSeats","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"MASTERCARD","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"Change Payment","testcasename":"validateBICChangePaymentProfile","description":"Change Payment from Portal","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-changePayment","testMethod":"validateBICChangePaymentProfile","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},'
                     println("Starting Testing Hub API Call - accountportal")
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
                         println('Testing Hub API called successfully - accountportal')

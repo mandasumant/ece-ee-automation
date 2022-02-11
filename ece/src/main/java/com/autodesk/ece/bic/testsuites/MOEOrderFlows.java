@@ -115,11 +115,10 @@ public class MOEOrderFlows extends ECETestBase {
     validateCreateOrder(testResults);
   }
 
-
   @Test(groups = {
       "bic-quoteFlow-moe"}, description = "Validation of Create BIC Order from MOE")
   public void validateMoeQuoteOrderFlow() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<>();
+    HashMap<String, String> testResults = new HashMap<String, String>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
     HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);
     results.putAll(testDataForEachMethod);

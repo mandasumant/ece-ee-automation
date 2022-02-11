@@ -27,7 +27,7 @@ public class FinancingTestBase {
     this.testData = testData;
   }
 
-  @Step("Go through Financing APPLICATION" + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Go through Financing Application" + GlobalConstants.TAG_TESTINGHUB)
   public void completeFinancingApplication() {
    try {
      Util.printInfo("current URL : " + driver.getCurrentUrl());
@@ -68,7 +68,14 @@ public class FinancingTestBase {
      Util.printInfo("Adding Personal details ");
      finacingPage.populateField("financingContractTitle","Manager");
      finacingPage.populateField("financingContactGiven","John");
-     finacingPage.populateField("financingContactFamily","Doe");
+     if(testData.get("isDeclined") != null && testData.get("isDeclined").equals("true")){
+       finacingPage.populateField("financingContactFamily","DECLINED");
+     }else if(testData.get("isDeclined") != null && testData.get("isDeclined").equals("true")){
+       finacingPage.populateField("financingContactFamily","CANCELED");
+     }
+     else {
+       finacingPage.populateField("financingContactFamily", "Doe");
+     }
      finacingPage.clickUsingLowLevelActions("financingContactSuffix");
      finacingPage.populateField("financingPhone","8888888888");
      finacingPage.populateField("financingContactBirthDate","01/10/1991");
