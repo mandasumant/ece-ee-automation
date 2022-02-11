@@ -280,33 +280,21 @@ public class BICTestBase {
 
     try {
       int count = 0;
-      while (driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
+      while (driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
           .isDisplayed()) {
-
-        Util.printInfo("Finding the Skip button. Attempt # 1");
-        driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
+        Util.printInfo("Add seats modal is present");
+        driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]")).click();
+        Util.sleep(5000);
         count++;
-        Util.sleep(1000);
-        if (count == 3) {
-          Util.printInfo("Finding the Skip button. Tried 3 times. Exiting.");
+        if (count > 3) {
           AssertUtils.fail("Failed to find or click on Skip Add seats button.");
+          break;
         }
-        if (count == 2) {
-          Util.printInfo("Finding the Skip button. Attempt # 3");
-          driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-              .sendKeys(Keys.ESCAPE);
-        }
-        if (count == 1) {
-          Util.printInfo("Finding the Skip button. Attempt # 2");
-          driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-              .sendKeys(Keys.PAGE_DOWN);
-        }
-        Util.printInfo("count : " + count);
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      AssertUtils.fail("Failed to find or click on Skip Add seats button.");
+      Util.printInfo("Unable to skip 'Add Seats' modal");
     }
+    Util.printInfo("Add Seats modal closed!");
   }
 
   @Step("Wait for loading spinner to complete")
