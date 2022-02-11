@@ -211,6 +211,10 @@ public class BICOrderCreation extends ECETestBase {
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
+    }
+
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
@@ -256,6 +260,7 @@ public class BICOrderCreation extends ECETestBase {
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
     Util.sleep(120000);
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -324,6 +329,7 @@ public class BICOrderCreation extends ECETestBase {
               Util.customDate("MM/dd/yyyy", 0, -5, +1));
     } catch (ParseException e) {
       e.printStackTrace();
+    }
     }
   }
 

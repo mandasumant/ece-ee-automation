@@ -478,18 +478,30 @@ public class PortalTestBase {
           editSwitchTermButton.click();
         }
 
-        clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-1-year\"]");
-
+        if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+          clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-3-year\"]");
+        }else{
+          clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-1-year\"]");
+        }
         clickWithJavaScriptExecutor(javascriptExecutor, "//button[@data-wat-val=\"continue\"]");
 
+        Util.sleep(5000);
         AssertUtils.assertTrue(driver
             .findElement(By.xpath("//*[contains(text(),\"Your term change is confirmed\")]"))
             .isDisplayed());
 
-        AssertUtils.assertTrue(driver
-            .findElement(By.xpath("//*[starts-with(text(),\"1 year starting\")]"))
-            .isDisplayed());
+        Util.sleep(5000);
+        portalPage.clickUsingLowLevelActions("switchTermDone");
 
+        if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+          AssertUtils.assertTrue(driver
+              .findElement(By.xpath("//*[starts-with(text(),\"Changes to 3-year term starting\")]"))
+              .isDisplayed());
+        }else{
+          AssertUtils.assertTrue(driver
+              .findElement(By.xpath("//*[starts-with(text(),\"1 year starting\")]"))
+              .isDisplayed());
+        }
         clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
 
         //close portal window

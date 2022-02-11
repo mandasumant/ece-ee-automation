@@ -70,10 +70,9 @@ public class FinancingTestBase {
      finacingPage.populateField("financingContactGiven","John");
      if(testData.get("isDeclined") != null && testData.get("isDeclined").equals("true")){
        finacingPage.populateField("financingContactFamily","DECLINED");
-     }else if(testData.get("isDeclined") != null && testData.get("isDeclined").equals("true")){
+     }else if(testData.get("isCanceled") != null && testData.get("isCanceled").equals("true")){
        finacingPage.populateField("financingContactFamily","CANCELED");
-     }
-     else {
+     } else {
        finacingPage.populateField("financingContactFamily", "Doe");
      }
      finacingPage.clickUsingLowLevelActions("financingContactSuffix");
