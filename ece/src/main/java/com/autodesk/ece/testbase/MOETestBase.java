@@ -74,9 +74,7 @@ public class MOETestBase {
     String guacMoeResourceURL = data.get("guacMoeResourceURL");
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
 
-    String constructMoeURLWithOpptyId =
-        guacBaseURL + locale + "/"
-            + guacMoeResourceURL;
+    String constructMoeURLWithOpptyId = guacBaseURL + locale + "/" + guacMoeResourceURL;
 
     System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
 
@@ -114,7 +112,6 @@ public class MOETestBase {
     return results;
   }
 
-
   @SuppressWarnings({"static-access", "unused"})
   @Step("Navigate to MOE, add Quote and place Order" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBicOrderMoeWithQuote(LinkedHashMap<String, String> data)
@@ -138,6 +135,28 @@ public class MOETestBase {
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
+  public HashMap<String, String> createQuoteWithoutOppty(LinkedHashMap<String, String> data)
+      throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    String guacBaseURL = data.get("guacBaseURL");
+    String guacMoeResourceURL = data.get("guacMoeResourceURL");
+    String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
+
+    Names names = bicTestBase.generateFirstAndLastNames();
+    String emailID = bicTestBase.generateUniqueEmailID();
+
+    // Sales agent sends a quote to the customer from DTC page
+    String quoteNumber = sendQuoteFromDtcPage(data, guacBaseURL, locale, emailID, names);
+
+    // Confirm if quote is correctly saved against user's email address
+    assertQuoteIsSavedForUser(names, guacBaseURL, guacMoeResourceURL, locale, emailID, quoteNumber);
+
+    results.put(BICConstants.emailid, emailID);
+    results.put("quoteNumber", quoteNumber);
 
     return results;
   }
@@ -245,6 +264,66 @@ public class MOETestBase {
     return orderNumber;
   }
 
+  private String sendQuoteFromDtcPage(LinkedHashMap<String, String> data, String guacBaseURL,
+      String locale, String emailID, Names names) throws MetadataException {
+    // construct MOE DTC URL
+    String guacMoeDTCURL = data.get("guacMoeDTCURL");
+    String constructMoeDtcUrl = guacBaseURL + locale + "/" + guacMoeDTCURL;
+    System.out.println("constructMoeURL " + constructMoeDtcUrl);
+
+    //navigate to DTC Url
+    bicTestBase.getUrl(constructMoeDtcUrl);
+
+    loginToMoe();
+
+    //click on Continue button to proceed to cart
+    moePage.clickUsingLowLevelActions("moeDtcContinueBtn");
+
+    //Search dor product from the Search bar in cart section and add the product to cart.
+    moePage.waitForField("moeSearchBar", true, 1000);
+    moePage.populateField("moeSearchBar", "3ds Max");
+    moePage.clickUsingLowLevelActions("moe3dsMaxMonthly");
+
+    // Sales agent should see the toggle that allows them to switch between 'Order' and 'Quote' view.
+    validateOrderDefaultViewDtc();
+
+    //In 'Quote' view, with product(s) added to cart, agent should be able to fill in the Contact Information,expiration date, primary email ID, secondary email ID for the customer.
+    String quoteNumber = populateCustomerInfoAndSendQuoteDTC(emailID, names);
+
+    // Once clicked, Agent should see the read-only view of the contact and quote details and the CTA should change from 'Send quote' to 'Resend quote'.
+    validateQuoteReadOnlyView();
+
+    //TODO: The customer should get an email with the quote attached as a PDF.
+    //TODO: If agent clicks on 'Resend quote' CTA, customer should get the email again with the quote attached as PDF. Currently does not work due to bug.
+
+    return quoteNumber;
+  }
+
+
+  private void assertQuoteIsSavedForUser(Names names, String guacBaseURL,
+      String guacMoeResourceURL,
+      String locale, String emailID, String quoteNumber)
+      throws MetadataException {
+    // construct MOE URL with an OpptyId. Will need to replace/hardcode some OpptyId once we merge Sumant's story.
+    String constructMoeURLWithOpptyId = guacBaseURL + locale + "/" + guacMoeResourceURL;
+    System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
+
+    // navigate to Url with OpptyId
+    bicTestBase.getUrl(constructMoeURLWithOpptyId);
+
+    // Relogin
+    moePage.clickUsingLowLevelActions("moeReLoginLink");
+    moePage.waitForPageToLoad();
+
+    // Enter email address which we used to send a quote to on DTC page
+    emulateUser(emailID, names);
+
+    // assert that the quote is the same as we generated on DTC page
+    String actualQuoteNumber = moePage.getValueFromGUI("moeQuoteNumber");
+    AssertUtils.assertEquals("Quote number is correctly saved against the user.", actualQuoteNumber,
+        quoteNumber);
+  }
+
   private void loginToMoe() {
     Util.printInfo("MOE - Re-Login");
     if (moePage.isFieldVisible("moeReLoginLink")) {
@@ -304,6 +383,23 @@ public class MOETestBase {
       moePage.click("moeModalCloseBtn");
     }
     Util.printInfo("Successfully emulated user");
+  }
+
+  private void validateOrderDefaultViewDtc() {
+    Util.printInfo("MOE - Order view");
+    try {
+      AssertUtils.assertTrue(driver
+          .findElement(By.xpath(".//h5[contains(text(),\"3ds Max\")]"))
+          .isDisplayed());
+      driver.findElement(By.xpath("//input[@aria-labelledby=\"quote-toggle-off\"]"))
+          .getAttribute("aria-checked")
+          .contains("true");
+      driver.findElement(By.xpath("//input[@aria-labelledby=\"quote-toggle-on\"]"))
+          .getAttribute("aria-checked")
+          .contains("false");
+    } catch (Exception e) {
+      AssertUtils.fail("MOE - Web element not found!");
+    }
   }
 
   private void validateOrderDefaultView() {
@@ -379,6 +475,54 @@ public class MOETestBase {
     moePage.waitForPageToLoad();
 
     Util.printInfo("MOE - Quote sent");
+  }
+
+  private String populateCustomerInfoAndSendQuoteDTC(String emailID, Names names) {
+    Util.printInfo("MOE - Send Quote");
+
+    // open Quote section
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("document.getElementById('quote-radio').click()");
+    moePage.waitForPageToLoad();
+
+    AssertUtils.assertTrue(driver
+        .findElement(By.xpath("//h3[contains(text(),\"Quote contact information\")]"))
+        .isDisplayed());
+
+    // Clean first and last name fields due to bug then enter data
+    String firstNameXpath = moePage.getFirstFieldLocator("moeQuoteFirstNameField");
+    String lastNameXpath = moePage.getFirstFieldLocator("moeQuoteLastNameField");
+
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
+    driver.findElement(By.xpath(firstNameXpath)).sendKeys(names.firstName);
+
+    Util.sleep(1000);
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
+    driver.findElement(By.xpath(lastNameXpath)).sendKeys(names.lastName);
+
+    moePage.populateField("moeQuoteAddressField", "149 Penn Rd");
+    moePage.populateField("moeQuoteCityField", "Silverdale");
+    moePage.populateField("moeQuoteStateField", "WA");
+    moePage.populateField("moeQuotePostalCodeField", "98315");
+    moePage.populateField("moeQuotePhoneNumberField", "1234567890");
+    moePage.populateField("moeQuoteCompanyField", "Autodesk Quote");
+
+    moeQuoteEnterExpirationData();
+
+    moePage.populateField("moeQuotePrimaryEmail", emailID);
+    moePage.populateField("moeQuoteSecondaryEmail", "test-" + emailID);
+
+    moePage.click("moeSendQuote");
+
+    //get quote number from the page
+    String quoteNumber = moePage.getValueFromGUI("moeQuoteNumber");
+    Util.printInfo("Quote number is: " + quoteNumber);
+
+    moePage.waitForPageToLoad();
+
+    Util.printInfo("MOE - Quote sent");
+
+    return quoteNumber;
   }
 
   private void moeQuoteEnterExpirationData() {
