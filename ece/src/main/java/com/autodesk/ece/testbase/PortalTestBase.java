@@ -1128,7 +1128,7 @@ public class PortalTestBase {
       driver.switchTo().defaultContent();
       Util.sleep(2000);
       driver.switchTo().frame(securityCodeFrame);
-      Util.printInfo("Entering seciruty code : " + paymentCardDetails[3]);
+      Util.printInfo("Entering security code : " + paymentCardDetails[3]);
       Util.sleep(2000);
       BICTestBase.bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
       driver.switchTo().defaultContent();
