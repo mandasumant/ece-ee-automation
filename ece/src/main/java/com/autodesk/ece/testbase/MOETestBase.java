@@ -70,7 +70,7 @@ public class MOETestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     Map<String, String> address = null;
-    // construct MOE URL with opptyId
+    // Construct MOE URL with opptyId
     String guacBaseURL = data.get("guacBaseURL");
     String guacMoeResourceURL = data.get("guacMoeResourceURL");
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
@@ -81,7 +81,7 @@ public class MOETestBase {
 
     System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
 
-    //navigate to Url
+    // Navigate to Url
     bicTestBase.getUrl(constructMoeURLWithOpptyId);
     bicTestBase.disableChatSession();
 
@@ -89,18 +89,18 @@ public class MOETestBase {
 
     loginToMoe();
 
-    //Perform account lookup for the customer's email address that will show as 'account not found'.
+    // Perform account lookup for the customer's email address that will show as 'account not found'.
     Names names = bicTestBase.generateFirstAndLastNames();
     String emailID = bicTestBase.generateUniqueEmailID();
     emulateUser(emailID, names);
 
-    //TODO: Validate that the product that's added by default to GUAC MOE cart matches with the line items that are part of the Opportunity (passed to GUAC as part of get Opty call).
+    // TODO: Validate that the product that's added by default to GUAC MOE cart matches with the line items that are part of the Opportunity (passed to GUAC as part of get Opty call).
 
     // TODO: Validate that the address fields that are pre-filled in the payment section matches the address that's in the Opportunity in salesforce (passed to GUAC as part of get Opty call).
 
     // TODO: Order is successfully placed in backend systems. Validate that the order origin for this order is GUAC_MOE_DIRECT
 
-    //Populate Billing info and save payment profile
+    // Populate Billing info and save payment profile
     address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
@@ -139,6 +139,11 @@ public class MOETestBase {
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
+
+    // Jira ref.: ECEEPLT-1489
+    // TODO: Validate that submitted order have order origin value as GUAC_MOE_DIRECT.
+    // TODO: Validate that the Pelican Finance Report mention the Quote ID from the order that was placed.
+    // TODO: Validate that the Opty get closed in SFDC.
 
     return results;
   }
@@ -207,17 +212,6 @@ public class MOETestBase {
         .split("@");
     bicTestBase.debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
 
-    // Get Payment details
-    bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
-
-    // Enter billing details
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
-        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
-      bicTestBase.debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
-      bicTestBase.populateBillingAddress(address, data);
-      bicTestBase.debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
-    }
-
     bicTestBase.getUrl(constructGuacMoeURL);
 
     loginToMoe();
@@ -232,7 +226,7 @@ public class MOETestBase {
 
     validateQuoteReadOnlyView();
 
-    addNewProductAndSendQuote(emailID);
+    addNewProductWithQuoteDetailsAndSend(emailID);
 
     selectQuoteElementFromDropdown();
 
@@ -254,6 +248,7 @@ public class MOETestBase {
     return orderNumber;
   }
 
+  @Step("Login to MOE")
   private void loginToMoe() {
     Util.printInfo("Re-Login");
     if (moePage.isFieldVisible("moeReLoginLink")) {
@@ -278,6 +273,7 @@ public class MOETestBase {
     Util.printInfo("Successfully logged into MOE");
   }
 
+  @Step("Save payment profile and submit order")
   private String savePaymentProfileAndSubmitOrder(LinkedHashMap<String, String> data,
       Map<String, String> address, String[] paymentCardDetails) {
     bicTestBase.populateBillingAddress(address, data);
@@ -293,6 +289,7 @@ public class MOETestBase {
     return bicTestBase.submitGetOrderNumber(data);
   }
 
+  @Step("Emulate user")
   private void emulateUser(String emailID, Names names) throws MetadataException {
     Util.printInfo("Emulate User");
     moePage.click("moeAccountLookupEmail");
@@ -302,13 +299,13 @@ public class MOETestBase {
     if (moePage.checkIfElementExistsInPage("moeContinueBtn", 10)) {
       moePage.click("moeContinueBtn");
     } else {
-      //enter first and last names
+      // Enter first and last names
       moePage.populateField("moeUserFirstNameField", names.firstName);
       moePage.populateField("moeUserLastNameField", names.lastName);
-      //click send account setup invite
+      // Click send account setup invite
       moePage.click("moeSendSetupInviteBtn");
       moePage.waitForPageToLoad();
-      //close account setup invite sent  popup modal
+      // Close account setup invite sent  popup modal
       moePage.click("moeModalCloseBtn");
     }
     moePage.waitForPageToLoad();
@@ -323,10 +320,11 @@ public class MOETestBase {
     validateProductName("3ds Max");
   }
 
+  @Step("Validate product name")
   private void validateProductName(String title) {
     Util.printInfo("Validate product added");
 
-    //TODO: replace static data with product name added in Salesforce while creating the optyId
+    // TODO: replace static data with product name added in Salesforce while creating the optyId
     String productTitle = driver.findElement(By.xpath(
             "//h5[@class=\"checkout--product-bar--info-column--name-sub-column--name wd-mr-24\"]"))
         .getText();
@@ -334,6 +332,7 @@ public class MOETestBase {
     AssertUtils.assertEquals(title, productTitle);
   }
 
+  @Step("Validate Quote toggle default view")
   private void validateQuoteToggleDefaultView() {
     Util.printInfo("Validate Quote toggle default view");
     try {
@@ -349,10 +348,11 @@ public class MOETestBase {
     }
   }
 
+  @Step("Populate Quote details and send")
   private void populateQuoteDetailsAndSend(String emailID) {
     Util.printInfo("Populate Quote details and send");
 
-    // open Quote section
+    // Open Quote section
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("document.getElementById('quote-radio').click()");
     moePage.waitForPageToLoad();
@@ -373,6 +373,7 @@ public class MOETestBase {
     sendQuote();
   }
 
+  @Step("Select Quote from dropdown list")
   private void selectQuoteElementFromDropdown() {
     Util.printInfo("Select Quote");
     try {
@@ -406,7 +407,7 @@ public class MOETestBase {
     Util.printInfo("Click on 'Send quote' cta");
     moePage.click("moeSendQuote");
     bicTestBase.waitForLoadingSpinnerToComplete();
-    //TODO: add try catch block to validate if error modal loaded
+    // TODO: add try catch block to validate if error modal loaded
     try {
       AssertUtils.assertTrue(driver
           .findElement(By.xpath("//button/span[contains(text(),\"Resend quote\")]"))
@@ -416,6 +417,7 @@ public class MOETestBase {
     }
   }
 
+  @Step("Validate Quote section from read only view")
   private void validateQuoteReadOnlyView() {
     Util.printInfo("Validate Quote Read only view");
     try {
@@ -461,7 +463,8 @@ public class MOETestBase {
     }
   }
 
-  private void addNewProductAndSendQuote(String emailID) {
+  @Step("Add new product with Quote details and send")
+  private void addNewProductWithQuoteDetailsAndSend(String emailID) {
     emptyCart();
 
     addProductFromSearchResult();
@@ -475,6 +478,7 @@ public class MOETestBase {
     validateQuoteReadOnlyView();
   }
 
+  @Step("Login to Portal with user account")
   private void loginToPortalWithUserAccount(LinkedHashMap<String, String> data, String emailID,
       String password) {
     // Navigate to Portal, logout from service account session and log back in with user account

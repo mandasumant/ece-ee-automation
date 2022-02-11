@@ -284,7 +284,7 @@ public class BICTestBase {
           .isDisplayed()) {
         Util.printInfo("Add seats modal is present");
         driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]")).click();
-        Util.sleep(5000);
+        Util.sleep(3000);
         count++;
         if (count > 3) {
           AssertUtils.fail("Failed to find or click on Skip Add seats button.");
@@ -294,7 +294,6 @@ public class BICTestBase {
     } catch (Exception e) {
       Util.printInfo("Unable to skip 'Add Seats' modal");
     }
-    Util.printInfo("Add Seats modal closed!");
   }
 
   @Step("Wait for loading spinner to complete")
@@ -1296,7 +1295,7 @@ public class BICTestBase {
 
     data.putAll(names.getMap());
 
-    //Apply promo if exists
+    // Apply promo if exists
     if (promocode != null && !promocode.isEmpty()) {
       populatePromoCode(promocode, data);
     }
@@ -1436,6 +1435,8 @@ public class BICTestBase {
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
+
+    Util.sleep(3000);
 
     // If the submit button is disabled, fill the payment information out again
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
