@@ -180,17 +180,6 @@ public class MOETestBase {
         .split("@");
     bicTestBase.debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
 
-    // Get Payment details
-    bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
-
-    // Enter billing details
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
-        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
-      bicTestBase.debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
-      bicTestBase.populateBillingAddress(address, data);
-      bicTestBase.debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
-    }
-
     bicTestBase.getUrl(constructGuacMoeURL);
     loginToMoe();
     emulateUser(emailID, names);
