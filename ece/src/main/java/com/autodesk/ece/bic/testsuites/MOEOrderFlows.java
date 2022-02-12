@@ -107,15 +107,10 @@ public class MOEOrderFlows extends ECETestBase {
   public void validateMoeOpportunityFlow() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
-    HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);
+    HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     validateTestResults(testResults, results);
-
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-    updateTestingHub(testResults);
 
     validateCreateOrder(testResults);
   }

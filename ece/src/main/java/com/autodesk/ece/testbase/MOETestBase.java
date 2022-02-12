@@ -438,7 +438,7 @@ public class MOETestBase {
     moePage.populateField("moeQuoteStateField", "WA");
     moePage.populateField("moeQuotePhoneNumberField", "1234567890");
 
-    setExpirationData();
+    setExpirationDate();
 
     moePage.populateField("moeQuoteSecondaryEmail", "test-" + emailID);
 
@@ -457,7 +457,7 @@ public class MOETestBase {
     }
   }
 
-  private void setExpirationData() {
+  private void setExpirationDate() {
     Util.printInfo("Enter expiration date");
 
     DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
@@ -560,7 +560,6 @@ public class MOETestBase {
     AssertUtils.assertTrue(3 == size);
   }
 
-  @Step("Login to Portal with user account")
   private void validateOrderDefaultViewDtc() {
     Util.printInfo("MOE - Order view");
     try {
@@ -581,7 +580,7 @@ public class MOETestBase {
   private String populateCustomerInfoAndSendQuoteDTC(String emailID, Names names) {
     Util.printInfo("MOE - Send Quote");
 
-    // Ppen Quote section
+    // Open Quote section
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("document.getElementById('quote-radio').click()");
     moePage.waitForPageToLoad();
@@ -608,7 +607,7 @@ public class MOETestBase {
     moePage.populateField("moeQuotePhoneNumberField", "1234567890");
     moePage.populateField("moeQuoteCompanyField", "Autodesk Quote");
 
-    moeQuoteEnterExpirationData();
+    setExpirationDate();
 
     moePage.populateField("moeQuotePrimaryEmail", emailID);
     moePage.populateField("moeQuoteSecondaryEmail", "test-" + emailID);
@@ -624,26 +623,6 @@ public class MOETestBase {
     Util.printInfo("MOE - Quote sent");
 
     return quoteNumber;
-  }
-
-  private void moeQuoteEnterExpirationData() {
-    Util.printInfo("MOE - Enter Expiration date");
-
-    DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
-    Date date1 = new Date();
-    String currentYear = dateFormat1.format(date1);
-
-    DateFormat dateFormat2 = new SimpleDateFormat("MMdd");
-    Date date2 = new Date();
-    String currentMonthDay = dateFormat2.format(date2);
-
-    Util.sleep(2000);
-    WebElement webElement = driver.findElement(
-        By.xpath("//input[@id=\"moe--quote--expiration-date\"]"));
-    webElement.sendKeys(currentYear);
-    webElement.sendKeys(Keys.TAB);
-    webElement.sendKeys(currentMonthDay);
-    Util.sleep(2000);
   }
 
   @Step("Login to Portal with user account")
