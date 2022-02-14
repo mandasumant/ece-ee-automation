@@ -268,6 +268,7 @@ public class MOETestBase {
     return orderNumber;
   }
 
+  @Step("Create a quote and send to the customer from MOE DTC page.")
   private String sendQuoteFromDtcPage(LinkedHashMap<String, String> data, String guacBaseURL,
       String locale, String emailID, Names names) throws MetadataException {
     // Construct MOE DTC URL
@@ -297,6 +298,7 @@ public class MOETestBase {
     return quoteNumber;
   }
 
+  @Step("Assert that quote created on DTC page is reflected on OpptyId page for the same customer.")
   private void assertQuoteIsSavedForUser(Names names, String guacBaseURL,
       String guacMoeResourceURL,
       String locale, String emailID, String quoteNumber)
@@ -560,6 +562,7 @@ public class MOETestBase {
     AssertUtils.assertTrue(3 == size);
   }
 
+  @Step("Validate default order view.")
   private void validateOrderDefaultViewDtc() {
     Util.printInfo("MOE - Order view");
     try {
@@ -577,6 +580,7 @@ public class MOETestBase {
     }
   }
 
+  @Step("Add customer info in the quote section and send a quote.")
   private String populateCustomerInfoAndSendQuoteDTC(String emailID, Names names) {
     Util.printInfo("MOE - Send Quote");
 
@@ -612,7 +616,7 @@ public class MOETestBase {
     moePage.populateField("moeQuotePrimaryEmail", emailID);
     moePage.populateField("moeQuoteSecondaryEmail", "test-" + emailID);
 
-    moePage.click("moeSendQuote");
+    sendQuote();
 
     // Get quote number from the page
     String quoteNumber = moePage.getValueFromGUI("moeQuoteNumber");
