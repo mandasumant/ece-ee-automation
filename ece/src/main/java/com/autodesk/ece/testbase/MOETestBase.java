@@ -10,6 +10,11 @@ import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -270,15 +275,9 @@ public class MOETestBase {
 
   private String sendQuoteFromDtcPage(LinkedHashMap<String, String> data, String guacBaseURL,
       String locale, String emailID, Names names) throws MetadataException {
-    // Construct MOE DTC URL
-    String guacMoeDTCURL = data.get("guacMoeDTCURL");
-    String constructMoeDtcUrl = guacBaseURL + locale + "/" + guacMoeDTCURL;
-    System.out.println("constructMoeURL " + constructMoeDtcUrl);
+    navigateToMoeDtcUrl(data, guacBaseURL, locale);
 
-    bicTestBase.getUrl(constructMoeDtcUrl);
-
-    loginToMoe();
-    moePage.clickUsingLowLevelActions("moeDtcContinueBtn");
+    proceedToDtcCartSection();
 
     addProductFromSearchResult();
 
@@ -291,7 +290,6 @@ public class MOETestBase {
     // CTA should change from 'Send quote' to 'Resend quote'
     validateQuoteReadOnlyView();
 
-    //TODO: The customer should get an email with the quote attached as a PDF.
     //TODO: If agent clicks on 'Resend quote' CTA, customer should get the email again with the quote attached as PDF. Currently does not work due to bug.
 
     return quoteNumber;
@@ -632,5 +630,42 @@ public class MOETestBase {
     String constructPortalUrl = data.get("cepURL");
     bicTestBase.getUrl(constructPortalUrl);
     bicTestBase.loginToOxygen(emailID, password);
+  }
+
+  private void navigateToMoeDtcUrl(LinkedHashMap<String, String> data, String guacBaseURL,
+      String locale) {
+    String guacMoeDTCURL = data.get("guacMoeDTCURL");
+    String constructMoeDtcUrl = guacBaseURL + locale + "/" + guacMoeDTCURL;
+    System.out.println("constructMoeURL " + constructMoeDtcUrl);
+    bicTestBase.getUrl(constructMoeDtcUrl);
+  }
+
+  private void proceedToDtcCartSection() throws MetadataException {
+    loginToMoe();
+    moePage.clickUsingLowLevelActions("moeDtcContinueBtn");
+  }
+
+  @Step("Click on Copy Cart link and return the value from clipboard.")
+  private String copyCartLinkFromClipboard()
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    moePage.clickUsingLowLevelActions("moeCopyCartLink");
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    String copyCartLink = (String) clipboard.getData(DataFlavor.stringFlavor);
+    Util.printInfo("Copied URL is " + copyCartLink);
+    return copyCartLink;
+  }
+
+  @Step("Login to Checkout page as a customer.")
+  private void loginToCheckoutWithUserAccount(String emailID, Names names,
+      String password, String copyCartLink) {
+    // Navigate to Copy Cart URL
+    bicTestBase.getUrl(copyCartLink);
+    moePage.waitForPageToLoad();
+
+    // Sign out from sales agent account
+    bicTestBase.signOutFromCheckoutPage();
+
+    // Create new user and sign in
+    bicTestBase.createBICAccount(names, emailID, password);
   }
 }
