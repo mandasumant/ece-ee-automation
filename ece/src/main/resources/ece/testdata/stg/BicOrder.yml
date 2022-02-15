@@ -16,6 +16,7 @@ default:
   guacResourceURL: "checkout?priceIds="
   productsPath: "/products/"
   guacMoeResourceURL: "manual-order-entry?optyId=A-1776440"
+  guacMoeDTCURL: "manual-order-entry-dtc"
   productName: "3ds-max"
   US: "en-US/"
   CANADA_FRENCH: "fr-CA/"
@@ -318,6 +319,10 @@ validateMoeOpportunityFlow:
   bicNativePriceID: *bicNativePriceID
 
 validateMoeQuoteOrderFlow:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+
+validateMoeQuoteDtcFlow:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 

@@ -87,7 +87,7 @@ public class MOEOrderFlows extends ECETestBase {
   @Test(groups = {
       "bic-nativeorder-moe"}, description = "Validation of Create BIC Order from MOE")
   public void validateBicNativeOrderMoe() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
     HashMap<String, String> results = moetb.createBicOrderMoe(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -111,6 +111,21 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     validateTestResults(testResults, results);
+
+    validateCreateOrder(testResults);
+  }
+
+  @Test(groups = {
+      "bic-quotedtc-moe"}, description = "Sales agent sends quote from DTC page")
+  public void validateMoeQuoteDtcFlow() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+    HashMap<String, String> results = moetb.createQuoteWithoutOppty(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+
+    updateTestingHub(testResults);
 
     validateCreateOrder(testResults);
   }
