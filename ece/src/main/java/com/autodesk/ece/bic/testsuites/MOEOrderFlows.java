@@ -150,6 +150,25 @@ public class MOEOrderFlows extends ECETestBase {
     validateCreateOrder(testResults);
   }
 
+  @Test(groups = {
+      "bic-basicFlowDtc-moe"}, description = "Customer submits an order via Copy cart link generated on DTC page")
+  public void validateMoeDtcFlow()
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    HashMap<String, String> testResults = new HashMap<>();
+    MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+    HashMap<String, String> results = moetb.createBicOrderMoeDTC(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    validateTestResults(testResults, results);
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(testResults);
+
+    validateCreateOrder(testResults);
+  }
+
   private void validateTestResults(HashMap<String, String> testResults,
       HashMap<String, String> results) {
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

@@ -175,6 +175,50 @@ public class MOETestBase {
     return results;
   }
 
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Place order via Copy cart link generated on DTC page" + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createBicOrderMoeDTC(LinkedHashMap<String, String> data)
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    //TODO: Start from the Salesforce's LC Home page where there's a link for 'Direct to cart'.
+
+    HashMap<String, String> results = new HashMap<>();
+    Map<String, String> address = null;
+    String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
+    String password = data.get(BICECEConstants.PASSWORD);
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    String guacBaseURL = data.get("guacBaseURL");
+    navigateToMoeDtcUrl(data, guacBaseURL, locale);
+
+    proceedToDtcCartSection();
+
+    addProductFromSearchResult();
+
+    String copyCartLink = copyCartLinkFromClipboard();
+
+    Names names = bicTestBase.generateFirstAndLastNames();
+    data.putAll(names.getMap());
+    String emailID = bicTestBase.generateUniqueEmailID();
+
+    loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
+
+    String region = data.get(BICECEConstants.REGION);
+    address = bicTestBase.getBillingAddress(region);
+
+    bicTestBase.enterBillingDetails(data, address, paymentMethod, region);
+
+    String orderNumber = bicTestBase.submitGetOrderNumber(data);
+    bicTestBase.printConsole(copyCartLink, orderNumber, emailID, address, names.firstName,
+        names.lastName,
+        paymentMethod);
+
+    // TODO: Validate that submitted order have order origin value as GUAC_MOE_DTC.
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
   private String getBicOrderMoe(LinkedHashMap<String, String> data, String emailID,
       String guacBaseURL, String guacMoeResourceURL, String locale, String password,
       String paymentMethod) throws MetadataException {
