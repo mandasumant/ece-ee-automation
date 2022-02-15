@@ -159,6 +159,7 @@ public class BICTestBase {
 
   @Step("Create BIC account")
   public void createBICAccount(Names names, String emailID, String password) {
+    Util.printInfo("Switching to User login frame");
     switchToBICCartLoginPage();
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
     bicPage.waitForField("createNewUserGUAC", true, 30000);
@@ -233,7 +234,6 @@ public class BICTestBase {
   }
 
   private void switchToBICCartLoginPage() {
-    Util.sleep(10000);
     List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
     driver.switchTo().frame(element);

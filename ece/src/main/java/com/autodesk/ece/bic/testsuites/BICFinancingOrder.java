@@ -85,11 +85,38 @@ public class BICFinancingOrder extends ECETestBase {
     testDataForEachMethod.put("paymentType", paymentType);
   }
 
-  @Test(groups = {"bic-financing-declined"}, description = "Validation of Create BIC Hybrid Order")
+  @Test(groups = {"bic-financing-declined"}, description = "Validation of LiftForward Declined Order")
   public void validateBicNativeFinancingDeclinedOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     testDataForEachMethod.put("isDeclined", "true");
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
+
+    results.putAll(testDataForEachMethod);
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    updateTestingHub(testResults);
+
+    Util.sleep(120000);
+
+    // Getting a PurchaseOrder details from pelican
+    String purchaseOrderAPIResponse = pelicantb.getPurchaseOrder(results);
+    JsonPath jp = new JsonPath(purchaseOrderAPIResponse);
+
+    AssertUtils.assertTrue(jp.get("content[0].id") != null);
+    AssertUtils.assertTrue(jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionId") == null);
+    AssertUtils.assertEquals(jp.get("content[0].orderState"),"DECLINED");
+    AssertUtils.assertEquals(jp.get("content[0].payments[0].paymentProcessor"),"LIFTFORWARD");
+
+    updateTestingHub(testResults);
+
+  }
+
+  @Test(groups = {"bic-financing-canceled"}, description = "Validation of  LiftForward BIC Cancel Order")
+  public void validateBicNativeFinancingCanceledOrder() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
+    testDataForEachMethod.put("isCanceled", "true");
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
 

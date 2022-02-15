@@ -351,3 +351,7 @@ validateRenewBicOrder:
 validateBicNativeFinancingDeclinedOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
+
+validateBicNativeFinancingCanceledOrder:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
