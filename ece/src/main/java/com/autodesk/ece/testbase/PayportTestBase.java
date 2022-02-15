@@ -69,6 +69,7 @@ public class PayportTestBase {
       String jsonFile = Objects.requireNonNull(
           classLoader.getResource("ece/payload/payportRenewPurchase.json")).getPath();
       String payload = LoadJsonWithValue.loadJson(dataSet, jsonFile).toString();
+      Util.printInfo("The Payport Request Json " + payload);
       Map<String, String> header = new HashMap<>();
       header.put("Content-Type", "application/json");
       Response response = given()
