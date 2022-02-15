@@ -10,7 +10,12 @@ import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.util.HashMap;
 import java.util.Map;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.sikuli.script.Key;
 
 public class FinancingTestBase {
 
@@ -41,16 +46,18 @@ public class FinancingTestBase {
 
      Util.printInfo("current URL : " + driver.getCurrentUrl());
      finacingPage.populateField("financingVerificationCode","1234");
+
      finacingPage.clickUsingLowLevelActions("financingVerificationCodeContinue");
      Util.sleep(2000);
-
      Util.printInfo("current URL : " + driver.getCurrentUrl());
-     finacingPage.waitForFieldPresent("financingSelectApplication", 1000);
-     finacingPage.clickUsingLowLevelActions("financingSelectApplication");
+
+     WebElement applicationType = driver.findElement(By.xpath("//*[@id=\"applicantType\"]/div"));
+     applicationType.click();
+     Actions a = new Actions(driver);
+     a.sendKeys(Keys.chord(Key.DOWN,Key.ENTER)).perform();
 
      finacingPage.populateField("financingNumberOfEmployees","1000");
      finacingPage.populateField("financingLegalName","Infra Company Inc");
-
      finacingPage.populateField("financingDescriptionOfBusiness","Construction Company");
      finacingPage.populateField("financingCompanyPhoneNumber","8888888888");
      finacingPage.populateField("financingBusinessWebsite","www.construction.com");
@@ -62,7 +69,10 @@ public class FinancingTestBase {
      Util.printInfo("Adding address details ");
      finacingPage.populateField("financingBusinessAddressStreet","111 Market St");
      finacingPage.populateField("financingBusinessAddressCity","San Francisco");
-     finacingPage.clickUsingLowLevelActions("financingBusinessAddressState");
+     WebElement state =driver.findElement(By.xpath("//*[@id=\"address.stateCode\"]/div"));
+     state.click();
+     Actions stateAction = new Actions(driver);
+     stateAction.sendKeys(Keys.chord(Key.DOWN,Key.ENTER)).perform();
      finacingPage.populateField("financingBusinessAddressZipCode","94101");
 
      Util.printInfo("Adding Personal details ");
@@ -75,7 +85,7 @@ public class FinancingTestBase {
      } else {
        finacingPage.populateField("financingContactFamily", "Doe");
      }
-     finacingPage.clickUsingLowLevelActions("financingContactSuffix");
+
      finacingPage.populateField("financingPhone","8888888888");
      finacingPage.populateField("financingContactBirthDate","01/10/1991");
      finacingPage.clickUsingLowLevelActions("financingSubmit");
@@ -84,9 +94,9 @@ public class FinancingTestBase {
      AssertUtils.assertTrue(driver.getCurrentUrl().contains("thanks"),"Successfully submitted the application to LiftForward");
 
      finacingPage.waitForFieldPresent("financingApplicationConfirmation", 5000);
-     boolean downloadStarted = finacingPage.isFieldVisible("financingApplicationConfirmation");
+     boolean financingApplicationConfirmation = finacingPage.isFieldVisible("financingApplicationConfirmation");
      Util.sleep(2000);
-     AssertUtils.assertEquals(downloadStarted, true, "Successfully submitted the application to LiftForward");
+     AssertUtils.assertEquals(financingApplicationConfirmation, true, "Successfully submitted the application to LiftForward");
 
    }catch (MetadataException e ){
      e.printStackTrace();

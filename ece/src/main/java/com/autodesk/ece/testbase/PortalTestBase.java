@@ -1180,9 +1180,11 @@ public class PortalTestBase {
     Util.sleep(2000);
     driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get("lastname"));
     if (data.size() == 6) {
+      Util.printInfo("Populating EMEA Billing Details");
       status = populateEMEABillingDetails(data);
       BICTestBase.bicPage.waitForPageToLoad();
     } else {
+      Util.printInfo("Populating NAMER Billing Details");
       status = populateNAMERBillingDetails(data, paymentType, userType);
     }
 

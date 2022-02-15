@@ -260,76 +260,76 @@ public class BICOrderCreation extends ECETestBase {
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
     Util.sleep(120000);
-    if(testDataForEachMethod.get(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
 
-    // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    if(!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      // Get find Subscription ById
+      results.putAll(pelicantb.getSubscriptionById(results));
 
-    Assert.assertNotNull(results.get("response_currentBillingPriceId"),
-        "Current Billing PriceId  should not be null");
-    Assert.assertNotNull(results.get("response_nextBillingPriceId"),
-        "Next Billing PriceId  should not be null");
-    Assert.assertNotNull(results.get("response_switchTermPriceId"),
-        "Switch Term Billing PriceId  should not be null");
-    Assert.assertNotEquals("Current and Next billing PriceIds  must be different",
-        results.get("response_currentBillingPriceId"), results.get("response_nextBillingPriceId"));
+      Assert.assertNotNull(results.get("response_currentBillingPriceId"),
+          "Current Billing PriceId  should not be null");
+      Assert.assertNotNull(results.get("response_nextBillingPriceId"),
+          "Next Billing PriceId  should not be null");
+      Assert.assertNotNull(results.get("response_switchTermPriceId"),
+          "Switch Term Billing PriceId  should not be null");
+      Assert.assertNotEquals("Current and Next billing PriceIds  must be different",
+          results.get("response_currentBillingPriceId"), results.get("response_nextBillingPriceId"));
 
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      try {
+        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
 
-      testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
-      testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
-      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
-    updateTestingHub(testResults);
+        testResults.put(BICConstants.subscriptionPeriodStartDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+        testResults.put(BICConstants.subscriptionPeriodEndDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
+      updateTestingHub(testResults);
 
-    // Update the subscription so that it is expired, which will allow us to renew it
-    pelicantb.forwardNextBillingCycleForRenewal(results);
+      // Update the subscription so that it is expired, which will allow us to renew it
+      pelicantb.forwardNextBillingCycleForRenewal(results);
 
-    // Lookup the subscription in pelican to confirm its renewal date
-    results.putAll(pelicantb.getSubscriptionById(results));
+      // Lookup the subscription in pelican to confirm its renewal date
+      results.putAll(pelicantb.getSubscriptionById(results));
 
-    // Verify that the subscription has actually moved to the past and is in a state to be renewed
-    try {
-      String originalBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
-      Util.printInfo("Original Billing Date: " + originalBillingDateString);
-      Date originalBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
-          originalBillingDateString);
-      Assert.assertTrue(originalBillingDate.before(new Date()),
-          "Check that the subscription is ready to be renewed");
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
+      // Verify that the subscription has actually moved to the past and is in a state to be renewed
+      try {
+        String originalBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
+        Util.printInfo("Original Billing Date: " + originalBillingDateString);
+        Date originalBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+            originalBillingDateString);
+        Assert.assertTrue(originalBillingDate.before(new Date()),
+            "Check that the subscription is ready to be renewed");
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
 
-    // Trigger Invoice join so that the subscription is picked up by payport
-    pelicantb.postInvoicePelicanAPI(results);
+      // Trigger Invoice join so that the subscription is picked up by payport
+      pelicantb.postInvoicePelicanAPI(results);
 
-    // Trigger the payport renewal job to renew the subscription
-    triggerPayportRenewalJob(results);
+      // Trigger the payport renewal job to renew the subscription
+      triggerPayportRenewalJob(results);
 
-    // Get the subscription in pelican to check if it has renewed
-    results.putAll(pelicantb.getSubscriptionById(results));
+      // Get the subscription in pelican to check if it has renewed
+      results.putAll(pelicantb.getSubscriptionById(results));
 
-    try {
-      // Ensure that the subscription renews in the future
-      String nextBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
-      Util.printInfo("New Billing Date: " + nextBillingDateString);
-      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
-          nextBillingDateString);
-      Assert.assertTrue(newBillingDate.after(new Date()),
-          "Check that the subscription has been renewed");
+      try {
+        // Ensure that the subscription renews in the future
+        String nextBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
+        Util.printInfo("New Billing Date: " + nextBillingDateString);
+        Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+            nextBillingDateString);
+        Assert.assertTrue(newBillingDate.after(new Date()),
+            "Check that the subscription has been renewed");
 
-      AssertUtils
-          .assertEquals("The billing date has been updated to next cycle ",
-              results.get(BICECEConstants.NEXT_BILLING_DATE).split("\\s")[0],
-              Util.customDate("MM/dd/yyyy", 0, -5, +1));
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
+        AssertUtils
+            .assertEquals("The billing date has been updated to next cycle ",
+                results.get(BICECEConstants.NEXT_BILLING_DATE).split("\\s")[0],
+                Util.customDate("MM/dd/yyyy", 0, -5, +1));
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -343,7 +343,7 @@ public class BICOrderCreation extends ECETestBase {
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Trigger Invoice join
+    // Trigger Invoice joinaf
     pelicantb.postInvoicePelicanAPI(results);
 
     Util.sleep(180000);
@@ -389,7 +389,7 @@ public class BICOrderCreation extends ECETestBase {
           .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
       testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
       testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      testResults.put("subscriptionPeriodStartDate",
+      testResults.put(BICECEConstants.subscriptionPeriodStartDate,
           results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
       testResults
           .put(BICConstants.subscriptionPeriodEndDate, results.get(
