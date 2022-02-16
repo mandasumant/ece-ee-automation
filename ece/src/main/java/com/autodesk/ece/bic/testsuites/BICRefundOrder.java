@@ -74,7 +74,6 @@ public class BICRefundOrder extends ECETestBase {
       AssertUtils.fail("The store  is not supported for the given country/locale : "+ locale + ". Supported stores  are "
           + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
-
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
   }
@@ -96,7 +95,7 @@ public class BICRefundOrder extends ECETestBase {
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
-    results.put(BICECEConstants.orderNumber,results.get("getPOReponse_orderId"));
+    results.put(BICECEConstants.orderNumber,results.get(BICECEConstants.ORDER_ID));
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 
@@ -125,7 +124,7 @@ public class BICRefundOrder extends ECETestBase {
     try {
       testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));
       testResults
-          .put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
+          .put(TestingHubConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);

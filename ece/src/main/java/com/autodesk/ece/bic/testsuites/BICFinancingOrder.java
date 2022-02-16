@@ -210,7 +210,7 @@ public class BICFinancingOrder extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
           .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));

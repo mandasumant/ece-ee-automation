@@ -176,7 +176,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
@@ -193,8 +193,8 @@ public class BICOrderCreation extends ECETestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
-    updateTestingHub(testResults);
 
+    updateTestingHub(testResults);
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -231,7 +231,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
@@ -383,7 +383,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
           .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -446,7 +446,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
           .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -504,7 +504,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
           .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -554,7 +554,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
           .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -649,7 +649,7 @@ public class BICOrderCreation extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put("Subscription Created", "True");
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults.put(BICECEConstants.RESPONSE_OFFERING_TYPE,
           results.get(BICECEConstants.OFFERING_TYPE));
@@ -739,7 +739,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
           .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -843,7 +843,7 @@ public class BICOrderCreation extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICECEConstants.SUB1_ID, results.get(BICECEConstants.SUB1_ID));
       testResults.put(BICECEConstants.SUB2_ID, results.get(BICECEConstants.SUB2_ID));
       testResults.put(
