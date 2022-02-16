@@ -91,7 +91,7 @@ mvn clean install -DskipTests
 ## Running your first test
 
 Tests are initiated through bash command line.
-See [wiki](https://wiki.autodesk.com/display/EFDE/Automation+Command+Line) for reference:
+See [wiki](https://wiki.autodesk.com/display/EFDE/PLATINUM+-+Platform+Automation+CJT+Tests+execution) for reference:
 
 ## Formatting guideline
 

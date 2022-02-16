@@ -280,32 +280,19 @@ public class BICTestBase {
 
     try {
       int count = 0;
-      while (driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
+      while (driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
           .isDisplayed()) {
-
-        Util.printInfo("Finding the Skip button. Attempt # 1");
-        driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
+        Util.printInfo("Add seats modal is present");
+        driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]")).click();
+        Util.sleep(3000);
         count++;
-        Util.sleep(1000);
-        if (count == 3) {
-          Util.printInfo("Finding the Skip button. Tried 3 times. Exiting.");
+        if (count > 3) {
           AssertUtils.fail("Failed to find or click on Skip Add seats button.");
+          break;
         }
-        if (count == 2) {
-          Util.printInfo("Finding the Skip button. Attempt # 3");
-          driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-              .sendKeys(Keys.ESCAPE);
-        }
-        if (count == 1) {
-          Util.printInfo("Finding the Skip button. Attempt # 2");
-          driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-              .sendKeys(Keys.PAGE_DOWN);
-        }
-        Util.printInfo("count : " + count);
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      AssertUtils.fail("Failed to find or click on Skip Add seats button.");
+      Util.printInfo("Unable to skip 'Add Seats' modal");
     }
   }
 
@@ -1147,9 +1134,10 @@ public class BICTestBase {
   }
 
   public void navigateToCart(LinkedHashMap<String, String> data) {
-
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
+    String productName =
+        System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
+            BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
 
     String constructGuacDotComURL =
         guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
@@ -1160,18 +1148,13 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if (System.getProperty(BICECEConstants.PAYMENT)
+        .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       selectYearlySubscription(driver);
-    }else{
+    } else {
       selectMonthlySubscription(driver);
     }
-
     subscribeAndAddToCart(data);
-
-    if(driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-        .isDisplayed()) {
-      driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
-    }
 
     checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
@@ -1257,7 +1240,6 @@ public class BICTestBase {
       String password,
       String paymentMethod, String promocode) throws MetadataException {
     String orderNumber = null;
-
     String constructGuacDotComURL =
         guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
             .get(BICECEConstants.PRODUCTS_PATH) + productName;
@@ -1313,7 +1295,7 @@ public class BICTestBase {
 
     data.putAll(names.getMap());
 
-    //Apply promo if exists
+    // Apply promo if exists
     if (promocode != null && !promocode.isEmpty()) {
       populatePromoCode(promocode, data);
     }
@@ -1330,7 +1312,7 @@ public class BICTestBase {
     return orderNumber;
   }
 
-  private void enterBillingDetails(LinkedHashMap<String, String> data,
+  public void enterBillingDetails(LinkedHashMap<String, String> data,
       Map<String, String> address, String paymentMethod, String region) {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod, region);
     selectPaymentProfile(data, paymentCardDetails, address);
@@ -1453,6 +1435,8 @@ public class BICTestBase {
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
+
+    Util.sleep(3000);
 
     // If the submit button is disabled, fill the payment information out again
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
@@ -1664,15 +1648,8 @@ public class BICTestBase {
   public void loginToOxygen(String emailID, String password) {
     bicPage.waitForPageToLoad();
     Util.sleep(60000);
-    try {
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");
-      bicPage.waitForPageToLoad();
-      js.executeScript("document.getElementById('meMenu-signOut').click()");
-      bicPage.waitForPageToLoad();
-    } catch (Exception e) {
-      AssertUtils.fail("Application Loading issue : Unable to logout");
-    }
+    signOutFromCheckoutPage();
+
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, emailID);
     bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
@@ -1696,6 +1673,18 @@ public class BICTestBase {
     String lastName = "LN" + randomString;
     Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
     return new Names(firstName, lastName);
+  }
+
+  public void signOutFromCheckoutPage() {
+    try {
+      JavascriptExecutor js = (JavascriptExecutor) driver;
+      js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");
+      bicPage.waitForPageToLoad();
+      js.executeScript("document.getElementById('meMenu-signOut').click()");
+      bicPage.waitForPageToLoad();
+    } catch (Exception e) {
+      AssertUtils.fail("Application Loading issue : Unable to logout");
+    }
   }
 
   private String[] getCardPaymentDetails(String paymentMethod, String region) {

@@ -5,9 +5,9 @@
 -   [ ] The first commit title contains the Jira ticket number and a short description (i.e.:
     ECEEPLT-XXX: Add test for iDeal and Sofort)
 -   [ ] Branch builds correctly (`mvn clean install -DskipTests`)
--   [ ] Run regression. See [Wiki](https://wiki.autodesk.com/display/EFDE/Automation+Command+Line)
+-   [ ] Run regression. See [Wiki](https://wiki.autodesk.com/display/EFDE/PLATINUM+-+Platform+Automation+CJT+Tests+execution)
     for available command line. (strikethrough if not applicable)
--   [ ] Review and update [Wiki](https://wiki.autodesk.com/display/EFDE/Automation+Command+Line). (
+-   [ ] Review and update [Wiki](https://wiki.autodesk.com/display/EFDE/PLATINUM+-+Platform+Automation+CJT+Tests+execution). (
     strikethrough if not applicable)
 
 **Summary**
