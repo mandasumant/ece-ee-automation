@@ -106,7 +106,7 @@ public class BICOrderPromoCode extends ECETestBase {
     try {
       testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));
       testResults
-          .put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
+          .put(TestingHubConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put("orderState", results.get("getPOReponse_orderState"));
       testResults.put("fulfillmentStatus", results.get("getPOReponse_fulfillmentStatus"));
       testResults.put("fulfillmentDate", results.get("getPOReponse_fulfillmentDate"));
