@@ -147,7 +147,15 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> moeResults = moetb.createBicOrderMoe(testDataForEachMethod);
     moeResults.putAll(testDataForEachMethod);
 
+    // Getting a PurchaseOrder details from pelican
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(moeResults, true);
+
+    moeResults.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
+
     validateTestResults(testResults, moeResults);
+
+    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", moeResults.get("getPOReponse_origin"),
+            BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
     portaltb.validateBICOrderProductInCEP(moeResults.get(BICConstants.cepURL),
         moeResults.get(BICConstants.emailid), PASSWORD, moeResults.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -170,6 +178,14 @@ public class MOEOrderFlows extends ECETestBase {
 
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
+
+    // Getting a PurchaseOrder details from pelican
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
+
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
+
+    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOReponse_origin"),
+            BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
     validateTestResults(testResults, results);
 
@@ -199,6 +215,14 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
+    // Getting a PurchaseOrder details from pelican
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
+
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
+
+    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOReponse_origin"),
+            BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
+
     validateTestResults(testResults, results);
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
@@ -217,6 +241,14 @@ public class MOEOrderFlows extends ECETestBase {
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
     HashMap<String, String> results = moetb.createBicOrderMoeDTC(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
+
+    // Getting a PurchaseOrder details from pelican
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
+
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
+
+    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOReponse_origin"),
+            BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
     validateTestResults(testResults, results);
 

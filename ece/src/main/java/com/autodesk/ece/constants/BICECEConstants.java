@@ -148,5 +148,6 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYMENT_TYPE_ZIP = "ZIP";
   public static final String ALTERNATE_PAYMENT_METHODS = "alternate-payment-methods";
   public static final String PAYMENT_TYPE_FINANCING = "FINANCING";
+  public static final String GUAC_MOE_ORDER_ORIGIN = "GUAC_MOE_DIRECT";
 }
 
