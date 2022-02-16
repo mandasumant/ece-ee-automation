@@ -159,6 +159,7 @@ public class BICTestBase {
 
   @Step("Create BIC account")
   public void createBICAccount(Names names, String emailID, String password) {
+    Util.printInfo("Switching to User login frame");
     switchToBICCartLoginPage();
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
     bicPage.waitForField("createNewUserGUAC", true, 30000);
@@ -233,7 +234,6 @@ public class BICTestBase {
   }
 
   private void switchToBICCartLoginPage() {
-    Util.sleep(10000);
     List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
     driver.switchTo().frame(element);
@@ -280,32 +280,19 @@ public class BICTestBase {
 
     try {
       int count = 0;
-      while (driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
+      while (driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
           .isDisplayed()) {
-
-        Util.printInfo("Finding the Skip button. Attempt # 1");
-        driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
+        Util.printInfo("Add seats modal is present");
+        driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]")).click();
+        Util.sleep(3000);
         count++;
-        Util.sleep(1000);
-        if (count == 3) {
-          Util.printInfo("Finding the Skip button. Tried 3 times. Exiting.");
+        if (count > 3) {
           AssertUtils.fail("Failed to find or click on Skip Add seats button.");
+          break;
         }
-        if (count == 2) {
-          Util.printInfo("Finding the Skip button. Attempt # 3");
-          driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-              .sendKeys(Keys.ESCAPE);
-        }
-        if (count == 1) {
-          Util.printInfo("Finding the Skip button. Attempt # 2");
-          driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-              .sendKeys(Keys.PAGE_DOWN);
-        }
-        Util.printInfo("count : " + count);
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      AssertUtils.fail("Failed to find or click on Skip Add seats button.");
+      Util.printInfo("Unable to skip 'Add Seats' modal");
     }
   }
 
@@ -1147,9 +1134,10 @@ public class BICTestBase {
   }
 
   public void navigateToCart(LinkedHashMap<String, String> data) {
-
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
+    String productName =
+        System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
+            BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
 
     String constructGuacDotComURL =
         guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
@@ -1160,18 +1148,13 @@ public class BICTestBase {
     getUrl(constructGuacDotComURL);
     disableChatSession();
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if (System.getProperty(BICECEConstants.PAYMENT)
+        .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       selectYearlySubscription(driver);
-    }else{
+    } else {
       selectMonthlySubscription(driver);
     }
-
     subscribeAndAddToCart(data);
-
-    if(driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON))
-        .isDisplayed()) {
-      driver.findElement(By.xpath(BICECEConstants.ADD_SEATS_MODAL_SKIP_BUTTON)).click();
-    }
 
     checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
@@ -1257,7 +1240,6 @@ public class BICTestBase {
       String password,
       String paymentMethod, String promocode) throws MetadataException {
     String orderNumber = null;
-
     String constructGuacDotComURL =
         guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
             .get(BICECEConstants.PRODUCTS_PATH) + productName;
@@ -1313,7 +1295,7 @@ public class BICTestBase {
 
     data.putAll(names.getMap());
 
-    //Apply promo if exists
+    // Apply promo if exists
     if (promocode != null && !promocode.isEmpty()) {
       populatePromoCode(promocode, data);
     }
@@ -1453,6 +1435,8 @@ public class BICTestBase {
 
     switchToBICCartLoginPage();
     loginBICAccount(data);
+
+    Util.sleep(3000);
 
     // If the submit button is disabled, fill the payment information out again
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
