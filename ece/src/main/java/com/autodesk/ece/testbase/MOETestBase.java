@@ -122,7 +122,7 @@ public class MOETestBase {
     String productID = "";
     String quantity = "";
     String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
-    String guacMoeResourceURL = data.get("guacMoeResourceURL");
+    String guacMoeResourceURL = data.get("guacMoeResourceURL") + data.get("guacMoeOptyId");
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
     String password = data.get(BICECEConstants.PASSWORD);
@@ -151,7 +151,7 @@ public class MOETestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
-    String guacMoeResourceURL = data.get("guacMoeResourceURL");
+    String guacMoeResourceURL = data.get("guacMoeResourceURL") + data.get("guacMoeOptyId");
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
 
     Names names = bicTestBase.generateFirstAndLastNames();
