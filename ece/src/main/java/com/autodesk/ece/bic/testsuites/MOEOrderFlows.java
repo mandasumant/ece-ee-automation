@@ -10,6 +10,8 @@ import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -195,6 +197,25 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
     HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    validateTestResults(testResults, results);
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(testResults);
+
+    validateCreateOrder(testResults);
+  }
+
+  @Test(groups = {
+      "bic-basicFlowDtc-moe"}, description = "Customer submits an order via Copy cart link generated on DTC page")
+  public void validateMoeDtcFlow()
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    HashMap<String, String> testResults = new HashMap<>();
+    MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+    HashMap<String, String> results = moetb.createBicOrderMoeDTC(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     validateTestResults(testResults, results);

@@ -1312,7 +1312,7 @@ public class BICTestBase {
     return orderNumber;
   }
 
-  private void enterBillingDetails(LinkedHashMap<String, String> data,
+  public void enterBillingDetails(LinkedHashMap<String, String> data,
       Map<String, String> address, String paymentMethod, String region) {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod, region);
     selectPaymentProfile(data, paymentCardDetails, address);
@@ -1648,15 +1648,8 @@ public class BICTestBase {
   public void loginToOxygen(String emailID, String password) {
     bicPage.waitForPageToLoad();
     Util.sleep(60000);
-    try {
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");
-      bicPage.waitForPageToLoad();
-      js.executeScript("document.getElementById('meMenu-signOut').click()");
-      bicPage.waitForPageToLoad();
-    } catch (Exception e) {
-      AssertUtils.fail("Application Loading issue : Unable to logout");
-    }
+    signOutFromCheckoutPage();
+
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, emailID);
     bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
@@ -1680,6 +1673,18 @@ public class BICTestBase {
     String lastName = "LN" + randomString;
     Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
     return new Names(firstName, lastName);
+  }
+
+  public void signOutFromCheckoutPage() {
+    try {
+      JavascriptExecutor js = (JavascriptExecutor) driver;
+      js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");
+      bicPage.waitForPageToLoad();
+      js.executeScript("document.getElementById('meMenu-signOut').click()");
+      bicPage.waitForPageToLoad();
+    } catch (Exception e) {
+      AssertUtils.fail("Application Loading issue : Unable to logout");
+    }
   }
 
   private String[] getCardPaymentDetails(String paymentMethod, String region) {
