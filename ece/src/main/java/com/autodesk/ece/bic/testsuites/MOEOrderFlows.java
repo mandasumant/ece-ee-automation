@@ -212,6 +212,13 @@ public class MOEOrderFlows extends ECETestBase {
   public void validateMoeQuoteOrderFlow() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+
+    sfdctb.loginSfdcLightningView();
+    sfdctb.clickOnCreateMOEOpty();
+    HashMap<String, String> sfdcResults
+            = sfdctb.createGUACMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+
     HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -239,6 +246,13 @@ public class MOEOrderFlows extends ECETestBase {
       throws MetadataException, IOException, UnsupportedFlavorException {
     HashMap<String, String> testResults = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+
+    sfdctb.loginSfdcLightningView();
+    sfdctb.clickOnCreateMOEOpty();
+    HashMap<String, String> sfdcResults
+            = sfdctb.createGUACMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+
     HashMap<String, String> results = moetb.createBicOrderMoeDTC(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
