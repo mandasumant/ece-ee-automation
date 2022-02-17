@@ -261,8 +261,8 @@ public class MOEOrderFlows extends ECETestBase {
 
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
-    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOReponse_origin"),
-            BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
+    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOReponse_origin"),
+            BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
 
     validateTestResults(testResults, results);
 
