@@ -201,7 +201,7 @@ pipeline {
             when {
                 branch 'master'
                 anyOf {
-//                     triggeredBy 'TimerTrigger'
+                    triggeredBy 'TimerTrigger'
                     expression {
                         params.MOE == true
                     }
