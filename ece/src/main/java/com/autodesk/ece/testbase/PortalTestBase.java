@@ -320,6 +320,7 @@ public class PortalTestBase {
     String errorMsg = "";
     String productXpath = null;
     try {
+
       productXpath = portalPage
           .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
     } catch (Exception e) {
@@ -1407,6 +1408,10 @@ public class PortalTestBase {
 
     if (isPortalTabsVisible()) {
       try {
+        // The subscription id that is being displayed in Portal is different from Pelican. Hence, Checking for "Subscription ID" text
+        if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+          subscriptionID="Subscription ID";
+        }
         status = isSubscriptionDisplayedInBO(subscriptionID);
       } catch (Exception e) {
         e.printStackTrace();
