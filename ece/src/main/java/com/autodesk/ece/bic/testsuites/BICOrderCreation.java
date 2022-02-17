@@ -101,35 +101,35 @@ public class BICOrderCreation extends ECETestBase {
   @Test(groups = {
       "bic-changePayment"}, description = "Validation of BIC change payment details functionality")
   public void validateBICChangePaymentProfile() throws MetadataException {
-
+    HashMap<String, String> testResults = new HashMap<String, String>();
     String emailID = System.getProperty(BICECEConstants.EMAIL);
     String password = System.getProperty(BICECEConstants.PASSWORD);
 
-    if (Strings.isNullOrEmpty(EMAIL)) {
-      HashMap<String, String> results = getBicTestBase()
-          .createGUACBICOrderDotCom(testDataForEachMethod);
-      emailID = results.get(BICConstants.emailid);
-      password = PASSWORD;
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICOrderDotCom(testDataForEachMethod);
+    emailID = results.get(BICConstants.emailid);
+    password = PASSWORD;
 
-      updateTestingHub(results);
-      results.putAll(testDataForEachMethod);
+    updateTestingHub(results);
+    results.putAll(testDataForEachMethod);
 
-      if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
-        Util.sleep(120000);
-      }
-
-      // Getting a PurchaseOrder details from pelican
-      results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
-
-      // Trigger Invoice join
-      pelicantb.postInvoicePelicanAPI(results);
-
-      results.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      updateTestingHub(results);
+    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+      Util.sleep(120000);
     }
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+
+    // Trigger Invoice join
+    pelicantb.postInvoicePelicanAPI(results);
+
+    results.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(results);
+
 
     String paymentType = System.getProperty("payment");
     Util.printInfo("Current Payment Type is : " + paymentType);
+
     String[] paymentTypes = localeDataMap.get(locale).get(BICECEConstants.PAYMENT_METHODS)
         .split(",");
     ArrayList<String> payments = new ArrayList<>(Arrays.asList(paymentTypes));
@@ -137,6 +137,8 @@ public class BICOrderCreation extends ECETestBase {
     int index = (int) Util.randomNumber(payments.size());
     paymentType = payments.get(index);
     Util.printInfo("New Payment Type is : " + paymentType);
+
+
     testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
 
     portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
@@ -148,6 +150,31 @@ public class BICOrderCreation extends ECETestBase {
         .split("@");
     portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails,
         localeDataMap.get(locale));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+    updateTestingHub(testResults);
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {"bic-nativeorder"}, description = "Validation of Create BIC Hybrid Order")
@@ -672,6 +699,9 @@ public class BICOrderCreation extends ECETestBase {
 
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
+
+    // Wait for subscription to show up in portal .
+    Util.sleep(600000);
 
     // Portal
     portaltb.validateMetaOrderProductInCEP(results.get(BICConstants.cepURL),

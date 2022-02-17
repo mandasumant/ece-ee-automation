@@ -1156,7 +1156,7 @@ public class BICTestBase {
     }
     subscribeAndAddToCart(data);
 
-    checkCartDetailsError();
+    //checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
   }
 
@@ -1248,7 +1248,7 @@ public class BICTestBase {
     Map<String, String> address = null;
     getUrl(constructGuacDotComURL);
     disableChatSession();
-    checkCartDetailsError();
+   // checkCartDetailsError();
     String productType = data.get("productType");
 
     // Selecting monthly for Non-Flex, Non-Financing , Non-Meta orders only
@@ -1437,6 +1437,7 @@ public class BICTestBase {
     loginBICAccount(data);
 
     Util.sleep(3000);
+
 
     // If the submit button is disabled, fill the payment information out again
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
