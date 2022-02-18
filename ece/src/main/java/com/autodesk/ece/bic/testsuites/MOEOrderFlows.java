@@ -141,7 +141,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.loginSfdcLightningView();
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
-            = sfdctb.createGUACMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
+            = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
     HashMap<String, String> moeResults = moetb.createBicOrderMoe(testDataForEachMethod);
@@ -173,7 +173,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.loginSfdcLightningView();
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
-            = sfdctb.createGUACMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
+            = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
@@ -216,7 +216,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.loginSfdcLightningView();
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
-            = sfdctb.createGUACMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
+            = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
     HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);

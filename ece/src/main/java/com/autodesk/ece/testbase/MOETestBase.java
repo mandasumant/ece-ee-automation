@@ -8,7 +8,9 @@ import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.DateTimeUtils;
 import com.autodesk.testinghub.core.utils.Util;
+import com.google.gson.annotations.Until;
 import io.qameta.allure.Step;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -21,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -170,6 +173,133 @@ public class MOETestBase {
 
     results.put(BICConstants.emailid, emailID);
     results.put("quoteNumber", quoteNumber);
+
+    return results;
+  }
+
+  @Step("Create GUAC MOE opportunity from SFDC "+ GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createGUACOpty(String name, String account, String stage, String projectClosedate, String fulfillment, String sku) {
+    HashMap<String, String> results = new HashMap<String, String>();
+
+    try {
+      driver.switchTo().frame(0);
+      Util.printInfo("switched to iframe");
+
+      moePage.populateField("projectClosedate", projectClosedate);
+      Util.printInfo("entered project close date");
+      Util.sleep(2000);
+
+      moePage.click("name");
+      moePage.populateField("name", name );
+      Util.printInfo("entered name : "+name);
+      results.put("optyName", name);
+
+      Select sel;
+      sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:4:j_id47")));
+      sel.selectByValue(fulfillment);
+      Util.printInfo("Selected Fulfillment : "+ fulfillment);
+      Util.sleep(1000);
+      results.put("fulfillment", fulfillment);
+
+      Util.printInfo("entering account details");
+      moePage.clickUsingLowLevelActions("accountLookup");
+      Util.printInfo("clicked on account lookup");
+      Util.sleep(3000);
+      moePage.populateField("accountTextField", account);
+      Util.printInfo("entered account name");
+      Util.sleep(3000);
+      Util.printInfo("entered account "+ account);
+      moePage.clickUsingLowLevelActions("searchAccount");
+      Util.sleep(3000);
+      moePage.clickUsingLowLevelActions("selectAccount");
+      Util.printInfo("selected account name : "+ account);
+      Util.sleep(3000);
+      results.put("accountName", account);
+
+      sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:2:j_id47")));
+      sel.selectByValue("Stage 1");
+      Util.printInfo("Selected stage : "+ stage);
+      Util.sleep(1000);
+      results.put("stage", stage);
+
+      moePage.click("save");
+      Util.printInfo("Clicked on Save button after entering details.");
+      moePage.waitForPageToLoad();
+      Util.sleep(20000);
+      driver.switchTo().defaultContent();
+
+      String xpath = moePage.getFirstFieldLocator("opportunityName").replace("<optyname>", name);
+      if(driver.findElement(By.xpath(xpath)).isDisplayed()) {
+        Util.printInfo("Opportunity '"+ name +"' created");
+        String optyid = driver.findElement(By.xpath("//span[@class='uiOutputText' and contains(., 'A-')]")).getText();
+        Util.printInfo(optyid);
+        results.put("opportunityid", optyid);
+
+      }else {
+        AssertUtils.fail("failed to create opportunity.");
+      }
+
+
+    } catch(Exception e) {
+      e.getMessage();
+      AssertUtils.fail("Failed to enter opty details.");
+    }
+
+    try {
+      if (StringUtils.isNotEmpty(sku)) {
+
+        Util.printInfo("Associating Products to Opty: " + sku);
+        moePage.click("manageProducts");
+        moePage.waitForPageToLoad();
+
+        WebElement iframeXpath = null;
+        try {
+          iframeXpath = driver.findElement(By.xpath("//*[@id=\"brandBand_2\"]/div/div/div[5]/div/force-aloha-page/div/iframe"));
+        } catch (Exception e) {
+          iframeXpath = driver.findElement(By.xpath("//*[@id=\"brandBand_2\"]/div/div/div[3]/div/force-aloha-page/div/iframe"));
+        }
+        driver.switchTo().frame(iframeXpath);
+        Util.printInfo("Switched iFrame to click on Add Products Tab");
+        moePage.clickUsingLowLevelActions("addProduct");
+        moePage.waitForPageToLoad();
+
+        moePage.populateField("skuSearch", sku);
+        moePage.clickUsingLowLevelActions("skuSearchButton");
+        moePage.waitForPageToLoad();
+
+        moePage.click("checkbox");
+        Util.sleep(5000);
+
+        moePage.populateField("estimatedUnit", "1");
+        Util.sleep(2000);
+
+        WebElement webElement = driver.findElement(
+                By.xpath("//input[@class='slds-input input']"));
+        webElement.sendKeys(Keys.TAB);
+        Util.sleep(5000);
+
+        Util.printInfo("Entered SKU and quantity in the Add Product");
+
+        moePage.checkIfElementExistsInPage("addProductsButton",30);
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("document.querySelectorAll(\"button[name=AddProductsToCart]\")[0].click()");
+        Util.printInfo("Clicked on cta: Add Products");
+        Util.sleep(20000);
+
+        moePage.checkIfElementExistsInPage("okButton",40);
+        moePage.clickUsingLowLevelActions("okButton");
+        Util.printInfo("Clicked on cta: OK");
+        Util.sleep(10000);
+
+        moePage.clickUsingLowLevelActions("close");
+        Util.sleep(5000);
+        Util.printInfo("Clicked on cta: Close");
+      }
+    } catch (Exception e) {
+      e.getMessage();
+      AssertUtils.fail("Failed to assign Product to MOE Opty.");
+    }
 
     return results;
   }
