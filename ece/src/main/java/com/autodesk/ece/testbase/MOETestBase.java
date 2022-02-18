@@ -103,8 +103,6 @@ public class MOETestBase {
 
     // TODO: Validate that the address fields that are pre-filled in the payment section matches the address that's in the Opportunity in salesforce (passed to GUAC as part of get Opty call).
 
-    // TODO: Order is successfully placed in backend systems. Validate that the order origin for this order is GUAC_MOE_DIRECT
-
     // Populate Billing info and save payment profile
     address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
@@ -146,7 +144,6 @@ public class MOETestBase {
     results.put(BICConstants.orderNumber, orderNumber);
 
     // Jira ref.: ECEEPLT-1489
-    // TODO: Validate that submitted order have order origin value as GUAC_MOE_DIRECT.
     // TODO: Validate that the Pelican Finance Report mention the Quote ID from the order that was placed.
     // TODO: Validate that the Opty get closed in SFDC.
 
@@ -159,7 +156,7 @@ public class MOETestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
-    String guacMoeResourceURL = data.get("guacMoeResourceURL") + data.get("guacMoeOptyId");
+    String guacMoeResourceURL = data.get("guacMoeResourceURL") + "A-1776440";
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
 
     Names names = bicTestBase.generateFirstAndLastNames();
@@ -340,8 +337,6 @@ public class MOETestBase {
         names.lastName,
         paymentMethod);
 
-    // TODO: Validate that submitted order have order origin value as GUAC_MOE_DTC.
-
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
 
@@ -464,7 +459,10 @@ public class MOETestBase {
     // CTA should change from 'Send quote' to 'Resend quote'
     validateQuoteReadOnlyView();
 
-    //TODO: If agent clicks on 'Resend quote' CTA, customer should get the email again with the quote attached as PDF. Currently does not work due to bug.
+    //Agent clicks on 'Resend quote' CTA
+    Util.printInfo("Click on 'Resend quote' button.");
+    moePage.click("moeResendQuote");
+    bicTestBase.waitForLoadingSpinnerToComplete();
 
     return quoteNumber;
   }
@@ -474,7 +472,7 @@ public class MOETestBase {
       String guacMoeResourceURL,
       String locale, String emailID, String quoteNumber)
       throws MetadataException {
-    // construct MOE URL with an OpptyId. Will need to replace/hardcode some OpptyId once we merge Sumant's story.
+    // construct MOE URL with a test OpptyId.
     String constructMoeURLWithOpptyId = guacBaseURL + locale + "/" + guacMoeResourceURL;
     System.out.println("constructMoeURL " + constructMoeURLWithOpptyId);
 
