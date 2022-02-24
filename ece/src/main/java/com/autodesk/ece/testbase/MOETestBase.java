@@ -8,9 +8,7 @@ import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.DateTimeUtils;
 import com.autodesk.testinghub.core.utils.Util;
-import com.google.gson.annotations.Until;
 import io.qameta.allure.Step;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -55,7 +53,7 @@ public class MOETestBase {
     String productID = "";
     String quantity = "";
     String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
-    String guacMoeResourceURL = data.get("guacMoeResourceURL") + data.get("guacMoeOptyId");
+    String guacMoeResourceURL = data.get("guacMoeResourceURL") + "A-1776440";
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
     String password = data.get(BICECEConstants.PASSWORD);
