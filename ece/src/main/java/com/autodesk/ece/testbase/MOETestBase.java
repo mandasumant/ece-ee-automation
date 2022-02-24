@@ -234,18 +234,12 @@ public class MOETestBase {
       moePage.click("save");
       Util.printInfo("Clicked on Save button after entering details.");
       moePage.waitForPageToLoad();
-      Util.sleep(20000);
       driver.switchTo().defaultContent();
 
       Util.printInfo("Opportunity '" + name + "' created");
-      String optyid = driver.findElement(By.xpath(
-          "//lightning-formatted-rich-text[@class='slds-rich-text-editor__output' and contains(., 'A-')]"))
-          .getText();
-      Util.printInfo(optyid);
-      results.put("opportunityid", optyid);
     } catch (Exception e) {
       e.getMessage();
-      AssertUtils.fail("Failed to enter opty details.");
+      AssertUtils.fail(e.getMessage() + "Failed to enter opty details.");
     }
 
     try {
@@ -273,7 +267,6 @@ public class MOETestBase {
         }
 
         Util.printInfo("Switched iFrame to click on Add Products Tab");
-        moePage.waitForPageToLoad();
 
         moePage.populateField("skuSearch", sku);
         moePage.clickUsingLowLevelActions("skuSearchButton");
@@ -303,15 +296,20 @@ public class MOETestBase {
         moePage.checkIfElementExistsInPage("okButton", 40);
         moePage.clickUsingLowLevelActions("okButton");
         Util.printInfo("Clicked on cta: OK");
-        Util.sleep(10000);
+        Util.sleep(5000);
 
         moePage.clickUsingLowLevelActions("close");
-        Util.sleep(5000);
         Util.printInfo("Clicked on cta: Close");
+
+        Util.sleep(15000);
+        String optyid = driver.findElement(By.xpath(
+            "//lightning-formatted-rich-text[@class='slds-rich-text-editor__output' and contains(., 'A-')]"))
+            .getText();
+        Util.printInfo(optyid);
+        results.put("opportunityid", optyid);
       }
     } catch (Exception e) {
-      e.getMessage();
-      AssertUtils.fail("Failed to assign Product to MOE Opty.");
+      AssertUtils.fail("Failed to assign Product to MOE Opty." + e.getMessage());
     }
 
     return results;
@@ -657,7 +655,11 @@ public class MOETestBase {
 
     WebElement webElement = driver.findElement(
         By.xpath("//input[@id=\"moe--quote--expiration-date\"]"));
-    webElement.sendKeys(currentYear);
+
+    for (int i = 0; i <= 4; i++) {
+      webElement.sendKeys(currentYear);
+    }
+
     webElement.sendKeys(Keys.TAB);
     webElement.sendKeys(currentMonthDay);
   }
