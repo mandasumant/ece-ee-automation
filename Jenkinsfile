@@ -197,7 +197,9 @@ pipeline {
             when {
                 branch 'master'
                 anyOf {
-                    triggeredBy 'TimerTrigger'
+                    not {
+                        triggeredBy 'TimerTrigger'
+                    }
                     expression {
                         params.LIFT == true
                     }
