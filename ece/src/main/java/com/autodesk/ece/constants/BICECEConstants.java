@@ -80,6 +80,8 @@ public class BICECEConstants extends BICConstants {
   public static final String FIRST_NAME = "firstName";
   public static final String CREDIT_CARD_NUMBER_FRAME = "creditCardNumberFrame";
   public static final String PAYPAL_ACCEPT_COOKIES_BTN = "paypalAcceptCookiesBtn";
+  public static final String PAYPAL_CHANGE_USERNAME_BUTTON = "paypalChangeUsernameBtn";
+  public static final String PAYPAL_NEXT_BUTTON = "paypalNextBtn";
   public static final String SUBMIT_ORDER_BUTTON = "SubmitOrderButton";
   public static final String CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE = "Checked Mandate Agreement is visible - ";
   public static final String MANDATE_CHECKBOX_HEADER = "mandateAgreementCheckboxHeader";

@@ -833,11 +833,16 @@ public class BICTestBase {
         bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
       }
 
+      if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
+        bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
+      }
+
       Util.printInfo("Entering paypal user name [" + data.get("paypalUser") + "]...");
       bicPage.waitForElementVisible(
           bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
 
       bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
+      bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
       bicPage.populateField("paypalPasswordField", data.get("paypalSsap"));
