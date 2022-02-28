@@ -500,7 +500,7 @@ public class PortalTestBase {
               .isDisplayed());
         }else{
           AssertUtils.assertTrue(driver
-              .findElement(By.xpath("//*[starts-with(text(),\"1 year starting\")]"))
+              .findElement(By.xpath("//*[starts-with(text(),\"Changes to 1-year term starting\")]"))
               .isDisplayed());
         }
         clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
@@ -898,8 +898,8 @@ public class PortalTestBase {
     portalPage.waitForFieldPresent("portalConfirmationOkButton", 5000);
     portalPage.clickUsingLowLevelActions("portalConfirmationOkButton");
     Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-        BICECEConstants.PORTAL_ORDER_SEAT_COUNT));
-    String renewingSeatsCount = portalPage.getTextFromLink(BICECEConstants.PORTAL_ORDER_SEAT_COUNT);
+        BICECEConstants.PORTAL_REDUCE_SEATS_COUNT));
+    String renewingSeatsCount = portalPage.getTextFromLink(BICECEConstants.PORTAL_REDUCE_SEATS_COUNT);
     String reducedSeatQty = renewingSeatsCount.split(" ")[0];
     Util.printInfo("Recording new seats count.");
     orderDetails.put("reducedSeatQty", reducedSeatQty);

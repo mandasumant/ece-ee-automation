@@ -136,6 +136,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PORTAL_ADD_SEAT_BUTTON = "portalAddSeatButton";
   public static final String ADD_SEATS = "add-seats";
   public static final String PORTAL_REDUCE_SEATS_BUTTON = "portalReduceSeatsButton";
+  public static final String PORTAL_REDUCE_SEATS_COUNT = "portalRenewingSeatsCount";
   public static final String PORTAL_PAYMENT_METHOD = "portalPaymentMethod";
   public static final String PAYMENTOPTION = "<PAYMENTOPTION>";
   public static final String PORTAL_CARD_SAVE_BTN = "portalCardSaveBtn";
