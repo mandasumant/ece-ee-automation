@@ -196,13 +196,8 @@ pipeline {
         stage ('LiftForward Financing Regression') {
             when {
                 branch 'master'
-                anyOf {
-                    not {
-                        triggeredBy 'TimerTrigger'
-                    }
-                    expression {
-                        params.LIFT == true
-                    }
+                expression {
+                    params.LIFT == true
                 }
             }
             steps {
