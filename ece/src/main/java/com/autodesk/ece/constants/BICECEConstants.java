@@ -125,7 +125,7 @@ public class BICECEConstants extends BICConstants {
   public static final String APPLICATION_JSON = "application/json";
   public static final String PAYLOAD_AUTH = "Payload Auth:: ";
   public static final String ADYEN = "adyen";
-  public static final String RESULT = "result :: ";
+  public static final String RESULT = "API response :: ";
   public static final String FALSE = " :: false";
   public static final String PRODUCT_IS_DISPLAYED_IN_PORTAL = "Product is displayed in portal";
   public static final String SEPARATION_LINE = "-----------------------------";
@@ -153,5 +153,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYMENT_TYPE_FINANCING = "FINANCING";
   public static final String GUAC_MOE_ORDER_ORIGIN = "GUAC_MOE_DIRECT";
   public static final String GUAC_DTC_ORDER_ORIGIN = "GUAC_MOE_DTC";
+  public static final String BUYER_EXTERNAL_KEY = "BUYER_EXTERNAL_KEY";
+  public static final String GET_GUAC_MOE_QUOTE_ID = "getPOReponse_quoteId";
 }
 
