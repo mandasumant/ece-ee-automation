@@ -993,7 +993,7 @@ public class BICTestBase {
 
     boolean isOrderSubmitted = false;
     if (!(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY) ||
-        System.getProperty(BICECEConstants.PAYMENT)
+           System.getProperty(BICECEConstants.PAYMENT)
             .equals(BICECEConstants.PAYMENT_TYPE_FINANCING))) {
       try {
         bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
