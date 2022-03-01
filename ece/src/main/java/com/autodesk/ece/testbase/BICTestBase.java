@@ -1285,7 +1285,7 @@ public class BICTestBase {
       bicPage.waitForFieldPresent(BICECEConstants.GUAC_CART_EDIT_QUANTITY, 5000);
       try {
         bicPage.populateField(BICECEConstants.GUAC_CART_EDIT_QUANTITY, Keys.BACK_SPACE.name());
-        bicPage.sendKeysInTextFieldSlowly(BICECEConstants.GUAC_CART_EDIT_QUANTITY,
+        bicPage.populateField(BICECEConstants.GUAC_CART_EDIT_QUANTITY,
             data.get(BICECEConstants.ADD_SEAT_QTY));
         Util.sleep(5000);
       } catch (Exception e) {
@@ -1580,7 +1580,7 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<String, String>();
 
     try {
-      Util.printInfo("Entering -> testCjtTrialDownloadUI ");
+      Util.printInfo("Entering -> testCjtTrialDownloadUI -> "+ data.get("trialDownloadUrl") );
       getUrl(data.get("trialDownloadUrl"));
 
       bicPage.clickUsingLowLevelActions("downloadFreeTrialLink");
@@ -1603,32 +1603,32 @@ public class BICTestBase {
         bicPage.selectFrame(BICECEConstants.DOWNLOAD_FREE_TRIAL_LOGIN_FRAME);
 
         bicPage.waitForFieldPresent("downloadFreeTrialUserName", 1000);
-        bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialUserName",
+        bicPage.populateField("downloadFreeTrialUserName",
             System.getProperty(BICECEConstants.EMAIL));
 
         bicPage.waitForFieldPresent("downloadFreeTrialVerifyUserButtonClick", 1000);
         bicPage.clickUsingLowLevelActions("downloadFreeTrialVerifyUserButtonClick");
 
         bicPage.waitForFieldPresent("downloadFreeTrialPassword", 1000);
-        bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialPassword",
+        bicPage.populateField("downloadFreeTrialPassword",
             System.getProperty(BICECEConstants.PASSWORD));
-        Util.sleep(20000);
+        Util.sleep(5000);
         bicPage.waitForFieldPresent("downloadFreeTrialSignInButtonClick", 1000);
         bicPage.clickUsingLowLevelActions("downloadFreeTrialSignInButtonClick");
         bicPage.selectMainWindow();
       }
 
-      Util.sleep(10000);
+      Util.sleep(5000);
       bicPage.waitForFieldPresent("downloadFreeTrialCompanyName", 1000);
-      bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialCompanyName", data.get("companyName"));
+      bicPage.populateField("downloadFreeTrialCompanyName", data.get("companyName"));
       bicPage.clickUsingLowLevelActions("downloadFreeTrialState");
-      bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialPostalCode", data.get("postalCode"));
-      bicPage.sendKeysInTextFieldSlowly("downloadFreeTrialPhoneNo", data.get("phoneNumber"));
+      bicPage.populateField("downloadFreeTrialPostalCode", data.get("postalCode"));
+      bicPage.populateField("downloadFreeTrialPhoneNo", data.get("phoneNumber"));
       bicPage.clickUsingLowLevelActions("downloadFreeTrialBeginDownloadLink");
 
       bicPage.waitForFieldPresent("downloadFreeTrialStarted", 5000);
       boolean downloadStarted = bicPage.isFieldVisible("downloadFreeTrialStarted");
-      Util.sleep(2000);
+      Util.sleep(5000);
       AssertUtils.assertEquals(downloadStarted, true, "SUCCESSFULLY STARTED DOWNLOAD");
       results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
     } catch (Exception e) {
