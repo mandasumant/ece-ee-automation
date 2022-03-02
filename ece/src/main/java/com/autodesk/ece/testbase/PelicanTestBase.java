@@ -415,7 +415,6 @@ public class PelicanTestBase {
     JsonPath jp = new JsonPath(purchaseOrderAPIresponse);
     try {
       results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
-      results.put("getPOReponse_quoteId", jp.get("content[0].quoteId").toString());
       results.put("getPOReponse_orderId", jp.get("content[0].id").toString());
       results
           .put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
