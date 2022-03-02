@@ -22,6 +22,8 @@
         "offerExternalKey": "{{offerExternalKey}}",
         "priceId": "{{priceId}}"
       }
-    ]
+    ],
+    "paymentProfileId": "{{paymentProfileId}}",
+    "userExternalKey": "{{userExternalKey}}"
   }
 }

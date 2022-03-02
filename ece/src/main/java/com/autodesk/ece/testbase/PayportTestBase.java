@@ -63,6 +63,7 @@ public class PayportTestBase {
     dataSet.put("taxCode", results.get("getPOReponse_taxCode"));
     dataSet.put("offerExternalKey", results.get("response_offeringExternalKey"));
     dataSet.put("priceId", results.get("response_nextBillingPriceId"));
+    dataSet.put("userExternalKey", results.get("getPOReponse_oxygenID"));
 
     try {
       ClassLoader classLoader = this.getClass().getClassLoader();
