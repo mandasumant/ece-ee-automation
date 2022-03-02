@@ -10,6 +10,7 @@ import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
+import io.restassured.path.json.JsonPath;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -210,7 +211,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.loginSfdcLightningView();
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
-            = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
+        = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
     HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);
@@ -221,10 +222,11 @@ public class MOEOrderFlows extends ECETestBase {
 
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
-    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOReponse_origin"),
-            BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
+    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT",
+        results.get("getPOReponse_origin"),
+        BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
-    validateTestResults(testResults, results);
+    validateTestResultsQuoteId(testResults, results);
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
@@ -297,6 +299,53 @@ public class MOEOrderFlows extends ECETestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
+    updateTestingHub(testResults);
+  }
+
+  private void validateTestResultsQuoteId(HashMap<String, String> testResults,
+      HashMap<String, String> results) {
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    testResults.put(BICECEConstants.BUYER_EXTERNAL_KEY,
+        results.get(BICECEConstants.BUYER_EXTERNAL_KEY));
+    testResults.put(BICECEConstants.GET_GUAC_MOE_QUOTE_ID,
+        results.get(BICECEConstants.GET_GUAC_MOE_QUOTE_ID));
+
+    updateTestingHub(testResults);
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+
+    // Get find Subscription ById
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    // Get Finance Reports
+    String result = pelicantb.postReportsFinancePelicanAPI(results);
+
+    JsonPath jp = new JsonPath(result);
+    AssertUtils.assertEquals(jp.get("content[0].quoteId"),
+        results.get(BICECEConstants.GET_GUAC_MOE_QUOTE_ID));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put("orderNumber_SAP", results.get(BICConstants.orderNumberSAP));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
     updateTestingHub(testResults);
   }
 

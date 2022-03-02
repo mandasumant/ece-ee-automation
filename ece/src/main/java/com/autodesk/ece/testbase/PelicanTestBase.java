@@ -253,11 +253,57 @@ public class PelicanTestBase {
     Map<String, String> header = new HashMap<>();
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
-    Response response = getRestResponse(invoicePelicanAPIUrl, header,"{}");
+    Response response = getRestResponse(invoicePelicanAPIUrl, header, "{}");
     String result = response.getBody().asString();
     Util.PrintInfo(BICECEConstants.RESULT + result);
     JsonPath js = new JsonPath(result);
     Util.printInfo("js is:" + js);
+  }
+
+  @Step("Order Service finance reports API " + GlobalConstants.TAG_TESTINGHUB)
+  public String postReportsFinancePelicanAPI(HashMap<String, String> data) {
+    String postReportsFinancePelicanAPIUrl = data.get("postReportsFinancePelicanAPIUrl");
+
+    //Generate the input JSON
+    JSONArray orderArray = new JSONArray();
+    orderArray.put(data.get(BICConstants.orderNumber));
+
+    JSONArray buyerArray = new JSONArray();
+    buyerArray.put(data.get(BICECEConstants.BUYER_EXTERNAL_KEY));
+
+    JSONObject requestParams = new JSONObject();
+    requestParams.put("orderIds", orderArray);
+    requestParams.put("buyerExternalKeys", buyerArray);
+
+    JSONObject filters = new JSONObject();
+    filters.put("filters", requestParams);
+
+    Util.printInfo("Finance Reports Request Body: " + filters.toJSONString());
+
+    String requestJson = filters.toJSONString();
+    data.put("pelican_postReportsFinancePelicanAPIUrl", postReportsFinancePelicanAPIUrl);
+    HashMap<String, String> results = new HashMap<String, String>();
+    Util.printInfo("postReportsFinancePelicanAPIUrl : " + postReportsFinancePelicanAPIUrl);
+    String sig_details = getPriceByPriceIdSignature(data);
+    String hmacSignature = sig_details.split("::")[0];
+    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
+    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
+
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
+
+    Map<String, String> header = new HashMap<>();
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+
+    Response response = getRestResponse(postReportsFinancePelicanAPIUrl, header, requestJson);
+    String result = response.getBody().asString();
+    Util.PrintInfo(BICECEConstants.RESULT + result);
+
+    return result;
   }
 
   @Step("Get Pelican Response" + GlobalConstants.TAG_TESTINGHUB)
@@ -268,7 +314,7 @@ public class PelicanTestBase {
     //Generate the input JSON
     JSONObject filters = new JSONObject();
     JSONArray array = new JSONArray();
-    if(data.get(BICConstants.orderNumber) != null) {
+    if (data.get(BICConstants.orderNumber) != null) {
       array.put(data.get(BICConstants.orderNumber));
       JSONObject orders = new JSONObject();
       orders.put("orderIds", array);
@@ -368,18 +414,17 @@ public class PelicanTestBase {
     HashMap<String, String> results = new HashMap<>();
     JsonPath jp = new JsonPath(purchaseOrderAPIresponse);
     try {
-
       results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
+      results.put("getPOReponse_quoteId", jp.get("content[0].quoteId").toString());
       results.put("getPOReponse_orderId", jp.get("content[0].id").toString());
       results
           .put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
+      results
+          .put(BICECEConstants.BUYER_EXTERNAL_KEY, jp.get("content[0].buyerExternalKey").toString());
       results.put("getPOReponse_storedPaymentProfileId",
           jp.get("content[0].payments[0].paymentProfileId").toString());
       results.put("getPOReponse_fulfillmentStatus",
           jp.get("content[0].lineItems[0].fulfillmentStatus").toString());
-      results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
-      results.put("getPOReponse_storeExternalKey",
-          jp.get("content[0].storeExternalKey").toString());
       results.put("getPOReponse_orderState", jp.get("content[0].orderState").toString());
       results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
           jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionId").toString());
