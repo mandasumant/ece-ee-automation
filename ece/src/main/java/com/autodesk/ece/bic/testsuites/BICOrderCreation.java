@@ -370,7 +370,7 @@ public class BICOrderCreation extends ECETestBase {
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Trigger Invoice joinaf
+    // Trigger Invoice job
     pelicantb.postInvoicePelicanAPI(results);
 
     Util.sleep(180000);
@@ -428,7 +428,6 @@ public class BICOrderCreation extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
-    Util.sleep(60000);
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);

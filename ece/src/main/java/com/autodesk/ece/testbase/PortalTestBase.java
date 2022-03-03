@@ -131,7 +131,7 @@ public class PortalTestBase {
       driver.get(data);
       e.printStackTrace();
     }
-    return feynamnLayoutLoaded();
+    return true;
   }
 
   //@Step("launch URL in browser")
@@ -154,38 +154,7 @@ public class PortalTestBase {
     }
   }
 
-  //@Step("feynamnLayout UI load wait")
-  public boolean feynamnLayoutLoaded() {
-
-    //Not removing this code as part of refactor, as this code is expected to be used instead of static wait
-//      try {
-//          Util.sleep(5000);
-//          JavascriptExecutor js = (JavascriptExecutor)driver;
-//          WebElement bicAcceptCookiesBtn = portalPage.getMultipleWebElementsfromField("portalAcceptCookiesBtn").get(0);
-//          if(bicAcceptCookiesBtn.isDisplayed())
-//              js.executeScript("arguments[0].click();", bicAcceptCookiesBtn);
-//
-//          Util.printInfo("Cookies accepted...");
-//      }
-//      catch(Exception e) {
-//          Util.printInfo("Cookies accept box does not appear on the page...");
-//      }
-//
-//      portalPage.waitForField("portalProductServiceTab", true, 15000);
-//      boolean status = false;
-//      try {
-//          status = portalPage.checkIfElementExistsInPage("portalProductServiceTab",15);
-//      }
-//      catch (MetadataException e) {
-//          e.printStackTrace();
-//          AssertUtils.fail("product and services tab not found in Portal");
-//      }
-//      return status;
-    Util.sleep(30000);
-    return true;
-  }
-
-  //@Step("User Login in Customer Portal " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("User Login in Customer Portal " + GlobalConstants.TAG_TESTINGHUB)
   public boolean portalLogin(String portalUserName, String portalPassword) {
     boolean status = false;
     try {
@@ -226,64 +195,37 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("isPortalElementPresent in GUI load wait")
+  @Step("Looking for Product and Services Web element in Portal" + GlobalConstants.TAG_TESTINGHUB)
   public boolean isPortalElementPresent(String Field) {
     boolean status = false;
+    int attempts = 0;
 
-    try {
-      status =
-          portalPage.isFieldVisible(Field) || portalPage.checkFieldExistence(Field) || portalPage
-              .isFieldPresent(Field) || portalPage.checkIfElementExistsInPage(Field, 60);
-    } catch (MetadataException e) {
-    }
-
-    if (!status) {
-      Util.printError("isPortalElementPresent :: " + Field + "" + status);
-    }
-
-    return status;
-  }
-
-  @Step("isPortalElementPresent in GUI load wait")
-  public boolean isPortalElementPresentWithXpath(String xPath) {
-    boolean status = false;
-
-    try {
-      for (int i = 1; i < 4; i++) {
-        WebElement element = driver.findElement(By.xpath(xPath));
-        if (element == null) {
-          Util.sleep(10000);
-          driver.navigate().refresh();
-        } else {
-          status = true;
-          return status;
-        }
+    while (attempts < 3) {
+      try {
+        status =
+                portalPage.isFieldVisible(Field) || portalPage.checkFieldExistence(Field) || portalPage
+                        .isFieldPresent(Field) || portalPage.checkIfElementExistsInPage(Field, 60);
+      } catch (MetadataException e) {
+        Util.printWarning("Failed looking for \"Portal Product and Service Tab\" - Attempt #" + (attempts + 1));
       }
-    } catch (ElementNotVisibleException e) {
+
+      if (!status) {
+        driver.navigate().refresh();
+        Util.sleep(5000);
+        attempts++;
+      } else {
+        Util.printInfo("Found the \"Portal Product and Service Tab\", so skipping the retry logic");
+        break;
+      }
     }
 
-    if (!status) {
-      Util.printError("isPortalElementPresentWithXpath :: " + xPath + "" + status);
-    }
     return status;
   }
 
   @Step("check if all the tabs are loading in Portal ")
   public boolean isPortalTabsVisible() {
-    boolean status = false, link1 = false, link2 = false, link3 = false;
+    boolean status = false;
     status = isPortalElementPresent("portalProductServiceTab");
-   /*
-    Util.printInfo("portalProductServiceTab is loading :: " + status);
-    Util.printInfo("portalProductServiceTab is loading :: " + status);
-    Commented out because they only support running test for English language
-    link1 = isPortalElementPresent("portalUMTab");
-    Util.printInfo("portalUMTab is loading :: " + link1);
-    link2 = isPortalElementPresent("portalBOTab");
-    Util.printInfo("portalBOTab is loading :: " + link2);
-    link3 = isPortalElementPresent("portalReportingTab");
-    Util.printInfo("portalReportingTab is loading :: " + link3);
-    return status && (link1 && link2 || link3);
-    */
     return status;
   }
 
@@ -291,17 +233,31 @@ public class PortalTestBase {
   public boolean isSubscriptionDisplayedInPS(String subscriptionID) {
     boolean status = false;
     String productXpath = null;
-    try {
-      productXpath = portalPage
-          .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
-    } catch (Exception e) {
-      AssertUtils.fail(
-          "Verify subscription/agreement is displayed in All P&S page step couldn't be completed due to technical issue "
-              + e.getMessage());
+    int attempts = 0;
+
+    while (attempts < 3) {
+      try {
+        productXpath = portalPage
+                .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
+
+        Util.printInfo("Found the Subscription productXpath, so skipping the retry logic");
+        break;
+      } catch (Exception e) {
+        if (attempts >= 2 ) {
+          AssertUtils.fail(
+                  "All retries exhausted: Verify subscription/agreement is displayed in All P&S page step couldn't " +
+                          "be completed due to technical issue " + e.getMessage());
+        }
+        driver.navigate().refresh();
+        Util.sleep(10000);
+        Util.printInfo("Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts + 1));
+        attempts ++;
+      }
     }
 
     Util.printInfo("Check if element with subscriptionId exists on the page.");
-    status = isPortalElementPresentWithXpath(productXpath);
+
+    status = isSubscriptionDisplayed(productXpath);
 
     if (!status) {
       AssertUtils.fail(
@@ -312,25 +268,63 @@ public class PortalTestBase {
     return status;
   }
 
+  @Step("Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
+  public boolean isSubscriptionDisplayed(String productXpath) {
+    boolean status = false;
+    Integer attempts = 0;
+
+    while (attempts < 3) {
+      WebElement element = null;
+      try {
+        element = driver.findElement(By.xpath(productXpath));
+      } catch (ElementNotVisibleException e) {
+      }
+
+      if (element == null) {
+        if (attempts >= 2 ) {
+          AssertUtils.fail("Failed to find the Subscription Web Element in portal");
+        }
+        driver.navigate().refresh();
+        Util.sleep(10000);
+        Util.printInfo("Retry Logic: Failed to find the Subscription Web Element, attempts #" + (attempts + 1));
+        attempts++;
+      } else {
+        status = true;
+        Util.printInfo("Found the Subscription Web Element, so skipping the retry logic");
+        break;
+      }
+    }
+
+    return status;
+  }
+
   @Step("Verify subscription/agreement is displayed on Subscriptions page"
       + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionDisplayedInBO(String subscriptionID) {
     openSubscriptionsLink();
-    boolean status;
+    boolean status = false;
     String errorMsg = "";
     String productXpath = null;
-    try {
 
-      productXpath = portalPage
-          .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
-    } catch (Exception e) {
-      //AssertUtils.fail("Verify product is displayed in Subscription page step couldn't be completed due to technical issue " + e.getMessage());
-      errorMsg =
-          "Verify product is displayed in Subscription page step couldn't be completed due to technical issue "
-              + e.getMessage();
+    int attempts = 0;
+
+    while (attempts < 3) {
+      try {
+        productXpath = portalPage
+                .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
+
+      } catch (Exception e) {
+        driver.navigate().refresh();
+        Util.sleep(10000);
+        Util.printInfo("Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts + 1));
+        attempts ++;
+      }
+      Util.printInfo("Found the Subscription productXpath, so skipping the retry logic");
+      break;
     }
 
-    status = isPortalElementPresentWithXpath(productXpath);
+    status = isSubscriptionDisplayed(productXpath);
+    
     if (!status) {
       errorMsg =
           ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
@@ -417,7 +411,7 @@ public class PortalTestBase {
   @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
   public boolean validateBICOrderProductInCEP(String cepURL, String portalUserName,
       String portalPassword, String subscriptionID) {
-    boolean status = false, statusPS, statusBO, statusBOC, statusBOS, portalLogin, portalLoad = false;
+    boolean status = false, statusPS = false;
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
@@ -425,19 +419,10 @@ public class PortalTestBase {
 
     if (isPortalTabsVisible()) {
       try {
-        portalLogin = clickALLPSLink();
-        //portalLoad = feynamnLayoutLoaded();
+        clickALLPSLink();
         statusPS = isSubscriptionDisplayedInPS(subscriptionID);
-        /*
-         * clickContractsLink(); statusBOC =
-         * isSubscriptionDisplayedinBO(subscriptionID);
-         *
-         * clickSubscriptionLink(); statusBOS =
-         * isSubscriptionDisplayedinBO(subscriptionID);
-         *
-         * statusBO= statusBOC||statusBOS;
-         */
-        status = (statusPS/* && statusBO */);
+
+        status = (statusPS);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -722,8 +707,6 @@ public class PortalTestBase {
 
       portalPage.waitForPageToLoad();
 
-      // Util.waitForElement(portalPage.getFirstFieldLocator("portalASProductTerm"),
-      // "Product Term");
       portalPage.waitForFieldPresent("portalASProductTerm", 5000);
       String productSubscriptionTerm = portalPage
           .getLinkText("portalASProductTerm"); // .split(":")[1].trim();
@@ -786,6 +769,10 @@ public class PortalTestBase {
       e.printStackTrace();
       AssertUtils.fail("Failed to place add seat order from portal...");
     }
+
+    // We just placed an order, this takes time to sync Order > subscription > LEM > Portal
+    Util.sleep(60000);
+
     return orderDetails;
   }
 
@@ -837,9 +824,9 @@ public class PortalTestBase {
         Util.printInfo("Calling "+ data.get("zipPaySubscriptionUrl"));
         driver.get(data.get("zipPaySubscriptionUrl"));
       } else {
-        Util.sleep(5000);
         Util.printInfo("Clicking on back button...");
         portalPage.clickUsingLowLevelActions("portalBackButton");
+        Util.sleep(5000);
       }
 
       driver.switchTo().defaultContent();
