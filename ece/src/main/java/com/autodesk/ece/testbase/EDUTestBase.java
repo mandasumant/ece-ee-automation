@@ -322,13 +322,14 @@ public class EDUTestBase {
    */
   @Step("Activate Product Class Subscription" + GlobalConstants.TAG_TESTINGHUB)
   public void activateProductAndAssignUsers(String productLink) throws MetadataException {
-    eduPage.clickUsingLowLevelActions("educationClassLabTab");
-    eduPage.clickUsingLowLevelActions("subscriptionAcceptButton");
-
     boolean assignmentSuccess = false;
     int assignmentAttemptCount = 0;
 
     while (!assignmentSuccess) {
+      eduPage.clickUsingLowLevelActions("educationClassLabTab");
+      eduPage.clickUsingLowLevelActions("subscriptionAcceptButton");
+      Util.sleep(5000);
+
       // Assign user
       WebElement activateButton = driver.findElement(
           By.cssSelector(".edu-activate-cta [href=\"" + productLink + "\"]"));
@@ -352,9 +353,9 @@ public class EDUTestBase {
 
         if (assignmentAttemptCount > 5) {
           AssertUtils.fail("Failed to assign seats to educator");
-          assignmentSuccess = true;
         }
       } else {
+        Util.printInfo("Successfully assigned Seats to Educator");
         assignmentSuccess = true;
       }
     }
