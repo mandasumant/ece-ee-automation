@@ -130,16 +130,20 @@ public class BICOrderCreation extends ECETestBase {
     String paymentType = System.getProperty("payment");
     Util.printInfo("Current Payment Type is : " + paymentType);
 
-    String[] paymentTypes = localeDataMap.get(locale).get(BICECEConstants.PAYMENT_METHODS)
-        .split(",");
-    ArrayList<String> payments = new ArrayList<>(Arrays.asList(paymentTypes));
-    payments.remove(paymentType);
-    int index = (int) Util.randomNumber(payments.size());
-    paymentType = payments.get(index);
-    Util.printInfo("New Payment Type is : " + paymentType);
+    String newPaymentType = System.getProperty("newPaymentType");
+
+    if(newPaymentType == null || newPaymentType.isEmpty()) {
+      String[] paymentTypes = localeDataMap.get(locale).get(BICECEConstants.PAYMENT_METHODS)
+          .split(",");
+      ArrayList<String> payments = new ArrayList<>(Arrays.asList(paymentTypes));
+      payments.remove(paymentType);
+      int index = (int) Util.randomNumber(payments.size());
+      newPaymentType = payments.get(index);
+    }
+    Util.printInfo("New Payment Type is : " + newPaymentType);
 
 
-    testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
+    testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, newPaymentType);
 
     portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
 
@@ -247,7 +251,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));

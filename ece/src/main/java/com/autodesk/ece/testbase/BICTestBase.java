@@ -1575,7 +1575,7 @@ public class BICTestBase {
     driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
   }
 
-  @Step("Guac: Test Trail Download  " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Guac: Test Trial Download  " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> testCjtTrialDownloadUI(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
 
