@@ -1022,7 +1022,6 @@ public class PortalTestBase {
           BICTestBase.bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
       BICTestBase.bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
 
-      BICTestBase.bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
       BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
