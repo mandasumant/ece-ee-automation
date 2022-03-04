@@ -28,7 +28,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -324,7 +323,7 @@ public class PortalTestBase {
     }
 
     status = isSubscriptionDisplayed(productXpath);
-    
+
     if (!status) {
       errorMsg =
           ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
@@ -1005,7 +1004,7 @@ public class PortalTestBase {
       BICTestBase.bicPage.waitForElementToDisappear("paypalPageLoader", 30);
 
       String title = driver.getTitle();
-      AssertUtils.assertTrue(title.contains("PayPal"),
+      AssertUtils.assertTrue(title.toUpperCase().contains("PayPal".toUpperCase()),
           "Current title [" + title + "] does not contains keyword : PayPal");
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
@@ -1014,10 +1013,17 @@ public class PortalTestBase {
         BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
       }
 
+      if (BICTestBase.bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
+        BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
+      }
+
       Util.printInfo("Entering paypal user name [" + data.get("paypalUser") + "]...");
       BICTestBase.bicPage.waitForElementVisible(
           BICTestBase.bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
       BICTestBase.bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
+
+      BICTestBase.bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
+      BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
       BICTestBase.bicPage.populateField("paypalPasswordField", data.get("paypalSsap"));
@@ -1161,12 +1167,13 @@ public class PortalTestBase {
       lastNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
     }
-    driver.findElement(By.xpath(firstNameXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-    Util.sleep(2000);
+
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
     driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get("firstname"));
-    driver.findElement(By.xpath(lastNameXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-    Util.sleep(2000);
+
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
     driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get("lastname"));
+
     if (data.size() == 6) {
       Util.printInfo("Populating EMEA Billing Details");
       status = populateEMEABillingDetails(data);
@@ -1270,21 +1277,15 @@ public class PortalTestBase {
     driver.findElement(By.xpath(orgNameXpath))
         .sendKeys(new RandomStringUtils().random(10, true, true));
 
-    driver.findElement(By.xpath(orgNameXpath)).click();
-    driver.findElement(By.xpath(fullAddrXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-    Util.sleep(3000);
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
     driver.findElement(By.xpath(fullAddrXpath)).sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
 
-    driver.findElement(By.xpath(cityXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-    Util.sleep(3000);
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
     driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY));
 
-    driver.findElement(By.xpath(zipXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-    Util.sleep(3000);
+    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
     driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.ZIPCODE));
 
-    driver.findElement(By.xpath(phoneXpath)).sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-    Util.sleep(3000);
     driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
 
     WebElement countryEle = driver.findElement(By.xpath(countryXpath));
