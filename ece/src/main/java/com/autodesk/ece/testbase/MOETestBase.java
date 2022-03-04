@@ -135,11 +135,10 @@ public class MOETestBase {
     bicTestBase.navigateToCart(data);
 
     String emailID = bicTestBase.generateUniqueEmailID();
-    String orderNumber = getBicOrderMoeWithQuote(data, emailID, guacBaseURL, guacMoeResourceURL,
-        data.get(BICECEConstants.LOCALE), password, paymentMethod);
+    results.putAll(getBicOrderMoeWithQuote(data, emailID, guacBaseURL, guacMoeResourceURL,
+        data.get(BICECEConstants.LOCALE), password, paymentMethod));
 
     results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
 
     // Jira ref.: ECEEPLT-1489
     // TODO: Validate that the Pelican Finance Report mention the Quote ID from the order that was placed.
@@ -291,7 +290,7 @@ public class MOETestBase {
         js.executeScript(
             "document.querySelectorAll(\"button[name=AddProductsToCart]\")[0].click()");
         Util.printInfo("Clicked on cta: Add Products");
-        Util.sleep(20000);
+        Util.sleep(30000);
 
         moePage.checkIfElementExistsInPage("okButton", 40);
         moePage.clickUsingLowLevelActions("okButton");
@@ -402,9 +401,10 @@ public class MOETestBase {
     return orderNumber;
   }
 
-  private String getBicOrderMoeWithQuote(LinkedHashMap<String, String> data, String emailID,
+  private HashMap <String, String> getBicOrderMoeWithQuote(LinkedHashMap<String, String> data, String emailID,
       String guacBaseURL, String guacMoeResourceURL, String locale, String password,
       String paymentMethod) throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
     locale = locale.replace("_", "-");
     String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
     System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
@@ -441,7 +441,7 @@ public class MOETestBase {
 
     validateProductNameDefault();
 
-    validateQuoteDropdownFromOrderView();
+    results.put("quoteId", validateQuoteDropdownFromOrderViewAndReturnItsValue());
 
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
@@ -452,7 +452,8 @@ public class MOETestBase {
 
     loginToPortalWithUserAccount(data, emailID, password);
 
-    return orderNumber;
+    results.put("orderNumber", orderNumber);
+    return results;
   }
 
   @Step("Create a quote and send to the customer from MOE DTC page.")
@@ -739,14 +740,17 @@ public class MOETestBase {
     validateQuoteReadOnlyView();
   }
 
-  @Step("Validate Quote dropdown list from Order view")
-  private void validateQuoteDropdownFromOrderView() throws MetadataException {
+  @Step("Validate Quote dropdown list from Order view and return its value")
+  private String validateQuoteDropdownFromOrderViewAndReturnItsValue() throws MetadataException {
     moePage.clickUsingLowLevelActions("moeRadioButtonOrder");
     Util.sleep(2000);
     Select selection = new Select(driver.findElement(By.id("moe-quotes")));
     int size = selection.getOptions().size();
     Util.printInfo("Number of items: " + size);
     AssertUtils.assertTrue(3 == size);
+
+    selection.selectByIndex(2);
+    return selection.getFirstSelectedOption().getAttribute("value");
   }
 
   @Step("Validate default order view.")

@@ -154,6 +154,5 @@ public class BICECEConstants extends BICConstants {
   public static final String GUAC_MOE_ORDER_ORIGIN = "GUAC_MOE_DIRECT";
   public static final String GUAC_DTC_ORDER_ORIGIN = "GUAC_MOE_DTC";
   public static final String BUYER_EXTERNAL_KEY = "BUYER_EXTERNAL_KEY";
-  public static final String GET_GUAC_MOE_QUOTE_ID = "getPOReponse_quoteId";
 }
 
