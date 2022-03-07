@@ -444,7 +444,7 @@ public class PelicanTestBase {
       results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
 
     } catch (Exception e) {
-      Util.printTestFailedMessage("Unable to get Purchase Order Details for Order Service");
+      Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service");
     }
     return results;
   }
