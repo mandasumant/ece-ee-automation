@@ -308,8 +308,6 @@ public class MOEOrderFlows extends ECETestBase {
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     testResults.put(BICECEConstants.BUYER_EXTERNAL_KEY,
         results.get(BICECEConstants.BUYER_EXTERNAL_KEY));
-    testResults.put(BICECEConstants.GET_GUAC_MOE_QUOTE_ID,
-        results.get(BICECEConstants.GET_GUAC_MOE_QUOTE_ID));
 
     updateTestingHub(testResults);
 
@@ -322,9 +320,9 @@ public class MOEOrderFlows extends ECETestBase {
     // Get Finance Reports
     String result = pelicantb.postReportsFinancePelicanAPI(results);
 
+    // Compare quoteId value from purchase order and finance reports
     JsonPath jp = new JsonPath(result);
-    AssertUtils.assertEquals(jp.get("content[0].quoteId"),
-        results.get(BICECEConstants.GET_GUAC_MOE_QUOTE_ID));
+    AssertUtils.assertEquals(jp.get("content[0].quoteId"), results.get("quoteId"));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

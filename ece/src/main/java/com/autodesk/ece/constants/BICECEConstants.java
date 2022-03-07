@@ -158,5 +158,6 @@ public class BICECEConstants extends BICConstants {
   public static final String GET_GUAC_MOE_QUOTE_ID = "getPOReponse_quoteId";
   public static final String VISA = "VISA";
   public static final String MASTERCARD = "MASTERCARD";
+
 }
 

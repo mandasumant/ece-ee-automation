@@ -1458,15 +1458,37 @@ public class PortalTestBase {
    */
   @Step("Verify product is visible in Portal " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> verifyProductVisible(String peIdPattern) {
-    Pattern pattern = Pattern.compile(peIdPattern);
-    String lastProductXPath = portalPage.getFirstFieldLocator("lastPurchasedProduct");
-
-    WebElement lastProduct = driver.findElement(By.xpath(lastProductXPath));
-    String subscriptionID = lastProduct.getAttribute("data-pe-id");
-    AssertUtils.assertTrue(pattern.matcher(subscriptionID).find());
-
+    Integer attempts = 0;
+    Boolean status = false;
+    String subscriptionID = null;
     HashMap<String, String> results = new HashMap<>();
-    results.put(BICECEConstants.PRODUCT_PE_ID, subscriptionID);
+
+    while (attempts < 10) {
+      Pattern pattern = Pattern.compile(peIdPattern);
+      try {
+        String lastProductXPath = portalPage.getFirstFieldLocator("lastPurchasedProduct");
+        WebElement lastProduct = driver.findElement(By.xpath(lastProductXPath));
+        subscriptionID = lastProduct.getAttribute("data-pe-id");
+        status = pattern.matcher(subscriptionID).find();
+      } catch (Exception e) {
+        Util.printInfo("Failed to find Student Subscription in Portal - Attempt #" + (attempts + 1));
+      }
+
+      if (!status) {
+        if (attempts >= 9) {
+          AssertUtils.fail("All retries exhausted: Failed to find Student Subscription in Portal");
+        }
+        Util.sleep(300000);
+        driver.navigate().refresh();
+        attempts++;
+      } else {
+        Util.printInfo("Found Student Subscription in Portal, so skipping the retry logic");
+        AssertUtils.assertTrue(pattern.matcher(subscriptionID).find());
+        results.put(BICECEConstants.PRODUCT_PE_ID, subscriptionID);
+        break;
+      }
+    }
+
     return results;
   }
 
