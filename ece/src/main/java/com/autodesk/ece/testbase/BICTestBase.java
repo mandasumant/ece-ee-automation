@@ -1628,7 +1628,7 @@ public class BICTestBase {
 
       bicPage.waitForFieldPresent("downloadFreeTrialStarted", 5000);
       boolean downloadStarted = bicPage.isFieldVisible("downloadFreeTrialStarted");
-      Util.sleep(5000);
+      Util.sleep(10000);
       AssertUtils.assertEquals(downloadStarted, true, "SUCCESSFULLY STARTED DOWNLOAD");
       results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
     } catch (Exception e) {
