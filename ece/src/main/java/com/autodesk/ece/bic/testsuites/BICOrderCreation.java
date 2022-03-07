@@ -139,6 +139,10 @@ public class BICOrderCreation extends ECETestBase {
       payments.remove(paymentType);
       int index = (int) Util.randomNumber(payments.size());
       newPaymentType = payments.get(index);
+
+      if(newPaymentType.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+        newPaymentType=BICECEConstants.MASTERCARD;
+      }
     }
     Util.printInfo("New Payment Type is : " + newPaymentType);
 
