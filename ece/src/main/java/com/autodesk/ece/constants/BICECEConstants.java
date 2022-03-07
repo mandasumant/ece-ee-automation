@@ -140,6 +140,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PORTAL_PAYMENT_METHOD = "portalPaymentMethod";
   public static final String PAYMENTOPTION = "<PAYMENTOPTION>";
   public static final String PORTAL_CARD_SAVE_BTN = "portalCardSaveBtn";
+  public static final String PORTAL_ACH_SAVE_BTN = "portalACHSaveButton";
   public static final String PAYMENT_DETAILS1 = "Payment details [";
   public static final String ARGUMENTS_CLICK = "arguments[0].click();";
   public static final String SKIP_LINK = "skipLink";
@@ -155,5 +156,7 @@ public class BICECEConstants extends BICConstants {
   public static final String GUAC_DTC_ORDER_ORIGIN = "GUAC_MOE_DTC";
   public static final String BUYER_EXTERNAL_KEY = "BUYER_EXTERNAL_KEY";
   public static final String GET_GUAC_MOE_QUOTE_ID = "getPOReponse_quoteId";
+  public static final String VISA = "VISA";
+  public static final String MASTERCARD = "MASTERCARD";
 }
 

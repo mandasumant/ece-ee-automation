@@ -150,7 +150,7 @@ public class BICOrderCreation extends ECETestBase {
     if (!(Strings.isNullOrEmpty(EMAIL))) {
       portaltb.portalLogin(emailID, password);
     }
-    String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentType.toUpperCase())
+    String[] paymentCardDetails = getBicTestBase().getPaymentDetails(newPaymentType.toUpperCase())
         .split("@");
     portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails,
         localeDataMap.get(locale));

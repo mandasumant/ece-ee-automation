@@ -961,16 +961,45 @@ public class PortalTestBase {
 
       populateBillingAddress(data, data.get("userType"));
       Util.printInfo("Clicking on save button");
-      portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
-
-        if(data.get(BICECEConstants.PAYMENT_TYPE)
-            .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        Util.printInfo("Clicking on madate agreement form...");
-          portalPage.waitForFieldPresent("portalDebitMandateAgreement", 5000);
-          portalPage.clickUsingLowLevelActions("portalDebitMandateAgreement");
-          portalPage.waitForFieldPresent(BICECEConstants.PORTAL_CARD_SAVE_BTN, 5000);
-          portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
+      if(data.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.VISA) || data.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.MASTERCARD)) {
+        portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
+      }else if(data.get(BICECEConstants.PAYMENT_TYPE)
+          .equalsIgnoreCase(BICConstants.paymentTypePayPal)){
+        Util.sleep(10000);
+        List<WebElement> list = portalPage.getMultipleWebElementFromXpath("//button[contains(@data-testid,'save-payment-profile')]");
+        if(list.size() > 1){
+          list.get(1).click();
+        }else{
+          list.get(0).click();
         }
+        Util.printInfo("Saved Paypal profile as new payment type");
+      }
+      else if(data.get(BICECEConstants.PAYMENT_TYPE)
+          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+        data.put(BICECEConstants.PAYMENT_DETAILS,BICECEConstants.ACCOUNT);
+        portalPage.waitForFieldPresent(BICECEConstants.PORTAL_ACH_SAVE_BTN, 5000);
+        Util.sleep(10000);
+        List<WebElement> list = portalPage.getMultipleWebElementFromXpath("//button[contains(@data-testid,'save-payment-profile')]");
+        if(list.size() > 1){
+          list.get(1).click();
+        }else{
+          list.get(0).click();
+        }
+
+        Util.printInfo("Saved ACH profile as new payment type");
+        Util.sleep(5000);
+        WebElement mandateAgreementElement = driver.findElement(By.xpath(
+            BICECEConstants.ID_MANDATE_AGREEMENT));
+        mandateAgreementElement.click();
+
+        List<WebElement> saveButtonList = portalPage.getMultipleWebElementFromXpath("//span[.='Save']");
+        if(saveButtonList.size() > 1){
+          saveButtonList.get(1).click();
+        }else{
+          saveButtonList.get(0).click();
+        }
+      }
+
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to select payment profile...");
@@ -1314,6 +1343,7 @@ public class PortalTestBase {
           BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] does not contains text [paypal]");
     } else if (data.get(BICECEConstants.PAYMENT_TYPE)
         .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+      Util.sleep(5000);
       Assert.assertTrue(paymentDetails.contains(BICECEConstants.ACCOUNT),
           BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] does not contains text [account]");
     } else {

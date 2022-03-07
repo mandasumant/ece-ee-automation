@@ -409,7 +409,7 @@ public class PelicanTestBase {
     return signature + "::" + timestamp;
   }
 
-  @Step("Subscription : subs Validation" + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Subscription : Getting purchase order details from Order Service " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> getPurchaseOrderDetails(String purchaseOrderAPIresponse) {
     HashMap<String, String> results = new HashMap<>();
     JsonPath jp = new JsonPath(purchaseOrderAPIresponse);
@@ -444,8 +444,7 @@ public class PelicanTestBase {
       results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
 
     } catch (Exception e) {
-      Util.printTestFailedMessage("Unable to get Purchase Order Details");
-      e.printStackTrace();
+      Util.printTestFailedMessage("Unable to get Purchase Order Details for Order Service");
     }
     return results;
   }
