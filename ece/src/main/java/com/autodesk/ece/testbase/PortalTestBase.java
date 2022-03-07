@@ -42,13 +42,14 @@ public class PortalTestBase {
   public WebDriver driver = null;
   ZipPayTestBase zipTestBase;
   BICTestBase bicTestBase;
+
   public PortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
     portalPage = testbase.createPage("PAGE_PORTAL");
     studentPage = testbase.createCommonPage("PAGE_STUDENT");
     new BICTestBase(driver, testbase);
     zipTestBase = new ZipPayTestBase(testbase);
-    bicTestBase = new BICTestBase(driver,testbase);
+    bicTestBase = new BICTestBase(driver, testbase);
   }
 
   public static String timestamp() {
@@ -202,10 +203,11 @@ public class PortalTestBase {
     while (attempts < 3) {
       try {
         status =
-                portalPage.isFieldVisible(Field) || portalPage.checkFieldExistence(Field) || portalPage
-                        .isFieldPresent(Field) || portalPage.checkIfElementExistsInPage(Field, 60);
+            portalPage.isFieldVisible(Field) || portalPage.checkFieldExistence(Field) || portalPage
+                .isFieldPresent(Field) || portalPage.checkIfElementExistsInPage(Field, 60);
       } catch (MetadataException e) {
-        Util.printWarning("Failed looking for \"Portal Product and Service Tab\" - Attempt #" + (attempts + 1));
+        Util.printWarning(
+            "Failed looking for \"Portal Product and Service Tab\" - Attempt #" + (attempts + 1));
       }
 
       if (!status) {
@@ -237,20 +239,23 @@ public class PortalTestBase {
     while (attempts < 3) {
       try {
         productXpath = portalPage
-                .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
+            .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
 
         Util.printInfo("Found the Subscription productXpath, so skipping the retry logic");
         break;
       } catch (Exception e) {
-        if (attempts >= 2 ) {
+        if (attempts >= 2) {
           AssertUtils.fail(
-                  "All retries exhausted: Verify subscription/agreement is displayed in All P&S page step couldn't " +
-                          "be completed due to technical issue " + e.getMessage());
+              "All retries exhausted: Verify subscription/agreement is displayed in All P&S page step couldn't "
+                  +
+                  "be completed due to technical issue " + e.getMessage());
         }
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts + 1));
-        attempts ++;
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts
+                + 1));
+        attempts++;
       }
     }
 
@@ -267,7 +272,8 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
+  @Step(
+      "Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionDisplayed(String productXpath) {
     boolean status = false;
     Integer attempts = 0;
@@ -280,12 +286,14 @@ public class PortalTestBase {
       }
 
       if (element == null) {
-        if (attempts >= 2 ) {
+        if (attempts >= 2) {
           AssertUtils.fail("Failed to find the Subscription Web Element in portal");
         }
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription Web Element, attempts #" + (attempts + 1));
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription Web Element, attempts #" + (attempts
+                + 1));
         attempts++;
       } else {
         status = true;
@@ -310,13 +318,15 @@ public class PortalTestBase {
     while (attempts < 3) {
       try {
         productXpath = portalPage
-                .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
+            .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
 
       } catch (Exception e) {
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts + 1));
-        attempts ++;
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts
+                + 1));
+        attempts++;
       }
       Util.printInfo("Found the Subscription productXpath, so skipping the retry logic");
       break;
@@ -463,9 +473,10 @@ public class PortalTestBase {
           editSwitchTermButton.click();
         }
 
-        if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        if (System.getProperty(BICECEConstants.PAYMENT)
+            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
           clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-3-year\"]");
-        }else{
+        } else {
           clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-1-year\"]");
         }
         clickWithJavaScriptExecutor(javascriptExecutor, "//button[@data-wat-val=\"continue\"]");
@@ -478,11 +489,12 @@ public class PortalTestBase {
         Util.sleep(5000);
         portalPage.clickUsingLowLevelActions("switchTermDone");
 
-        if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        if (System.getProperty(BICECEConstants.PAYMENT)
+            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
           AssertUtils.assertTrue(driver
               .findElement(By.xpath("//*[starts-with(text(),\"Changes to 3-year term starting\")]"))
               .isDisplayed());
-        }else{
+        } else {
           AssertUtils.assertTrue(driver
               .findElement(By.xpath("//*[starts-with(text(),\"Changes to 1-year term starting\")]"))
               .isDisplayed());
@@ -787,8 +799,8 @@ public class PortalTestBase {
       }
 
     } catch (MetadataException e) {
-        e.printStackTrace();
-        AssertUtils.fail("Failed to click on Save button on billing details page...");
+      e.printStackTrace();
+      AssertUtils.fail("Failed to click on Save button on billing details page...");
     }
   }
 
@@ -820,7 +832,7 @@ public class PortalTestBase {
 
       Util.sleep(5000);
       if (data.get("zipPaySubscriptionUrl") != null) {
-        Util.printInfo("Calling "+ data.get("zipPaySubscriptionUrl"));
+        Util.printInfo("Calling " + data.get("zipPaySubscriptionUrl"));
         driver.get(data.get("zipPaySubscriptionUrl"));
       } else {
         Util.printInfo("Clicking on back button...");
@@ -885,7 +897,8 @@ public class PortalTestBase {
     portalPage.clickUsingLowLevelActions("portalConfirmationOkButton");
     Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
         BICECEConstants.PORTAL_REDUCE_SEATS_COUNT));
-    String renewingSeatsCount = portalPage.getTextFromLink(BICECEConstants.PORTAL_REDUCE_SEATS_COUNT);
+    String renewingSeatsCount = portalPage
+        .getTextFromLink(BICECEConstants.PORTAL_REDUCE_SEATS_COUNT);
     String reducedSeatQty = renewingSeatsCount.split(" ")[0];
     Util.printInfo("Recording new seats count.");
     orderDetails.put("reducedSeatQty", reducedSeatQty);
@@ -896,14 +909,16 @@ public class PortalTestBase {
     portalPage.checkIfElementExistsInPage(BICECEConstants.PORTAL_REDUCE_SEATS_BUTTON, 10);
     String newSeatsTotal = data.get("reducedSeatQty");
     String initialOrderQty = data.get(BICECEConstants.INITIAL_ORDER_QTY);
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if (System.getProperty(BICECEConstants.PAYMENT)
+        .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       if (newSeatsTotal.equals(initialOrderQty)) {
-        Util.printInfo("Seats reduced successfully. New seats will be in effect after next renewal");
+        Util.printInfo(
+            "Seats reduced successfully. New seats will be in effect after next renewal");
       } else {
         AssertUtils.fail("Error while reducing seats. Initial order seat : " + initialOrderQty
             + " total number of seats : " + newSeatsTotal + " should be same");
       }
-    } else{
+    } else {
       if (!newSeatsTotal.equals(initialOrderQty)) {
         Util.printInfo("Seats reduced successfully.");
       } else {
@@ -961,41 +976,29 @@ public class PortalTestBase {
 
       populateBillingAddress(data, data.get("userType"));
       Util.printInfo("Clicking on save button");
-      if(data.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.VISA) || data.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.MASTERCARD)) {
+      if (data.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.VISA) || data
+          .get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.MASTERCARD)) {
         portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
-      }else if(data.get(BICECEConstants.PAYMENT_TYPE)
-          .equalsIgnoreCase(BICConstants.paymentTypePayPal)){
-        Util.sleep(10000);
-        List<WebElement> list = portalPage.getMultipleWebElementFromXpath("//button[contains(@data-testid,'save-payment-profile')]");
-        if(list.size() > 1){
-          list.get(1).click();
-        }else{
-          list.get(0).click();
-        }
+      } else if (data.get(BICECEConstants.PAYMENT_TYPE)
+          .equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
+        savePaymentProfile();
         Util.printInfo("Saved Paypal profile as new payment type");
-      }
-      else if(data.get(BICECEConstants.PAYMENT_TYPE)
+      } else if (data.get(BICECEConstants.PAYMENT_TYPE)
           .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-        data.put(BICECEConstants.PAYMENT_DETAILS,BICECEConstants.ACCOUNT);
+        data.put(BICECEConstants.PAYMENT_DETAILS, BICECEConstants.ACCOUNT);
         portalPage.waitForFieldPresent(BICECEConstants.PORTAL_ACH_SAVE_BTN, 5000);
-        Util.sleep(10000);
-        List<WebElement> list = portalPage.getMultipleWebElementFromXpath("//button[contains(@data-testid,'save-payment-profile')]");
-        if(list.size() > 1){
-          list.get(1).click();
-        }else{
-          list.get(0).click();
-        }
-
+        savePaymentProfile();
         Util.printInfo("Saved ACH profile as new payment type");
         Util.sleep(5000);
         WebElement mandateAgreementElement = driver.findElement(By.xpath(
             BICECEConstants.ID_MANDATE_AGREEMENT));
         mandateAgreementElement.click();
 
-        List<WebElement> saveButtonList = portalPage.getMultipleWebElementFromXpath("//span[.='Save']");
-        if(saveButtonList.size() > 1){
+        List<WebElement> saveButtonList = portalPage
+            .getMultipleWebElementFromXpath("//span[.='Save']");
+        if (saveButtonList.size() > 1) {
           saveButtonList.get(1).click();
-        }else{
+        } else {
           saveButtonList.get(0).click();
         }
       }
@@ -1003,6 +1006,17 @@ public class PortalTestBase {
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to select payment profile...");
+    }
+  }
+
+  private void savePaymentProfile() throws Exception{
+    Util.sleep(5000);
+    List<WebElement> list = portalPage.getMultipleWebElementFromXpath(
+        "//button[contains(@data-testid,'save-payment-profile')]");
+    if (list.size() > 1) {
+      list.get(1).click();
+    } else {
+      list.get(0).click();
     }
   }
 
@@ -1042,8 +1056,10 @@ public class PortalTestBase {
         BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
       }
 
-      if (BICTestBase.bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
-        BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
+      if (BICTestBase.bicPage
+          .checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
+        BICTestBase.bicPage
+            .clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
       }
 
       Util.printInfo("Entering paypal user name [" + data.get("paypalUser") + "]...");
@@ -1426,8 +1442,9 @@ public class PortalTestBase {
     if (isPortalTabsVisible()) {
       try {
         // The subscription id that is being displayed in Portal is different from Pelican. Hence, Checking for "Subscription ID" text
-        if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
-          subscriptionID="Subscription ID";
+        if (System.getProperty(BICECEConstants.PAYMENT)
+            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+          subscriptionID = "Subscription ID";
         }
         status = isSubscriptionDisplayedInBO(subscriptionID);
       } catch (Exception e) {
@@ -1471,7 +1488,8 @@ public class PortalTestBase {
         subscriptionID = lastProduct.getAttribute("data-pe-id");
         status = pattern.matcher(subscriptionID).find();
       } catch (Exception e) {
-        Util.printInfo("Failed to find Student Subscription in Portal - Attempt #" + (attempts + 1));
+        Util.printInfo(
+            "Failed to find Student Subscription in Portal - Attempt #" + (attempts + 1));
       }
 
       if (!status) {
