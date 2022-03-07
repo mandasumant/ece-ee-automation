@@ -6,6 +6,7 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
@@ -386,7 +387,7 @@ public class PelicanTestBase {
     String timestamp = "";
     try {
       Mac mac = Mac.getInstance("HmacSHA256");
-      String terceS = data.get("getPriceDetails_terceS_ssap");
+      String terceS = ProtectedConfigFile.decrypt(data.get("getPriceDetails_terceS_ssap"));
       SecretKeySpec keySpec = new SecretKeySpec(terceS.getBytes(), "HmacSHA256");
       mac.init(keySpec);
 

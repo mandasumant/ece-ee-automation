@@ -21,6 +21,7 @@ default:
     transcoding: "UTF-8"
     responseType: "application/xml"
     accessTokenURL: "https://enterprise-api-stg.autodesk.com/v2/oauth/generateaccesstoken?grant_type=client_credentials"
+    password: "6uzmrhXSBCml5DOYKE+qyw==:3q2NTjF2nAdakJZSSuWK+g=="
     
  
 validateBICIndirectSAPOrder:

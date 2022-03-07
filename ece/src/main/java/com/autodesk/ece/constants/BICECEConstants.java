@@ -110,6 +110,7 @@ public class BICECEConstants extends BICConstants {
   public static final String COUNTRY_DOMAIN="countryDomain";
   public static final String EDU_ROLE = "eduRole";
   public static final String EDU_SUBMIT = "eduSubmit";
+  public static final String EDU_PASSWORD = "eduAccountPassword";
   public static final String MOE_LOGIN_PASSWORD_FIELD = "moeLoginPasswordField";
   public static final String GET_POREPONSE_SUBSCRIPTION_ID = "getPOReponse_subscriptionId";
   public static final String GETPRICEDETAILS_X_E2_PARTNER_ID = "getPriceDetails_X_E2_PartnerId";
@@ -146,9 +147,7 @@ public class BICECEConstants extends BICConstants {
   public static final String SKIP_LINK = "skipLink";
   public static final String TRUE = "true";
   public static final String PAYMENT_TYPE_SEPA = "SEPA";
-  public static final String PAYMENT_SEPA_LOWERCASE = "sepa";
   public static final String PAYMENT_TYPE_GIROPAY = "GIROPAY";
-  public static final String PAYMENT_GIROPAY_LOWERCASE = "giropay";
   public static final String PAYMENT_TYPE_ZIP = "ZIP";
   public static final String ALTERNATE_PAYMENT_METHODS = "alternate-payment-methods";
   public static final String PAYMENT_TYPE_FINANCING = "FINANCING";

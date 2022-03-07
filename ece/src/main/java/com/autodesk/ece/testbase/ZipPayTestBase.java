@@ -5,6 +5,7 @@ import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
@@ -99,7 +100,9 @@ public class ZipPayTestBase {
     }
 
     zipPage.populateField(ZIP_PAY_USERNAME_KEY, testData.get(ZIP_PAY_USERNAME_KEY));
-    zipPage.populateField(ZIP_PAY_PASSWORD_KEY, testData.get(ZIP_PAY_PASSWORD_KEY));
+
+    String password = ProtectedConfigFile.decrypt(testData.get(ZIP_PAY_PASSWORD_KEY));
+    zipPage.populateField(ZIP_PAY_PASSWORD_KEY, password);
 
     while (loginAttempts < 5) {
       zipPage.click("zipPayLogin");
@@ -179,7 +182,8 @@ public class ZipPayTestBase {
        // Login to the zip account
        zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 5000);
        zipPage.populateField(ZIP_PAY_DASHBOARD_USERNAME, testData.get(ZIP_PAY_USERNAME_KEY));
-       zipPage.populateField(ZIP_PAY_DASHBOARD_PASSWORD, testData.get(ZIP_PAY_PASSWORD_KEY));
+       zipPage.populateField(ZIP_PAY_DASHBOARD_PASSWORD,
+           ProtectedConfigFile.decrypt(testData.get(ZIP_PAY_PASSWORD_KEY)));
        zipPage.click(ZIP_PAY_SUBMIT);
      }
     } catch (MetadataException e) {

@@ -10,6 +10,7 @@ import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.awt.AWTException;
@@ -845,7 +846,8 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
-      bicPage.populateField("paypalPasswordField", data.get("paypalSsap"));
+      bicPage.populateField("paypalPasswordField",
+          ProtectedConfigFile.decrypt(data.get("paypalSsap")));
 
       Util.printInfo("Clicking on login button...");
       bicPage.clickUsingLowLevelActions("paypalLoginBtn");
@@ -1177,7 +1179,7 @@ public class BICTestBase {
     String quantity = "";
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
-    String password = data.get(BICECEConstants.PASSWORD);
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String promoCode = data.get(BICECEConstants.PROMO_CODE);
 

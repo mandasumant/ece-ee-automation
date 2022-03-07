@@ -8,6 +8,7 @@ import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.google.common.base.Strings;
@@ -33,7 +34,6 @@ import org.testng.annotations.Test;
 public class BICOrderCreation extends ECETestBase {
 
   private static final String EMAIL = System.getProperty("email");
-  private static final String PASSWORD = "Password1";
   private static final String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
@@ -42,6 +42,7 @@ public class BICOrderCreation extends ECETestBase {
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
+  private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -96,24 +97,24 @@ public class BICOrderCreation extends ECETestBase {
 
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
+
+    PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
   }
 
   @Test(groups = {
       "bic-changePayment"}, description = "Validation of BIC change payment details functionality")
   public void validateBICChangePaymentProfile() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
-    String emailID = System.getProperty(BICECEConstants.EMAIL);
-    String password = System.getProperty(BICECEConstants.PASSWORD);
-
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
-    emailID = results.get(BICConstants.emailid);
-    password = PASSWORD;
+
+    String emailID = results.get(BICConstants.emailid);
 
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
-    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
+        .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
 
@@ -152,7 +153,7 @@ public class BICOrderCreation extends ECETestBase {
     portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
 
     if (!(Strings.isNullOrEmpty(EMAIL))) {
-      portaltb.portalLogin(emailID, password);
+      portaltb.portalLogin(emailID, PASSWORD);
     }
     String[] paymentCardDetails = getBicTestBase().getPaymentDetails(newPaymentType.toUpperCase())
         .split("@");

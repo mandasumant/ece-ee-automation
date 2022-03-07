@@ -9,6 +9,7 @@ import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.net.URISyntaxException;
@@ -104,8 +105,10 @@ public class EDUTestBase {
     eduPage.populateField("lastname", lastName);
     eduPage.populateField("newEmail", email);
     eduPage.populateField("newConfirmEmail", email);
-    eduPage.populateField(EDU_NEW_PASSWORD, "Password1");
-    results.put("password", "Password1");
+
+    String password = ProtectedConfigFile.decrypt(testData.get(BICECEConstants.EDU_PASSWORD));
+    eduPage.populateField(EDU_NEW_PASSWORD, password);
+    results.put("password", password);
 
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
@@ -158,7 +161,8 @@ public class EDUTestBase {
   @Step("Mark user as approved" + GlobalConstants.TAG_TESTINGHUB)
   public void verifyUser(String oxygenId) {
     String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
-    given().auth().basic(testData.get("eduAEMUser"), testData.get("eduAEMPassword")).when()
+    given().auth().basic(testData.get("eduAEMUser"),
+            ProtectedConfigFile.decrypt(testData.get("eduAEMPassword"))).when()
         .get(baseUrl);
   }
 

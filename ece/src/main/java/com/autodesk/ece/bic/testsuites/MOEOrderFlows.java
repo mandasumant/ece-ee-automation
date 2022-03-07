@@ -8,6 +8,7 @@ import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.restassured.path.json.JsonPath;
@@ -26,7 +27,6 @@ import org.testng.util.Strings;
 
 public class MOEOrderFlows extends ECETestBase {
 
-  private static final String PASSWORD = "Password1";
   private static final String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   Map<?, ?> loadRestYaml = null;
@@ -35,6 +35,7 @@ public class MOEOrderFlows extends ECETestBase {
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
   String optyName, stage, fulfillment, account, projectCloseDate,email,sku ="";
+  private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -121,6 +122,8 @@ public class MOEOrderFlows extends ECETestBase {
     testDataForEachMethod.put("account", account.trim());
     testDataForEachMethod.put("projectCloseDate", projectCloseDate);
     testDataForEachMethod.put("guacMoeUserEmail", email);
+
+    PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
   }
 
   @AfterMethod(alwaysRun = true)

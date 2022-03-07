@@ -8,6 +8,7 @@ import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.awt.Toolkit;
@@ -56,7 +57,7 @@ public class MOETestBase {
     String guacMoeResourceURL = data.get("guacMoeResourceURL") + "A-1776440";
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
-    String password = data.get(BICECEConstants.PASSWORD);
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     bicTestBase.navigateToCart(data);
 
@@ -129,7 +130,7 @@ public class MOETestBase {
     String guacMoeResourceURL = data.get("guacMoeResourceURL") + data.get("guacMoeOptyId");
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
-    String password = data.get(BICECEConstants.PASSWORD);
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     Util.printInfo("THE REGION " + data.get(BICECEConstants.LOCALE));
     bicTestBase.navigateToCart(data);
@@ -323,7 +324,7 @@ public class MOETestBase {
     HashMap<String, String> results = new HashMap<>();
     Map<String, String> address = null;
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
-    String password = data.get(BICECEConstants.PASSWORD);
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String guacBaseURL = data.get("guacBaseURL");
     navigateToMoeDtcUrl(data, guacBaseURL, locale);
@@ -525,7 +526,8 @@ public class MOETestBase {
     moePage.waitForField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, true, 30000);
     moePage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
     moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD,
-        "EM5AhbaOir5DnLhlP@$iialVOX7ypvBBKys");
+        ProtectedConfigFile.decrypt(
+            "/pLbucWe9KSs27xgcdkXKA==:uGNj1FHc/Ncc4bjnjXzpjWGVr8aj9s93aNpn1EXd4I3O0f9R0KRAQhRUEox5JdqC"));
     moePage.click("moeLoginButton");
     moePage.waitForPageToLoad();
     Util.printInfo("Successfully logged into MOE");

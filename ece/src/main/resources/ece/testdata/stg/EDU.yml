@@ -1,8 +1,9 @@
 default:
   eduLandingPage: "https://www-pt.autodesk.com/education/edu-software/overview?sorting=featured&filters=individual"
   eduVerificationEndpoint: "https://aem-author-internal.efddotcom-stg.autodesk.com/content/education/support/search.user-edit-verification.html?uid={oxygenId}&action=approve"
+  eduAccountPassword: "Ge5G+5phgDgNsjSTEYqBvQ==:tGUrvFb+e+oPK6lYvPi1JA=="
   eduAEMUser: "svc-testing-hub"
-  eduAEMPassword: "oS1adpvJ40mwuBQibZBGQize1Oy5DsrW"
+  eduAEMPassword: "L9lz66bJ0yo/z3zRDg4Gmw==:bVaOEJs/gp0aaS6UrRyrN2uKBT5GboyqS9CEF4JqOe+TRUke05+ZqDkngp2lYsCh"
   cepURL: "https://customer-stg.autodesk.com/"
 
 

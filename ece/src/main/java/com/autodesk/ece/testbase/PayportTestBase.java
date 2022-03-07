@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.utils.LoadJsonWithValue;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
@@ -94,7 +95,8 @@ public class PayportTestBase {
     ClassLoader classLoader = this.getClass().getClassLoader();
     try {
       KeyStore keystore = KeyStore.getInstance("PKCS12");
-      String certificatePassphrase = testData.get("payportCertificatePassphrase");
+      String certificatePassphrase = ProtectedConfigFile.decrypt(
+          testData.get("payportCertificatePassphrase"));
       keystore.load(classLoader.getResourceAsStream(filename), certificatePassphrase.toCharArray());
       SSLSocketFactory clientAuthFactory = new SSLSocketFactory(keystore, certificatePassphrase);
       config = new SSLConfig().with().sslSocketFactory(clientAuthFactory).and()

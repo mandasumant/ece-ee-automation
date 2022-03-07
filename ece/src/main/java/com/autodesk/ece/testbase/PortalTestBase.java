@@ -11,6 +11,7 @@ import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.CustomSoftAssert;
 import com.autodesk.testinghub.core.utils.ErrorEnum;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.text.DateFormat;
@@ -1055,7 +1056,8 @@ public class PortalTestBase {
       BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
-      BICTestBase.bicPage.populateField("paypalPasswordField", data.get("paypalSsap"));
+      BICTestBase.bicPage.populateField("paypalPasswordField",
+          ProtectedConfigFile.decrypt(data.get("paypalSsap")));
 
       Util.printInfo("Clicking on login button...");
       BICTestBase.bicPage.clickUsingLowLevelActions("paypalLoginBtn");
