@@ -54,6 +54,10 @@ public class EDUUserFlows extends ECETestBase {
     // Accept VSOS terms
     edutb.signUpUser(results.get(BICConstants.emailid), results.get(BICECEConstants.PASSWORD));
 
+    results.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    results.put(BICConstants.oxid, results.get(BICConstants.oxid));
+    updateTestingHub(results);
+
     if (testProductKey.equals(FUSION_360_KEY)) {
       // Download Fusion 360
       edutb.downloadF360Product();
@@ -79,6 +83,10 @@ public class EDUUserFlows extends ECETestBase {
     results.putAll(edutb.registerUser(EDUUserType.EDUCATOR));
 
     edutb.signUpUser(results.get(BICConstants.emailid), results.get(BICECEConstants.PASSWORD));
+
+    results.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    results.put(BICConstants.oxid, results.get(BICConstants.oxid));
+    updateTestingHub(results);
 
     // Activate product and assign users
     edutb.activateProductAndAssignUsers(testDataForProduct.get("card"));
@@ -131,6 +139,10 @@ public class EDUUserFlows extends ECETestBase {
     } else {
       edutb.downloadProduct(testDataForProduct.get("websdkplc"));
     }
+
+    results.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    results.put(BICConstants.oxid, results.get(BICConstants.oxid));
+    updateTestingHub(results);
 
     // Sleep 3 minutes to wait for subscription to show up in portal
     Util.sleep(180000);
