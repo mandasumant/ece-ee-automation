@@ -245,11 +245,15 @@ public class PortalTestBase {
         break;
       } catch (Exception e) {
         if (attempts >= 2) {
-          AssertUtils.fail("All retries exhausted: Verify subscription/agreement is displayed in All P&S page step couldn't " + "be completed due to technical issue " + e.getMessage());
+          AssertUtils.fail(
+              "All retries exhausted: Verify subscription/agreement is displayed in All P&S page step couldn't "
+                  + "be completed due to technical issue " + e.getMessage());
         }
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts + 1));
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts
+                + 1));
         attempts++;
       }
     }
@@ -259,13 +263,16 @@ public class PortalTestBase {
     status = isSubscriptionDisplayed(productXpath);
 
     if (!status) {
-      AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In P&S page");
+      AssertUtils.fail(
+          ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
+              + " , In P&S page");
     }
 
     return status;
   }
 
-  @Step("Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
+  @Step(
+      "Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionDisplayed(String productXpath) {
     boolean status = false;
     Integer attempts = 0;
@@ -283,7 +290,9 @@ public class PortalTestBase {
         }
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription Web Element, attempts #" + (attempts + 1));
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription Web Element, attempts #" + (attempts
+                + 1));
         attempts++;
       } else {
         status = true;
@@ -307,12 +316,15 @@ public class PortalTestBase {
 
     while (attempts < 3) {
       try {
-        productXpath = portalPage.getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
+        productXpath = portalPage.getFirstFieldLocator("subscriptionIDInBO")
+            .replace("TOKEN1", subscriptionID);
 
       } catch (Exception e) {
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts + 1));
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts
+                + 1));
         attempts++;
       }
       Util.printInfo("Found the Subscription productXpath, so skipping the retry logic");
@@ -322,7 +334,8 @@ public class PortalTestBase {
     status = isSubscriptionDisplayed(productXpath);
 
     if (!status) {
-      errorMsg = ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In B&O page";
+      errorMsg = ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
+          + " , In B&O page";
     }
 
     status = errorMsg.isEmpty();
@@ -877,11 +890,11 @@ public class PortalTestBase {
     portalPage.waitForFieldPresent("portalSaveChangesButton", 5000);
     portalPage.clickUsingLowLevelActions("portalSaveChangesButton");
     portalPage.checkIfElementExistsInPage("portalConfirmationModal", 10);
-    Util.printInfo("Clicking on ok button...");
     portalPage.waitForFieldPresent("portalConfirmationOkButton", 5000);
+    Util.printInfo("Confirmation OK button found.");
     portalPage.clickUsingLowLevelActions("portalConfirmationOkButton");
-    Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-        BICECEConstants.PORTAL_REDUCE_SEATS_COUNT));
+    portalPage.waitForFieldPresent("portalRenewingSeatsCount");
+    Util.printInfo("Reduced seats quantity found.");
     String renewingSeatsCount = portalPage
         .getTextFromLink(BICECEConstants.PORTAL_REDUCE_SEATS_COUNT);
     String reducedSeatQty = renewingSeatsCount.split(" ")[0];
@@ -994,7 +1007,7 @@ public class PortalTestBase {
     }
   }
 
-  private void savePaymentProfile() throws Exception{
+  private void savePaymentProfile() throws Exception {
     Util.sleep(5000);
     List<WebElement> list = portalPage.getMultipleWebElementFromXpath(
         "//button[contains(@data-testid,'save-payment-profile')]");
