@@ -993,22 +993,6 @@ public class BICTestBase {
       Util.printInfo("CONTINUE_CHECKOUT_Modal is not present");
     }
 
-    boolean isOrderSubmitted = false;
-    if (!(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY) ||
-           System.getProperty(BICECEConstants.PAYMENT)
-            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING))) {
-      try {
-        if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)) {
-          bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-          isOrderSubmitted = true;
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-        debugPageUrl(e.getMessage());
-        AssertUtils.fail("Failed to click on Submit button...");
-      }
-    }
-
     // Zip Pay Verification
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
       String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
