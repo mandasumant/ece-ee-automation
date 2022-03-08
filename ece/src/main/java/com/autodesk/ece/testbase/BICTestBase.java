@@ -1586,18 +1586,19 @@ public class BICTestBase {
       getUrl(data.get("trialDownloadUrl"));
 
       bicPage.clickUsingLowLevelActions("downloadFreeTrialLink");
-      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext1", 1000);
 
+      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext1", 2000);
       bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext1");
-      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext2", 1000);
 
+      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext2", 2000);
       bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext2");
-      bicPage.waitForFieldPresent("downloadFreeTrailBusinessUserOption", 1000);
 
+      bicPage.waitForFieldPresent("downloadFreeTrailBusinessUserOption", 2000);
       bicPage.clickUsingLowLevelActions("downloadFreeTrailBusinessUserOption");
-      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext3", 1000);
 
+      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext3", 2000);
       bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext3");
+
       bicPage.waitForFieldPresent(BICECEConstants.DOWNLOAD_FREE_TRIAL_LOGIN_FRAME, 1000);
 
       // Checking if download is prompting for user sign in
@@ -1627,11 +1628,8 @@ public class BICTestBase {
       bicPage.populateField("downloadFreeTrialPostalCode", data.get("postalCode"));
       bicPage.populateField("downloadFreeTrialPhoneNo", data.get("phoneNumber"));
       bicPage.clickUsingLowLevelActions("downloadFreeTrialBeginDownloadLink");
-
-      bicPage.waitForFieldPresent("downloadFreeTrialStarted", 5000);
-      boolean downloadStarted = bicPage.isFieldVisible("downloadFreeTrialStarted");
-      Util.sleep(10000);
-      AssertUtils.assertEquals(downloadStarted, true, "SUCCESSFULLY STARTED DOWNLOAD");
+      Util.sleep(5000);
+      AssertUtils.assertTrue(driver.getCurrentUrl().contains(data.get("trialDownloadUrl")), "SUCCESSFULLY STARTED DOWNLOAD");
       results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
     } catch (Exception e) {
       e.printStackTrace();
