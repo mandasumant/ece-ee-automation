@@ -896,7 +896,7 @@ public class PortalTestBase {
     portalPage.waitForFieldPresent("portalRenewingSeatsCount");
     Util.printInfo("Reduced seats quantity found.");
     String renewingSeatsCount = portalPage
-        .getTextFromLink(BICECEConstants.PORTAL_REDUCE_SEATS_COUNT);
+        .getTextFromLink("portalRenewingSeatsCount");
     String reducedSeatQty = renewingSeatsCount.split(" ")[0];
     Util.printInfo("Recording new seats count.");
     orderDetails.put("reducedSeatQty", reducedSeatQty);
