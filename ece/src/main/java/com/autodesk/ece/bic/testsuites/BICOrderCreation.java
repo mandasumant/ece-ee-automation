@@ -77,7 +77,7 @@ public class BICOrderCreation extends ECETestBase {
         .get(BICECEConstants.LOCALE_CONFIG);
     testDataForEachMethod.putAll(localeDataMap.get(locale));
 
-    Util.printInfo(
+    Util.printTestFailedMessage(
         "Validating the store for the locale :" + locale + " Store: " + System.getProperty(
             BICECEConstants.STORE));
 
@@ -85,7 +85,7 @@ public class BICOrderCreation extends ECETestBase {
         .equals(System.getProperty(BICECEConstants.STORE));
 
     if (!isValidStore) {
-      AssertUtils.fail("The store  is not supported for the given country/locale : " + locale
+      Util.printTestFailedMessage("The store  is not supported for the given country/locale : " + locale
           + ". Supported stores  are "
           + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
@@ -97,7 +97,6 @@ public class BICOrderCreation extends ECETestBase {
 
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
-
     PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
   }
 

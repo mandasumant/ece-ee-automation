@@ -998,9 +998,10 @@ public class BICTestBase {
            System.getProperty(BICECEConstants.PAYMENT)
             .equals(BICECEConstants.PAYMENT_TYPE_FINANCING))) {
       try {
-        bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 10000);
-        bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-        isOrderSubmitted = true;
+        if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)) {
+          bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+          isOrderSubmitted = true;
+        }
       } catch (Exception e) {
         e.printStackTrace();
         debugPageUrl(e.getMessage());
