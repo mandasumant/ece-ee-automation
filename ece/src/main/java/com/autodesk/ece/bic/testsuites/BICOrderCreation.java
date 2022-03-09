@@ -85,7 +85,7 @@ public class BICOrderCreation extends ECETestBase {
         .equals(System.getProperty(BICECEConstants.STORE));
 
     if (!isValidStore) {
-      Util.printTestFailedMessage("The store  is not supported for the given country/locale : " + locale
+      Util.printTestFailedMessage("The store is not supported for the given country/locale : " + locale
           + ". Supported stores  are "
           + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
