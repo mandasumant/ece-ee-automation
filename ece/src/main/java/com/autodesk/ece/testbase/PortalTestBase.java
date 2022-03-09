@@ -246,11 +246,15 @@ public class PortalTestBase {
         break;
       } catch (Exception e) {
         if (attempts >= 2) {
-          AssertUtils.fail("All retries exhausted: Verify subscription/agreement is displayed in All P&S page step couldn't " + "be completed due to technical issue " + e.getMessage());
+          AssertUtils.fail(
+              "All retries exhausted: Verify subscription/agreement is displayed in All P&S page step couldn't "
+                  + "be completed due to technical issue " + e.getMessage());
         }
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts + 1));
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts
+                + 1));
         attempts++;
       }
     }
@@ -260,13 +264,16 @@ public class PortalTestBase {
     status = isSubscriptionDisplayed(productXpath);
 
     if (!status) {
-      AssertUtils.fail(ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In P&S page");
+      AssertUtils.fail(
+          ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
+              + " , In P&S page");
     }
 
     return status;
   }
 
-  @Step("Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
+  @Step(
+      "Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionDisplayed(String productXpath) {
     boolean status = false;
     Integer attempts = 0;
@@ -284,7 +291,9 @@ public class PortalTestBase {
         }
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription Web Element, attempts #" + (attempts + 1));
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription Web Element, attempts #" + (attempts
+                + 1));
         attempts++;
       } else {
         status = true;
@@ -308,12 +317,15 @@ public class PortalTestBase {
 
     while (attempts < 3) {
       try {
-        productXpath = portalPage.getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionID);
+        productXpath = portalPage.getFirstFieldLocator("subscriptionIDInBO")
+            .replace("TOKEN1", subscriptionID);
 
       } catch (Exception e) {
         driver.navigate().refresh();
         Util.sleep(10000);
-        Util.printInfo("Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts + 1));
+        Util.printInfo(
+            "Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts
+                + 1));
         attempts++;
       }
       Util.printInfo("Found the Subscription productXpath, so skipping the retry logic");
@@ -323,7 +335,8 @@ public class PortalTestBase {
     status = isSubscriptionDisplayed(productXpath);
 
     if (!status) {
-      errorMsg = ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID + " , In B&O page";
+      errorMsg = ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
+          + " , In B&O page";
     }
 
     status = errorMsg.isEmpty();
@@ -531,7 +544,7 @@ public class PortalTestBase {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<String, String>();
     orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod, localeMap));
-    orderDetails.putAll(validateAddSeatOrder(orderDetails, addSeatQty));
+    orderDetails.putAll(validateAddSeatOrder(orderDetails));
     return orderDetails;
   }
 
@@ -650,6 +663,7 @@ public class PortalTestBase {
       String currentURL = driver.getCurrentUrl();
       Util.printInfo("currentURL1 before clicking on Add seat : " + currentURL);
       String zipPaySubscriptionUrl = currentURL;
+      Util.printInfo("Clicking on Add seats button.");
       portalPage.waitForFieldPresent(BICECEConstants.PORTAL_ADD_SEAT_BUTTON, 10000);
       portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_ADD_SEAT_BUTTON);
 
@@ -659,8 +673,8 @@ public class PortalTestBase {
 
       boolean status = currentURL.contains(BICECEConstants.ADD_SEATS);
 
-      while (!status) {
-
+      int attempts = 0;
+      while (!status && attempts != 3) {
         Util.printInfo("Attempt1 - Javascript method to redirect to Add seat page");
         String portalAddSeatButton = "document.getElementById(\"add-seats\").click()";
         clickCheckBox(portalAddSeatButton);
@@ -675,21 +689,21 @@ public class PortalTestBase {
           Util.sleep(20000);
           currentURL = driver.getCurrentUrl();
           Util.printInfo("currentURL3 : " + currentURL);
-        } else {
-          break;
         }
 
         status = currentURL.contains(BICECEConstants.ADD_SEATS);
-
         if (!status) {
-          debugPageUrl(" Portal - ADD Seat page");
-          Util.printTestFailedMessage(
-              "Multiple attempts failed to redirect in Portal - ADD Seat page " + currentURL);
-          AssertUtils.fail("Unable to redirect to Add Seat page in Account portal");
-        } else {
-          break;
+          attempts++;
         }
+      }
 
+      if (!status) {
+        debugPageUrl("Portal - ADD Seat page");
+        Util.printTestFailedMessage(
+            "Multiple attempts failed to redirect in Portal - ADD Seat page " + currentURL);
+        AssertUtils.fail("Unable to redirect to Add Seat page in Accounts portal.");
+      } else {
+        Util.printInfo("Status: Successfully clicked on Add seats button.");
       }
 
       debugPageUrl("trying to log into portal again");
@@ -741,6 +755,7 @@ public class PortalTestBase {
 
       Util.printInfo("Clicking on Save button...");
       clickOnContinueBtn();
+
       // Zip Pay Verification
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
           .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
@@ -790,8 +805,7 @@ public class PortalTestBase {
     }
   }
 
-  public HashMap<String, String> validateAddSeatOrder(HashMap<String, String> data,
-      String addSeatQty) {
+  public HashMap<String, String> validateAddSeatOrder(HashMap<String, String> data) {
     HashMap<String, String> orderDetails = new HashMap<String, String>();
 
     try {
@@ -826,27 +840,37 @@ public class PortalTestBase {
         Util.sleep(5000);
       }
 
-      driver.switchTo().defaultContent();
-      Util.printInfo("Refreshing the page...");
-      driver.navigate().refresh();
-      Util.sleep(5000);
+      int attempts = 0;
+      while (attempts < 3) {
+        driver.switchTo().defaultContent();
+        Util.printInfo("Refreshing the page...");
+        driver.navigate().refresh();
+        Util.sleep(10000);
 
-      Util.waitForElement(portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_ADD_SEAT_BUTTON),
-          "Add Seat button");
-      String totalSeats = portalPage.getTextFromLink(BICECEConstants.PORTAL_ORDER_SEAT_COUNT);
-      Util.printInfo("Total seats displayed on order info page: " + totalSeats);
-      orderDetails.put("totalSeats", totalSeats);
+        boolean addSeatsButtonVisible = portalPage
+            .waitForFieldPresent("portalAddSeatButton", 90000);
+        if (addSeatsButtonVisible) {
+          String totalSeats = portalPage.getTextFromLink(BICECEConstants.PORTAL_ORDER_SEAT_COUNT);
+          Util.printInfo("Total seats displayed on order info page: " + totalSeats);
+          orderDetails.put("totalSeats", totalSeats);
 
-      String initialOrderQty = data.get(BICECEConstants.INITIAL_ORDER_QTY);
-      if (!totalSeats.equals(initialOrderQty)) {
-        Util.printInfo("Seats added successfully...");
-      } else {
-        AssertUtils.fail("Failed to add seats. Initial order seat : " + initialOrderQty
-            + " total number of seats : " + totalSeats + " are same");
+          String initialOrderQty = data.get(BICECEConstants.INITIAL_ORDER_QTY);
+          if (!totalSeats.equals(initialOrderQty)) {
+            Util.printInfo("Seats added successfully...");
+            break;
+          } else {
+            AssertUtils.fail("Failed to add seats. Initial order seat : " + initialOrderQty
+                + " total number of seats : " + totalSeats + " are same");
+          }
+        } else {
+          attempts++;
+        }
+      }
+      if (attempts == 3) {
+        AssertUtils.fail("Add seats button is not visible.");
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      AssertUtils.fail("Failed to validate add seat order...");
+      AssertUtils.fail("Failed to validate add seat order..." + e.getMessage());
     }
 
     return orderDetails;
@@ -878,13 +902,13 @@ public class PortalTestBase {
     portalPage.waitForFieldPresent("portalSaveChangesButton", 5000);
     portalPage.clickUsingLowLevelActions("portalSaveChangesButton");
     portalPage.checkIfElementExistsInPage("portalConfirmationModal", 10);
-    Util.printInfo("Clicking on ok button...");
     portalPage.waitForFieldPresent("portalConfirmationOkButton", 5000);
+    Util.printInfo("Confirmation OK button found.");
     portalPage.clickUsingLowLevelActions("portalConfirmationOkButton");
-    Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-        BICECEConstants.PORTAL_REDUCE_SEATS_COUNT));
+    portalPage.waitForFieldPresent("portalRenewingSeatsCount");
+    Util.printInfo("Reduced seats quantity found.");
     String renewingSeatsCount = portalPage
-        .getTextFromLink(BICECEConstants.PORTAL_REDUCE_SEATS_COUNT);
+        .getTextFromLink("portalRenewingSeatsCount");
     String reducedSeatQty = renewingSeatsCount.split(" ")[0];
     Util.printInfo("Recording new seats count.");
     orderDetails.put("reducedSeatQty", reducedSeatQty);
@@ -995,7 +1019,7 @@ public class PortalTestBase {
     }
   }
 
-  private void savePaymentProfile() throws Exception{
+  private void savePaymentProfile() throws Exception {
     Util.sleep(5000);
     List<WebElement> list = portalPage.getMultipleWebElementFromXpath(
         "//button[contains(@data-testid,'save-payment-profile')]");
