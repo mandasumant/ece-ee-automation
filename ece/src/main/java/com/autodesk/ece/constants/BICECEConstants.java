@@ -113,7 +113,7 @@ public class BICECEConstants extends BICConstants {
   public static final String EDU_PASSWORD = "eduAccountPassword";
   public static final String MOE_LOGIN_PASSWORD_FIELD = "moeLoginPasswordField";
   public static final String GET_POREPONSE_SUBSCRIPTION_ID = "getPOReponse_subscriptionId";
-  public static final String GETPRICEDETAILS_X_E2_PARTNER_ID = "getPriceDetails_X_E2_PartnerId";
+  public static final String GETPRICEDETAILS_X_E2_PARTNER_ID = "getPelicanPartnerId";
   public static final String GETPRICEDETAILS_X_E2_APPFAMILY_ID = "getPriceDetails_X_E2_AppFamilyId";
   public static final String APPLICATION_VNDAPI_JSON = "application/vnd.api+json";
   public static final String X_E2_HMAC_TIMESTAMP = "X-E2-HMAC-Timestamp";

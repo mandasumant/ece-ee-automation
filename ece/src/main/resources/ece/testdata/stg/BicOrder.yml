@@ -81,9 +81,9 @@ default:
   getSubscriptionByIdUrl: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
   postInvoicePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/job/invoice"
   postReportsFinancePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/reports/finance"
-  getPriceDetails_X_E2_PartnerId: "$sfdcactor"
+  getPelicanPartnerId: "$automation"
   getPriceDetails_X_E2_AppFamilyId: "9999"
-  getPriceDetails_terceS_ssap: "fI1YB9CCA5WWfPW36KCG3w==:uYOHBUtARGXcajlIgn2VMQ=="
+  getPelicanActorSecret: "ZBMy0uiO6TSbQyESx3o/YA==:mNWJSg4T9+7uVxQ8ox/iOA=="
   quantity: "1"
   productType: "bic"
 
