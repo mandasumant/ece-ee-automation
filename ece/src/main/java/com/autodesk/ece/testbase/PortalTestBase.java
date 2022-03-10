@@ -207,7 +207,7 @@ public class PortalTestBase {
             portalPage.isFieldVisible(Field) || portalPage.checkFieldExistence(Field) || portalPage
                 .isFieldPresent(Field) || portalPage.checkIfElementExistsInPage(Field, 60);
       } catch (MetadataException e) {
-        Util.printWarning(
+        Util.printInfo(
             "Failed looking for \"Portal Product and Service Tab\" - Attempt #" + (attempts + 1));
       }
 
