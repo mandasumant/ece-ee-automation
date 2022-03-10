@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -158,39 +159,47 @@ public class PortalTestBase {
   @Step("User Login in Customer Portal " + GlobalConstants.TAG_TESTINGHUB)
   public boolean portalLogin(String portalUserName, String portalPassword) {
     boolean status = false;
-    try {
-      Util.sleep(2000);
-      portalPage.getMultipleWebElementsfromField("usernameCEP").get(0).sendKeys(portalUserName);
-      portalPage.getMultipleWebElementsfromField("verifyUserCEPBtn").get(0).click();
-      Util.sleep(2000);
-      portalPage.getMultipleWebElementsfromField("passCEP").get(0).click();
-      portalPage.getMultipleWebElementsfromField("passCEP").get(0).sendKeys(portalPassword);
-      Util.sleep(2000);
-      portalPage.getMultipleWebElementsfromField("createAccount").get(0).click();
+    Integer attempts = 0;
 
+    while(attempts < 3) {
       try {
-        if (portalPage.getMultipleWebElementsfromField(BICECEConstants.SKIP_LINK).get(0)
-            .isDisplayed()
-            || portalPage.isFieldVisible(BICECEConstants.SKIP_LINK)
-            || portalPage.checkFieldExistence(BICECEConstants.SKIP_LINK)
-            || portalPage.isFieldPresent(BICECEConstants.SKIP_LINK)) {
-          Util.printInfo("Skip link is displayed after logging into portal");
-          Util.printInfo("Clicking on SkipLink");
-          portalPage.clickUsingLowLevelActions(BICECEConstants.SKIP_LINK);
-          status = true;
+        Util.sleep(2000);
+        portalPage.getMultipleWebElementsfromField("usernameCEP").get(0).sendKeys(portalUserName);
+        portalPage.getMultipleWebElementsfromField("verifyUserCEPBtn").get(0).click();
+        Util.sleep(2000);
+        portalPage.getMultipleWebElementsfromField("passCEP").get(0).click();
+        portalPage.getMultipleWebElementsfromField("passCEP").get(0).sendKeys(portalPassword);
+        Util.sleep(2000);
+        portalPage.getMultipleWebElementsfromField("createAccount").get(0).click();
+
+        try {
+          if (portalPage.getMultipleWebElementsfromField(BICECEConstants.SKIP_LINK).get(0)
+                  .isDisplayed()
+                  || portalPage.isFieldVisible(BICECEConstants.SKIP_LINK)
+                  || portalPage.checkFieldExistence(BICECEConstants.SKIP_LINK)
+                  || portalPage.isFieldPresent(BICECEConstants.SKIP_LINK)) {
+            Util.printInfo("Skip link is displayed after logging into portal");
+            Util.printInfo("Clicking on SkipLink");
+            portalPage.clickUsingLowLevelActions(BICECEConstants.SKIP_LINK);
+            status = true;
+          }
+        } catch (Exception e) {
         }
+        status = true;
+        break;
       } catch (Exception e) {
+        Util.printInfo("Retry Logic: Failed to Login to Account Portal. Attempt:" + (attempts + 1));
+        e.printStackTrace();
+        attempts++;
+        driver.navigate().refresh();
+        Util.sleep(3000);
       }
-      status = true;
-    } catch (Exception e) {
-      e.printStackTrace();
-      Util.printTestFailedMessage(
-          "Portal TestBase class,  portalLogin() :: Failed " + " \n" + e.getMessage());
-      AssertUtils.fail("CustomerPortal : Login action unsuccessful... Please try again");
     }
 
     if (!status) {
-      AssertUtils.fail("User Log into Portal :: " + status);
+      AssertUtils.fail("Failed to Login to Account Portal");
+    } else {
+      Util.printInfo("Successfully logged into Portal!!!");
     }
 
     return status;
@@ -1485,13 +1494,12 @@ public class PortalTestBase {
    * @return - Full pe ID found
    */
   @Step("Verify product is visible in Portal " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> verifyProductVisible(String peIdPattern) {
+  public String verifyProductVisible(HashMap<String, String> results, String peIdPattern) {
     Integer attempts = 0;
     Boolean status = false;
     String subscriptionID = null;
-    HashMap<String, String> results = new HashMap<>();
 
-    while (attempts < 10) {
+    while (attempts < 5) {
       Pattern pattern = Pattern.compile(peIdPattern);
       try {
         String lastProductXPath = portalPage.getFirstFieldLocator("lastPurchasedProduct");
@@ -1504,21 +1512,21 @@ public class PortalTestBase {
       }
 
       if (!status) {
-        if (attempts >= 9) {
+        if (attempts >= 4) {
           AssertUtils.fail("All retries exhausted: Failed to find Student Subscription in Portal");
         }
-        Util.sleep(300000);
-        driver.navigate().refresh();
+        Util.sleep(60000);
+        Util.printInfo("Part of Retry: To invalidate Portal User Cache, Signout and Signin");
+        portalLogoutLogin(results.get(BICConstants.emailid), results.get("password"));
         attempts++;
       } else {
         Util.printInfo("Found Student Subscription in Portal, so skipping the retry logic");
         AssertUtils.assertTrue(pattern.matcher(subscriptionID).find());
-        results.put(BICECEConstants.PRODUCT_PE_ID, subscriptionID);
         break;
       }
     }
 
-    return results;
+    return subscriptionID;
   }
 
   @Step("Portal : Cancel subscription" + GlobalConstants.TAG_TESTINGHUB)
@@ -1590,5 +1598,16 @@ public class PortalTestBase {
     Util.printInfo("Clicking on subscription row...");
     portalPage.clickUsingLowLevelActions(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION);
     portalPage.waitForPageToLoad();
+  }
+
+  @Step("Account Portal: Logout & Login " + GlobalConstants.TAG_TESTINGHUB)
+  private void portalLogoutLogin(String userEmail, String password) {
+    JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+    clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
+    Util.sleep(3000);
+
+    if (isPortalLoginPageVisible()) {
+      portalLogin(userEmail, password);
+    }
   }
 }

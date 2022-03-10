@@ -52,7 +52,7 @@ public class EDUUserFlows extends ECETestBase {
     results.putAll(edutb.registerUser(EDUUserType.STUDENT));
 
     // Accept VSOS terms
-    edutb.signUpUser(results.get(BICConstants.emailid), results.get(BICECEConstants.PASSWORD));
+    edutb.signUpUser(results);
 
     updateTestingHub(results);
 
@@ -68,7 +68,8 @@ public class EDUUserFlows extends ECETestBase {
 
     // Validate that the user has a subscription to Fusion 360 in portal
     portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
-    results.putAll(portaltb.verifyProductVisible(testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
+    results.put(BICECEConstants.PRODUCT_PE_ID,
+        portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
 
     submitTestResults(results);
   }
@@ -80,7 +81,7 @@ public class EDUUserFlows extends ECETestBase {
     // Create new user with Educator role
     results.putAll(edutb.registerUser(EDUUserType.EDUCATOR));
 
-    edutb.signUpUser(results.get(BICConstants.emailid), results.get(BICECEConstants.PASSWORD));
+    edutb.signUpUser(results);
 
     updateTestingHub(results);
 
@@ -90,7 +91,8 @@ public class EDUUserFlows extends ECETestBase {
     // Check that we can see the product in portal
     edutb.switchToNextTab();
     portaltb.clickALLPSLink();
-    results.putAll(portaltb.verifyProductVisible(testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
+    results.put(BICECEConstants.PRODUCT_PE_ID,
+            portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
 
     submitTestResults(results);
   }
@@ -106,7 +108,7 @@ public class EDUUserFlows extends ECETestBase {
     edutb.verifyUser(results.get(BICConstants.oxid));
 
     // Accept VSOS terms
-    edutb.signUpUser(results.get(BICConstants.emailid), results.get(BICECEConstants.PASSWORD));
+    edutb.signUpUser(results);
 
     // Configure a license to download
     edutb.verifySeibelDownload();
@@ -143,7 +145,8 @@ public class EDUUserFlows extends ECETestBase {
 
     // Validate that the user has a subscription to Fusion 360 in portal
     portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
-    results.putAll(portaltb.verifyProductVisible(testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
+    results.put(BICECEConstants.PRODUCT_PE_ID,
+            portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
 
     submitTestResults(results);
   }

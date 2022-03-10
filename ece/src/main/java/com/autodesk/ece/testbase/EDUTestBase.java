@@ -109,18 +109,21 @@ public class EDUTestBase {
 
     String password = ProtectedConfigFile.decrypt(testData.get(BICECEConstants.EDU_PASSWORD));
     eduPage.populateField(EDU_NEW_PASSWORD, password);
+    results.put("firstName", firstName);
     results.put("password", password);
 
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
 
     eduPage.click(BICECEConstants.EDU_SUBMIT);
+    Util.sleep(2500);
 
     if (userType != EDUUserType.MENTOR) {
       // Pick a school called "Broadway"
       eduPage.waitForField("eduSchool", true, 10000);
       try {
         eduPage.sendKeysInTextFieldSlowly("eduSchool", "Saint");
+        Util.sleep(2500);
       } catch (Exception e) {
         AssertUtils.fail("Failed to search for school");
         e.printStackTrace();
@@ -129,6 +132,7 @@ public class EDUTestBase {
 
       try {
         eduPage.clickUsingLowLevelActions("eduSchoolOption");
+        Util.sleep(2500);
       } catch (MetadataException e) {
         e.printStackTrace();
       }
@@ -142,6 +146,7 @@ public class EDUTestBase {
       }
 
       eduPage.click(BICECEConstants.EDU_SUBMIT);
+      Util.sleep(2500);
     }
 
     eduPage.waitForField("eduComplete", true, 10000);
@@ -150,7 +155,8 @@ public class EDUTestBase {
     results.put(BICConstants.oxid, oxygenId);
 
     eduPage.click("eduComplete");
-
+    Util.sleep(2500);
+    
     return results;
   }
 
@@ -171,14 +177,14 @@ public class EDUTestBase {
    * From the main education landing page with a logged in user, click through the flow to accept
    * VSOS (student verification) terms
    */
-  public void signUpUser(String username, String password) {
-    acceptVSOSTerms();
+  public void signUpUser(HashMap<String, String> results) {
+    acceptVSOSTerms(results);
 
     // Clear session storage cache and login again
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("window.sessionStorage.clear()");
     eduPage.refresh();
-    loginUser(username, password);
+    loginUser(results.get(BICConstants.emailid), results.get(BICECEConstants.PASSWORD));
 
     dismissSuccessPopup();
     Util.sleep(5000);
@@ -187,13 +193,18 @@ public class EDUTestBase {
   }
 
   @Step("Accept VSOS terms" + GlobalConstants.TAG_TESTINGHUB)
-  private void acceptVSOSTerms() {
+  private void acceptVSOSTerms(HashMap<String, String> results) {
     try {
+      WebElement overviewPageHeader = driver.findElement(
+              By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
+      AssertUtils.assertTrue(
+              overviewPageHeader.getText().contains("Hi " + results.get("firstName")));
       eduPage.waitForField(EDU_GET_STARTED, true, 5000);
       eduPage.click(EDU_GET_STARTED);
       eduPage.waitForField(EDU_SIGNUP_SUBMIT, true, 5000);
       eduPage.click(EDU_SIGNUP_SUBMIT);
       eduPage.click(EDU_SIGNUP_SUBMIT);
+      Util.sleep(3000);
 
       String sheerUploadLocator = eduPage.getFirstFieldLocator("sheerUpload");
       String signupSuccessLocator = eduPage.getFirstFieldLocator("eduSignSuccess");
@@ -220,8 +231,28 @@ public class EDUTestBase {
         // Upload the tesing ID file
         WebElement sheerUpload = driver.findElement(By.xpath(sheerUploadLocator));
         sheerUpload.sendKeys(sheerIDImagePath);
+
+        // Assert that we are still in Overview page after upload
+        overviewPageHeader = driver.findElement(
+                By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+        AssertUtils.assertTrue(
+                overviewPageHeader.getText().contains("Additional documentation needed"));
+
         eduPage.click(EDU_SIGNUP_SUBMIT);
+        Util.sleep(3000);
+
+        WebElement landingPageHeader = driver.findElement(
+                By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+        AssertUtils.assertTrue(
+                landingPageHeader.getText().contains("Thank you"));
+
         eduPage.click("eduUploadClose");
+        Util.sleep(3000);
+
+        WebElement overviewHomeHeader = driver.findElement(
+                By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
+        AssertUtils.assertTrue(
+                overviewHomeHeader.getText().contains("Hi " + results.get("firstName")));
       }
     } catch (URISyntaxException e) {
       e.printStackTrace();
@@ -256,8 +287,12 @@ public class EDUTestBase {
 
   @Step("Dismiss registration success message" + GlobalConstants.TAG_TESTINGHUB)
   private void dismissSuccessPopup() {
-    eduPage.waitForField("eduSignSuccess", true, 5000);
-    eduPage.click("eduSignSuccess");
+    try {
+      eduPage.waitForField("eduSignSuccess", true, 5000);
+      eduPage.click("eduSignSuccess");
+    } catch (Exception e) {
+      Util.printInfo("Dismissing Success popup is unsuccessful, no Action to be taken.");
+    }
   }
 
   @Step("Verify Education Status" + GlobalConstants.TAG_TESTINGHUB)
@@ -302,6 +337,7 @@ public class EDUTestBase {
    *
    * @param websdk - Product websdk ID
    */
+  @Step("Download an education Product by plc " + GlobalConstants.TAG_TESTINGHUB)
   public void downloadProduct(String websdk) {
     // Activate the product
     WebElement getProductButton = driver.findElement(
@@ -309,6 +345,7 @@ public class EDUTestBase {
     AssertUtils.assertTrue(getProductButton.isDisplayed() && getProductButton.isEnabled(),
         "Ensuring that Get Product button is interactable");
     getProductButton.click();
+    Util.sleep(2500);
 
     // Wait for the download button to appear
     WebDriverWait wait = new WebDriverWait(driver, 20);
@@ -345,6 +382,12 @@ public class EDUTestBase {
     } catch (NullPointerException exception) {
       AssertUtils.fail("Failed to locate download directory");
     }
+    
+    WebElement overviewPageHeader = driver.findElement(
+            By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
+    AssertUtils.assertTrue(
+            overviewPageHeader.getText().contains("Hi "));
+
   }
 
   /**
