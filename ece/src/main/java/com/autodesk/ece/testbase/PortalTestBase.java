@@ -1027,7 +1027,7 @@ public class PortalTestBase {
     while(len > 0){
       try {
         list.get(len-1).click();
-        Util.printInfo("The element found and clicked..");
+        Util.printInfo("Save Button found and clicked..");
         break;
       } catch (Exception e){
         Util.printInfo("Unable to click on Save Button.Trying the next Save Button in the list.");
