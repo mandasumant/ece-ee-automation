@@ -107,7 +107,7 @@ public class PelicanTestBase {
     HashMap<String, String> results = new HashMap<String, String>();
     String baseURL = data.get("pelican_BaseUrl");
     Util.printInfo("getPriceDetails baseURL : " + subscriptionByIdUrl);
-    String sig_details = getPriceByPriceIdSignature(data);
+    String sig_details = getPelicanSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
     String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
@@ -167,7 +167,7 @@ public class PelicanTestBase {
     getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
         data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
     Util.printInfo("getPriceDetails baseURL : " + getPurchaseOrderDetailsUrl);
-    String sig_details = getPriceByPriceIdSignature(data);
+    String sig_details = getPelicanSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
     String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
@@ -285,7 +285,7 @@ public class PelicanTestBase {
     data.put("pelican_postReportsFinancePelicanAPIUrl", postReportsFinancePelicanAPIUrl);
     HashMap<String, String> results = new HashMap<String, String>();
     Util.printInfo("postReportsFinancePelicanAPIUrl : " + postReportsFinancePelicanAPIUrl);
-    String sig_details = getPriceByPriceIdSignature(data);
+    String sig_details = getPelicanSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
     String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
@@ -330,7 +330,7 @@ public class PelicanTestBase {
     data.put("pelican_getPurchaseOrderDetailsUrl", getPurchaseOrderDetailsUrl);
     HashMap<String, String> results = new HashMap<String, String>();
     Util.printInfo("getPurchaseOrderDetailsUrl : " + getPurchaseOrderDetailsUrl);
-    String sig_details = getPriceByPriceIdSignature(data);
+    String sig_details = getPelicanSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
     String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
@@ -360,7 +360,7 @@ public class PelicanTestBase {
     String getPurchaseOrderDetailsUrl = addTokenInResourceUrl(purchaseOrderDetailsUrl,
         data.get(BICConstants.orderNumber));
     Util.printInfo("putPelicanRefund details Url : " + getPurchaseOrderDetailsUrl);
-    String sig_details = getPriceByPriceIdSignature(data);
+    String sig_details = getPelicanSignature(data);
     String hmacSignature = sig_details.split("::")[0];
     String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
     String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
@@ -382,12 +382,12 @@ public class PelicanTestBase {
     Util.PrintInfo(BICECEConstants.RESULT + result);
   }
 
-  private String getPriceByPriceIdSignature(HashMap<String, String> data) {
+  private String getPelicanSignature(HashMap<String, String> data) {
     String signature = "";
     String timestamp = "";
     try {
       Mac mac = Mac.getInstance("HmacSHA256");
-      String terceS = ProtectedConfigFile.decrypt(data.get("getPriceDetails_terceS_ssap"));
+      String terceS = ProtectedConfigFile.decrypt(data.get("getPelicanActorSecret"));
       SecretKeySpec keySpec = new SecretKeySpec(terceS.getBytes(), "HmacSHA256");
       mac.init(keySpec);
 
