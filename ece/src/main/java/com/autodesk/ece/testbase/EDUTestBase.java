@@ -12,6 +12,7 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
+import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -305,6 +306,8 @@ public class EDUTestBase {
     // Activate the product
     WebElement getProductButton = driver.findElement(
         By.xpath("//a[@websdk-plc=\"" + websdk + "\"]"));
+    AssertUtils.assertTrue(getProductButton.isDisplayed() && getProductButton.isEnabled(),
+        "Ensuring that Get Product button is interactable");
     getProductButton.click();
 
     // Wait for the download button to appear
@@ -314,7 +317,34 @@ public class EDUTestBase {
     // Click on the download button
     WebElement downloadButton = driver.findElement(By.id(websdk))
         .findElement(By.cssSelector(".downloadWidget button.websdkButton"));
+    AssertUtils.assertTrue(downloadButton.isDisplayed() && downloadButton.isEnabled(),
+        "Ensuring that Download button is interactable");
     downloadButton.click();
+
+    // Wait a bit for downloads to start
+    Util.sleep(1000);
+
+    File downloadDirectory = Paths.get(System.getProperty("user.home"), "Downloads").toFile();
+
+    try {
+      int attempts = 0;
+      while (attempts < 5 && downloadDirectory.listFiles().length == 0) {
+        Util.printInfo("Polling download directory for files, attempt " + (attempts + 1));
+        attempts++;
+        Util.sleep(2500);
+      }
+      File[] downloadingFiles = downloadDirectory.listFiles();
+      Util.printInfo("Number of downloading files: " + downloadingFiles.length);
+      AssertUtils.assertTrue(downloadingFiles.length > 0,
+          "Ensure there are downloading files");
+
+      Util.printInfo("Downloading files:");
+      for (int i = 0; i < downloadingFiles.length; i++) {
+        Util.printInfo("   " + downloadingFiles[i].getName());
+      }
+    } catch (NullPointerException exception) {
+      AssertUtils.fail("Failed to locate download directory");
+    }
   }
 
   /**
