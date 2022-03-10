@@ -796,7 +796,7 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(60000);
 
     // Initial order validation in Portal
-    getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+     getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid), PASSWORD,
         results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);

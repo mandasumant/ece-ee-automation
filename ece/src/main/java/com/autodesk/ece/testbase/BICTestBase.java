@@ -242,7 +242,8 @@ public class BICTestBase {
 
   @Step("Login BIC account")
   public void loginBICAccount(HashMap<String, String> data) {
-    Util.printInfo(BICECEConstants.AUTODESK_ID + " is Present " + bicPage.isFieldPresent(BICECEConstants.AUTODESK_ID));
+    Util.printInfo(BICECEConstants.AUTODESK_ID + " is Present " + bicPage
+        .isFieldPresent(BICECEConstants.AUTODESK_ID));
     bicPage.click(BICECEConstants.AUTODESK_ID);
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, data.get(BICConstants.emailid));
@@ -250,7 +251,8 @@ public class BICTestBase {
     Util.sleep(5000);
     bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 30000);
-    bicPage.populateField(BICECEConstants.LOGIN_PASSWORD, data.get(BICECEConstants.PASSWORD));
+    bicPage.populateField(BICECEConstants.LOGIN_PASSWORD,
+        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
     bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
     bicPage.waitForPageToLoad();
     Util.sleep(5000);
@@ -323,10 +325,10 @@ public class BICTestBase {
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, data.get(BICConstants.emailid));
     bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
-
     bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 30000);
-    bicPage.populateField(BICECEConstants.LOGIN_PASSWORD, data.get(BICECEConstants.PASSWORD));
+    bicPage.populateField(BICECEConstants.LOGIN_PASSWORD,
+        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
     bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
     bicPage.waitForPageToLoad();
 
@@ -426,7 +428,8 @@ public class BICTestBase {
       } catch (Exception e) {
         Util.printInfo("Can not find the skip button and click");
       } finally {
-          driver.manage().timeouts().implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
+        driver.manage().timeouts()
+            .implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
       }
 
       clickOnContinueBtn(paymentType);
@@ -1240,7 +1243,7 @@ public class BICTestBase {
     Map<String, String> address = null;
     getUrl(constructGuacDotComURL);
     disableChatSession();
-   // checkCartDetailsError();
+    // checkCartDetailsError();
     String productType = data.get("productType");
 
     // Selecting monthly for Non-Flex, Non-Financing , Non-Meta orders only
@@ -1248,7 +1251,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("flexTab");
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
-     if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
+      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
           data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
               BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META))) {
         selectMonthlySubscription(driver);
@@ -1309,6 +1312,18 @@ public class BICTestBase {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod, region);
     selectPaymentProfile(data, paymentCardDetails, address);
 
+    // handling the chat popup
+    try {
+      Util.printInfo("Checking if Chat Popup Present");
+      if (bicPage.checkIfElementExistsInPage("chatHelpPopupButton", 10)) {
+        Util.printInfo("Clicking on the chatHelpPopupButton button");
+        bicPage.clickUsingLowLevelActions("chatHelpPopupButton");
+      }
+    }catch (Exception e){
+      Util.printInfo("No Chat Popup found. Continuing...");
+    }
+
+    Util.printInfo("Checking if Chat Popup Present. Done");
     if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
@@ -1365,7 +1380,8 @@ public class BICTestBase {
     int o2len = 0;
     String o2ID = "";
     try {
-      o2ID = os.getOxygenID(emailID, System.getProperty(BICECEConstants.PASSWORD));
+      o2ID = os
+          .getOxygenID(emailID, ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
       data.put(BICConstants.oxygenid, o2ID);
     } catch (Exception e) {
       e.printStackTrace();
@@ -1429,7 +1445,6 @@ public class BICTestBase {
     loginBICAccount(data);
 
     Util.sleep(3000);
-
 
     // If the submit button is disabled, fill the payment information out again
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
@@ -1567,7 +1582,7 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<String, String>();
 
     try {
-      Util.printInfo("Entering -> testCjtTrialDownloadUI -> "+ data.get("trialDownloadUrl") );
+      Util.printInfo("Entering -> testCjtTrialDownloadUI -> " + data.get("trialDownloadUrl"));
       getUrl(data.get("trialDownloadUrl"));
 
       bicPage.clickUsingLowLevelActions("downloadFreeTrialLink");
@@ -1614,7 +1629,8 @@ public class BICTestBase {
       bicPage.populateField("downloadFreeTrialPhoneNo", data.get("phoneNumber"));
       bicPage.clickUsingLowLevelActions("downloadFreeTrialBeginDownloadLink");
       Util.sleep(5000);
-      AssertUtils.assertTrue(driver.getCurrentUrl().contains(data.get("trialDownloadUrl")), "SUCCESSFULLY STARTED DOWNLOAD");
+      AssertUtils.assertTrue(driver.getCurrentUrl().contains(data.get("trialDownloadUrl")),
+          "SUCCESSFULLY STARTED DOWNLOAD");
       results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
     } catch (Exception e) {
       e.printStackTrace();
