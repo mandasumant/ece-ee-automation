@@ -1030,7 +1030,7 @@ public class PortalTestBase {
         Util.printInfo("Save Button found and clicked..");
         break;
       } catch (Exception e){
-        Util.printInfo("Unable to click on Save Button.Trying the next Save Button in the list.");
+        Util.printInfo("Unable to click on Save Button. Trying the next Save Button in the list.");
         len--;
       }
     }
