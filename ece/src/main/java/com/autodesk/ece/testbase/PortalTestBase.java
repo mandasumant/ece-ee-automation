@@ -1000,42 +1000,39 @@ public class PortalTestBase {
         portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
       } else if (data.get(BICECEConstants.PAYMENT_TYPE)
           .equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
-        savePaymentProfile();
+        findAndClickSaveButton("//button[contains(@data-testid,'save-payment-profile')]");
         Util.printInfo("Saved Paypal profile as new payment type");
       } else if (data.get(BICECEConstants.PAYMENT_TYPE)
           .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         data.put(BICECEConstants.PAYMENT_DETAILS, BICECEConstants.ACCOUNT);
         portalPage.waitForFieldPresent(BICECEConstants.PORTAL_ACH_SAVE_BTN, 5000);
-        savePaymentProfile();
+        findAndClickSaveButton("//button[contains(@data-testid,'save-payment-profile')]");
         Util.printInfo("Saved ACH profile as new payment type");
         Util.sleep(5000);
         WebElement mandateAgreementElement = driver.findElement(By.xpath(
             BICECEConstants.ID_MANDATE_AGREEMENT));
         mandateAgreementElement.click();
-
-        List<WebElement> saveButtonList = portalPage
-            .getMultipleWebElementFromXpath("//span[.='Save']");
-        if (saveButtonList.size() > 1) {
-          saveButtonList.get(1).click();
-        } else {
-          saveButtonList.get(0).click();
-        }
+        findAndClickSaveButton("//span[.='Save']");
       }
-
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to select payment profile...");
     }
   }
 
-  private void savePaymentProfile() throws Exception {
+  private void findAndClickSaveButton(String elementXpath) throws  Exception{
     Util.sleep(5000);
-    List<WebElement> list = portalPage.getMultipleWebElementFromXpath(
-        "//button[contains(@data-testid,'save-payment-profile')]");
-    if (list.size() > 1) {
-      list.get(1).click();
-    } else {
-      list.get(0).click();
+    List<WebElement> list = portalPage.getMultipleWebElementFromXpath(elementXpath);
+    int len = list.size();
+    while(len > 0){
+      try {
+        list.get(len-1).click();
+        Util.printInfo("Save Button found and clicked..");
+        break;
+      } catch (Exception e){
+        Util.printInfo("Unable to click on Save Button. Trying the next Save Button in the list.");
+        len--;
+      }
     }
   }
 
