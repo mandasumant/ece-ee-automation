@@ -387,13 +387,15 @@ public class EDUTestBase {
         Util.sleep(2500);
       }
       File[] downloadingFiles = downloadDirectory.listFiles();
-      Util.printInfo("Number of downloading files: " + downloadingFiles.length);
       AssertUtils.assertTrue(downloadingFiles.length > 0,
           "Ensure there are downloading files");
 
       Util.printInfo("Downloading files:");
-      for (int i = 0; i < downloadingFiles.length; i++) {
+      for (int i = 0; i < Math.min(downloadingFiles.length, 10); i++) {
         Util.printInfo("   " + downloadingFiles[i].getName());
+      }
+      if (downloadingFiles.length > 10) {
+        Util.printInfo("   ... and " + (downloadingFiles.length - 10) + " more file(s)");
       }
     } catch (NullPointerException exception) {
       AssertUtils.fail("Failed to locate download directory");
