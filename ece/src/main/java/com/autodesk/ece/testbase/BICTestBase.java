@@ -733,12 +733,8 @@ public class BICTestBase {
 
       bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 20000);
       bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-      Util.sleep(30000);
-      String url = driver.getCurrentUrl();
-      Util.printInfo("Entering Giropay url" + " : " + url);
+      Util.sleep(40000);
 
-      AssertUtils.assertTrue(url.indexOf("giropay") != -1,
-          "Current url [" + url + "] does contain keyword : giropay");
       Util.printInfo("Entering Giropay bank name : " + paymentCardDetails[0]);
       bicPage.populateField("giroPayBankName", paymentCardDetails[0]);
       Util.sleep(2000);
