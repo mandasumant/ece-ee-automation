@@ -20,7 +20,6 @@ public class BICOrderPromoCode extends ECETestBase {
 
   private static String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
-  Map<?, ?> loadRestYaml = null;
   long startTime, stopTime, executionTime;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
@@ -31,9 +30,7 @@ public class BICOrderPromoCode extends ECETestBase {
   public void beforeClass() {
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-    String restFileKey = "REST_" + GlobalConstants.ENV.toUpperCase();
-    loadRestYaml = YamlUtil.loadYmlUsingTestManifest(restFileKey);
-    String localeConfigFile= "LOCALE_CONFIG_" + GlobalConstants.ENV.toUpperCase();
+    String localeConfigFile = "LOCALE_CONFIG";
     localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
   }
 
@@ -45,13 +42,7 @@ public class BICOrderPromoCode extends ECETestBase {
         .get("default");
     LinkedHashMap<String, String> testCaseData = (LinkedHashMap<String, String>) loadYaml
         .get(name.getName());
-    LinkedHashMap<String, String> restDefaultValues = (LinkedHashMap<String, String>) loadRestYaml
-        .get("default");
-    LinkedHashMap<String, String> regionalData = (LinkedHashMap<String, String>) loadYaml
-        .get(System.getProperty("store"));
-    defaultValues.putAll(regionalData);
     defaultValues.putAll(testCaseData);
-    defaultValues.putAll(restDefaultValues);
     testDataForEachMethod = defaultValues;
 
     locale = System.getProperty(BICECEConstants.LOCALE);

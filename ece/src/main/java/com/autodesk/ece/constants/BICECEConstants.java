@@ -92,7 +92,6 @@ public class BICECEConstants extends BICConstants {
   public static final String JP_ORDER_NUMBER = "//h5[.='注文番号：']/..//p";
   public static final String GUAC_RESOURCE_URL = "guacResourceURL";
   public static final String USER_TYPE = "userType";
-  public static final String LANGUAGE_STORE = "languageStore";
   public static final String FIRST_NAME1 = "firstName :: ";
   public static final String LAST_NAME1 = "lastName :: ";
   public static final String ENTER_PAYMENT_DETAILS = "Enter Payment details";

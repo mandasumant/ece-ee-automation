@@ -1,10 +1,10 @@
-﻿#Test data for BIC order
+#Test data for BIC order
 ---
 default:
   userType: "newUser"
   paymentMethod: "VISA"
   password: "iAg7eLGIEYMczxIlN8R0AA==:ewmfKH9qq0dmWn91Yw3pRA=="
-  cepURL: "https://customer-stg.autodesk.com/"
+  cepURL: "https://customer-int.autodesk.com/"
   guacBaseURL: "https://checkout-pt.autodesk.com/"
   guacDotComBaseURL: "https://www-pt.autodesk"
   guacResourceURL: "checkout?priceIds="
@@ -22,11 +22,11 @@ default:
   zipPayPassword: "33dMvL0W2XONsQLqHmZaKg==:tY6Q+yefNznhedpc1RTRBQ=="
   zipPayVerificationCode: "123456"
 
-  getPurchaseOrderDetailsUrl: "https://api.pelicanstg.autodesk.com/orders/v3/filters"
-  putPelicanRefundOrderUrl: "https://api.pelicanstg.autodesk.com/orders/v3/passtoken/operation"
-  getSubscriptionByIdUrl: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
-  postInvoicePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/job/invoice"
-  postReportsFinancePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/reports/finance"
+  getPurchaseOrderDetailsUrl: "https://api.pelicanint.autodesk.com/orders/v3/filters"
+  putPelicanRefundOrderUrl: "https://api.pelicanint.autodesk.com/orders/v3/passtoken/operation"
+  getSubscriptionByIdUrl: "https://api.pelicanint.autodesk.com/subscriptions/v3/passtoken"
+  postInvoicePelicanAPIUrl: "https://api.pelicanint.autodesk.com/orders/v3/job/invoice"
+  postReportsFinancePelicanAPIUrl: "https://api.pelicanint.autodesk.com/orders/v3/reports/finance"
   getPelicanPartnerId: "$automation"
   getPriceDetails_X_E2_AppFamilyId: "9999"
   getPelicanActorSecret: "ZBMy0uiO6TSbQyESx3o/YA==:mNWJSg4T9+7uVxQ8ox/iOA=="
@@ -38,9 +38,9 @@ default:
   bicNativePriceID: &bicNativePriceID "27239"
   bicMetaPriceID: &bicMetaPriceID "27209"
   trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview"
-  account:       "yfds91WdxydZM"
-  emailid:       "acdisttest1801@letscheck.pw"
-  guacMoeSku:    "057N1-WW3931-L830"
+  account: "yfds91WdxydZM"
+  emailid: "acdisttest1801@letscheck.pw"
+  guacMoeSku: "057N1-WW3931-L830"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
