@@ -11,7 +11,7 @@ default:
   productsPath: "/products/"
   guacMoeResourceURL: "manual-order-entry?optyId="
   guacMoeDTCURL: "manual-order-entry-dtc"
-  productName: "3ds-max"
+  productName: "autocad"
   postalCode: "80202"
   payportRenewalURL: "https://payport.bicstg.autodesk.com/services/v1/user/USER_ID/renewalPurchase"
   payportCertificatePassphrase: "REcPO323d27LMFx5UTcyUw==:dj+KH+D46qHnbzIFOccVAA=="

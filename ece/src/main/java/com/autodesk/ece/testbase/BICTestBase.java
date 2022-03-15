@@ -357,8 +357,14 @@ public class BICTestBase {
   @Step("Selecting Monthly Subscription")
   public void selectMonthlySubscription(WebDriver driver) {
     JavascriptExecutor executor = (JavascriptExecutor) driver;
-    WebElement element = driver
-        .findElement(By.xpath("//terms-container/div/div[4]/term-element[3]"));
+    WebElement element;
+    try {
+      element = driver
+          .findElement(By.xpath("//terms-container/div/div[3]/term-element[3]"));
+    } catch (Exception e) {
+      element = driver
+          .findElement(By.xpath("//terms-container/div/div[4]/term-element[3]"));
+    }
     executor.executeScript("arguments[0].click();", element);
     Util.sleep(2000);
   }
@@ -1319,7 +1325,7 @@ public class BICTestBase {
         Util.printInfo("Clicking on the chatHelpPopupButton button");
         bicPage.clickUsingLowLevelActions("chatHelpPopupButton");
       }
-    }catch (Exception e){
+    } catch (Exception e) {
       Util.printInfo("No Chat Popup found. Continuing...");
     }
 
