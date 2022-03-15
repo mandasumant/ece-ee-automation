@@ -357,6 +357,22 @@ public class EDUTestBase {
     AssertUtils.assertTrue(downloadButton.isDisplayed() && downloadButton.isEnabled(),
         "Ensuring that Download button is interactable");
     downloadButton.click();
+    Util.sleep(2000);
+
+    try {
+      if (eduPage.checkIfElementExistsInPage("eduDownloadAccept", 10)) {
+        Util.printInfo("Found the 'Accept' button during product download.");
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("document.getElementsByClassName('websdkButton agreeButton')[0].click();");
+
+        Util.printInfo("Clicked on 'Accept' button during product download.");
+      } else {
+        Util.printInfo("'Accept' button is NOT found during product download.");
+      }
+    } catch (Exception e) {
+      Util.printInfo("'Accept' button is NOT found during product download.");
+    }
 
     // Wait a bit for downloads to start
     Util.sleep(1000);
@@ -371,13 +387,15 @@ public class EDUTestBase {
         Util.sleep(2500);
       }
       File[] downloadingFiles = downloadDirectory.listFiles();
-      Util.printInfo("Number of downloading files: " + downloadingFiles.length);
       AssertUtils.assertTrue(downloadingFiles.length > 0,
           "Ensure there are downloading files");
 
       Util.printInfo("Downloading files:");
-      for (int i = 0; i < downloadingFiles.length; i++) {
+      for (int i = 0; i < Math.min(downloadingFiles.length, 10); i++) {
         Util.printInfo("   " + downloadingFiles[i].getName());
+      }
+      if (downloadingFiles.length > 10) {
+        Util.printInfo("   ... and " + (downloadingFiles.length - 10) + " more file(s)");
       }
     } catch (NullPointerException exception) {
       AssertUtils.fail("Failed to locate download directory");
