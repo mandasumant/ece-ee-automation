@@ -156,7 +156,7 @@ public class EDUTestBase {
 
     eduPage.click("eduComplete");
     Util.sleep(2500);
-    
+
     return results;
   }
 
@@ -327,6 +327,12 @@ public class EDUTestBase {
     AssertUtils.assertTrue(
         downloadTitle.getText().contains("Thank you for downloading Fusion 360"));
 
+    // Verify cards container does not blank out
+    WebElement cardsContainer =
+        driver.findElement(By.xpath(eduPage.getFirstFieldLocator("eduCardsContainer")));
+    AssertUtils.assertTrue(
+        cardsContainer.getText().contains("Download, sign-in, and start designing!"));
+
     // Close the new tab and switch back to the old tab
     driver.close();
     driver.switchTo().window(currentTabHandle);
@@ -400,7 +406,7 @@ public class EDUTestBase {
     } catch (NullPointerException exception) {
       AssertUtils.fail("Failed to locate download directory");
     }
-    
+
     WebElement overviewPageHeader = driver.findElement(
             By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
     AssertUtils.assertTrue(
