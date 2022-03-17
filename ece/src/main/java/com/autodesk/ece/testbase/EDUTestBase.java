@@ -339,7 +339,7 @@ public class EDUTestBase {
   }
 
   /**
-   * Download an education product by webdsk ID
+   * Download an education product by websdk ID
    *
    * @param websdk - Product websdk ID
    */
@@ -377,7 +377,7 @@ public class EDUTestBase {
         Util.printInfo("'Accept' button is NOT found during product download.");
       }
     } catch (Exception e) {
-      Util.printInfo("'Accept' button is NOT found during product download.");
+      Util.printInfo(e.getMessage());
     }
 
     // Wait a bit for downloads to start
@@ -412,6 +412,9 @@ public class EDUTestBase {
     AssertUtils.assertTrue(
             overviewPageHeader.getText().contains("Hi "));
 
+    WebElement cardsGrid =
+        driver.findElement(By.xpath(eduPage.getFirstFieldLocator("eduCardsGrid")));
+    AssertUtils.assertTrue(cardsGrid.getText().contains("Get product"));
   }
 
   /**
