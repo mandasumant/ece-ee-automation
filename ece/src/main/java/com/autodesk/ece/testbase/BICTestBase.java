@@ -160,7 +160,6 @@ public class BICTestBase {
 
   @Step("Create BIC account")
   public void createBICAccount(Names names, String emailID, String password) {
-    Util.printInfo("Switching to User login frame");
     switchToBICCartLoginPage();
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
     bicPage.waitForField("createNewUserGUAC", true, 30000);
@@ -237,6 +236,7 @@ public class BICTestBase {
   private void switchToBICCartLoginPage() {
     List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
+    Util.printInfo("Switching to User login frame");
     driver.switchTo().frame(element);
   }
 
@@ -1250,7 +1250,9 @@ public class BICTestBase {
 
     // Selecting monthly for Non-Flex, Non-Financing , Non-Meta orders only
     if (productType.equals("flex")) {
+      bicPage.waitForFieldPresent("flexTab", 5000);
       bicPage.clickUsingLowLevelActions("flexTab");
+      bicPage.waitForFieldPresent("buyTokensButton", 5000);
       bicPage.clickUsingLowLevelActions("buyTokensButton");
     } else {
       if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
