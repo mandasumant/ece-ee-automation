@@ -156,7 +156,7 @@ public class EDUTestBase {
 
     eduPage.click("eduComplete");
     Util.sleep(2500);
-    
+
     return results;
   }
 
@@ -327,13 +327,19 @@ public class EDUTestBase {
     AssertUtils.assertTrue(
         downloadTitle.getText().contains("Thank you for downloading Fusion 360"));
 
+    // Verify cards container does not blank out
+    WebElement cardsContainer =
+        driver.findElement(By.xpath(eduPage.getFirstFieldLocator("eduCardsContainer")));
+    AssertUtils.assertTrue(
+        cardsContainer.getText().contains("Download, sign-in, and start designing!"));
+
     // Close the new tab and switch back to the old tab
     driver.close();
     driver.switchTo().window(currentTabHandle);
   }
 
   /**
-   * Download an education product by webdsk ID
+   * Download an education product by websdk ID
    *
    * @param websdk - Product websdk ID
    */
@@ -371,7 +377,7 @@ public class EDUTestBase {
         Util.printInfo("'Accept' button is NOT found during product download.");
       }
     } catch (Exception e) {
-      Util.printInfo("'Accept' button is NOT found during product download.");
+      Util.printInfo(e.getMessage());
     }
 
     // Wait a bit for downloads to start
@@ -400,12 +406,15 @@ public class EDUTestBase {
     } catch (NullPointerException exception) {
       AssertUtils.fail("Failed to locate download directory");
     }
-    
+
     WebElement overviewPageHeader = driver.findElement(
             By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
     AssertUtils.assertTrue(
             overviewPageHeader.getText().contains("Hi "));
 
+    WebElement cardsGrid =
+        driver.findElement(By.xpath(eduPage.getFirstFieldLocator("eduCardsGrid")));
+    AssertUtils.assertTrue(cardsGrid.getText().contains("Get product"));
   }
 
   /**
