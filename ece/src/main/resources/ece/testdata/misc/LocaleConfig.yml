@@ -5,6 +5,7 @@
     currencyStore: "USD"
     countryDomain: ".com"
     paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH,FINANCING"
+    address: "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO"
 
   en_CA:
     region: "ENCA"
@@ -12,6 +13,15 @@
     currencyStore: "CAD"
     countryDomain: ".ca/en"
     paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@750 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec"
+
+  fr_CA:
+    region: "FRCA"
+    storeName: "STORE-CA"
+    currencyStore: "CAD"
+    countryDomain: ".ca/fr"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@75 Rue Ann@Montreal@H3C 5N5@9916800100@Kanada@Quebec"
 
   en_GB:
     region: "ENGB"
@@ -19,6 +29,7 @@
     currencyStore: "GBP"
     countryDomain: ".co.uk"
     paymentMethods: "CREDITCARD,PAYPAL,BACS"
+    address : "Autodesk@Talbot Way@Birmingham@B10 0HJ@9916800100@United Kingdom"
 
   en_AU:
     region: "ENAU"
@@ -26,13 +37,23 @@
     currenyStore: "AUD"
     countryDomain: ".com.au"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address : "AutodeskAU@259-261 Colchester Road@Kilsyth@3137@397202088@Australia@Victoria"
 
   nl_NL:
     region: "NLNL"
-    storeName: "STORE-UK"
+    storeName: "STORE-EU"
     currencyStore: "EUR"
     countryDomain: ".nl"
-    paymentMethods: "CREDITCARD,PAYPAL,IDEAL"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
+    address : "Autodesk@Recollectenstraat 112@Weert@6001 AJ@06-65533273@Nederland@Limburg"
+
+  pl_PL:
+    region: "PLPL"
+    storeName: "STORE-PL"
+    currencyStore: "PLN"
+    countryDomain: ".pl"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@ul. Dworcowej 49@Jaworzno@43-600@48696207772@Polska@Limburg"
 
   fr_FR:
     region: "FRFR"
@@ -40,6 +61,7 @@
     currencyStore: "EUR"
     countryDomain: ".fr"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+    address : "Autodesk@27 rue La Boétie@Paris@75013@9916800100@France@Île-de-France"
 
   ja_JP:
     region: "JAJP"
@@ -47,13 +69,15 @@
     currencyStore: "YEN"
     countryDomain: ".jp"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+    address : "Autodesk@532-0003@Street@Osaka@81-6-6350-5223"
 
   de_DE:
     region: "DEDE"
     storeName: "STORE-DE"
     currencyStore: "EUR"
     countryDomain: ".de"
-    paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY,SOFORT"
+    address : "Autodesk@Güntzelstrasse 118@Rorodt@1826 GN@65043235263@Deutschland"
 
   it_IT:
     region: "ITIT"
@@ -61,3 +85,4 @@
     currencyStore: "EUR"
     countryDomain: ".it"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
+    address : "Autodesk@Via Medina 108@Grado@34073@0323 0700940@Italia@Gorizia"

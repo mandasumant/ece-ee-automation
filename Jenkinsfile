@@ -26,6 +26,8 @@ pipeline {
     parameters {
         booleanParam(name: 'CJT' , defaultValue: false, description: 'Run CJT Regression ?')
         booleanParam(name: 'LIFT', defaultValue: false, description: 'Run LIFT Regression ?')
+        booleanParam(name: 'APPOLO', defaultValue: false, description: 'Run Appolo Regression ?')
+
     }
 
     stages {
@@ -36,7 +38,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true ||
+                            params.APPOLO == true
                         }
                     }
                 }
@@ -247,5 +250,46 @@ pipeline {
                 }
             }
         }
+
+         stage ('Appolo UAT') {
+           when {
+              branch 'master'
+              expression {
+                  params.APPOLO == true
+              }
+          }
+          steps {
+              echo 'Initiating Appolo UAT '
+
+              script {
+                  println("Building Testing Hub API Input Map - estore")
+                  def testingHubInputMap = [:]
+                  testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
+                  testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+                  testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+                  testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"Appolo UAT - GUAC Orders","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                                                              '{"displayname":"BiC Native Order US(en_US)","testcasename":"validateBicNativeOrder","description":"BiC Native Order US(en_US) ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order UK(en_GB)","testcasename":"validateBicNativeOrder","description":"BiC Native Order UK(en_GB) ","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"BACS","store":"STORE-UK","sku":"default:1","email":"","locale":"en_GB"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order DE  SEPA(de_DE)","testcasename":"validateBicNativeOrder","description":"BiC Native Order DE  SEPA(de_DE)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"SEPA","store":"STORE-DE","sku":"default:1","email":"","locale":"de_DE"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order DE  GIROPAY(de_DE)","testcasename":"validateBicNativeOrder","description":"BiC Native Order DE  GIROPAY(de_DE","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"GIROPAY","store":"STORE-DE","sku":"default:1","email":"","locale":"de_DE"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order AUS  ZIP(en_AU)","testcasename":"validateBicNativeOrder","description":"BiC Native Order AUS  ZIP(en_AU)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"ZIP","store":"STORE-AUS","sku":"default:1","email":"","locale":"en_AU"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order CA(en_CA)","testcasename":"validateBicNativeOrder","description":"BiC Native Order CA(en_CA)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","locale":"en_CA"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order CA(fr_CA)","testcasename":"validateBicNativeOrder","description":"iC Native Order CA(fr_CA)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","locale":"fr_CA"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order NL(nl_NL)","testcasename":"validateBicNativeOrder","description":"BiC Native Order NL(nl_NL)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","locale":"nl_NL"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order PL(pl_PL)  ","testcasename":"validateBicNativeOrder","description":"BiC Native Order PL(pl_PL)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-PL","sku":"default:1","email":"","locale":"pl_PL"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order IT(it_IT)","testcasename":"validateBicNativeOrder","description":"BiC Native Order IT(it_IT)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-IT","sku":"default:1","email":"","locale":"it_IT"},"notsupportedenv":[],"wiki":""},' +
+                                                              '{"displayname":"BiC Native Order FR(fr_FR)","testcasename":"validateBicNativeOrder","description":"BiC Native Order FR(fr_FR)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-FR","sku":"default:1","email":"","locale":"fr_FR"},"notsupportedenv":[],"wiki":""}' +
+                                                            '],"workstreamname":"dclecjt"}'
+                  println("Starting Testing Hub API Call - estore")
+                  if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
+                      println('Testing Hub API called successfully - estore')
+                  } else {
+                      currentBuild.result = 'FAILURE'
+                      println('Testing Hub API call failed - estore')
+                  }
+              }
+
+          }
+      }
     }
 }

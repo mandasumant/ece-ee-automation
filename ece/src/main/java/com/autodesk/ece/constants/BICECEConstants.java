@@ -10,6 +10,7 @@ public class BICECEConstants extends BICConstants {
   public static final String DOWNLOAD_STATUS = "downloadStatus";
   public static final String LOCALE = "locale";
   public static final String REGION = "region";
+  public static final String ADDRESS = "address";
   public static final String LOCALE_CONFIG  = "LocaleConfig";
   public static final String STORE_NAME= "storeName";
   public static final String STORE = "store";

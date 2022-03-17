@@ -69,19 +69,29 @@ public class BICOrderCreation extends ECETestBase {
 
     localeDataMap = (LinkedHashMap<String, Map<String, String>>) localeConfigYaml
         .get(BICECEConstants.LOCALE_CONFIG);
-    testDataForEachMethod.putAll(localeDataMap.get(locale));
 
-    Util.printTestFailedMessage(
-        "Validating the store for the locale :" + locale + " Store: " + System.getProperty(
+    if(localeDataMap == null || localeDataMap.get(locale) == null){
+      AssertUtils.fail("The locale configuration is not found for  the given country/locale : " + locale );
+    } else {
+      testDataForEachMethod.putAll(localeDataMap.get(locale));
+    }
+
+    Util.printInfo(
+        "Validating the store for the locale :" + locale + " Store : " + System.getProperty(
             BICECEConstants.STORE));
 
     boolean isValidStore = testDataForEachMethod.get(BICECEConstants.STORE_NAME)
         .equals(System.getProperty(BICECEConstants.STORE));
 
     if (!isValidStore) {
-      Util.printTestFailedMessage("The store is not supported for the given country/locale : " + locale
-          + ". Supported stores  are "
-          + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
+      AssertUtils.fail(
+          "The store is not supported for the given country/locale : " + locale
+              + ". Supported stores are "
+              + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
+    }
+
+    if(testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS).isEmpty()){
+      AssertUtils.fail("Address not found in the config for the locale : " + locale);
     }
 
     String paymentType = System.getProperty("payment");

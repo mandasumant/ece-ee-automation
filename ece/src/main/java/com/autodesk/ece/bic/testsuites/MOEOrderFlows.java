@@ -77,6 +77,10 @@ public class MOEOrderFlows extends ECETestBase {
           + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
 
+    if(testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS).isEmpty()){
+      Util.printTestFailedMessage("Address not found in the config for the locale: "+locale);
+    }
+
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
 

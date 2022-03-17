@@ -81,36 +81,8 @@ public class BICTestBase {
   }
 
   @Step("get billing address")
-  public Map<String, String> getBillingAddress(String region) {
-    region = region.replace("/", "").replace("-", "");
-    String address = null;
+  public Map<String, String> getBillingAddress(String region,String address) {
     Map<String, String> ba = null;
-
-    switch (region.toUpperCase()) {
-      case "ENAU":
-        address = "AutodeskAU@259-261 Colchester Road@Kilsyth@3137@397202088@Australia@Victoria";
-        break;
-      case "ENUS":
-        address = getAmericaAddress();
-        break;
-      case "ENCA":
-        address = "Autodesk@75 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec";
-        break;
-      case "ENGB":
-        address = "Autodesk@Talbot Way@Birmingham@B10 0HJ@9916800100@United Kingdom";
-        break;
-      case "NLNL":
-        address = "Autodesk@High Way@Noord-Holland@1826 GN@06-30701138@Netherlands@Flevoland";
-        break;
-      case "DEDE":
-        address = "Autodesk@Güntzelstrasse 118@Rorodt@1826 GN@65043235263@Deutschland";
-        break;
-      case "JAJP":
-        address = "Autodesk@532-0003@Street@Osaka@81-6-6350-5223";
-        break;
-      default:
-        Util.printError("Check the region selected");
-    }
 
     String[] billingAddress = address.split("@");
     ba = new HashMap<String, String>();
@@ -548,9 +520,12 @@ public class BICTestBase {
       clearTextInputValue(driver.findElement(By.xpath(phoneXpath)));
       driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
 
-      WebElement countryEle = driver.findElement(By.xpath(countryXpath));
-      Select selCountry = new Select(countryEle);
-      selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));
+     // May not be required as country is deafulted on page
+     /*   WebElement countryEle = driver.findElement(By.xpath(countryXpath));
+          Select selCountry = new Select(countryEle);
+          selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));
+      */
+
       if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address
           .get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
         driver.findElement(By.xpath(stateXpath))
@@ -1266,7 +1241,8 @@ public class BICTestBase {
     acceptCookiesAndUSSiteLink();
 
     String region = data.get(BICECEConstants.REGION);
-    address = getBillingAddress(region);
+    String billingAddress = data.get(BICECEConstants.ADDRESS);
+    address = getBillingAddress(region, billingAddress);
 
     Names names = generateFirstAndLastNames();
     createBICAccount(names, emailID, password);
@@ -1454,7 +1430,7 @@ public class BICTestBase {
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
         "[data-testid=\"order-summary-section\"] .checkout--order-summary-section--submit-order  .checkout--order-summary-section--submit-order--button-container button"));
     if (submitButton.size() > 0 && !submitButton.get(0).isEnabled()) {
-      Map<String, String> address = getBillingAddress(region);
+      Map<String, String> address = getBillingAddress(region, data.get(BICECEConstants.ADDRESS));
       enterBillingDetails(data, address, paymentMethod, region);
     }
 
