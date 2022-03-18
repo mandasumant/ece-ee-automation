@@ -61,7 +61,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true ||
+                            params.APPOLO == true
                         }
                     }
                 }
@@ -87,7 +88,8 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.LIFT == true
+                            params.LIFT == true ||
+                            params.APPOLO == true
                         }
                     }
                 }
