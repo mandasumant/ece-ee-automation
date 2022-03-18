@@ -11,8 +11,8 @@ public class BICECEConstants extends BICConstants {
   public static final String LOCALE = "locale";
   public static final String REGION = "region";
   public static final String ADDRESS = "address";
-  public static final String LOCALE_CONFIG  = "LocaleConfig";
-  public static final String STORE_NAME= "storeName";
+  public static final String LOCALE_CONFIG = "LocaleConfig";
+  public static final String STORE_NAME = "storeName";
   public static final String STORE = "store";
   public static final String CLDCR_PLC = "CLDCR";
   public static final String SUBSCRIPTION_ID = "getPOReponse_subscriptionId";
@@ -27,7 +27,7 @@ public class BICECEConstants extends BICConstants {
   public static final String REDUCE_SEATS = "reduceSeats";
   public static final String E2E_EXECUTION_TIME = "e2e_ExecutionTime";
   public static final String ORDER_CREATION = "CreateOrder";
-  public static final String ORDER_NUMBER_LABEL="orderNumberLabel";
+  public static final String ORDER_NUMBER_LABEL = "orderNumberLabel";
   public static final String ORDER_ID = "getPOReponse_orderId";
   public static final String SUB1_ID = "sub1ID";
   public static final String SUB2_ID = "sub2ID";
@@ -107,7 +107,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PRODUCT_PE_ID = "product_pe_id";
   public static final String PRODUCT_NAME = "productName";
   public static final String PRODUCTS_PATH = "productsPath";
-  public static final String COUNTRY_DOMAIN="countryDomain";
+  public static final String COUNTRY_DOMAIN = "countryDomain";
   public static final String EDU_ROLE = "eduRole";
   public static final String EDU_SUBMIT = "eduSubmit";
   public static final String EDU_PASSWORD = "eduAccountPassword";

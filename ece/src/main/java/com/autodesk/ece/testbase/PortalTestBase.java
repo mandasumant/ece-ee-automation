@@ -161,7 +161,7 @@ public class PortalTestBase {
     boolean status = false;
     Integer attempts = 0;
 
-    while(attempts < 3) {
+    while (attempts < 3) {
       try {
         Util.sleep(2000);
         portalPage.getMultipleWebElementsfromField("usernameCEP").get(0).sendKeys(portalUserName);
@@ -174,10 +174,10 @@ public class PortalTestBase {
 
         try {
           if (portalPage.getMultipleWebElementsfromField(BICECEConstants.SKIP_LINK).get(0)
-                  .isDisplayed()
-                  || portalPage.isFieldVisible(BICECEConstants.SKIP_LINK)
-                  || portalPage.checkFieldExistence(BICECEConstants.SKIP_LINK)
-                  || portalPage.isFieldPresent(BICECEConstants.SKIP_LINK)) {
+              .isDisplayed()
+              || portalPage.isFieldVisible(BICECEConstants.SKIP_LINK)
+              || portalPage.checkFieldExistence(BICECEConstants.SKIP_LINK)
+              || portalPage.isFieldPresent(BICECEConstants.SKIP_LINK)) {
             Util.printInfo("Skip link is displayed after logging into portal");
             Util.printInfo("Clicking on SkipLink");
             portalPage.clickUsingLowLevelActions(BICECEConstants.SKIP_LINK);
@@ -942,16 +942,16 @@ public class PortalTestBase {
     }
   }
 
-  private void findAndClickSaveButton(String elementXpath) throws  Exception{
+  private void findAndClickSaveButton(String elementXpath) throws Exception {
     Util.sleep(5000);
     List<WebElement> list = portalPage.getMultipleWebElementFromXpath(elementXpath);
     int len = list.size();
-    while(len > 0){
+    while (len > 0) {
       try {
-        list.get(len-1).click();
+        list.get(len - 1).click();
         Util.printInfo("Save Button found and clicked..");
         break;
-      } catch (Exception e){
+      } catch (Exception e) {
         Util.printInfo("Unable to click on Save Button. Trying the next Save Button in the list.");
         len--;
       }

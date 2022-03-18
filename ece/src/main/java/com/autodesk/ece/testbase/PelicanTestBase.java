@@ -68,7 +68,7 @@ public class PelicanTestBase {
     return result.toString();
   }
 
-  public static Response getRestResponse(String baseUrl, Map<String, String> header,String requestJson) {
+  public static Response getRestResponse(String baseUrl, Map<String, String> header, String requestJson) {
     Response response = null;
     try {
       Util.printInfo("Hitting the URL = " + baseUrl);
@@ -81,7 +81,7 @@ public class PelicanTestBase {
         }
 
         //few Pelican API return 302 for POST/PUT hence 399
-        if(response.getStatusCode() < 399) {
+        if (response.getStatusCode() < 399) {
           break;
         }
         Util.sleep(3000);
@@ -134,7 +134,7 @@ public class PelicanTestBase {
           js.get("data.lastBillingInfo.purchaseOrderId") != null ? Integer
               .toString(js.get("data.lastBillingInfo.purchaseOrderId")) : null);
       results.put("response_nextBillingDate", js.get("data.nextBillingDate"));
-      results.put("response_offeringType",js.get("data.offeringType"));
+      results.put("response_offeringType", js.get("data.offeringType"));
       results.put("response_subscriptionQuantity", Integer.toString(js.get("data.quantity")));
       results.put("response_quantityToReduce", Integer.toString(js.get("data.quantityToReduce")));
       results.put("response_offeringExternalKey", js.get("data.offeringExternalKey"));

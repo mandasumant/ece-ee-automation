@@ -81,7 +81,7 @@ public class BICTestBase {
   }
 
   @Step("get billing address")
-  public Map<String, String> getBillingAddress(String region,String address) {
+  public Map<String, String> getBillingAddress(String region, String address) {
     Map<String, String> ba = null;
 
     String[] billingAddress = address.split("@");
@@ -520,7 +520,7 @@ public class BICTestBase {
       clearTextInputValue(driver.findElement(By.xpath(phoneXpath)));
       driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
 
-     // May not be required as country is deafulted on page
+      // May not be required as country is deafulted on page
      /*   WebElement countryEle = driver.findElement(By.xpath(countryXpath));
           Select selCountry = new Select(countryEle);
           selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));

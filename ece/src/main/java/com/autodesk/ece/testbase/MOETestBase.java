@@ -402,7 +402,7 @@ public class MOETestBase {
     return orderNumber;
   }
 
-  private HashMap <String, String> getBicOrderMoeWithQuote(LinkedHashMap<String, String> data, String emailID,
+  private HashMap<String, String> getBicOrderMoeWithQuote(LinkedHashMap<String, String> data, String emailID,
       String guacBaseURL, String guacMoeResourceURL, String locale, String password,
       String paymentMethod) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();

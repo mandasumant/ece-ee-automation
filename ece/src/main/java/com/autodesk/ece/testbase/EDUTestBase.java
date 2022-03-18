@@ -169,13 +169,13 @@ public class EDUTestBase {
   public void verifyUser(String oxygenId) {
     String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
     given().auth().basic(testData.get("eduAEMUser"),
-            ProtectedConfigFile.decrypt(testData.get("eduAEMPassword"))).when()
+        ProtectedConfigFile.decrypt(testData.get("eduAEMPassword"))).when()
         .get(baseUrl);
   }
 
   /**
-   * From the main education landing page with a logged in user, click through the flow to accept
-   * VSOS (student verification) terms
+   * From the main education landing page with a logged in user, click through the flow to accept VSOS (student
+   * verification) terms
    */
   public void signUpUser(HashMap<String, String> results) {
     acceptVSOSTerms(results);
@@ -196,9 +196,9 @@ public class EDUTestBase {
   private void acceptVSOSTerms(HashMap<String, String> results) {
     try {
       WebElement overviewPageHeader = driver.findElement(
-              By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
+          By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
       AssertUtils.assertTrue(
-              overviewPageHeader.getText().contains("Hi " + results.get("firstName")));
+          overviewPageHeader.getText().contains("Hi " + results.get("firstName")));
       eduPage.waitForField(EDU_GET_STARTED, true, 5000);
       eduPage.click(EDU_GET_STARTED);
       eduPage.waitForField(EDU_SIGNUP_SUBMIT, true, 5000);
@@ -234,25 +234,25 @@ public class EDUTestBase {
 
         // Assert that we are still in Overview page after upload
         overviewPageHeader = driver.findElement(
-                By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+            By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
         AssertUtils.assertTrue(
-                overviewPageHeader.getText().contains("Additional documentation needed"));
+            overviewPageHeader.getText().contains("Additional documentation needed"));
 
         eduPage.click(EDU_SIGNUP_SUBMIT);
         Util.sleep(3000);
 
         WebElement landingPageHeader = driver.findElement(
-                By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+            By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
         AssertUtils.assertTrue(
-                landingPageHeader.getText().contains("Thank you"));
+            landingPageHeader.getText().contains("Thank you"));
 
         eduPage.click("eduUploadClose");
         Util.sleep(3000);
 
         WebElement overviewHomeHeader = driver.findElement(
-                By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
+            By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
         AssertUtils.assertTrue(
-                overviewHomeHeader.getText().contains("Hi " + results.get("firstName")));
+            overviewHomeHeader.getText().contains("Hi " + results.get("firstName")));
       }
     } catch (URISyntaxException e) {
       e.printStackTrace();
@@ -408,9 +408,9 @@ public class EDUTestBase {
     }
 
     WebElement overviewPageHeader = driver.findElement(
-            By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
+        By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
     AssertUtils.assertTrue(
-            overviewPageHeader.getText().contains("Hi "));
+        overviewPageHeader.getText().contains("Hi "));
 
     WebElement cardsGrid =
         driver.findElement(By.xpath(eduPage.getFirstFieldLocator("eduCardsGrid")));
@@ -418,8 +418,8 @@ public class EDUTestBase {
   }
 
   /**
-   * Activate an educator subscription for a product and open the subscription in Portal. If the
-   * activation fails, it will retry up to 5 times
+   * Activate an educator subscription for a product and open the subscription in Portal. If the activation fails, it
+   * will retry up to 5 times
    *
    * @param productLink - The anchor of the product to activate
    * @throws MetadataException

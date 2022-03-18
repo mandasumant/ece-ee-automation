@@ -92,7 +92,7 @@ public class EDUUserFlows extends ECETestBase {
     edutb.switchToNextTab();
     portaltb.clickALLPSLink();
     results.put(BICECEConstants.PRODUCT_PE_ID,
-            portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
+        portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
 
     submitTestResults(results);
   }
@@ -146,7 +146,7 @@ public class EDUUserFlows extends ECETestBase {
     // Validate that the user has a subscription to Fusion 360 in portal
     portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
     results.put(BICECEConstants.PRODUCT_PE_ID,
-            portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
+        portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
 
     submitTestResults(results);
   }

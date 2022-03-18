@@ -23,7 +23,7 @@ public class BICOrderPromoCode extends ECETestBase {
   long startTime, stopTime, executionTime;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
-  LinkedHashMap<String, Map<String,String>> localeDataMap = null;
+  LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = null;
 
   @BeforeClass(alwaysRun = true)
@@ -47,10 +47,10 @@ public class BICOrderPromoCode extends ECETestBase {
 
     locale = System.getProperty(BICECEConstants.LOCALE);
 
-    if(locale == null || locale.trim().isEmpty()){
+    if (locale == null || locale.trim().isEmpty()) {
       locale = defaultLocale;
     }
-    testDataForEachMethod.put("locale",locale);
+    testDataForEachMethod.put("locale", locale);
 
     localeDataMap = (LinkedHashMap<String, Map<String, String>>) localeConfigYaml
         .get(BICECEConstants.LOCALE_CONFIG);
@@ -70,9 +70,9 @@ public class BICOrderPromoCode extends ECETestBase {
           + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
 
-
-    if(testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS).isEmpty()){
-       Util.printTestFailedMessage("Address not found in the config for the locale: "+locale);
+    if (testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS)
+        .isEmpty()) {
+      Util.printTestFailedMessage("Address not found in the config for the locale: " + locale);
     }
 
     String paymentType = System.getProperty("payment");
@@ -97,7 +97,7 @@ public class BICOrderPromoCode extends ECETestBase {
     testResults.put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
     updateTestingHub(testResults);
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
     // Getting a PurchaseOrder details from pelican

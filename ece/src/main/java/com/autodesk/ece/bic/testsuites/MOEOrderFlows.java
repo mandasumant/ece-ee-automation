@@ -33,7 +33,7 @@ public class MOEOrderFlows extends ECETestBase {
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
-  String optyName, stage, fulfillment, account, projectCloseDate,email,sku ="";
+  String optyName, stage, fulfillment, account, projectCloseDate, email, sku = "";
   private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
@@ -77,14 +77,15 @@ public class MOEOrderFlows extends ECETestBase {
           + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
 
-    if(testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS).isEmpty()){
-      Util.printTestFailedMessage("Address not found in the config for the locale: "+locale);
+    if (testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS)
+        .isEmpty()) {
+      Util.printTestFailedMessage("Address not found in the config for the locale: " + locale);
     }
 
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
 
-    if (Strings.isNullOrEmpty(System.getProperty("account"))){
+    if (Strings.isNullOrEmpty(System.getProperty("account"))) {
       account = testDataForEachMethod.get("account");
     } else {
       account = System.getProperty("account");
@@ -92,19 +93,19 @@ public class MOEOrderFlows extends ECETestBase {
 
     if (Strings.isNullOrEmpty(System.getProperty("projectCloseDate"))) {
       projectCloseDate = Util.getDateFirstDayNextMonth("MM/dd/yyyy");
-      Util.printInfo("project close date : "+ projectCloseDate);
+      Util.printInfo("project close date : " + projectCloseDate);
     } else {
       projectCloseDate = System.getProperty("projectCloseDate");
     }
 
     if (Strings.isNullOrEmpty(System.getProperty("email"))) {
       email = testDataForEachMethod.get(TestingHubConstants.emailid);
-      Util.printInfo("email : "+ email);
+      Util.printInfo("email : " + email);
     } else {
       email = System.getProperty("email");
     }
 
-    optyName = "MOE Opty"+ Util.generateRandom(3).toLowerCase();
+    optyName = "MOE Opty" + Util.generateRandom(3).toLowerCase();
     stage = "Stage 1";
     fulfillment = "Direct";
     sku = testDataForEachMethod.get("guacMoeSku");
@@ -146,7 +147,7 @@ public class MOEOrderFlows extends ECETestBase {
     validateTestResults(testResults, moeResults);
 
     AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", moeResults.get("getPOReponse_origin"),
-            BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
+        BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
     portaltb.validateBICOrderProductInCEP(moeResults.get(BICConstants.cepURL),
         moeResults.get(BICConstants.emailid), PASSWORD, moeResults.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -164,7 +165,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.loginSfdcLightningView();
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
-            = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
+        = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
@@ -176,7 +177,7 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
     AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOReponse_origin"),
-            BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
+        BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
     validateTestResults(testResults, results);
 
@@ -248,7 +249,7 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
     AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOReponse_origin"),
-            BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
+        BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
 
     validateTestResults(testResults, results);
 

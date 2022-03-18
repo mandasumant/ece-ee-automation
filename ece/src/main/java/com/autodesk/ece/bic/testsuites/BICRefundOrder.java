@@ -24,7 +24,7 @@ public class BICRefundOrder extends ECETestBase {
   long startTime;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
-  LinkedHashMap<String, Map<String,String>> localeDataMap = null;
+  LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = null;
 
   @BeforeClass(alwaysRun = true)
@@ -45,25 +45,27 @@ public class BICRefundOrder extends ECETestBase {
     defaultValues.putAll(testCaseData);
     testDataForEachMethod = defaultValues;
     locale = System.getProperty(BICECEConstants.LOCALE);
-    if(locale == null || locale.trim().isEmpty()){
+    if (locale == null || locale.trim().isEmpty()) {
       locale = defaultLocale;
     }
-    testDataForEachMethod.put("locale",locale);
+    testDataForEachMethod.put("locale", locale);
 
-    localeDataMap = (LinkedHashMap<String, Map<String,String>>) localeConfigYaml
+    localeDataMap = (LinkedHashMap<String, Map<String, String>>) localeConfigYaml
         .get(BICECEConstants.LOCALE_CONFIG);
     testDataForEachMethod.putAll(localeDataMap.get(locale));
 
-    Util.printInfo("Validating the store for the locale :"+locale +" Store: "+System.getProperty(BICECEConstants.STORE));
+    Util.printInfo(
+        "Validating the store for the locale :" + locale + " Store: " + System.getProperty(BICECEConstants.STORE));
 
     boolean isValidStore = false;
-    if(testDataForEachMethod.get(BICECEConstants.STORE_NAME).equals(System.getProperty(BICECEConstants.STORE))){
+    if (testDataForEachMethod.get(BICECEConstants.STORE_NAME).equals(System.getProperty(BICECEConstants.STORE))) {
       isValidStore = true;
     }
 
-    if(!isValidStore){
-      AssertUtils.fail("The store  is not supported for the given country/locale : "+ locale + ". Supported stores  are "
-          + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
+    if (!isValidStore) {
+      AssertUtils
+          .fail("The store  is not supported for the given country/locale : " + locale + ". Supported stores  are "
+              + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
@@ -86,7 +88,7 @@ public class BICRefundOrder extends ECETestBase {
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
-    results.put(BICECEConstants.orderNumber,results.get(BICECEConstants.ORDER_ID));
+    results.put(BICECEConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 
@@ -111,8 +113,7 @@ public class BICRefundOrder extends ECETestBase {
 
     // Verify that Order status is Refunded
     AssertUtils.assertEquals("Order status is NOT REFUNDED",
-            results.get("refund_orderState"), "REFUNDED");
-
+        results.get("refund_orderState"), "REFUNDED");
 
     try {
       testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));

@@ -38,9 +38,9 @@ default:
   bicNativePriceID: &bicNativePriceID "27239"
   bicMetaPriceID: &bicMetaPriceID "27209"
   trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview"
-  account:       "yfds91WdxydZM"
-  emailid:       "acdisttest1801@letscheck.pw"
-  guacMoeSku:    "057N1-WW3931-L830"
+  account: "yfds91WdxydZM"
+  emailid: "acdisttest1801@letscheck.pw"
+  guacMoeSku: "057N1-WW3931-L830"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID

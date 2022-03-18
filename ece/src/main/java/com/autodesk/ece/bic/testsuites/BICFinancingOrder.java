@@ -74,8 +74,9 @@ public class BICFinancingOrder extends ECETestBase {
           + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
 
-    if(testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS).isEmpty()){
-      Util.printTestFailedMessage("Address not found in the config for the locale: "+locale);
+    if (testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS)
+        .isEmpty()) {
+      Util.printTestFailedMessage("Address not found in the config for the locale: " + locale);
     }
 
     String paymentType = System.getProperty("payment");
@@ -194,7 +195,7 @@ public class BICFinancingOrder extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-                BICECEConstants.ADD_SEAT_QTY),
+            BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod, localeDataMap.get(locale)));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
 

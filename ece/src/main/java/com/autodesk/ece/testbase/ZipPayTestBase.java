@@ -175,17 +175,17 @@ public class ZipPayTestBase {
     driver.switchTo().window(tabs.get(1));
     driver.get("https://account.sandbox.zipmoney.com.au/#");
 
-    try{
-     if(zipPage.checkIfElementExistsInPage(ZIP_PAY_DASHBOARD_LOGIN, 10)){
-      zipPage.click(ZIP_PAY_DASHBOARD_LOGIN);
+    try {
+      if (zipPage.checkIfElementExistsInPage(ZIP_PAY_DASHBOARD_LOGIN, 10)) {
+        zipPage.click(ZIP_PAY_DASHBOARD_LOGIN);
 
-       // Login to the zip account
-       zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 5000);
-       zipPage.populateField(ZIP_PAY_DASHBOARD_USERNAME, testData.get(ZIP_PAY_USERNAME_KEY));
-       zipPage.populateField(ZIP_PAY_DASHBOARD_PASSWORD,
-           ProtectedConfigFile.decrypt(testData.get(ZIP_PAY_PASSWORD_KEY)));
-       zipPage.click(ZIP_PAY_SUBMIT);
-     }
+        // Login to the zip account
+        zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 5000);
+        zipPage.populateField(ZIP_PAY_DASHBOARD_USERNAME, testData.get(ZIP_PAY_USERNAME_KEY));
+        zipPage.populateField(ZIP_PAY_DASHBOARD_PASSWORD,
+            ProtectedConfigFile.decrypt(testData.get(ZIP_PAY_PASSWORD_KEY)));
+        zipPage.click(ZIP_PAY_SUBMIT);
+      }
     } catch (MetadataException e) {
       AssertUtils.fail("Error while checking zip login page");
     }

@@ -70,8 +70,8 @@ public class BICOrderCreation extends ECETestBase {
     localeDataMap = (LinkedHashMap<String, Map<String, String>>) localeConfigYaml
         .get(BICECEConstants.LOCALE_CONFIG);
 
-    if(localeDataMap == null || localeDataMap.get(locale) == null){
-      AssertUtils.fail("The locale configuration is not found for  the given country/locale : " + locale );
+    if (localeDataMap == null || localeDataMap.get(locale) == null) {
+      AssertUtils.fail("The locale configuration is not found for  the given country/locale : " + locale);
     } else {
       testDataForEachMethod.putAll(localeDataMap.get(locale));
     }
@@ -90,7 +90,8 @@ public class BICOrderCreation extends ECETestBase {
               + testDataForEachMethod.get(BICECEConstants.STORE_NAME));
     }
 
-    if(testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS).isEmpty()){
+    if (testDataForEachMethod.get(BICECEConstants.ADDRESS) == null || testDataForEachMethod.get(BICECEConstants.ADDRESS)
+        .isEmpty()) {
       AssertUtils.fail("Address not found in the config for the locale : " + locale);
     }
 
@@ -125,13 +126,12 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(results);
 
-
     String paymentType = System.getProperty("payment");
     Util.printInfo("Current Payment Type is : " + paymentType);
 
     String newPaymentType = System.getProperty("newPaymentType");
 
-    if(newPaymentType == null || newPaymentType.isEmpty()) {
+    if (newPaymentType == null || newPaymentType.isEmpty()) {
       String[] paymentTypes = localeDataMap.get(locale).get(BICECEConstants.PAYMENT_METHODS)
           .split(",");
       ArrayList<String> payments = new ArrayList<>(Arrays.asList(paymentTypes));
@@ -139,12 +139,11 @@ public class BICOrderCreation extends ECETestBase {
       int index = (int) Util.randomNumber(payments.size());
       newPaymentType = payments.get(index);
 
-      if(newPaymentType.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
-        newPaymentType=BICECEConstants.MASTERCARD;
+      if (newPaymentType.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        newPaymentType = BICECEConstants.MASTERCARD;
       }
     }
     Util.printInfo("New Payment Type is : " + newPaymentType);
-
 
     testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, newPaymentType);
 
@@ -196,7 +195,7 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
-    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
     // Getting a PurchaseOrder details from pelican
@@ -245,7 +244,7 @@ public class BICOrderCreation extends ECETestBase {
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
 
@@ -295,7 +294,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
     Util.sleep(120000);
 
-    if(!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       // Get find Subscription ById
       results.putAll(pelicantb.getSubscriptionById(results));
 
@@ -398,7 +397,7 @@ public class BICOrderCreation extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-                BICECEConstants.ADD_SEAT_QTY),
+            BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod, localeDataMap.get(locale)));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
@@ -506,7 +505,7 @@ public class BICOrderCreation extends ECETestBase {
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
 
@@ -645,7 +644,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
-    if(System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
 
@@ -736,7 +735,7 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     updateTestingHub(testResults);
 
-    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
 
@@ -758,7 +757,6 @@ public class BICOrderCreation extends ECETestBase {
 
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
-
 
     // Trigger Invoice join
     pelicantb.postInvoicePelicanAPI(results);
@@ -795,7 +793,7 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(60000);
 
     // Initial order validation in Portal
-     getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+    getPortalTestBase().validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid), PASSWORD,
         results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
@@ -807,11 +805,10 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   /**
-   * Test the align billing functionality in portal. Place two orders for the same product without
-   * adding seats to create two separate subscriptions. Since the subscriptions are placed
-   * sequentially, they will expire on the same day and you wouldn't be able to align them. After
-   * the orders are placed, we use pelican's patch api to advance the renewal date of the second
-   * subscription so that the 2 subscriptions are unaligned. Next, we automate portal's UI to
+   * Test the align billing functionality in portal. Place two orders for the same product without adding seats to
+   * create two separate subscriptions. Since the subscriptions are placed sequentially, they will expire on the same
+   * day and you wouldn't be able to align them. After the orders are placed, we use pelican's patch api to advance the
+   * renewal date of the second subscription so that the 2 subscriptions are unaligned. Next, we automate portal's UI to
    * realign the billing dates and assert that the dates match.
    */
   @Test(groups = {"bic-align-billing"}, description = "Validation of align billing")
@@ -828,7 +825,7 @@ public class BICOrderCreation extends ECETestBase {
     testDataForEachMethod.putAll(results);
     getBicTestBase().driver.manage().deleteAllCookies();
 
-    if(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)){
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
 
@@ -918,7 +915,7 @@ public class BICOrderCreation extends ECETestBase {
         .put(BICECEConstants.SUBSCRIPTION_END_DATE, results.get(BICECEConstants.RESPONSE_END_DATE));
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
 
-    if(!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Assert.assertNull(results.get(BICECEConstants.RESPONSE_END_DATE), "End date is null.");
     }
 
@@ -941,7 +938,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get(
-                BICECEConstants.RESPONSE_END_DATE),
+            BICECEConstants.RESPONSE_END_DATE),
             results.get(BICECEConstants.NEXT_BILLING_DATE));
     Assert.assertEquals(results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "false",
         "Auto renew is off.");
@@ -982,9 +979,9 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   /**
-   * Validate the renewal functionality. Steps: 1. Place an order for a subscription product 2. Get
-   * the subscription for the placed order 3. Manually update the subscription so that it is expired
-   * 4. Trigger the renewal job 5. Validate that the subscription next renews in the future
+   * Validate the renewal functionality. Steps: 1. Place an order for a subscription product 2. Get the subscription for
+   * the placed order 3. Manually update the subscription so that it is expired 4. Trigger the renewal job 5. Validate
+   * that the subscription next renews in the future
    */
   @Test(groups = {"renew-bic-order"}, description = "Validation of BIC Renewal Order")
   public void validateRenewBicOrder() throws MetadataException {

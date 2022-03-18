@@ -24,6 +24,7 @@ import org.testng.annotations.AfterTest;
 public class ECETestBase {
 
   protected static DBValidations dbValtb = null;
+  protected static TestinghubUtil thutil = null;
   protected SFDCTestBase sfdctb = null;
   protected SOAPTestBase soaptb = null;
   protected PortalTestBase portaltb = null;
@@ -34,7 +35,6 @@ public class ECETestBase {
   private WebDriver webdriver = null;
   private GlobalTestBase testbase = null;
   private BICTestBase bictb = null;
-  protected static TestinghubUtil thutil = null;
 
   public ECETestBase() {
     System.out.println("into the testing hub. core changes");
