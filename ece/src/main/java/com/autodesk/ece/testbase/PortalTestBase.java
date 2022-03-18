@@ -246,7 +246,7 @@ public class PortalTestBase {
     Integer attempts = 0;
     WebElement element = null;
 
-    while (attempts < 10) {
+    while (attempts < 15) {
       try {
         String productXpath = portalPage
             .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionId);
@@ -256,12 +256,12 @@ public class PortalTestBase {
       }
 
       if(isNull(element)) {
-        if (attempts >= 9) {
+        if (attempts >= 14) {
           AssertUtils.fail("All retries exhausted: Could find subscription/agreement productXpath element");
         }
 
         Util.printInfo("Retry: Failed to find the Subscription productXpath in Portal, attempt #" + (attempts + 1));
-        Util.sleep(60000);
+        Util.sleep(300000);
         Util.printInfo("Part of Retry: Invalidate Portal User Cache, by Signout and Signin back");
         portalLogoutLogin(userName, password);
         attempts++;
