@@ -1,5 +1,6 @@
 package com.autodesk.ece.testbase;
 
+import static java.util.Objects.isNull;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
@@ -22,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -240,115 +240,37 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("Portal : Validate subscription" + GlobalConstants.TAG_TESTINGHUB)
-  public boolean isSubscriptionDisplayedInPS(String subscriptionID) {
-    boolean status = false;
-    String productXpath = null;
-    int attempts = 0;
-
-    while (attempts < 3) {
-      try {
-        productXpath = portalPage
-            .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionID);
-
-        Util.printInfo("Found the Subscription productXpath, so skipping the retry logic");
-        break;
-      } catch (Exception e) {
-        if (attempts >= 2) {
-          AssertUtils.fail(
-              "All retries exhausted: Verify subscription/agreement is displayed in All P&S page step couldn't "
-                  + "be completed due to technical issue " + e.getMessage());
-        }
-        driver.navigate().refresh();
-        Util.sleep(10000);
-        Util.printInfo(
-            "Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts
-                + 1));
-        attempts++;
-      }
-    }
-
-    Util.printInfo("Check if element with subscriptionId exists on the page.");
-
-    status = isSubscriptionDisplayed(productXpath);
-
-    if (!status) {
-      AssertUtils.fail(
-          ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
-              + " , In P&S page");
-    }
-
-    return status;
-  }
-
-  @Step(
-      "Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
-  public boolean isSubscriptionDisplayed(String productXpath) {
+  @Step("Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
+  public boolean isSubscriptionInPortal(String subscriptionId, String userName, String password) {
     boolean status = false;
     Integer attempts = 0;
+    WebElement element = null;
 
-    while (attempts < 3) {
-      WebElement element = null;
+    while (attempts < 10) {
       try {
+        String productXpath = portalPage
+            .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionId);
         element = driver.findElement(By.xpath(productXpath));
-      } catch (ElementNotVisibleException e) {
+      } catch (Exception e) {
+        //Do nothing here.
       }
 
-      if (element == null) {
-        if (attempts >= 2) {
-          AssertUtils.fail("Failed to find the Subscription Web Element in portal");
+      if(isNull(element)) {
+        if (attempts >= 9) {
+          AssertUtils.fail("All retries exhausted: Could find subscription/agreement productXpath element");
         }
-        driver.navigate().refresh();
-        Util.sleep(10000);
-        Util.printInfo(
-            "Retry Logic: Failed to find the Subscription Web Element, attempts #" + (attempts
-                + 1));
+
+        Util.printInfo("Retry: Failed to find the Subscription productXpath in Portal, attempt #" + (attempts + 1));
+        Util.sleep(60000);
+        Util.printInfo("Part of Retry: Invalidate Portal User Cache, by Signout and Signin back");
+        portalLogoutLogin(userName, password);
         attempts++;
       } else {
+        Util.printInfo("Found the Subscription WebElement, so skipping retries");
         status = true;
-        Util.printInfo("Found the Subscription Web Element, so skipping the retry logic");
         break;
       }
     }
-
-    return status;
-  }
-
-  @Step("Verify subscription/agreement is displayed on Subscriptions page"
-      + GlobalConstants.TAG_TESTINGHUB)
-  public boolean isSubscriptionDisplayedInBO(String subscriptionID) {
-    openSubscriptionsLink();
-    boolean status = false;
-    String errorMsg = "";
-    String productXpath = null;
-
-    int attempts = 0;
-
-    while (attempts < 3) {
-      try {
-        productXpath = portalPage.getFirstFieldLocator("subscriptionIDInBO")
-            .replace("TOKEN1", subscriptionID);
-
-      } catch (Exception e) {
-        driver.navigate().refresh();
-        Util.sleep(10000);
-        Util.printInfo(
-            "Retry Logic: Failed to find the Subscription productXpath, attempt #" + (attempts
-                + 1));
-        attempts++;
-      }
-      Util.printInfo("Found the Subscription productXpath, so skipping the retry logic");
-      break;
-    }
-
-    status = isSubscriptionDisplayed(productXpath);
-
-    if (!status) {
-      errorMsg = ErrorEnum.AGREEMENT_NOTFOUND_CEP.geterr() + " subscriptionID ::  " + subscriptionID
-          + " , In B&O page";
-    }
-
-    status = errorMsg.isEmpty();
 
     return status;
   }
@@ -437,7 +359,7 @@ public class PortalTestBase {
     if (isPortalTabsVisible()) {
       try {
         clickALLPSLink();
-        statusPS = isSubscriptionDisplayedInPS(subscriptionID);
+        statusPS = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
 
         status = (statusPS);
       } catch (Exception e) {
@@ -1463,7 +1385,7 @@ public class PortalTestBase {
             .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
           subscriptionID = "Subscription ID";
         }
-        status = isSubscriptionDisplayedInBO(subscriptionID);
+        status = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
       } catch (Exception e) {
         e.printStackTrace();
       }
