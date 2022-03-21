@@ -206,8 +206,9 @@ public class BICTestBase {
   }
 
   private void switchToBICCartLoginPage() {
-    List<String> elementXpath = bicPage.getFieldLocators("createNewUseriFrame");
-    WebElement element = driver.findElement(By.xpath(elementXpath.get(0)));
+    String elementXpath = bicPage.getFirstFieldLocator("createNewUseriFrame");
+    Util.waitForElement(elementXpath,"Create New User iFrame");
+    WebElement element = driver.findElement(By.xpath(elementXpath));
     Util.printInfo("Switching to User login frame");
     driver.switchTo().frame(element);
   }
