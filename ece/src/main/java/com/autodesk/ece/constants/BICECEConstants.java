@@ -51,6 +51,7 @@ public class BICECEConstants extends BICConstants {
   public static final String ZIPCODE = "Zipcode";
   public static final String PHONE_NUMBER = "Phone_Number";
   public static final String COUNTRY = "Country";
+  public static final String OVERVIEW = "/overview";
   public static final String STATE_PROVINCE = "State_Province";
   public static final String BIC_FN = "bic_FN";
   public static final String CITY = "City";
@@ -158,6 +159,7 @@ public class BICECEConstants extends BICConstants {
   public static final String VISA = "VISA";
   public static final String MASTERCARD = "MASTERCARD";
   public static final String EDU_OVERVIEW_HEADER = "Check that your information below is correct, then click Confirm";
+  public static final String NA = "N/A";
 
 }
 

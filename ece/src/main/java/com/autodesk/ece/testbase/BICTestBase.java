@@ -93,7 +93,7 @@ public class BICTestBase {
     ba.put(BICECEConstants.PHONE_NUMBER, getRandomMobileNumber());
     ba.put(BICECEConstants.COUNTRY, billingAddress[5]);
 
-    if (!driver.findElements(By.xpath("//*[@name=\"state\"]")).isEmpty()) {
+    if (billingAddress.length == 7) {
       ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
     }
 
@@ -462,6 +462,7 @@ public class BICTestBase {
     boolean status = false;
     try {
       Util.printInfo("Adding billing details...");
+      Util.printInfo("Address Details :" + address);
       String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
           stateXpath = "";
       String paymentTypeToken = null;
@@ -507,25 +508,26 @@ public class BICTestBase {
       driver.findElement(By.xpath(orgNameXpath))
           .sendKeys(address.get(
               BICECEConstants.ORGANIZATION_NAME));
-
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       driver.findElement(By.xpath(fullAddrXpath))
           .sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
 
+      WebElement countryEle = driver.findElement(By.xpath(countryXpath));
+      Select selCountry = new Select(countryEle);
+      WebElement countryOption = selCountry.getFirstSelectedOption();
+      String defaultCountry = countryOption.getText();
+      Util.printInfo("The Country selected by default : "+ defaultCountry);
+      selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));
+
       clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
       driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY));
 
-      clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
-      driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.ZIPCODE));
-
+      if(!address.get(BICECEConstants.ZIPCODE).equals(BICECEConstants.NA)) {
+        clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
+        driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.ZIPCODE));
+      }
       clearTextInputValue(driver.findElement(By.xpath(phoneXpath)));
       driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
-
-      // May not be required as country is deafulted on page
-     /*   WebElement countryEle = driver.findElement(By.xpath(countryXpath));
-          Select selCountry = new Select(countryEle);
-          selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));
-      */
 
       if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address
           .get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
@@ -533,7 +535,6 @@ public class BICTestBase {
             .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
       }
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
       Util.printTestFailedMessage("populateBillingDetails");
       AssertUtils.fail("Unable to Populate Billing Details");
@@ -1114,10 +1115,9 @@ public class BICTestBase {
 
     String constructGuacDotComURL =
         guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
-            .get(BICECEConstants.PRODUCTS_PATH) + productName;
+            .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
 
     Util.printInfo("constructGuacURL " + constructGuacDotComURL);
-
     getUrl(constructGuacDotComURL);
     disableChatSession();
 
@@ -1215,7 +1215,7 @@ public class BICTestBase {
     String orderNumber = null;
     String constructGuacDotComURL =
         guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
-            .get(BICECEConstants.PRODUCTS_PATH) + productName;
+            .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
 
     Util.printInfo("constructGuacDotComURL " + constructGuacDotComURL);
     Map<String, String> address = null;

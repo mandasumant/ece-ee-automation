@@ -39,21 +39,13 @@
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
     address: "AutodeskAU@259-261 Colchester Road@Kilsyth@3137@397202088@Australia@Victoria"
 
-  en_NL:
-    region: "NLNL"
-    storeName: "STORE-EU"
-    currencyStore: "EUR"
-    countryDomain: ".nl"
-    paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@Recollectenstraat 112@Weert@6001 AJ@06-65533273@Nederland@Limburg"
-
   nl_NL:
     region: "NLNL"
     storeName: "STORE-EU"
     currencyStore: "EUR"
     countryDomain: ".nl"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@Recollectenstraat 112@Weert@6001 AJ@06-65533273@Nederland@Limburg"
+    address: "Autodesk@Recollectenstraat 112@Weert@6001 AJ@06-65533273@Nederland"
 
   nl_BE:
     region: "NLBE"
@@ -61,7 +53,7 @@
     currencyStore: "EUR"
     countryDomain: ".be/nl"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@2e verdieping@Goetsenhovenvijve@1209@06-65533273@Belgium@Antwerpen"
+    address: "Autodesk@2e verdieping@Goetsenhovenvijve@1209@06-65533273@België"
 
   fr_BE:
     region: "FRBE"
@@ -69,7 +61,7 @@
     currencyStore: "EUR"
     countryDomain: ".be/fr"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@2e verdieping@Goetsenhovenvijve@1209@06-65533273@Belgium@Antwerpen"
+    address: "Autodesk@2e verdieping@Goetsenhovenvijve@1209@06-65533273@Belgique"
 
   pl_PL:
     region: "PLPL"
@@ -77,7 +69,7 @@
     currencyStore: "PLN"
     countryDomain: ".pl"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@ul. Dworcowej 49@Jaworzno@43-600@48696207772@Polska@Limburg"
+    address: "Autodesk@ul. Dworcowej 49@Jaworzno@43-600@48696207772@Polska"
 
   fr_FR:
     region: "FRFR"
@@ -85,15 +77,15 @@
     currencyStore: "EUR"
     countryDomain: ".fr"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
-    address: "Autodesk@27 rue La Boétie@Paris@75013@9916800100@France@Île-de-France"
+    address: "Autodesk@27 rue La Boétie@Paris@75013@9916800100@France"
 
   ja_JP:
     region: "JAJP"
     storeName: "STORE-JP"
     currencyStore: "YEN"
-    countryDomain: ".jp"
-    paymentMethods: "CREDITCARD,PAYPAL,SEPA"
-    address: "Autodesk@532-0003@Street@Osaka@81-6-6350-5223"
+    countryDomain: ".co.jp"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@532-0003@Street@Osaka@81-6-6350-5223@Japan"
 
   de_DE:
     region: "DEDE"
@@ -109,23 +101,23 @@
     currencyStore: "EUR"
     countryDomain: ".it"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
-    address: "Autodesk@Via Medina 108@Grado@34073@0323 0700940@Italia@Gorizia"
+    address: "Autodesk@Via Medina 108@Grado@34073@0323 0700940@Italia"
 
   es_ES:
     region: "ESES"
     storeName: "STORE-ES"
     currencyStore: "EUR"
     countryDomain: ".es"
-    paymentMethods: "CREDITCARD,PAYPAL,SEPA"
-    address: "Autodesk@8 Puerta 231@Palencia@13158@03230700940@Spain@Aragón"
+    paymentMethods: "CREDITCARD,PAYPAL,Direct Debit"
+    address: "Autodesk@8 Puerta 231@Palencia@13158@03230700940@España"
 
   es_MX:
     region: "ESMX"
-    storeName: "STORE-ES"
+    storeName: "STORE-MX"
     currencyStore: "EUR"
-    countryDomain: ".es"
+    countryDomain: ".mx"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
-    address: "Autodesk@8 Puerta 231@Palencia@13158@03230700940@Spain@Aragón"
+    address: "Autodesk@8 Puerta 231@Palencia@13158@03230700940@México@Aragón"
 
   fl_FL:
     region: "FLFL"
@@ -133,7 +125,8 @@
     currencyStore: "EUR"
     countryDomain: ".fi"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
-    address: "Autodesk@Visiokatu 60@KankaanpÄÄ@38710@03230700940@Finland@Satakunta"
+    address: "Autodesk@Visiokatu 60@KankaanpÄÄ@38710@03230700940@Suomi"
+
 
   hu_HU:
     region: "HUHU"
@@ -141,7 +134,7 @@
     currencyStore: "EUR"
     countryDomain: ".hu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Kis Diófa u. 63.@Csákánydoroszló@9919@03230700940@Hungary@Vas"
+    address: "Autodesk@Kis Diófa u. 63.@Csákánydoroszló@9919@03230700940@Magyarország"
 
   pt_PT:
     region: "PTPT"
@@ -149,7 +142,7 @@
     currencyStore: "EUR"
     countryDomain: ".pt"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@R Rei Lavrador 10@Grândola@7570-192@03230700940@Portuguese@Setúbal"
+    address: "Autodesk@R Rei Lavrador 10@Grândola@7570-192@03230700940@Portugal"
 
   sv_SE:
     region: "SVSE"
@@ -157,7 +150,7 @@
     currencyStore: "SEK"
     countryDomain: ".se"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Hammarvägen 42@SmÖgen@450 43@03230700940@Sweden"
+    address: "Autodesk@Hammarvägen 42@SmÖgen@450 43@03230700940@Sverige"
 
   no_NO:
     region: "NONO"
@@ -165,7 +158,7 @@
     currencyStore: "NOK"
     countryDomain: ".no"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Kjørbuktåsen 51@Moss@1514@03230700940@Norway"
+    address: "Autodesk@Kjørbuktåsen 51@Moss@1514@03230700940@Norge"
 
   da_DK:
     region: "DADK"
@@ -173,7 +166,7 @@
     currencyStore: "DKK"
     countryDomain: ".dk"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Eskelundsvej 11@MRegion Sjælland@1556@03230700940@Denmark@Region Sjælland"
+    address: "Autodesk@Eskelundsvej 11@MRegion Sjælland@1556@03230700940@Danmark"
 
   cs_CZ:
     region: "CSCZ"
@@ -181,28 +174,152 @@
     currencyStore: "CZK"
     countryDomain: ".cz"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Milady Horákové 139@Nová Vcelnice@378 42@03230700940@The Czech Republic@Jihoceský kraj"
+    address: "Autodesk@Milady Horákové 139@Nová Vcelnice@378 42@03230700940@Česká republika"
 
   de_CH:
     region: "DECH"
     storeName: "STORE-CH"
     currencyStore: "CHF"
-    countryDomain: ".ch"
+    countryDomain: ".ch/de"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Sondanella 35@Grumo@6717@03230700940@Switzerland"
+    address: "Autodesk@Sondanella 35@Grumo@6717@03230700940@Schweiz"
 
   fr_CH:
     region: "FRCH"
     storeName: "STORE-CH"
     currencyStore: "CHF"
-    countryDomain: ".ch"
+    countryDomain: ".ch/fr"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Sondanella 35@Grumo@6717@03230700940@Switzerland"
+    address: "Autodesk@Sondanella 35@Grumo@6717@03230700940@Suisse"
 
   it_CH:
     region: "ITCH"
     storeName: "STORE-CH"
     currencyStore: "CHF"
-    countryDomain: ".ch"
+    countryDomain: ".ch/it"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Sondanella 35@Grumo@6717@03230700940@Switzerland"
+    address: "Autodesk@Sondanella 35@Grumo@6717@03230700940@Svizzera"
+
+  ############################################################
+  #Additional locales for testing Appolo
+  ############################################################
+
+  pn_AU:
+    region: "PNAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@P.O. Box 1849, Mt Hagen@Highlands Region@3137@397202088@Papua New Guinea"
+
+  ci_AU:
+    region: "CIAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@47, Nelson Mandela Walk@Shire of Cocos Islands@3137@397202088@Cocos (Keeling) Islands"
+
+  cs_AU:
+    region: "CSAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@10664 Pouros Estate@Vivianmouth@3137@397202088@Christmas Island"
+
+  fi_AU:
+    region: "FIAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@24 Fulaga St@Samabula@N/A@397202088@Fiji"
+
+  na_AU:
+    region: "NAAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@518 Jast Spurs@Nibok District, Nibok@N/A@397202088@Nauru"
+
+  mi_AU:
+    region: "MIAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@19728 Diamond Junctions@Osinskiton@96960@397202088@Marshall Island"
+
+  nu_AU:
+    region: "ENAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@118, Atafu Bush Road@Alofi, Atafu@N/A@397202088@Niue"
+
+  ni_AU:
+    region: "NIAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@53, Hemus Road@Burnt Pine@2899@397202088@Norfolk Island"
+
+  pl_AU:
+    region: "PLAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@742 Gina Stream@Ngeremlengui@96940@397202088@Palau"
+
+  pi_AU:
+    region: "PIAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@7087 Kunde Circle@Lake Julian@92036000@397202088@Pitcairn Island"
+
+  sa_AU:
+    region: "SAAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@915 Cecile Ramp@American Samoa@967990@397202088@Samoa"
+
+  si_AU:
+    region: "SIAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@4269 Powlowski Ridge@Guadalcanal@N/A@397202088@Solomon Islands"
+
+  to_AU:
+    region: "TOAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@40192 Iliana Knolls@Tongatapu, Talasiu@N/A@397202088@Tonga"
+
+  tu_AU:
+    region: "TAAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@211 Cremin Path@Funafuti, Fakai Fou@N/A@397202088@Tuvalu"
+
+  va_AU:
+    region: "VAAU"
+    storeName: "STORE-AUS"
+    currenyStore: "AUD"
+    countryDomain: ".com.au"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "AutodeskAU@427 Crooks Burgs@Sanma@N/A@397202088@Vanuatu"
