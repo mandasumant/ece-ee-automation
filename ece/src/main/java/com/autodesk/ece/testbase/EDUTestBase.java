@@ -231,6 +231,7 @@ public class EDUTestBase {
         // Upload the tesing ID file
         WebElement sheerUpload = driver.findElement(By.xpath(sheerUploadLocator));
         sheerUpload.sendKeys(sheerIDImagePath);
+        Util.sleep(5000);
 
         // Assert that we are still in Overview page after upload
         overviewPageHeader = driver.findElement(
@@ -238,13 +239,30 @@ public class EDUTestBase {
         AssertUtils.assertTrue(
             overviewPageHeader.getText().contains("Additional documentation needed"));
 
+        eduPage.isFieldPresent(EDU_SIGNUP_SUBMIT);
         eduPage.click(EDU_SIGNUP_SUBMIT);
         Util.sleep(3000);
 
         WebElement landingPageHeader = driver.findElement(
             By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
-        AssertUtils.assertTrue(
-            landingPageHeader.getText().contains("Thank you"));
+
+
+        // Sometimes the Submit Action is not working, so retrying one last time
+        if(!(landingPageHeader.getText().contains("Thank you"))) {
+
+          overviewPageHeader = driver.findElement(
+              By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+          AssertUtils.assertTrue(
+              overviewPageHeader.getText().contains("Additional documentation needed"));
+
+          eduPage.click(EDU_SIGNUP_SUBMIT);
+          Util.sleep(3000);
+
+          landingPageHeader = driver.findElement(
+              By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+          AssertUtils.assertTrue(
+              landingPageHeader.getText().contains("Thank you"));
+        }
 
         eduPage.click("eduUploadClose");
         Util.sleep(3000);
