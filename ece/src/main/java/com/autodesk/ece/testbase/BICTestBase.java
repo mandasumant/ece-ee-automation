@@ -353,6 +353,7 @@ public class BICTestBase {
 
   @Step("Adding to cart")
   public void subscribeAndAddToCart(HashMap<String, String> data) {
+    Util.sleep(5000);
     bicPage.waitForField("guacAddToCart", true, 3000);
     bicPage.clickToSubmit("guacAddToCart", 3000);
     bicPage.waitForPageToLoad();
