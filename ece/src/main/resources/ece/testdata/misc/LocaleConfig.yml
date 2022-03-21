@@ -127,7 +127,6 @@
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
     address: "Autodesk@Visiokatu 60@KankaanpÄÄ@38710@03230700940@Suomi"
 
-
   hu_HU:
     region: "HUHU"
     storeName: "STORE-EU"
@@ -268,7 +267,7 @@
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
     address: "AutodeskAU@53, Hemus Road@Burnt Pine@2899@397202088@Norfolk Island"
 
-  pl_AU:
+  pa_AU:
     region: "PLAU"
     storeName: "STORE-AUS"
     currenyStore: "AUD"
