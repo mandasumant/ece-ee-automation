@@ -275,8 +275,8 @@ public class BICTestBase {
   @Step("Wait for loading spinner to complete")
   public void waitForLoadingSpinnerToComplete() {
     Util.sleep(2000);
-    int count = 0;
     try {
+      int count = 0;
       while (driver.findElement(By.xpath("//*[@data-testid=\"loading\"]"))
           .isDisplayed()) {
         count++;
