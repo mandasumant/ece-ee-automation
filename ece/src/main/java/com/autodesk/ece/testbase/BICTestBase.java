@@ -275,7 +275,8 @@ public class BICTestBase {
   @Step("Wait for loading spinner to complete")
   public void waitForLoadingSpinnerToComplete() {
     Util.sleep(2000);
-      int count = 0;
+    int count = 0;
+    try {
       while (driver.findElement(By.xpath("//*[@data-testid=\"loading\"]"))
           .isDisplayed()) {
         count++;
@@ -285,6 +286,9 @@ public class BICTestBase {
         }
         Util.printInfo("Loading spinner visible: " + count + " second(s)");
       }
+    } catch (Exception e) {
+      Util.printInfo("There is no loading spinner element.");
+    }
   }
 
   @Step("Login to an existing BIC account")
@@ -342,14 +346,8 @@ public class BICTestBase {
   @Step("Selecting Yearly Subscription")
   public void selectYearlySubscription(WebDriver driver) {
     JavascriptExecutor executor = (JavascriptExecutor) driver;
-    WebElement element;
-    try {
-      element = driver
-          .findElement(By.xpath("//terms-container/div/div[4]/term-element[2]"));
-    } catch (Exception e) {
-      element = driver
-          .findElement(By.xpath("//terms-container/div/div[3]/term-element[2]"));
-    }
+    WebElement element = driver
+        .findElement(By.xpath("//terms-container/div/div[4]/term-element[2]"));
     executor.executeScript("arguments[0].click();", element);
     Util.sleep(2000);
   }
@@ -1111,7 +1109,7 @@ public class BICTestBase {
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
     String constructGuacURL;
 
-    // Skip below steps for INT env if DotCom URL is empty in config file
+    // Starting from dot com page for STG environment
     if (!guacBaseDotComURL.isEmpty()) {
       String productName =
           System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
@@ -1125,26 +1123,27 @@ public class BICTestBase {
       getUrl(constructGuacURL);
       disableChatSession();
 
-      // Selecting monthly for Non-Flex, Non-Financing, Non-Meta orders only
+      // Selecting monthly for Non-Flex, Non-Financing
       if (productType.equals("flex")) {
         bicPage.waitForFieldPresent("flexTab", 5000);
         bicPage.clickUsingLowLevelActions("flexTab");
         bicPage.waitForFieldPresent("buyTokensButton", 5000);
         bicPage.clickUsingLowLevelActions("buyTokensButton");
       } else {
-        if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
-            data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
-                BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META))) {
-          selectMonthlySubscription(driver);
-        } else {
+        if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
           selectYearlySubscription(driver);
+        } else {
+          selectMonthlySubscription(driver);
         }
         subscribeAndAddToCart();
       }
     } else {
-      // Navigate directly to INT env checkout page when DotCOM Url is empty
+      // Navigating directly to checkout page for INT env
       String checkoutPageIntUrl = data.get("guacBaseURL");
-      constructGuacURL = checkoutPageIntUrl + data.get(BICECEConstants.LANGUAGE_STORE) + "?priceIds=24115";
+      String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
+      constructGuacURL =
+          checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + data
+              .get(BICECEConstants.PRICE_ID);
       Util.printInfo("constructedCheckoutPageUrl " + constructGuacURL);
       getUrl(constructGuacURL);
     }

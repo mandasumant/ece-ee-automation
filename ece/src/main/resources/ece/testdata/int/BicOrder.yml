@@ -8,6 +8,7 @@ default:
   guacBaseURL: "https://checkout-publish-iac-default.checkout-apollo-int.autodesk.com/"
   guacDotComBaseURL: ""
   guacResourceURL: "checkout?priceIds="
+  guacPriceId: "?priceIds="
   productsPath: "/products/"
   guacMoeResourceURL: "manual-order-entry?optyId="
   guacMoeDTCURL: "manual-order-entry-dtc"
@@ -37,7 +38,7 @@ default:
   priceIDFlexOrder: &FlexOrderPriceID "31498"
   bicNativePriceID: &bicNativePriceID "27239"
   bicMetaPriceID: &bicMetaPriceID "27209"
-  trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview"
+  trialDownloadUrl: ""
   account: "yfds91WdxydZM"
   emailid: "acdisttest1801@letscheck.pw"
   guacMoeSku: "057N1-WW3931-L830"
@@ -46,22 +47,26 @@ validateBicNativeOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "2"
+  priceId: "24115"
 
 validateBicRefundOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "2"
+  priceId: "24115"
 
 validateBicFlexOrder:
   productID: *FlexOrderPriceID
   bicFlexPriceID: *FlexOrderPriceID
   productType: "flex"
+  priceId: "31498"
 
 validateBicMetaOrder:
   productID: *bicMetaPriceID
   bicNativePriceID: *bicMetaPriceID
   productName: "INFRAWORKS"
   offeringType: "META"
+  priceId: "27222"
 
 validateTrialDownloadUI:
   nullTest: "1"
@@ -72,6 +77,7 @@ validateTrialDownloadUI:
 validateBicReturningUser:
   metaproductID: *bicMetaPriceID
   productID: *NativeOrderPriceID
+  priceId: "24115"
 
 validateBicAddSeats:
   productID: *NativeOrderPriceID
@@ -80,6 +86,7 @@ validateBicAddSeatNativeOrder:
   metaproductID: *bicMetaPriceID
   nativeproductID: *bicNativePriceID
   addSeatQty: "2"
+  priceId: "24115"
 
 validateBICAddSeatsFinancing:
   metaproductID: *bicMetaPriceID
@@ -91,7 +98,7 @@ validateBicReduceSeats:
   addSeatQty: "2"
 
 validateBICChangePaymentProfile:
-  getPaymentDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"
+  getPaymentDetails: "https://api.pelicanint.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"
   nativeproductID: *bicNativePriceID
   userType: "existing"
   productID: *NativeOrderPriceID
