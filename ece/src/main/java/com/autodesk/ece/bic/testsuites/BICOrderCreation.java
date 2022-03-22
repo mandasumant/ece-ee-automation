@@ -71,7 +71,7 @@ public class BICOrderCreation extends ECETestBase {
         .get(BICECEConstants.LOCALE_CONFIG);
 
     if (localeDataMap == null || localeDataMap.get(locale) == null) {
-      AssertUtils.fail("The locale configuration is not found for  the given country/locale : " + locale);
+      AssertUtils.fail("The locale configuration is not found for the given country/locale: " + locale);
     } else {
       testDataForEachMethod.putAll(localeDataMap.get(locale));
     }

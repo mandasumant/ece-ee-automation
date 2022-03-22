@@ -160,6 +160,7 @@ public class BICECEConstants extends BICConstants {
   public static final String MASTERCARD = "MASTERCARD";
   public static final String EDU_OVERVIEW_HEADER = "Check that your information below is correct, then click Confirm";
   public static final String NA = "N/A";
+  public static final String LANGUAGE_STORE = "languageStore";
 
 }
 

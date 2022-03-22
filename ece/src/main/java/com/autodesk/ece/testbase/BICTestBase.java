@@ -207,7 +207,7 @@ public class BICTestBase {
 
   private void switchToBICCartLoginPage() {
     String elementXpath = bicPage.getFirstFieldLocator("createNewUseriFrame");
-    Util.waitForElement(elementXpath,"Create New User iFrame");
+    Util.waitForElement(elementXpath, "Create New User iFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath));
     Util.printInfo("Switching to User login frame");
     driver.switchTo().frame(element);
@@ -275,7 +275,6 @@ public class BICTestBase {
   @Step("Wait for loading spinner to complete")
   public void waitForLoadingSpinnerToComplete() {
     Util.sleep(2000);
-    try {
       int count = 0;
       while (driver.findElement(By.xpath("//*[@data-testid=\"loading\"]"))
           .isDisplayed()) {
@@ -286,8 +285,6 @@ public class BICTestBase {
         }
         Util.printInfo("Loading spinner visible: " + count + " second(s)");
       }
-    } catch (Exception e) {
-    }
   }
 
   @Step("Login to an existing BIC account")
@@ -345,14 +342,20 @@ public class BICTestBase {
   @Step("Selecting Yearly Subscription")
   public void selectYearlySubscription(WebDriver driver) {
     JavascriptExecutor executor = (JavascriptExecutor) driver;
-    WebElement element = driver
-        .findElement(By.xpath("//terms-container/div/div[4]/term-element[2]"));
+    WebElement element;
+    try {
+      element = driver
+          .findElement(By.xpath("//terms-container/div/div[4]/term-element[2]"));
+    } catch (Exception e) {
+      element = driver
+          .findElement(By.xpath("//terms-container/div/div[3]/term-element[2]"));
+    }
     executor.executeScript("arguments[0].click();", element);
     Util.sleep(2000);
   }
 
   @Step("Adding to cart")
-  public void subscribeAndAddToCart(HashMap<String, String> data) {
+  public void subscribeAndAddToCart() {
     bicPage.waitForField("guacAddToCart", true, 3000);
     bicPage.clickToSubmit("guacAddToCart", 3000);
     bicPage.waitForPageToLoad();
@@ -502,7 +505,7 @@ public class BICTestBase {
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
       status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
 
-      if (status == false) {
+      if (!status) {
         AssertUtils.fail("Organization_Name not available.");
       }
       driver.findElement(By.xpath(orgNameXpath))
@@ -516,13 +519,13 @@ public class BICTestBase {
       Select selCountry = new Select(countryEle);
       WebElement countryOption = selCountry.getFirstSelectedOption();
       String defaultCountry = countryOption.getText();
-      Util.printInfo("The Country selected by default : "+ defaultCountry);
+      Util.printInfo("The Country selected by default : " + defaultCountry);
       selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));
 
       clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
       driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY));
 
-      if(!address.get(BICECEConstants.ZIPCODE).equals(BICECEConstants.NA)) {
+      if (!address.get(BICECEConstants.ZIPCODE).equals(BICECEConstants.NA)) {
         clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
         driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.ZIPCODE));
       }
@@ -544,12 +547,9 @@ public class BICTestBase {
 
   public String getPaymentDetails(String paymentMethod) {
 
-    String paymentDetails = null;
+    String paymentDetails;
 
     switch (paymentMethod.toUpperCase()) {
-      case "VISA":
-        paymentDetails = "4000020000000000@03 - Mar@30@737";
-        break;
       case "MASTERCARD":
         paymentDetails = "2222400010000008@03 - Mar@30@737";
         break;
@@ -726,8 +726,8 @@ public class BICTestBase {
       driver.manage().window().maximize();
       org.openqa.selenium.Dimension dimension = driver.manage().window().getSize();
 
-      int x = (int) ((dimension.getWidth() / 2) + 20);
-      int y = (int) ((dimension.getHeight() / 10) + 50);
+      int x = (dimension.getWidth() / 2) + 20;
+      int y = (dimension.getHeight() / 10) + 50;
 
       Util.sleep(2000);
       if (bicPage.checkIfElementExistsInPage("giroPayAssume", 10)) {
@@ -1093,11 +1093,10 @@ public class BICTestBase {
     return orderNumber;
   }
 
-  public void printConsole(String Url, String OrderNumber, String emailID,
+  public void printConsole(String OrderNumber, String emailID,
       Map<String, String> address,
       String firstName, String lastName, String paymentMethod) {
     Util.printInfo("*************************************************************" + "\n");
-    Util.printAssertingMessage("Url to place order       :: " + Url);
     Util.printAssertingMessage("Email Id for the account :: " + emailID);
     Util.printAssertingMessage("First name of the account :: " + firstName);
     Util.printAssertingMessage("Last name of the account  :: " + lastName);
@@ -1107,29 +1106,48 @@ public class BICTestBase {
     Util.printInfo("*************************************************************");
   }
 
-  public void navigateToCart(LinkedHashMap<String, String> data) {
+  public void navigateToCart(LinkedHashMap<String, String> data) throws MetadataException {
+    String productType = data.get("productType");
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName =
-        System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
-            BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
+    String constructGuacURL;
 
-    String constructGuacDotComURL =
-        guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
-            .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
+    // Skip below steps for INT env if DotCom URL is empty in config file
+    if (!guacBaseDotComURL.isEmpty()) {
+      String productName =
+          System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
+              BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
 
-    Util.printInfo("constructGuacURL " + constructGuacDotComURL);
-    getUrl(constructGuacDotComURL);
-    disableChatSession();
+      constructGuacURL =
+          guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
+              .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
 
-    if (System.getProperty(BICECEConstants.PAYMENT)
-        .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-      selectYearlySubscription(driver);
+      Util.printInfo("constructGuacURL " + constructGuacURL);
+      getUrl(constructGuacURL);
+      disableChatSession();
+
+      // Selecting monthly for Non-Flex, Non-Financing, Non-Meta orders only
+      if (productType.equals("flex")) {
+        bicPage.waitForFieldPresent("flexTab", 5000);
+        bicPage.clickUsingLowLevelActions("flexTab");
+        bicPage.waitForFieldPresent("buyTokensButton", 5000);
+        bicPage.clickUsingLowLevelActions("buyTokensButton");
+      } else {
+        if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
+            data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
+                BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META))) {
+          selectMonthlySubscription(driver);
+        } else {
+          selectYearlySubscription(driver);
+        }
+        subscribeAndAddToCart();
+      }
     } else {
-      selectMonthlySubscription(driver);
+      // Navigate directly to INT env checkout page when DotCOM Url is empty
+      String checkoutPageIntUrl = data.get("guacBaseURL");
+      constructGuacURL = checkoutPageIntUrl + data.get(BICECEConstants.LANGUAGE_STORE) + "?priceIds=24115";
+      Util.printInfo("constructedCheckoutPageUrl " + constructGuacURL);
+      getUrl(constructGuacURL);
     }
-    subscribeAndAddToCart(data);
-
-    //checkCartDetailsError();
     acceptCookiesAndUSSiteLink();
   }
 
@@ -1138,22 +1156,17 @@ public class BICTestBase {
   public HashMap<String, String> createGUACBICOrderDotCom(LinkedHashMap<String, String> data)
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
-    String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System
-        .getProperty(BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
     String term = "";
     String quantity = "";
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
     String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
-    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String promoCode = data.get(BICECEConstants.PROMO_CODE);
 
     String emailID = generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
 
-    String orderNumber = createBICOrderDotCom(data, emailID, guacBaseDotComURL,
-        productName, password, paymentMethod, promoCode);
+    String orderNumber = createBICOrderDotCom(data, emailID, password, promoCode);
 
     if (data.get(BICECEConstants.PAYMENT_TYPE)
         .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
@@ -1208,38 +1221,12 @@ public class BICTestBase {
   }
 
   private String createBICOrderDotCom(LinkedHashMap<String, String> data, String emailID,
-      String guacDotComBaseURL,
-      String productName,
-      String password,
-      String paymentMethod, String promocode) throws MetadataException {
+      String password, String promocode) throws MetadataException {
     String orderNumber = null;
-    String constructGuacDotComURL =
-        guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
-            .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
-
-    Util.printInfo("constructGuacDotComURL " + constructGuacDotComURL);
     Map<String, String> address = null;
-    getUrl(constructGuacDotComURL);
-    disableChatSession();
-    // checkCartDetailsError();
-    String productType = data.get("productType");
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
-    // Selecting monthly for Non-Flex, Non-Financing , Non-Meta orders only
-    if (productType.equals("flex")) {
-      bicPage.waitForFieldPresent("flexTab", 5000);
-      bicPage.clickUsingLowLevelActions("flexTab");
-      bicPage.waitForFieldPresent("buyTokensButton", 5000);
-      bicPage.clickUsingLowLevelActions("buyTokensButton");
-    } else {
-      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING) && (
-          data.get(BICECEConstants.OFFERING_TYPE) == null || data.get(
-              BICECEConstants.OFFERING_TYPE).equals(BICECEConstants.META))) {
-        selectMonthlySubscription(driver);
-      }
-      subscribeAndAddToCart(data);
-    }
-
-    acceptCookiesAndUSSiteLink();
+    navigateToCart(data);
 
     String region = data.get(BICECEConstants.REGION);
     String billingAddress = data.get(BICECEConstants.ADDRESS);
@@ -1264,7 +1251,7 @@ public class BICTestBase {
       }
     }
 
-    if (productType.equals("flex")) {
+    if (data.get("productType").equals("flex")) {
       Select flexOffers = new Select(driver.findElement(By.id("product-term")));
       flexOffers.selectByVisibleText("100 Tokens");
     }
@@ -1280,7 +1267,7 @@ public class BICTestBase {
 
     if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       orderNumber = submitGetOrderNumber(data);
-      printConsole(constructGuacDotComURL, orderNumber, emailID, address, names.firstName,
+      printConsole(orderNumber, emailID, address, names.firstName,
           names.lastName,
           paymentMethod);
     }
@@ -1358,7 +1345,6 @@ public class BICTestBase {
 
   private String getO2ID(LinkedHashMap<String, String> data, String emailID) {
     OxygenService os = new OxygenService();
-    int o2len = 0;
     String o2ID = "";
     try {
       o2ID = os
@@ -1370,7 +1356,7 @@ public class BICTestBase {
     return o2ID;
   }
 
-  private String validateBicOrderNumber(String orderNumber) {
+  private void validateBicOrderNumber(String orderNumber) {
     Util.printInfo(orderNumber);
     if (!((orderNumber.equalsIgnoreCase("EXPORT COMPLIANCE")) || (orderNumber
         .equalsIgnoreCase("輸出コンプライアンス")))
@@ -1380,41 +1366,11 @@ public class BICTestBase {
       Util.printTestFailedMessage(" Cart order " + orderNumber);
       AssertUtils.fail(" Cart order " + orderNumber);
     }
-    return orderNumber;
-  }
-
-  private void checkCartDetailsError() {
-    Util.printInfo("Checking Cart page error...");
-    try {
-      bicPage.waitForElementVisible(bicPage.getMultipleWebElementsfromField("bicSections").get(0),
-          10);
-      if (driver.findElement(By.xpath("//*[@data-testid=\"sections\"")).isDisplayed()) {
-        Util.printInfo("Page is loaded");
-      } else if (driver
-          .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
-          .isDisplayed()) {
-        Util.printTestFailedMessage("Error message is displayed while loading Checkout Cart");
-        String errorMsg = driver
-            .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
-            .getText();
-        AssertUtils.fail(errorMsg);
-      } else if (driver
-          .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
-          .isDisplayed()) {
-        Util.printTestFailedMessage("Error message is displayed while loading Commerce Cart");
-        String errorMsg = driver
-            .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
-            .getText();
-        AssertUtils.fail(errorMsg);
-      }
-    } catch (Exception e) {
-      Util.printInfo("No error on cart page while navigating...");
-    }
   }
 
   @SuppressWarnings("unused")
   @Step("Create BIC Existing User Order Creation via Cart " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createBICReturningUser(LinkedHashMap<String, String> data) {
+  public HashMap<String, String> createBICReturningUser(LinkedHashMap<String, String> data) throws MetadataException {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
     String region = data.get(BICECEConstants.REGION);
@@ -1451,7 +1407,7 @@ public class BICTestBase {
    */
   @Step("Create BIC Order for logged in user" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBICReturningUserLoggedIn(
-      LinkedHashMap<String, String> data) {
+      LinkedHashMap<String, String> data) throws MetadataException {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
     String region = data.get("US");
@@ -1472,7 +1428,7 @@ public class BICTestBase {
   @Step("Create BIC Existing User Order Creation via Cart and add seat"
       + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBic_ReturningUserAddSeat(
-      LinkedHashMap<String, String> data) {
+      LinkedHashMap<String, String> data) throws MetadataException {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
 
@@ -1538,9 +1494,8 @@ public class BICTestBase {
     Util.printInfo("num :: " + num);
     Util.printInfo("option select :: " + num.charAt(12));
     Util.printInfo(String.valueOf(num.charAt(12)).trim());
-    String option = String.valueOf(num.charAt(12)).trim();
 
-    return option;
+    return String.valueOf(num.charAt(12)).trim();
   }
 
   public void acceptCookiesAndUSSiteLink() {

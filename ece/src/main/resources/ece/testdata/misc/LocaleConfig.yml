@@ -2,6 +2,7 @@
   en_US:
     region: "ENUS"
     storeName: "STORE-NAMER"
+    languageStore: "en-US"
     currencyStore: "USD"
     countryDomain: ".com"
     paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH,FINANCING"
