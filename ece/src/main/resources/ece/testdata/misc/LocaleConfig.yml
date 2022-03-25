@@ -207,6 +207,127 @@
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Sondanella 35@Grumo@6717@03230700940@Svizzera"
 
+  en_BG:
+    region: "ENBG"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "Autodesk@622 Kory Unions@Smolyan@17941-5172@392 83 44 92@Bulgaria"
+
+  en_CY:
+    region: "ENCY"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "Autodesk@ 21 Vyzantiou@Nicosia@2064@143233421@Cyprus"
+
+  en_HR:
+    region: "ENHR"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL,ZIP"
+    address: "Autodesk@Poljanice pete 14@Zagreb@10000@231412341@Croatia"
+
+  en_LI:
+    region: "ENLI"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@232 Main St@Schaanwald@9486@1234@Liechtenstein"
+
+  en_LV:
+    region: "ENLV"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@Caka, bld. 136@Riga@1009@371(67)29-67-94@Latvia"
+
+  en_IS:
+    region: "ENIS"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@Holmatun 62@Bessastaðahreppur@225@231412@Iceland"
+
+  en_GR:
+    region: "ENGR"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@28is Oktovriou 44@Athina@106 82@231423@Greece"
+
+
+  en_EE:
+    region: "ENEE"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@ Raua põik 7@Raasiku@75203@1234@Estonia"
+
+  en_SE:
+    region: "ENSE"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@Främsteby Karlsborg 59@SkÖldinge@712 63@12341234@Sweden"
+
+  en_SI:
+    region: "ENEE"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@Parmova 7@Maribor@2501@4325345@Slovenia"
+
+  en_SK:
+    region: "ENSK"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@ Prokopova 345/42@Bratislava@85101@223435@Slovakia"
+
+  en_IE:
+    region: "ENIE"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@ Irish St.@Ardee@47545@041-6857993@Ireland"
+
+  en_RO:
+    region: "ENRO"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@BD. LĂPUŞNEANU A. bl@ConstanŢa@245254@0241-547 987@Romania"
+
+  en_LU:
+    region: "ENLU"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@ Raua põik 7@Raasiku@75203@1234@Estonia"
+
+  en_LT:
+    region: "ENLT"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@Vilniaus g. 105@Širvintos@01100@134213@Lithuania"
+
   ############################################################
   #Additional locales for testing Appolo
   ############################################################
