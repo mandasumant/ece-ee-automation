@@ -1379,7 +1379,8 @@ public class BICTestBase {
   @Step("Assert that tax value matches the tax parameter.")
   private void checkIfTaxValueIsCorrect(HashMap<String, String> data) {
     String taxValue = driver
-        .findElement(By.xpath("//p[@data-testid='checkout--order-summary-section--tax']")).getText().substring(1);
+        .findElement(By.xpath("//p[@data-testid='checkout--order-summary-section--tax']")).getText();
+    taxValue = taxValue.replaceAll("[^0-9.]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
     Util.printInfo("Tax amount is " + taxValueAmount);
 
