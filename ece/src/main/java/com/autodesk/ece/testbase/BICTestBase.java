@@ -1243,7 +1243,15 @@ public class BICTestBase {
     acceptCookiesAndUSSiteLink();
 
     String region = data.get(BICECEConstants.REGION);
-    String billingAddress = data.get(BICECEConstants.ADDRESS);
+
+    String billingAddress;
+    String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
+    if (addressViaParam != null && !addressViaParam.isEmpty()) {
+      Util.printInfo("The address is passed as parameter : " + addressViaParam);
+      billingAddress = addressViaParam;
+    } else {
+      billingAddress = data.get(BICECEConstants.ADDRESS);
+    }
     address = getBillingAddress(region, billingAddress);
 
     Names names = generateFirstAndLastNames();
