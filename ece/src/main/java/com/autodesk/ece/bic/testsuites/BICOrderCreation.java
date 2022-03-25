@@ -35,12 +35,14 @@ public class BICOrderCreation extends ECETestBase {
 
   private static final String EMAIL = System.getProperty("email");
   private static final String defaultLocale = "en_US";
+  private static final String defaultTaxOption = "true";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   long startTime, stopTime, executionTime;
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
+  String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
   private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
@@ -94,6 +96,15 @@ public class BICOrderCreation extends ECETestBase {
         .isEmpty()) {
       AssertUtils.fail("Address not found in the config for the locale : " + locale);
     }
+
+    if (taxOptionEnabled == null || taxOptionEnabled.trim().isEmpty()) {
+      taxOptionEnabled = defaultTaxOption;
+    } else if (taxOptionEnabled.equals("true")) {
+      taxOptionEnabled = "true";
+    } else {
+      taxOptionEnabled = "false";
+    }
+    testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
 
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
@@ -154,8 +165,7 @@ public class BICOrderCreation extends ECETestBase {
     }
     String[] paymentCardDetails = getBicTestBase().getPaymentDetails(newPaymentType.toUpperCase())
         .split("@");
-    portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails,
-        localeDataMap.get(locale));
+    portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -290,7 +300,7 @@ public class BICOrderCreation extends ECETestBase {
 
     portaltb.switchTermInUserPortal(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        PASSWORD);
     updateTestingHub(testResults);
     Util.sleep(120000);
 
@@ -398,7 +408,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
             BICECEConstants.ADD_SEAT_QTY),
-            testDataForEachMethod, localeDataMap.get(locale)));
+            testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
     // results.get("perSeatGrossAmount"));
@@ -523,7 +533,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Reduce seats in Portal
-    results.putAll(portaltb.reduceSeatsInPortalAndValidate(localeDataMap.get(locale)));
+    results.putAll(portaltb.reduceSeatsInPortalAndValidate());
     testResults.put("reducedSeatQty", results.get("reducedSeatQty"));
     updateTestingHub(testResults);
 

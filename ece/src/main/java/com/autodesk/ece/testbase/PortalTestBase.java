@@ -28,7 +28,6 @@ import java.util.TimeZone;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -80,7 +79,7 @@ public class PortalTestBase {
     }
 
     // 2nd method from Portal
-    if (userSessionID == null || userSessionID == "") {
+    if (userSessionID == null || userSessionID.equals("")) {
       openPortalBICLaunch(data.get(TestingHubConstants.cepURL));
       JavascriptExecutor js;
 
@@ -100,8 +99,8 @@ public class PortalTestBase {
       }
     }
 
-    // 3rd method from featureflag WebSite
-    if (userSessionID == null || userSessionID == "") {
+    // 3rd method from feature flag WebSite
+    if (userSessionID == null || userSessionID.equals("")) {
       try {
         openPortalURL("http://featureflag.ecs.ads.autodesk.com");
         driver.findElement(By.xpath("//textarea[@id='id-email']")).sendKeys(emailID);
@@ -121,7 +120,7 @@ public class PortalTestBase {
   }
 
   //@Step("launch URL in browser"+GlobalConstants.TAG_TESTINGHUB)
-  public boolean openPortalURL(String data) {
+  public void openPortalURL(String data) {
     try {
       driver.manage().window().maximize();
       Util.sleep(2000);
@@ -133,7 +132,6 @@ public class PortalTestBase {
       driver.get(data);
       e.printStackTrace();
     }
-    return true;
   }
 
   //@Step("launch URL in browser")
@@ -157,9 +155,9 @@ public class PortalTestBase {
   }
 
   @Step("User Login in Customer Portal " + GlobalConstants.TAG_TESTINGHUB)
-  public boolean portalLogin(String portalUserName, String portalPassword) {
+  public void portalLogin(String portalUserName, String portalPassword) {
     boolean status = false;
-    Integer attempts = 0;
+    int attempts = 0;
 
     while (attempts < 3) {
       try {
@@ -202,7 +200,6 @@ public class PortalTestBase {
       Util.printInfo("Successfully logged into Portal!!!");
     }
 
-    return status;
   }
 
   @Step("Looking for Product and Services Web element in Portal" + GlobalConstants.TAG_TESTINGHUB)
@@ -243,7 +240,7 @@ public class PortalTestBase {
   @Step("Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionInPortal(String subscriptionId, String userName, String password) {
     boolean status = false;
-    Integer attempts = 0;
+    int attempts = 0;
     WebElement element = null;
 
     while (attempts < 15) {
@@ -281,7 +278,7 @@ public class PortalTestBase {
   }
 
   @Step("Click on All Products & Services Link")
-  public boolean clickALLPSLink() {
+  public void clickALLPSLink() {
     boolean status = false;
     try {
       // portalPage.click("portalAllPSLink");
@@ -302,7 +299,6 @@ public class PortalTestBase {
     }
 
     Util.sleep(10000);
-    return status;
   }
 
   /**
@@ -329,7 +325,7 @@ public class PortalTestBase {
     Util.printInfo("Checking email popup...");
     Util.sleep(5000);
     try {
-      if (portalPage.checkIfElementExistsInPage("portalEmailPopupYesButton", 10) == true) {
+      if (portalPage.checkIfElementExistsInPage("portalEmailPopupYesButton", 10)) {
         Util.sleep(15000);
         Util.printInfo("HTML code - Before Clicking portalEmailPopupYesButton");
         debugPageUrl("Clicking on portal email popup");
@@ -374,9 +370,8 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
-  public boolean switchTermInUserPortal(String cepURL, String portalUserName,
-      String portalPassword, String subscriptionID) {
-    boolean status = false, statusPS = false;
+  public void switchTermInUserPortal(String cepURL, String portalUserName,
+      String portalPassword) {
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
@@ -438,11 +433,7 @@ public class PortalTestBase {
         e.printStackTrace();
       }
     }
-    if (statusPS) {
-      AssertUtils.fail(BICECEConstants.PRODUCT_IS_DISPLAYED_IN_PORTAL + BICECEConstants.FALSE);
-    }
 
-    return statusPS;
   }
 
   private boolean isPortalLoginPageVisible() {
@@ -471,20 +462,20 @@ public class PortalTestBase {
 
   @Step("Adding seat from portal for BIC orders")
   public HashMap<String, String> createAndValidateAddSeatOrderInPortal(String addSeatQty,
-      LinkedHashMap<String, String> testDataForEachMethod, Map<String, String> localeMap) {
+      LinkedHashMap<String, String> testDataForEachMethod) {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<String, String>();
-    orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod, localeMap));
+    orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod));
     orderDetails.putAll(validateAddSeatOrder(orderDetails));
     return orderDetails;
   }
 
-  public HashMap<String, String> navigateToSubscriptionAndOrdersTab(Map<String, String> localeMap) {
+  public HashMap<String, String> navigateToSubscriptionAndOrdersTab() {
     Util.printInfo("Navigating to subscriptions and orders tab...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
     Util.sleep(60000);
     try {
-      if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 10) == true) {
+      if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 10)) {
         Util.printInfo("Clicking on portal subscription and contracts link...");
         portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
         portalPage.waitForPageToLoad();
@@ -579,12 +570,12 @@ public class PortalTestBase {
   }
 
   public HashMap<String, String> createAddSeatOrder(String addSeatQty,
-      LinkedHashMap<String, String> testDataForEachMethod, Map<String, String> localeMap) {
+      LinkedHashMap<String, String> testDataForEachMethod) {
     Util.printInfo("Placing add seat order from portal...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
 
     try {
-      orderDetails.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
+      orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
 
       String paymentDetails = orderDetails.get(BICECEConstants.PAYMENT_DETAILS);
       Util.printInfo("Payment Details : " + paymentDetails);
@@ -808,19 +799,19 @@ public class PortalTestBase {
   }
 
   @Step("Reduce seats from portal for BIC orders")
-  public HashMap<String, String> reduceSeatsInPortalAndValidate(Map<String, String> localeMap)
+  public HashMap<String, String> reduceSeatsInPortalAndValidate()
       throws MetadataException {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<>();
-    orderDetails.putAll(reduceSeats(localeMap));
+    orderDetails.putAll(reduceSeats());
     validateReducedSeats(orderDetails);
     return orderDetails;
   }
 
-  public HashMap<String, String> reduceSeats(Map<String, String> localeMap)
+  public HashMap<String, String> reduceSeats()
       throws MetadataException {
     HashMap<String, String> orderDetails = new HashMap<>();
-    orderDetails.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
+    orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
 
     Util.printInfo("Reducing seats.");
     Util.sleep(10000);
@@ -879,11 +870,11 @@ public class PortalTestBase {
 
   @Step("Changing payment from Portal" + GlobalConstants.TAG_TESTINGHUB)
   public void changePaymentMethodAndValidate(HashMap<String, String> data,
-      String[] paymentCardDetails, Map<String, String> localeMap) {
+      String[] paymentCardDetails) {
     Util.printInfo("Changing the payment method from portal...");
     try {
       debugPageUrl("Step 1");
-      data.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
+      data.putAll(navigateToSubscriptionAndOrdersTab());
       clickPortalClosePopup();
       Util.printInfo("Clicking on change payment option...");
       portalPage.waitForFieldPresent("portalChangePaymentBtn", 10000);
@@ -893,7 +884,7 @@ public class PortalTestBase {
           BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
-      validatePaymentDetailsOnPortal(data, localeMap);
+      validatePaymentDetailsOnPortal(data);
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to change the payment details from portal...");
@@ -1252,7 +1243,7 @@ public class PortalTestBase {
     wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(orgNameXpath)));
     status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
 
-    if (status == false) {
+    if (!status) {
       AssertUtils.fail("Organization_Name not available.");
     }
 
@@ -1286,10 +1277,9 @@ public class PortalTestBase {
     return status;
   }
 
-  public void validatePaymentDetailsOnPortal(HashMap<String, String> data,
-      Map<String, String> localeMap) {
+  public void validatePaymentDetailsOnPortal(HashMap<String, String> data) {
     Util.printInfo("Validating payment details...");
-    data.putAll(navigateToSubscriptionAndOrdersTab(localeMap));
+    data.putAll(navigateToSubscriptionAndOrdersTab());
     String paymentDetails = data.get(BICECEConstants.PAYMENT_DETAILS).toLowerCase();
     Util.printInfo("Payment Details on order info page: " + paymentDetails);
 
@@ -1414,7 +1404,7 @@ public class PortalTestBase {
    */
   @Step("Verify product is visible in Portal " + GlobalConstants.TAG_TESTINGHUB)
   public String verifyProductVisible(HashMap<String, String> results, String peIdPattern) {
-    Integer attempts = 0;
+    int attempts = 0;
     Boolean status = false;
     String subscriptionID = null;
 
