@@ -99,10 +99,6 @@ public class BICOrderCreation extends ECETestBase {
 
     if (taxOptionEnabled == null || taxOptionEnabled.trim().isEmpty()) {
       taxOptionEnabled = defaultTaxOption;
-    } else if (taxOptionEnabled.equals("true")) {
-      taxOptionEnabled = "true";
-    } else {
-      taxOptionEnabled = "false";
     }
     testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
 
