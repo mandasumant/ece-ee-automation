@@ -1378,13 +1378,17 @@ public class BICTestBase {
 
   @Step("Assert that tax value matches the tax parameter.")
   private void checkIfTaxValueIsCorrect(HashMap<String, String> data) {
+    String nonZeroTaxState = data.get("taxOptionEnabled");
+    if (nonZeroTaxState.equals("undefined")) {
+      return;
+    }
+
     String taxValue = driver
         .findElement(By.xpath("//p[@data-testid='checkout--order-summary-section--tax']")).getText();
     taxValue = taxValue.replaceAll("[^0-9.]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
     Util.printInfo("Tax amount is " + taxValueAmount);
 
-    String nonZeroTaxState = data.get("taxOptionEnabled");
     if (nonZeroTaxState.equals("true")) {
       AssertUtils.assertTrue(taxValueAmount > 0);
       Util.printInfo("This state collects tax.");

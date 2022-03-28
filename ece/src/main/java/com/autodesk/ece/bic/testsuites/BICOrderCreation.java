@@ -35,7 +35,7 @@ public class BICOrderCreation extends ECETestBase {
 
   private static final String EMAIL = System.getProperty("email");
   private static final String defaultLocale = "en_US";
-  private static final String defaultTaxOption = "true";
+  private static final String defaultTaxOption = "undefined";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   long startTime, stopTime, executionTime;
