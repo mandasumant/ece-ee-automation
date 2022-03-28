@@ -112,6 +112,7 @@ createBicOrderMoe:
 validateBicNativeOrderMoe:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
+  priceId: "24115"
 
 validateMoeOpportunityFlow:
   productID: *NativeOrderPriceID
