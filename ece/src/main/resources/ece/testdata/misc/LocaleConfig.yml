@@ -119,8 +119,8 @@
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
     address: "Autodesk@8 Puerta 231@Palencia@13158@03230700940@México@Aragón"
 
-  fl_FL:
-    region: "FLFL"
+  fi_FI:
+    region: "FIFI"
     storeName: "STORE-EU"
     currencyStore: "EUR"
     countryDomain: ".fi"
@@ -161,7 +161,7 @@
 
   no_NO:
     region: "NONO"
-    storeName: "STORE-SE"
+    storeName: "STORE-NO"
     currencyStore: "NOK"
     countryDomain: ".no"
     paymentMethods: "CREDITCARD,PAYPAL"
@@ -263,7 +263,6 @@
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@28is Oktovriou 44@Athina@106 82@231423@Greece"
 
-
   en_EE:
     region: "ENEE"
     storeName: "STORE-EU"
@@ -271,6 +270,14 @@
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@ Raua põik 7@Raasiku@75203@1234@Estonia"
+
+  en_MT:
+    region: "ENMT"
+    storeName: "STORE-EU"
+    currenyStore: "EUR"
+    countryDomain: ".eu"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "Autodesk@Anchor Bay@Mellieha@N/A@12341234@Malta"
 
   en_SE:
     region: "ENSE"
@@ -281,7 +288,7 @@
     address: "Autodesk@Främsteby Karlsborg 59@SkÖldinge@712 63@12341234@Sweden"
 
   en_SI:
-    region: "ENEE"
+    region: "ENSI"
     storeName: "STORE-EU"
     currenyStore: "EUR"
     countryDomain: ".eu"
@@ -318,7 +325,7 @@
     currenyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@ Raua põik 7@Raasiku@75203@1234@Estonia"
+    address: "Autodesk@202 B Rue De Hamm@Luxembourg@1111@1234@Luxembourg"
 
   en_LT:
     region: "ENLT"
