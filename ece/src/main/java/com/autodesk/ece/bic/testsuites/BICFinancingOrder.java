@@ -189,14 +189,13 @@ public class BICFinancingOrder extends ECETestBase {
     }
     String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentType.toUpperCase())
         .split("@");
-    portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails,
-        localeDataMap.get(locale));
+    portaltb.changePaymentMethodAndValidate(testDataForEachMethod, paymentCardDetails);
 
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
             BICECEConstants.ADD_SEAT_QTY),
-            testDataForEachMethod, localeDataMap.get(locale)));
+            testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
 
     testResults.put(BICECEConstants.ADD_SEAT_QTY, results.get(BICECEConstants.ADD_SEAT_QTY));

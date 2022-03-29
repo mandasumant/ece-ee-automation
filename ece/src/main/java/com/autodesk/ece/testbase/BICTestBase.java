@@ -4,7 +4,6 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
-import com.autodesk.testinghub.core.common.services.OxygenService;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -207,7 +206,7 @@ public class BICTestBase {
 
   private void switchToBICCartLoginPage() {
     String elementXpath = bicPage.getFirstFieldLocator("createNewUseriFrame");
-    Util.waitForElement(elementXpath,"Create New User iFrame");
+    Util.waitForElement(elementXpath, "Create New User iFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath));
     Util.printInfo("Switching to User login frame");
     driver.switchTo().frame(element);
@@ -503,7 +502,7 @@ public class BICTestBase {
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
       status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
 
-      if (status == false) {
+      if (!status) {
         AssertUtils.fail("Organization_Name not available.");
       }
       driver.findElement(By.xpath(orgNameXpath))
@@ -517,13 +516,13 @@ public class BICTestBase {
       Select selCountry = new Select(countryEle);
       WebElement countryOption = selCountry.getFirstSelectedOption();
       String defaultCountry = countryOption.getText();
-      Util.printInfo("The Country selected by default : "+ defaultCountry);
+      Util.printInfo("The Country selected by default : " + defaultCountry);
       selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));
 
       clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
       driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY));
 
-      if(!address.get(BICECEConstants.ZIPCODE).equals(BICECEConstants.NA)) {
+      if (!address.get(BICECEConstants.ZIPCODE).equals(BICECEConstants.NA)) {
         clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
         driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.ZIPCODE));
       }
@@ -945,6 +944,13 @@ public class BICTestBase {
 
   @Step("Submitting Order and Retrieving Order Number")
   public String submitGetOrderNumber(HashMap<String, String> data) {
+    // Check if tax amount calculated properly
+    checkIfTaxValueIsCorrect(data);
+
+    // Get total order value from checkout page
+    String orderTotalCheckout = driver
+        .findElement(By.xpath("//h3[@data-testid='checkout--order-summary-section--total']")).getText();
+
     clickMandateAgreementCheckbox();
     int count = 0;
     debugPageUrl(" Step 1 wait for SubmitOrderButton");
@@ -1021,7 +1027,7 @@ public class BICTestBase {
             "Export compliance issue is present. Checking for order number in the Pelican response");
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         String response = (String) executor
-            .executeScript(String.format("return sessionStorage.getItem('purchase')"));
+            .executeScript("return sessionStorage.getItem('purchase')");
         JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
         JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
         orderNumber = purchaseOrder.get("id").toString();
@@ -1090,6 +1096,12 @@ public class BICTestBase {
 
     debugPageUrl("Step 8 Check to see if EXPORT COMPLIANCE issue or Null");
     validateBicOrderNumber(orderNumber);
+
+    Util.printInfo("Asserting that order total equals the total amount from checkout page.");
+    String orderTotal = driver
+        .findElement(By.xpath("//p[contains(@class,'checkout--order-confirmation--invoice-details--order-total ')]"))
+        .getText();
+    AssertUtils.assertEquals(orderTotal, orderTotalCheckout);
 
     return orderNumber;
   }
@@ -1171,8 +1183,7 @@ public class BICTestBase {
   public void disableChatSession() {
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript(String.format(
-          "window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");"));
+      js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");");
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       e2.printStackTrace();
@@ -1365,21 +1376,32 @@ public class BICTestBase {
     }
   }
 
-  private String getO2ID(LinkedHashMap<String, String> data, String emailID) {
-    OxygenService os = new OxygenService();
-    int o2len = 0;
-    String o2ID = "";
-    try {
-      o2ID = os
-          .getOxygenID(emailID, ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
-      data.put(BICConstants.oxygenid, o2ID);
-    } catch (Exception e) {
-      e.printStackTrace();
+  @Step("Assert that tax value matches the tax parameter.")
+  private void checkIfTaxValueIsCorrect(HashMap<String, String> data) {
+    String nonZeroTaxState = data.get("taxOptionEnabled");
+    if (nonZeroTaxState.equals("undefined")) {
+      return;
     }
-    return o2ID;
+
+    String taxValue = driver
+        .findElement(By.xpath("//p[@data-testid='checkout--order-summary-section--tax']")).getText();
+    taxValue = taxValue.replaceAll("[^0-9.]", "");
+    double taxValueAmount = Double.parseDouble(taxValue);
+    Util.printInfo("Tax amount is " + taxValueAmount);
+
+    if (nonZeroTaxState.equals("Y")) {
+      AssertUtils.assertTrue(taxValueAmount > 0);
+      Util.printInfo("This state collects tax.");
+    } else if (nonZeroTaxState.equals("N")) {
+      AssertUtils.assertEquals(taxValueAmount, 0.00);
+      Util.printInfo("This state does not collect tax.");
+    } else {
+      Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
+    }
   }
 
-  private String validateBicOrderNumber(String orderNumber) {
+
+  private void validateBicOrderNumber(String orderNumber) {
     Util.printInfo(orderNumber);
     if (!((orderNumber.equalsIgnoreCase("EXPORT COMPLIANCE")) || (orderNumber
         .equalsIgnoreCase("輸出コンプライアンス")))
@@ -1388,36 +1410,6 @@ public class BICTestBase {
     } else {
       Util.printTestFailedMessage(" Cart order " + orderNumber);
       AssertUtils.fail(" Cart order " + orderNumber);
-    }
-    return orderNumber;
-  }
-
-  private void checkCartDetailsError() {
-    Util.printInfo("Checking Cart page error...");
-    try {
-      bicPage.waitForElementVisible(bicPage.getMultipleWebElementsfromField("bicSections").get(0),
-          10);
-      if (driver.findElement(By.xpath("//*[@data-testid=\"sections\"")).isDisplayed()) {
-        Util.printInfo("Page is loaded");
-      } else if (driver
-          .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
-          .isDisplayed()) {
-        Util.printTestFailedMessage("Error message is displayed while loading Checkout Cart");
-        String errorMsg = driver
-            .findElement(By.xpath("//div[@data-error-code='FETCH_AMART_HTTP_CLIENT_ERROR']"))
-            .getText();
-        AssertUtils.fail(errorMsg);
-      } else if (driver
-          .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
-          .isDisplayed()) {
-        Util.printTestFailedMessage("Error message is displayed while loading Commerce Cart");
-        String errorMsg = driver
-            .findElement(By.xpath("//div[@data-error-code='FETCH_DR_HTTP_CLIENT_ERROR']"))
-            .getText();
-        AssertUtils.fail(errorMsg);
-      }
-    } catch (Exception e) {
-      Util.printInfo("No error on cart page while navigating...");
     }
   }
 
@@ -1547,9 +1539,8 @@ public class BICTestBase {
     Util.printInfo("num :: " + num);
     Util.printInfo("option select :: " + num.charAt(12));
     Util.printInfo(String.valueOf(num.charAt(12)).trim());
-    String option = String.valueOf(num.charAt(12)).trim();
 
-    return option;
+    return String.valueOf(num.charAt(12)).trim();
   }
 
   public void acceptCookiesAndUSSiteLink() {
