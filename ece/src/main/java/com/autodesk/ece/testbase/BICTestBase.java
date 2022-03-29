@@ -1389,12 +1389,14 @@ public class BICTestBase {
     double taxValueAmount = Double.parseDouble(taxValue);
     Util.printInfo("Tax amount is " + taxValueAmount);
 
-    if (nonZeroTaxState.equals("true")) {
+    if (nonZeroTaxState.equals("Y")) {
       AssertUtils.assertTrue(taxValueAmount > 0);
       Util.printInfo("This state collects tax.");
-    } else {
+    } else if (nonZeroTaxState.equals("N")) {
       AssertUtils.assertEquals(taxValueAmount, 0.00);
       Util.printInfo("This state does not collect tax.");
+    } else {
+      Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
   }
 
