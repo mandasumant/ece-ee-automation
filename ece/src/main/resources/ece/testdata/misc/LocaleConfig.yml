@@ -277,7 +277,7 @@
     currenyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Anchor Bay@Mellieha@N/A@12341234@Malta"
+    address: "Autodesk@Anchor Bay@Mellieha@59538@12341234@Malta"
 
   en_SE:
     region: "ENSE"
@@ -317,7 +317,7 @@
     currenyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@BD. LĂPUŞNEANU A. bl@ConstanŢa@245254@0241-547 987@Romania"
+    address: "Autodesk@New Street@Constant@245254@0241-547 987@Romania"
 
   en_LU:
     region: "ENLU"
