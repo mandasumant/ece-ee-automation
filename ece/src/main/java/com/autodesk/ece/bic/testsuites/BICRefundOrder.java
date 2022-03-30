@@ -19,6 +19,7 @@ import org.testng.annotations.Test;
 
 public class BICRefundOrder extends ECETestBase {
 
+  private static final String defaultTaxOption = "undefined";
   private static String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   long startTime;
@@ -26,6 +27,7 @@ public class BICRefundOrder extends ECETestBase {
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = null;
+  String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -69,6 +71,11 @@ public class BICRefundOrder extends ECETestBase {
     }
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
+
+    if (taxOptionEnabled == null || taxOptionEnabled.trim().isEmpty()) {
+      taxOptionEnabled = defaultTaxOption;
+    }
+    testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
   }
 
   @Test(groups = {"bic-RefundOrder"}, description = "BIC refund order")

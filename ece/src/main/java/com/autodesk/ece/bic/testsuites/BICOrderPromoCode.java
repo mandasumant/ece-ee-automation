@@ -18,6 +18,7 @@ import org.testng.annotations.Test;
 
 public class BICOrderPromoCode extends ECETestBase {
 
+  private static final String defaultTaxOption = "undefined";
   private static String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   long startTime, stopTime, executionTime;
@@ -25,6 +26,7 @@ public class BICOrderPromoCode extends ECETestBase {
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = null;
+  String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -77,6 +79,11 @@ public class BICOrderPromoCode extends ECETestBase {
 
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
+
+    if (taxOptionEnabled == null || taxOptionEnabled.trim().isEmpty()) {
+      taxOptionEnabled = defaultTaxOption;
+    }
+    testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
   }
 
   @Test(groups = {"bic-promocode-order"}, description = "Validation of Create BIC Hybrid Order")
