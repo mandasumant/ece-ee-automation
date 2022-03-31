@@ -29,8 +29,6 @@ import org.testng.Assert;
 
 public class PelicanTestBase {
 
-  private String productName = "";
-
   public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
   }
@@ -89,8 +87,7 @@ public class PelicanTestBase {
       String result = response.getBody().asString();
       Util.printInfo("results from the url-" + result);
       if (response.getStatusCode() != 200) {
-        Assert.assertTrue(false,
-            "Response code must be 200 but the API return " + response.getStatusCode());
+        Assert.fail("Response code must be 200 but the API return " + response.getStatusCode());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -310,7 +307,6 @@ public class PelicanTestBase {
   @Step("Get Pelican Response" + GlobalConstants.TAG_TESTINGHUB)
   public String getPurchaseOrder(HashMap<String, String> data) {
     String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsUrl");
-    productName = data.get("productName");
 
     //Generate the input JSON
     JSONObject filters = new JSONObject();
@@ -328,7 +324,6 @@ public class PelicanTestBase {
 
     String requestJson = filters.toJSONString();
     data.put("pelican_getPurchaseOrderDetailsUrl", getPurchaseOrderDetailsUrl);
-    HashMap<String, String> results = new HashMap<String, String>();
     Util.printInfo("getPurchaseOrderDetailsUrl : " + getPurchaseOrderDetailsUrl);
     String sig_details = getPelicanSignature(data);
     String hmacSignature = sig_details.split("::")[0];
@@ -354,8 +349,6 @@ public class PelicanTestBase {
 
   @Step("Create Refund Order" + GlobalConstants.TAG_TESTINGHUB)
   public void createRefundOrder(HashMap<String, String> data) {
-    HashMap<String, String> results = new HashMap<String, String>();
-
     String purchaseOrderDetailsUrl = data.get("putPelicanRefundOrderUrl");
     String getPurchaseOrderDetailsUrl = addTokenInResourceUrl(purchaseOrderDetailsUrl,
         data.get(BICConstants.orderNumber));
@@ -397,11 +390,9 @@ public class PelicanTestBase {
       Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
       timestamp = String.valueOf(cal.getTimeInMillis() / 1000);
 
-      String message = new StringBuilder().append(partnerId).append(appFamilyId).append(timestamp)
-          .toString();
+      String message = partnerId + appFamilyId + timestamp;
 
       byte[] signatureBytes = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
-      // signature = getSHA256Hash(secret, message);
       signature = hex(signatureBytes);
 
     } catch (Exception e) {
@@ -443,7 +434,7 @@ public class PelicanTestBase {
       results.put("getPOReponse_taxCode",
           jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey").toString());
       results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
-
+      results.put("getPOReponse_taxAmount", jp.get("content[0].taxAmount").toString());
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service");
     }
