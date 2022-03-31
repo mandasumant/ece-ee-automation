@@ -28,12 +28,14 @@ import org.testng.util.Strings;
 public class MOEOrderFlows extends ECETestBase {
 
   private static final String defaultLocale = "en_US";
+  private static final String defaultTaxOption = "undefined";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
   String optyName, stage, fulfillment, account, projectCloseDate, email, sku = "";
+  String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
   private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
@@ -118,6 +120,11 @@ public class MOEOrderFlows extends ECETestBase {
     testDataForEachMethod.put("guacMoeUserEmail", email);
 
     PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
+
+    if (taxOptionEnabled == null || taxOptionEnabled.trim().isEmpty()) {
+      taxOptionEnabled = defaultTaxOption;
+    }
+    testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
   }
 
   @AfterMethod(alwaysRun = true)
