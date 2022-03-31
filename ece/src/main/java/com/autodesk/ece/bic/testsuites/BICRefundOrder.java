@@ -99,9 +99,6 @@ public class BICRefundOrder extends ECETestBase {
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
-
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrder(results);
 

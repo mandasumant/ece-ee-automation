@@ -240,24 +240,6 @@ public class PelicanTestBase {
     return results;
   }
 
-  @SuppressWarnings("unused")
-  @Step("Create invoice for PO " + GlobalConstants.TAG_TESTINGHUB)
-  public void postInvoicePelicanAPI(HashMap<String, String> data) {
-    String invoicePelicanAPIUrl = data.get("postInvoicePelicanAPIUrl");
-    HashMap<String, String> results = new HashMap<String, String>();
-    Util.printInfo("invoicePelicanAPIUrl  : " + invoicePelicanAPIUrl);
-    String Content_Type = BICECEConstants.APPLICATION_JSON;
-
-    Map<String, String> header = new HashMap<>();
-    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
-
-    Response response = getRestResponse(invoicePelicanAPIUrl, header, "{}");
-    String result = response.getBody().asString();
-    Util.PrintInfo(BICECEConstants.RESULT + result);
-    JsonPath js = new JsonPath(result);
-    Util.printInfo("js is:" + js);
-  }
-
   @Step("Order Service finance reports API " + GlobalConstants.TAG_TESTINGHUB)
   public String postReportsFinancePelicanAPI(HashMap<String, String> data) {
     String postReportsFinancePelicanAPIUrl = data.get("postReportsFinancePelicanAPIUrl");
@@ -455,12 +437,12 @@ public class PelicanTestBase {
   public String retryGetPurchaseOrder(HashMap<String, String> results, boolean silent) {
     String response = "";
     boolean subscriptionIdFound = false;
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i < 15; i++) {
       response = getPurchaseOrder(results);
       int intIndex = response.indexOf("subscriptionId");
       if (intIndex == -1) {
         Util.printInfo("SubscriptionId not found. Retry #" + i);
-        Util.sleep(300000);
+        Util.sleep(30000);
       } else {
         Util.printInfo("Found subscriptionId at index " + intIndex);
         subscriptionIdFound = true;
