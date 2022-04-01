@@ -1099,7 +1099,7 @@ public class BICTestBase {
 
     Util.printInfo("Asserting that order total equals the total amount from checkout page.");
     String orderTotal = driver
-        .findElement(By.xpath("//p[contains(@class,'checkout--order-confirmation--invoice-details--order-total ')]"))
+        .findElement(By.xpath("//p[contains(@class,'checkout--order-confirmation--invoice-details--order-total')]"))
         .getText();
     AssertUtils.assertEquals(orderTotal, orderTotalCheckout);
 
