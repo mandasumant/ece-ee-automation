@@ -942,18 +942,19 @@ public class BICTestBase {
     }
   }
 
-  @Step("Submitting Order and Retrieving Order Number")
-  public String submitGetOrderNumber(HashMap<String, String> data) {
+  @Step("Submit Order on Checkout page")
+  public void submitOrder(HashMap<String, String> data) {
     // Check if tax amount calculated properly
     checkIfTaxValueIsCorrect(data);
 
     // Get total order value from checkout page
     String orderTotalCheckout = driver
         .findElement(By.xpath("//h3[@data-testid='checkout--order-summary-section--total']")).getText();
+    data.put("orderTotalCheckout", orderTotalCheckout);
 
     clickMandateAgreementCheckbox();
     int count = 0;
-    debugPageUrl(" Step 1 wait for SubmitOrderButton");
+    debugPageUrl("Step 1: Wait for submit order button.");
     while (!bicPage.waitForField(BICECEConstants.SUBMIT_ORDER_BUTTON, true, 60000)) {
       Util.sleep(20000);
       count++;
@@ -965,15 +966,15 @@ public class BICTestBase {
       }
     }
 
-    debugPageUrl(" Step 2 wait for SubmitOrderButton");
+    debugPageUrl("Step 2: Wait for submit order button.");
     try {
-      int countModal1 = 0;
+      int countModal = 0;
       while (driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).isDisplayed()) {
         Util.printInfo(" CONTINUE CHECKOUT Modal is present");
         driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).click();
         Util.sleep(5000);
-        countModal1++;
-        if (countModal1 > 3) {
+        countModal++;
+        if (countModal > 3) {
           AssertUtils.fail("Unexpected Pop up in the cart - Please contact TestingHub");
           break;
         }
@@ -997,7 +998,7 @@ public class BICTestBase {
     } catch (Exception e) {
       e.printStackTrace();
       debugPageUrl(e.getMessage());
-      AssertUtils.fail("Failed to click on Submit button...");
+      AssertUtils.fail("Failed to click on Submit button.");
     }
 
     // Zip Pay Checkout
@@ -1006,8 +1007,7 @@ public class BICTestBase {
       zipTestBase.zipPayCheckout();
     }
 
-    String orderNumber = null;
-    debugPageUrl(" Step 3 Check order Number is Null");
+    debugPageUrl("Step 3: Check order number is Null");
     bicPage.waitForPageToLoad();
 
     try {
@@ -1018,6 +1018,11 @@ public class BICTestBase {
     } catch (Exception e) {
       Util.printInfo("Great! Export Compliance issue is not present");
     }
+  }
+
+  @Step("Retrieving Order Number")
+  public String getOrderNumber(HashMap<String, String> data) {
+    String orderNumber = null;
 
     try {
       if (driver.findElement(By.xpath(
@@ -1036,35 +1041,32 @@ public class BICTestBase {
         }
       }
     } catch (Exception e) {
-      Util.printMessage("Great! Export Compliance issue is not present");
+      Util.printMessage("Great! Export Compliance issue is not present.");
     }
-    debugPageUrl(" Step 3a Check order Number is Null");
+    debugPageUrl("Step 1: Check order number is Null");
     try {
       orderNumber = driver.findElement(By.xpath(
           "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
           .getText();
     } catch (Exception e) {
-      debugPageUrl(" Step 4 Check order Number is Null");
+      debugPageUrl("Step 2: Check order number is Null");
     }
 
     try {
       orderNumber = driver.findElement(By.xpath(BICECEConstants.JP_ORDER_NUMBER)).getText();
     } catch (Exception e) {
-      debugPageUrl(" Step 4 Check order Number is Null for JP");
+      debugPageUrl("Step 3: Check order number is Null for JP");
     }
 
-    debugPageUrl(" Step 4a Check order Number is Null");
-
+    debugPageUrl("Step 3a: Check order number is Null");
     if (orderNumber == null) {
-
       bicPage.waitForPageToLoad();
-
       try {
         orderNumber = driver.findElement(By.xpath(
             "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
             .getText();
       } catch (Exception e) {
-        debugPageUrl(" Step 5 Check order Number is Null");
+        debugPageUrl("Step 4: Check order number is Null");
       }
     }
 
@@ -1072,36 +1074,20 @@ public class BICTestBase {
       try {
         orderNumber = driver.findElement(By.xpath(BICECEConstants.JP_ORDER_NUMBER)).getText();
       } catch (Exception e) {
-        debugPageUrl(" Step 5 Check order Number is Null for JP");
+        debugPageUrl("Step 5: Check order number is Null for JP");
       }
     }
 
-    debugPageUrl(" Step 5a Check order Number is Null");
-
-    if (orderNumber == null) {
-      try {
-        debugPageUrl(" Step 6 Assert order Number is Null");
-
-        orderNumber = driver.findElement(By.xpath("//h2[text()='Order Processing Problem']"))
-            .getText();
-        debugPageUrl("");
-        AssertUtils.fail("Unable to place BIC order : " + orderNumber);
-      } catch (Exception e) {
-        debugPageUrl(" Step 7 Assert order Number is Null");
-        e.printStackTrace();
-        Util.printTestFailedMessage("Error while fetching Order Number from Cart");
-        AssertUtils.fail("Unable to place BIC order");
-      }
-    }
-
-    debugPageUrl("Step 8 Check to see if EXPORT COMPLIANCE issue or Null");
+    debugPageUrl("Step 6: Check to see if EXPORT COMPLIANCE issue or Null");
     validateBicOrderNumber(orderNumber);
 
-    Util.printInfo("Asserting that order total equals the total amount from checkout page.");
-    String orderTotal = driver
-        .findElement(By.xpath("//p[contains(@class,'checkout--order-confirmation--invoice-details--order-total ')]"))
-        .getText();
-    AssertUtils.assertEquals(orderTotal, orderTotalCheckout);
+    if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+      Util.printInfo("Asserting that order total equals the total amount from checkout page.");
+      String orderTotal = driver
+          .findElement(By.xpath("//p[contains(@class,'checkout--order-confirmation--invoice-details--order-total ')]"))
+          .getText();
+      AssertUtils.assertEquals(orderTotal, data.get("orderTotalCheckout"));
+    }
 
     return orderNumber;
   }
@@ -1223,7 +1209,7 @@ public class BICTestBase {
       String guacDotComBaseURL,
       String productName,
       String password,
-      String paymentMethod, String promocode) throws MetadataException {
+      String paymentMethod, String promoCode) throws MetadataException {
     String orderNumber = null;
     String constructGuacDotComURL =
         guacDotComBaseURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
@@ -1292,14 +1278,18 @@ public class BICTestBase {
     data.putAll(names.getMap());
 
     // Apply promo if exists
-    if (promocode != null && !promocode.isEmpty()) {
-      populatePromoCode(promocode, data);
+    if (promoCode != null && !promoCode.isEmpty()) {
+      populatePromoCode(promoCode, data);
     }
 
-    enterBillingDetails(data, address, paymentMethod, region);
+    enterBillingDetails(data, address, paymentMethod);
 
     if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-      orderNumber = submitGetOrderNumber(data);
+      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        submitOrder(data);
+      }
+      orderNumber = getOrderNumber(data);
+
       printConsole(constructGuacDotComURL, orderNumber, emailID, address, names.firstName,
           names.lastName,
           paymentMethod);
@@ -1309,8 +1299,8 @@ public class BICTestBase {
   }
 
   public void enterBillingDetails(LinkedHashMap<String, String> data,
-      Map<String, String> address, String paymentMethod, String region) {
-    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod, region);
+      Map<String, String> address, String paymentMethod) {
+    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     selectPaymentProfile(data, paymentCardDetails, address);
 
     // handling the chat popup
@@ -1333,26 +1323,26 @@ public class BICTestBase {
     }
   }
 
-  private void populatePromoCode(String promocode, LinkedHashMap<String, String> data) {
+  private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
     String priceBeforePromo = null;
     String priceAfterPromo = null;
 
     try {
       if (driver.findElement(By.xpath("//h2[contains(text(),\"just have a question\")]"))
           .isDisplayed()) {
-        bicPage.clickUsingLowLevelActions("promocodePopUpThanksButton");
+        bicPage.clickUsingLowLevelActions("promoCodePopUpThanksButton");
       }
 
-      priceBeforePromo = bicPage.getValueFromGUI("promocodeBeforeDiscountPrice").trim();
-      Util.printInfo("Step : Entering promocode " + promocode + "\n" + " priceBeforePromo : "
+      priceBeforePromo = bicPage.getValueFromGUI("promoCodeBeforeDiscountPrice").trim();
+      Util.printInfo("Step : Entering promo code " + promoCode + "\n" + " priceBeforePromo : "
           + priceBeforePromo);
 
-      bicPage.clickUsingLowLevelActions("promocodeLink");
-      bicPage.clickUsingLowLevelActions("promocodeInput");
-      bicPage.populateField("promocodeInput", promocode);
-      bicPage.clickUsingLowLevelActions("promocodeSubmit");
+      bicPage.clickUsingLowLevelActions("promoCodeLink");
+      bicPage.clickUsingLowLevelActions("promoCodeInput");
+      bicPage.populateField("promoCodeInput", promoCode);
+      bicPage.clickUsingLowLevelActions("promoCodeSubmit");
       waitForLoadingSpinnerToComplete();
-      priceAfterPromo = bicPage.getValueFromGUI("promocodeAfterDiscountPrice").trim();
+      priceAfterPromo = bicPage.getValueFromGUI("promoCodeAfterDiscountPrice").trim();
 
       Util.printInfo("----------------------------------------------------------------------");
       Util.printInfo(
@@ -1362,11 +1352,11 @@ public class BICTestBase {
 
     } catch (Exception e) {
       Util.printTestFailedMessage(
-          "Unable to enter the Promocode : " + promocode + "\n" + e.getMessage());
+          "Unable to enter the promo code : " + promoCode + "\n" + e.getMessage());
     } finally {
       if (priceAfterPromo.equalsIgnoreCase(priceBeforePromo)) {
         AssertUtils
-            .fail("Even after applying the PromoCode, there is not change in the Pricing" + "\n"
+            .fail("Even after applying the promo code, there is not change in the Pricing" + "\n"
                 + "priceBeforePromo :  " + priceBeforePromo + "\n"
                 + "priceAfterPromo : " + priceAfterPromo);
       } else {
@@ -1433,10 +1423,13 @@ public class BICTestBase {
         "[data-testid=\"order-summary-section\"] .checkout--order-summary-section--submit-order  .checkout--order-summary-section--submit-order--button-container button"));
     if (submitButton.size() > 0 && !submitButton.get(0).isEnabled()) {
       Map<String, String> address = getBillingAddress(region, data.get(BICECEConstants.ADDRESS));
-      enterBillingDetails(data, address, paymentMethod, region);
+      enterBillingDetails(data, address, paymentMethod);
     }
 
-    orderNumber = submitGetOrderNumber(data);
+    if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+      submitOrder(data);
+    }
+    orderNumber = getOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1455,14 +1448,16 @@ public class BICTestBase {
       LinkedHashMap<String, String> data) {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
-    String region = data.get("US");
 
     navigateToCart(data);
     loginAccount(data);
     Util.sleep(5000);
     skipAddSeats();
 
-    orderNumber = submitGetOrderNumber(data);
+    if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+      submitOrder(data);
+    }
+    orderNumber = getOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1486,7 +1481,11 @@ public class BICTestBase {
     Util.sleep(5000);
     existingSubscriptionAddSeat(data);
     Util.printInfo("Successfully added seats.");
-    orderNumber = submitGetOrderNumber(data);
+
+    if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+      submitOrder(data);
+    }
+    orderNumber = getOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
     results.put(BICConstants.orderNumber, orderNumber);
@@ -1675,7 +1674,7 @@ public class BICTestBase {
     }
   }
 
-  private String[] getCardPaymentDetails(String paymentMethod, String region) {
+  private String[] getCardPaymentDetails(String paymentMethod) {
     debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
     return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
   }

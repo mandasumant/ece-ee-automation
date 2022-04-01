@@ -41,11 +41,6 @@ public class BICECEConstants extends BICConstants {
   public static final String ORDER_STATE = "getPOReponse_orderState";
   public static final String FULFILLMENT_STATUS = "getPOReponse_fulfillmentStatus";
   public static final String FULFILLMENT_DATE = "getPOReponse_fulfillmentDate";
-  public static final String COMPANY_NAME_DR = "companyNameDR";
-  public static final String ADDRESS_DR = "addressDR";
-  public static final String CITY_DR = "cityDR";
-  public static final String POSTAL_CODE_DR = "postalCodeDR";
-  public static final String PHONE_NUMBER_DR = "phoneNumberDR";
   public static final String ORGANIZATION_NAME = "Organization_Name";
   public static final String FULL_ADDRESS = "Full_Address";
   public static final String ZIPCODE = "Zipcode";
@@ -104,7 +99,6 @@ public class BICECEConstants extends BICConstants {
   public static final String ORDER_NUMBER = "OrderNumber  :: ";
   public static final String DOWNLOAD_FREE_TRIAL_LOGIN_FRAME = "downloadFreeTrialLoginFrame";
   public static final String MOE_LOGIN_USERNAME_FIELD = "moeLoginUsernameField";
-  public static final String CREDIT_CARD_FRAME_DR = "creditCardFrameDR";
   public static final String PRODUCT_PE_ID = "product_pe_id";
   public static final String PRODUCT_NAME = "productName";
   public static final String PRODUCTS_PATH = "productsPath";
