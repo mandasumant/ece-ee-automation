@@ -344,9 +344,10 @@ public class MOETestBase {
     String region = data.get(BICECEConstants.REGION);
     address = bicTestBase.getBillingAddress(region, data.get(BICECEConstants.ADDRESS));
 
-    bicTestBase.enterBillingDetails(data, address, paymentMethod, region);
+    bicTestBase.enterBillingDetails(data, address, paymentMethod);
 
-    String orderNumber = bicTestBase.submitGetOrderNumber(data);
+    bicTestBase.submitOrder(data);
+    String orderNumber = bicTestBase.getOrderNumber(data);
     bicTestBase.printConsole(copyCartLink, orderNumber, emailID, address, names.firstName,
         names.lastName,
         paymentMethod);
@@ -546,7 +547,10 @@ public class MOETestBase {
     Util.sleep(5000);
     bicTestBase.agreeToTerm();
 
-    return bicTestBase.submitGetOrderNumber(data);
+    if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+      bicTestBase.submitOrder(data);
+    }
+    return bicTestBase.getOrderNumber(data);
   }
 
   @Step("Emulate user")
