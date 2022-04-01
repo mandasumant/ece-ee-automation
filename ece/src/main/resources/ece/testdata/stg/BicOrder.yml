@@ -26,6 +26,7 @@ default:
   putPelicanRefundOrderUrl: "https://api.pelicanstg.autodesk.com/orders/v3/passtoken/operation"
   getSubscriptionByIdUrl: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
   postReportsFinancePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/reports/finance"
+  getPelicanBaseUrl: "https://api.pelicanstg.autodesk.com"
   getPelicanPartnerId: "$automation"
   getPriceDetails_X_E2_AppFamilyId: "9999"
   getPelicanActorSecret: "ZBMy0uiO6TSbQyESx3o/YA==:mNWJSg4T9+7uVxQ8ox/iOA=="

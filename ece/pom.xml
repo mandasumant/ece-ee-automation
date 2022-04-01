@@ -43,9 +43,22 @@
             <url>https://redshift-maven-repository.s3-website-us-east-1.amazonaws.com/release</url>
         </repository>
 
+        <repository>
+            <id>platform-automation</id>
+            <name>ArtifactoryPlatformAutomation-releases</name>
+            <url>https://art-bobcat.autodesk.com/artifactory/team-dcle-platform-automation-release
+            </url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <dependency>
+            <artifactId>bms-e2-pelican-subscription-java-client</artifactId>
+            <groupId>com.autodesk.platformautomation</groupId>
+            <scope>compile</scope>
+            <version>3.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.autodesk.testinghub</groupId>
             <artifactId>core</artifactId>
