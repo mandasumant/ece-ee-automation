@@ -348,9 +348,7 @@ public class MOETestBase {
 
     bicTestBase.submitOrder(data);
     String orderNumber = bicTestBase.getOrderNumber(data);
-    bicTestBase.printConsole(copyCartLink, orderNumber, emailID, address, names.firstName,
-        names.lastName,
-        paymentMethod);
+    bicTestBase.printConsole(orderNumber, emailID, address, names.firstName, names.lastName, paymentMethod);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
