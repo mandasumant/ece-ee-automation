@@ -108,7 +108,7 @@ public class BICOrderPromoCode extends ECETestBase {
       Util.sleep(120000);
     }
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -116,9 +116,6 @@ public class BICOrderPromoCode extends ECETestBase {
     String promotionDiscount = results.get("getPOResponse_promotionDiscount");
 
     AssertUtils.assertTrue(Float.parseFloat(promotionDiscount) > 0, "Promotion was applied");
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
 
     try {
       testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));

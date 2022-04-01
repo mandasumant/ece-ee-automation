@@ -125,10 +125,7 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     results.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(results);
@@ -204,14 +201,12 @@ public class BICOrderCreation extends ECETestBase {
     if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
     }
+
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -263,10 +258,6 @@ public class BICOrderCreation extends ECETestBase {
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
-    Util.sleep(300000);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -344,9 +335,6 @@ public class BICOrderCreation extends ECETestBase {
         e.printStackTrace();
       }
 
-      // Trigger Invoice join so that the subscription is picked up by payport
-      pelicantb.postInvoicePelicanAPI(results);
-
       // Trigger the payport renewal job to renew the subscription
       triggerPayportRenewalJob(results);
 
@@ -382,17 +370,12 @@ public class BICOrderCreation extends ECETestBase {
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Trigger Invoice job
-    pelicantb.postInvoicePelicanAPI(results);
-
-    Util.sleep(180000);
-
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
@@ -412,13 +395,10 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -520,7 +500,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Initial order validation in Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
@@ -582,13 +562,10 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -654,9 +631,6 @@ public class BICOrderCreation extends ECETestBase {
       Util.sleep(120000);
     }
 
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
-
     // Getting a PurchaseOrder details from pelican
     String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
 
@@ -678,11 +652,6 @@ public class BICOrderCreation extends ECETestBase {
       AssertUtils.fail("The product is not a meta product . Offering type is  : " + results.get(
           BICECEConstants.RESPONSE_OFFERING_TYPE));
     }
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
-
-    Util.sleep(180000);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -707,9 +676,6 @@ public class BICOrderCreation extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
 
     // Wait for subscription to show up in portal .
     Util.sleep(600000);
@@ -764,15 +730,12 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
 
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
-
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -911,7 +874,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -1002,7 +965,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -1024,11 +987,6 @@ public class BICOrderCreation extends ECETestBase {
     } catch (ParseException e) {
       e.printStackTrace();
     }
-
-    // Trigger Invoice join so that the subscription is picked up by payport
-    pelicantb.postInvoicePelicanAPI(results);
-
-    Util.sleep(60000);
 
     // Trigger the payport renewal job to renew the subscription
     triggerPayportRenewalJob(results);

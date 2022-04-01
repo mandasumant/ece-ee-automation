@@ -164,10 +164,7 @@ public class BICFinancingOrder extends ECETestBase {
     Util.sleep(120000);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     results.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(results);
@@ -202,13 +199,10 @@ public class BICFinancingOrder extends ECETestBase {
     updateTestingHub(testResults);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
-
-    // Trigger Invoice join
-    pelicantb.postInvoicePelicanAPI(results);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

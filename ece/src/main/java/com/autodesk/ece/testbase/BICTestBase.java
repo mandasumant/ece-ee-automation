@@ -1372,9 +1372,8 @@ public class BICTestBase {
     if (nonZeroTaxState.equals("undefined")) {
       return;
     }
-
     String taxValue = driver
-        .findElement(By.xpath("//p[@data-testid='checkout--order-summary-section--tax']")).getText();
+        .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax']")).getText();
     taxValue = taxValue.replaceAll("[^0-9.]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
     Util.printInfo("Tax amount is " + taxValueAmount);
