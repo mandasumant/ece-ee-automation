@@ -5,7 +5,7 @@ default:
   paymentMethod: "VISA"
   password: "iAg7eLGIEYMczxIlN8R0AA==:ewmfKH9qq0dmWn91Yw3pRA=="
   cepURL: "https://customer-int.autodesk.com/"
-  guacBaseURL: "https://checkout-publish-iac-default.checkout-apollo-int.autodesk.com/"
+  guacBaseURL: "https://checkout-apollo.autodesk.com/"
   guacDotComBaseURL: ""
   guacResourceURL: "checkout?priceIds="
   guacPriceId: "?priceIds="
@@ -29,7 +29,7 @@ default:
   postReportsFinancePelicanAPIUrl: "https://api.pelicanint.autodesk.com/orders/v3/reports/finance"
   getPelicanPartnerId: "$automation"
   getPriceDetails_X_E2_AppFamilyId: "9999"
-  getPelicanActorSecret: "ZBMy0uiO6TSbQyESx3o/YA==:mNWJSg4T9+7uVxQ8ox/iOA=="
+  getPelicanActorSecret: "CuvXm69JlLqWgFKyMDau7w==:2cY4r8CAiTXMbzDzmHC2Ng=="
   quantity: "1"
   productType: "bic"
 
