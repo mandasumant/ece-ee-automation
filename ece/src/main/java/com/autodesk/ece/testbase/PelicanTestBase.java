@@ -144,10 +144,12 @@ public class PelicanTestBase {
         results.put("response_quantityToReduce",
             String.valueOf(result.getData().getQuantityToReduce()));
         results.put("response_offeringExternalKey", result.getData().getOfferingExternalKey());
-        results.put("response_nextBillingUnitPrice",
-            result.getData().getNextBillingInfo().getUnitPrice());
-        results.put("response_nextBillingChargeAmount", result.getData().getNextBillingInfo()
-            .getChargeAmount());
+        results.put("response_nextBillingUnitPriceD",
+            result.getData().getNextBillingInfo() != null ? String.valueOf(
+                result.getData().getNextBillingInfo().getUnitPrice()) : null);
+        results.put("response_nextBillingChargeAmount",
+            result.getData().getNextBillingInfo() != null ? String.valueOf(
+                result.getData().getNextBillingInfo().getChargeAmount()) : null);
         results.put("response_endDate", result.getData().getEndDate());
         results.put("response_autoRenewEnabled",
             Boolean.toString(result.getData().getAutoRenewEnabled()));
@@ -155,7 +157,7 @@ public class PelicanTestBase {
         results.put("response_currentBillingPriceId",
             String.valueOf(result.getData().getPriceId() != null ? result.getData().getPriceId() : null));
         results.put("response_nextBillingPriceId",
-            result.getData().getNextBillingInfo().getNextBillingPriceId() != null ? String.valueOf(
+            result.getData().getNextBillingInfo() != null ? String.valueOf(
                 result.getData().getNextBillingInfo().getNextBillingPriceId())
                 : null);
         results.put("response_switchTermPriceId",
@@ -439,6 +441,7 @@ public class PelicanTestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service");
     }
+
     return results;
   }
 
