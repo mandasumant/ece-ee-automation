@@ -28,7 +28,7 @@ default:
   getSubscriptionByIdUrl: "https://api.pelicanint.autodesk.com/subscriptions/v3/passtoken"
   postReportsFinancePelicanAPIUrl: "https://api.pelicanint.autodesk.com/orders/v3/reports/finance"
   getPelicanPartnerId: "$automation"
-  getPriceDetails_X_E2_AppFamilyId: "9999"
+  getPriceDetails_X_E2_AppFamilyId: "7777"
   getPelicanActorSecret: "CuvXm69JlLqWgFKyMDau7w==:2cY4r8CAiTXMbzDzmHC2Ng=="
   quantity: "1"
   productType: "bic"
@@ -58,14 +58,14 @@ validateBicFlexOrder:
   productID: *FlexOrderPriceID
   bicFlexPriceID: *FlexOrderPriceID
   productType: "flex"
-  priceId: "31498"
+  priceId: "26865"
 
 validateBicMetaOrder:
   productID: *bicMetaPriceID
   bicNativePriceID: *bicMetaPriceID
   productName: "INFRAWORKS"
   offeringType: "META"
-  priceId: "27222"
+  priceId: "24423"
 
 validateTrialDownloadUI:
   nullTest: "1"

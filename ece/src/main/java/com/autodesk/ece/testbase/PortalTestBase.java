@@ -4,14 +4,12 @@ import static java.util.Objects.isNull;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
-import com.autodesk.testinghub.core.common.services.OxygenService;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.CustomSoftAssert;
-import com.autodesk.testinghub.core.utils.ErrorEnum;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
@@ -67,59 +65,6 @@ public class PortalTestBase {
     executor.executeScript(BICECEConstants.ARGUMENTS_CLICK, element);
   }
 
-  public String getOxygenId(HashMap<String, String> data) {
-    String userSessionID = null;
-    String emailID = data.get(TestingHubConstants.emailid);
-    OxygenService os = new OxygenService();
-
-    // 1st method from API
-    try {
-      userSessionID = os.getOxygenID(data.get(TestingHubConstants.emailid), data.get("password"));
-    } catch (Exception e1) {
-    }
-
-    // 2nd method from Portal
-    if (userSessionID == null || userSessionID.equals("")) {
-      openPortalBICLaunch(data.get(TestingHubConstants.cepURL));
-      JavascriptExecutor js;
-
-      js = (JavascriptExecutor) driver;
-      clickALLPSLink();
-      try {
-        String userCurrentData = (String) js.executeScript(
-            String.format("return window.sessionStorage.getItem('%s');", "userData"));
-        String[] temp = userCurrentData.split("\"oxygenId\":\"");
-        if (temp[1] != null) {
-          String[] sessionID = temp[1].split("\",\"");
-          userSessionID = sessionID[0];
-        }
-      } catch (Exception e) {
-        //AssertUtils.fail(ErrorEnum.PORTAL_SERVICE_DOWN.geterr());
-        Util.printError(ErrorEnum.PORTAL_SERVICE_DOWN.geterr());
-      }
-    }
-
-    // 3rd method from feature flag WebSite
-    if (userSessionID == null || userSessionID.equals("")) {
-      try {
-        openPortalURL("http://featureflag.ecs.ads.autodesk.com");
-        driver.findElement(By.xpath("//textarea[@id='id-email']")).sendKeys(emailID);
-        Util.sleep(2000);
-
-        driver.findElement(By.xpath("//button[@id='id-submit']")).click();
-        Util.sleep(5000);
-        userSessionID = driver.findElement(By.xpath("//textarea[@id='id-userId']")).getText();
-      } catch (Exception e) {
-        //e.printStackTrace();
-        Util.printError(e.getMessage());
-      } finally {
-        clickALLPSLink();
-      }
-    }
-    return userSessionID;
-  }
-
-  //@Step("launch URL in browser"+GlobalConstants.TAG_TESTINGHUB)
   public void openPortalURL(String data) {
     try {
       driver.manage().window().maximize();
@@ -134,7 +79,6 @@ public class PortalTestBase {
     }
   }
 
-  //@Step("launch URL in browser")
   public boolean openPortalBICLaunch(String data) {
     Util.printInfo("launch URL in browser");
     driver.manage().deleteAllCookies();
@@ -230,13 +174,6 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("check if all the tabs are loading in Portal ")
-  public boolean isPortalTabsVisible() {
-    boolean status = false;
-    status = isPortalElementPresent("portalProductServiceTab");
-    return status;
-  }
-
   @Step("Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionInPortal(String subscriptionId, String userName, String password) {
     boolean status = false;
@@ -252,7 +189,7 @@ public class PortalTestBase {
         //Do nothing here.
       }
 
-      if(isNull(element)) {
+      if (isNull(element)) {
         if (attempts >= 14) {
           AssertUtils.fail("All retries exhausted: Could find subscription/agreement productXpath element");
         }
@@ -274,6 +211,7 @@ public class PortalTestBase {
 
   @Step("Open Subscriptions and Contracts link in Portal")
   public void openSubscriptionsLink() {
+    //TO DO: update the method to open the url based on env once INT environment Subscriptions and Contacts page is fixed
     openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
   }
 
@@ -344,29 +282,24 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
-  public boolean validateBICOrderProductInCEP(String cepURL, String portalUserName,
+  public void validateBICOrderProductInCEP(String cepURL, String portalUserName,
       String portalPassword, String subscriptionID) {
-    boolean status = false, statusPS = false;
+    boolean status = false;
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
     }
 
-    if (isPortalTabsVisible()) {
-      try {
-        clickALLPSLink();
-        statusPS = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
-
-        status = (statusPS);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    try {
+      clickALLPSLink();
+      status = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+
     if (!status) {
       AssertUtils.fail(BICECEConstants.PRODUCT_IS_DISPLAYED_IN_PORTAL + BICECEConstants.FALSE);
     }
-
-    return status;
   }
 
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
@@ -377,63 +310,60 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
 
-    if (isPortalTabsVisible()) {
+    try {
+      clickALLPSLink();
+      JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+      portalPage.waitForPageToLoad();
+      WebElement primaryEntitlements = driver
+          .findElement(By.xpath("//*[@id='primary-entitlements']/div[2]/div"));
+      primaryEntitlements.click();
+
+      clickWithJavaScriptExecutor(javascriptExecutor, "//a[@data-action='ManageRenewal']");
+
       try {
-        clickALLPSLink();
-        JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
-        portalPage.waitForPageToLoad();
-        WebElement primaryEntitlements = driver
-            .findElement(By.xpath("//*[@id='primary-entitlements']/div[2]/div"));
-        primaryEntitlements.click();
-
-        clickWithJavaScriptExecutor(javascriptExecutor, "//a[@data-action='ManageRenewal']");
-
-        try {
-          WebElement editSwitchTermButton = driver
-              .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
-          editSwitchTermButton.click();
-        } catch (org.openqa.selenium.StaleElementReferenceException ex) {
-          WebElement editSwitchTermButton = driver
-              .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
-          editSwitchTermButton.click();
-        }
-
-        if (System.getProperty(BICECEConstants.PAYMENT)
-            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-          clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-3-year\"]");
-        } else {
-          clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-1-year\"]");
-        }
-        clickWithJavaScriptExecutor(javascriptExecutor, "//button[@data-wat-val=\"continue\"]");
-
-        Util.sleep(5000);
-        AssertUtils.assertTrue(driver
-            .findElement(By.xpath("//*[contains(text(),\"Your term change is confirmed\")]"))
-            .isDisplayed());
-
-        Util.sleep(5000);
-        portalPage.clickUsingLowLevelActions("switchTermDone");
-
-        if (System.getProperty(BICECEConstants.PAYMENT)
-            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-          AssertUtils.assertTrue(driver
-              .findElement(By.xpath("//*[starts-with(text(),\"Changes to 3-year term starting\")]"))
-              .isDisplayed());
-        } else {
-          AssertUtils.assertTrue(driver
-              .findElement(By.xpath("//*[starts-with(text(),\"Changes to 1-year term starting\")]"))
-              .isDisplayed());
-        }
-        clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
-
-        //close portal window
-        driver.close();
-
-      } catch (Exception e) {
-        e.printStackTrace();
+        WebElement editSwitchTermButton = driver
+            .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
+        editSwitchTermButton.click();
+      } catch (org.openqa.selenium.StaleElementReferenceException ex) {
+        WebElement editSwitchTermButton = driver
+            .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
+        editSwitchTermButton.click();
       }
-    }
 
+      if (System.getProperty(BICECEConstants.PAYMENT)
+          .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-3-year\"]");
+      } else {
+        clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-1-year\"]");
+      }
+      clickWithJavaScriptExecutor(javascriptExecutor, "//button[@data-wat-val=\"continue\"]");
+
+      Util.sleep(5000);
+      AssertUtils.assertTrue(driver
+          .findElement(By.xpath("//*[contains(text(),\"Your term change is confirmed\")]"))
+          .isDisplayed());
+
+      Util.sleep(5000);
+      portalPage.clickUsingLowLevelActions("switchTermDone");
+
+      if (System.getProperty(BICECEConstants.PAYMENT)
+          .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        AssertUtils.assertTrue(driver
+            .findElement(By.xpath("//*[starts-with(text(),\"Changes to 3-year term starting\")]"))
+            .isDisplayed());
+      } else {
+        AssertUtils.assertTrue(driver
+            .findElement(By.xpath("//*[starts-with(text(),\"Changes to 1-year term starting\")]"))
+            .isDisplayed());
+      }
+      clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
+
+      //close portal window
+      driver.close();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   private boolean isPortalLoginPageVisible() {
@@ -1360,7 +1290,7 @@ public class PortalTestBase {
   }
 
   @Step("CEP : META Order capture " + GlobalConstants.TAG_TESTINGHUB)
-  public boolean validateMetaOrderProductInCEP(String cepURL, String portalUserName,
+  public void validateMetaOrderProductInCEP(String cepURL, String portalUserName,
       String portalPassword, String subscriptionID) {
     boolean status = false;
     openPortalBICLaunch(cepURL);
@@ -1368,7 +1298,7 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
 
-    if (isPortalTabsVisible()) {
+    if (isPortalElementPresent("portalProductServiceTab")) {
       try {
         // The subscription id that is being displayed in Portal is different from Pelican. Hence, Checking for "Subscription ID" text
         if (System.getProperty(BICECEConstants.PAYMENT)
@@ -1383,7 +1313,6 @@ public class PortalTestBase {
     if (!status) {
       AssertUtils.fail(BICECEConstants.PRODUCT_IS_DISPLAYED_IN_PORTAL + BICECEConstants.FALSE);
     }
-    return status;
   }
 
   /**
@@ -1405,7 +1334,7 @@ public class PortalTestBase {
   @Step("Verify product is visible in Portal " + GlobalConstants.TAG_TESTINGHUB)
   public String verifyProductVisible(HashMap<String, String> results, String peIdPattern) {
     int attempts = 0;
-    Boolean status = false;
+    boolean status = false;
     String subscriptionID = null;
 
     while (attempts < 5) {

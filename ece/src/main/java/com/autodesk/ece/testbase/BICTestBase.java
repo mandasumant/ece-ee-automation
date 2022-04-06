@@ -4,7 +4,6 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
-import com.autodesk.testinghub.core.common.services.OxygenService;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -1257,10 +1256,12 @@ public class BICTestBase {
       }
     }
 
+    /* temporary commenting out
     if (data.get("productType").equals("flex")) {
       Select flexOffers = new Select(driver.findElement(By.id("product-term")));
       flexOffers.selectByVisibleText("100 Tokens");
     }
+    */
 
     data.putAll(names.getMap());
 
@@ -1398,10 +1399,12 @@ public class BICTestBase {
 
     navigateToCart(data);
 
-    switchToBICCartLoginPage();
-    loginBICAccount(data);
+    if (!data.get("guacDotComBaseURL").isEmpty()) {
+      switchToBICCartLoginPage();
+      loginBICAccount(data);
 
-    Util.sleep(3000);
+      Util.sleep(3000);
+    }
 
     // If the submit button is disabled, fill the payment information out again
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
