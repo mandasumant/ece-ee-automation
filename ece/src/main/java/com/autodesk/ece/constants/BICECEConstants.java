@@ -157,5 +157,6 @@ public class BICECEConstants extends BICConstants {
   public static final String EDU_OVERVIEW_HEADER = "Check that your information below is correct, then click Confirm";
   public static final String NA = "N/A";
   public static final String TAX_OPTION = "isTaxed";
+  public static final String GET_HELP_IFRAME = "getHelpIframe";
 }
 

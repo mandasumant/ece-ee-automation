@@ -1127,6 +1127,20 @@ public class BICTestBase {
         bicPage.waitForFieldPresent("flexTab", 5000);
         bicPage.clickUsingLowLevelActions("flexTab");
         bicPage.waitForFieldPresent("buyTokensButton", 5000);
+        Util.sleep(3000);
+
+        try {
+          WebElement getHelpIframe = bicPage
+              .getMultipleWebElementsfromField(BICECEConstants.GET_HELP_IFRAME).get(0);
+          driver.switchTo().frame(getHelpIframe);
+          bicPage.waitForFieldPresent("getHelpPopUpCloseButton", 2000);
+          bicPage.clickUsingLowLevelActions("getHelpPopUpCloseButton");
+          Util.printInfo("Get help pop up closed.");
+        } catch (Exception e) {
+          Util.printInfo("Get help pop up does not appear on the page.");
+        }
+        driver.switchTo().defaultContent();
+
         bicPage.clickUsingLowLevelActions("buyTokensButton");
       } else {
         if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {

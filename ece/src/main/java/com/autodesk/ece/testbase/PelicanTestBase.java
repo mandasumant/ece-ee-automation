@@ -2,6 +2,11 @@ package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.platformautomation.ApiClient;
+import com.autodesk.platformautomation.ApiException;
+import com.autodesk.platformautomation.Configuration;
+import com.autodesk.platformautomation.bmse2pelicansubscription.SubscriptionControllerApi;
+import com.autodesk.platformautomation.bmse2pelicansubscription.models.SubscriptionSuccess;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -97,63 +102,79 @@ public class PelicanTestBase {
 
   @Step("Order Service : Order Capture" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> getSubscriptionById(HashMap<String, String> data) {
-    String subscriptionByIdUrl = data.get("getSubscriptionByIdUrl");
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath(data.get("getPelicanBaseUrl"));
+    SubscriptionControllerApi apiInstance = new SubscriptionControllerApi(defaultClient);
 
-    subscriptionByIdUrl = addTokenInResourceUrl(subscriptionByIdUrl,
-        data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
-    HashMap<String, String> results = new HashMap<String, String>();
-    String baseURL = data.get("pelican_BaseUrl");
-    Util.printInfo("getPriceDetails baseURL : " + subscriptionByIdUrl);
     String sig_details = getPelicanSignature(data);
-    String hmacSignature = sig_details.split("::")[0];
-    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
+    String xE2PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String xE2AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
+    String xE2HMACTimestamp = sig_details.split("::")[1];
+    String xE2HMACSignature = sig_details.split("::")[0];
+    String testId = data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID);
+    Long id = Long.parseLong(testId);
+    String xRequestRef = UUID.randomUUID()
+        .toString();
 
-    String Content_Type = BICECEConstants.APPLICATION_VNDAPI_JSON;
+    HashMap<String, String> results = new HashMap<String, String>();
 
-    Map<String, String> header = new HashMap<>();
-    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
-    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
-    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
-    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
-    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
-    header.put(BICECEConstants.ACCEPT, Content_Type);
+    boolean success = false;
+    int attempt = 0;
 
-    Response response = getRestResponse(subscriptionByIdUrl, header, null);
-    String result = response.getBody().asString();
-    Util.PrintInfo(BICECEConstants.RESULT + result);
-    JsonPath js = new JsonPath(result);
-    Util.printInfo("js is:" + js);
+    while (!success) {
+      Util.printInfo("Attempt: " + attempt);
+      Util.sleep(3000);
+      attempt++;
+      if (attempt > 3) {
+        AssertUtils.fail("Unable to get a successful response for SubscriptionControllerApi#findSubscriptionById.");
+        break;
+      }
+      try {
+        SubscriptionSuccess result = apiInstance.findSubscriptionById(xE2PartnerId, xE2AppFamilyId,
+            xE2HMACTimestamp, xE2HMACSignature, id, xRequestRef);
+        Util.PrintInfo(BICECEConstants.RESULT + result);
 
-    try {
-      results.put("response_priceID",
-          js.get("data.lastBillingInfo.purchaseOrderId") != null ? Integer
-              .toString(js.get("data.lastBillingInfo.purchaseOrderId")) : null);
-      results.put("response_nextBillingDate", js.get("data.nextBillingDate"));
-      results.put("response_offeringType", js.get("data.offeringType"));
-      results.put("response_subscriptionQuantity", Integer.toString(js.get("data.quantity")));
-      results.put("response_quantityToReduce", Integer.toString(js.get("data.quantityToReduce")));
-      results.put("response_offeringExternalKey", js.get("data.offeringExternalKey"));
-      results.put("response_nextBillingUnitPrice", js.get("data.nextBillingInfo.unitPrice"));
-      results.put("response_nextBillingChargeAmount", js.get("data.nextBillingInfo.chargeAmount"));
-      results.put("response_endDate", js.get("data.endDate"));
-      results.put("response_autoRenewEnabled", Boolean.toString(js.get("data.autoRenewEnabled")));
-      results.put("response_expirationDate", js.get("data.expirationDate"));
-      results.put("response_currentBillingPriceId",
-          js.get(BICECEConstants.DATA_PRICE_ID) != null ? Integer
-              .toString(js.get(BICECEConstants.DATA_PRICE_ID)) : null);
-      results.put("response_nextBillingPriceId",
-          js.get("data.nextBillingInfo.nextBillingPriceId") != null ? Integer
-              .toString(js.get("data.nextBillingInfo.nextBillingPriceId")) : null);
-      results.put("response_switchTermPriceId", js.get("data.switchTermPriceId") != null ? Integer
-          .toString(js.get("data.switchTermPriceId")) : null);
-      results.put("response_status", js.get("data.status"));
+        results.put("response_priceID",
+            result.getData().getLastBillingInfo().getPurchaseOrderId() != null ? String.valueOf(
+                result.getData().getLastBillingInfo().getPurchaseOrderId()) : null);
+        results.put("response_nextBillingDate", result.getData().getNextBillingDate());
+        results.put("response_offeringType", String.valueOf(result.getData().getOfferingType()));
+        results.put("response_subscriptionQuantity",
+            String.valueOf(result.getData().getQuantity()));
+        results.put("response_quantityToReduce",
+            String.valueOf(result.getData().getQuantityToReduce()));
+        results.put("response_offeringExternalKey", result.getData().getOfferingExternalKey());
+        results.put("response_nextBillingUnitPriceD",
+            result.getData().getNextBillingInfo() != null ? String.valueOf(
+                result.getData().getNextBillingInfo().getUnitPrice()) : null);
+        results.put("response_nextBillingChargeAmount",
+            result.getData().getNextBillingInfo() != null ? String.valueOf(
+                result.getData().getNextBillingInfo().getChargeAmount()) : null);
+        results.put("response_endDate", result.getData().getEndDate());
+        results.put("response_autoRenewEnabled",
+            Boolean.toString(result.getData().getAutoRenewEnabled()));
+        results.put("response_expirationDate", result.getData().getExpirationDate());
+        results.put("response_currentBillingPriceId",
+            String.valueOf(result.getData().getPriceId() != null ? result.getData().getPriceId() : null));
+        results.put("response_nextBillingPriceId",
+            result.getData().getNextBillingInfo() != null ? String.valueOf(
+                result.getData().getNextBillingInfo().getNextBillingPriceId())
+                : null);
+        results.put("response_switchTermPriceId",
+            result.getData().getSwitchTermPriceId() != null ? String.valueOf(
+                result.getData().getSwitchTermPriceId()) : null);
+        results.put("response_status", String.valueOf(result.getData().getStatus()));
 
-    } catch (Exception e) {
-
-      e.printStackTrace();
+        success = true;
+      } catch (ApiException e) {
+        Util.printError("Exception when calling SubscriptionControllerApi#findSubscriptionById");
+        Util.printError("Status code: " + e.getCode());
+        Util.printError("Reason: " + e.getResponseBody());
+        Util.printError("Response headers: " + e.getResponseHeaders());
+        e.printStackTrace();
+      }
     }
+
     return results;
   }
 
@@ -420,6 +441,7 @@ public class PelicanTestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service");
     }
+
     return results;
   }
 
