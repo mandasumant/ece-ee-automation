@@ -348,9 +348,7 @@ public class MOETestBase {
 
     bicTestBase.submitOrder(data);
     String orderNumber = bicTestBase.getOrderNumber(data);
-    bicTestBase.printConsole(copyCartLink, orderNumber, emailID, address, names.firstName,
-        names.lastName,
-        paymentMethod);
+    bicTestBase.printConsole(orderNumber, emailID, address, names.firstName, names.lastName, paymentMethod);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -394,7 +392,7 @@ public class MOETestBase {
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
     bicTestBase
-        .printConsole(constructGuacMoeURL, orderNumber, emailID, address, names.firstName,
+        .printConsole(orderNumber, emailID, address, names.firstName,
             names.lastName,
             paymentMethod);
 
@@ -448,7 +446,7 @@ public class MOETestBase {
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
     bicTestBase
-        .printConsole(constructGuacMoeURL, orderNumber, emailID, address, names.firstName,
+        .printConsole(orderNumber, emailID, address, names.firstName,
             names.lastName,
             paymentMethod);
 

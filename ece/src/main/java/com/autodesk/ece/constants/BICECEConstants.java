@@ -88,6 +88,8 @@ public class BICECEConstants extends BICConstants {
   public static final String DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK = "document.getElementById('mandate-agreement').click()";
   public static final String JP_ORDER_NUMBER = "//h5[.='注文番号：']/..//p";
   public static final String GUAC_RESOURCE_URL = "guacResourceURL";
+  public static final String GUAC_PRICE_ID = "guacPriceId";
+  public static final String PRICE_ID = "priceId";
   public static final String USER_TYPE = "userType";
   public static final String FIRST_NAME1 = "firstName :: ";
   public static final String LAST_NAME1 = "lastName :: ";

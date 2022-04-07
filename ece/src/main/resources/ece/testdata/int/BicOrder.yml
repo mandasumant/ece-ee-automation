@@ -5,16 +5,17 @@ default:
   paymentMethod: "VISA"
   password: "iAg7eLGIEYMczxIlN8R0AA==:ewmfKH9qq0dmWn91Yw3pRA=="
   cepURL: "https://customer-int.autodesk.com/"
-  guacBaseURL: "https://checkout-pt.autodesk.com/"
-  guacDotComBaseURL: "https://www-pt.autodesk"
+  guacBaseURL: "https://checkout-apollo.autodesk.com/"
+  guacDotComBaseURL: ""
   guacResourceURL: "checkout?priceIds="
+  guacPriceId: "?priceIds="
   productsPath: "/products/"
   guacMoeResourceURL: "manual-order-entry?optyId="
   guacMoeDTCURL: "manual-order-entry-dtc"
-  productName: "3ds-max"
+  productName: "autocad"
   postalCode: "80202"
-  payportRenewalURL: "https://payport.bicstg.autodesk.com/services/v1/user/USER_ID/renewalPurchase"
-  payportCertificatePassphrase: "REcPO323d27LMFx5UTcyUw==:dj+KH+D46qHnbzIFOccVAA=="
+  payportRenewalURL: "https://payport.bicint.autodesk.com/services/v1/user/USER_ID/renewalPurchase"
+  payportCertificatePassphrase: "T1Cs4VRk2FU2eEW87MrkMA==:/41AWl5BPfqJ11aFLjrBvg=="
   paypalUser: "Paypal-buyer-namer@ssttest.net"
   paypalSsap: "7bxJM+6vun/DjvlSXY2/ig==:+IqEDClRWa3GI8ATrHnmRQ=="
   paypalPaymentType: "CREDIT UNION 1"
@@ -26,9 +27,10 @@ default:
   putPelicanRefundOrderUrl: "https://api.pelicanint.autodesk.com/orders/v3/passtoken/operation"
   getSubscriptionByIdUrl: "https://api.pelicanint.autodesk.com/subscriptions/v3/passtoken"
   postReportsFinancePelicanAPIUrl: "https://api.pelicanint.autodesk.com/orders/v3/reports/finance"
+  getPelicanBaseUrl: "https://api.pelicanint.autodesk.com"
   getPelicanPartnerId: "$automation"
-  getPriceDetails_X_E2_AppFamilyId: "9999"
-  getPelicanActorSecret: "ZBMy0uiO6TSbQyESx3o/YA==:mNWJSg4T9+7uVxQ8ox/iOA=="
+  getPriceDetails_X_E2_AppFamilyId: "7777"
+  getPelicanActorSecret: "CuvXm69JlLqWgFKyMDau7w==:2cY4r8CAiTXMbzDzmHC2Ng=="
   quantity: "1"
   productType: "bic"
 
@@ -36,7 +38,7 @@ default:
   priceIDFlexOrder: &FlexOrderPriceID "31498"
   bicNativePriceID: &bicNativePriceID "27239"
   bicMetaPriceID: &bicMetaPriceID "27209"
-  trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview"
+  trialDownloadUrl: ""
   account: "yfds91WdxydZM"
   emailid: "acdisttest1801@letscheck.pw"
   guacMoeSku: "057N1-WW3931-L830"
@@ -45,22 +47,26 @@ validateBicNativeOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "2"
+  priceId: "24115"
 
 validateBicRefundOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "2"
+  priceId: "24115"
 
 validateBicFlexOrder:
   productID: *FlexOrderPriceID
   bicFlexPriceID: *FlexOrderPriceID
   productType: "flex"
+  priceId: "26865"
 
 validateBicMetaOrder:
   productID: *bicMetaPriceID
   bicNativePriceID: *bicMetaPriceID
   productName: "INFRAWORKS"
   offeringType: "META"
+  priceId: "24423"
 
 validateTrialDownloadUI:
   nullTest: "1"
@@ -71,6 +77,7 @@ validateTrialDownloadUI:
 validateBicReturningUser:
   metaproductID: *bicMetaPriceID
   productID: *NativeOrderPriceID
+  priceId: "24115"
 
 validateBicAddSeats:
   productID: *NativeOrderPriceID
@@ -79,6 +86,7 @@ validateBicAddSeatNativeOrder:
   metaproductID: *bicMetaPriceID
   nativeproductID: *bicNativePriceID
   addSeatQty: "2"
+  priceId: "24115"
 
 validateBICAddSeatsFinancing:
   metaproductID: *bicMetaPriceID
@@ -90,7 +98,7 @@ validateBicReduceSeats:
   addSeatQty: "2"
 
 validateBICChangePaymentProfile:
-  getPaymentDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"
+  getPaymentDetails: "https://api.pelicanint.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"
   nativeproductID: *bicNativePriceID
   userType: "existing"
   productID: *NativeOrderPriceID
@@ -104,6 +112,7 @@ createBicOrderMoe:
 validateBicNativeOrderMoe:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
+  priceId: "24115"
 
 validateMoeOpportunityFlow:
   productID: *NativeOrderPriceID
@@ -142,6 +151,7 @@ validateRenewBicOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
+  priceId: "24115"
 
 validateBicNativeFinancingDeclinedOrder:
   productID: *NativeOrderPriceID
