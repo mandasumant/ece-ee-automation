@@ -36,6 +36,7 @@ public class BICOrderCreation extends ECETestBase {
   private static final String EMAIL = System.getProperty("email");
   private static final String defaultLocale = "en_US";
   private static final String defaultTaxOption = "undefined";
+  private static final String defaultPriceId = "24038";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   long startTime, stopTime, executionTime;
@@ -43,6 +44,7 @@ public class BICOrderCreation extends ECETestBase {
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
+  String priceId = System.getProperty(BICECEConstants.PRICE_ID);
   private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
@@ -101,6 +103,11 @@ public class BICOrderCreation extends ECETestBase {
       taxOptionEnabled = defaultTaxOption;
     }
     testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
+
+    if (priceId == null || priceId.trim().isEmpty()) {
+      priceId = defaultPriceId;
+    }
+    testDataForEachMethod.put("priceId", priceId);
 
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);

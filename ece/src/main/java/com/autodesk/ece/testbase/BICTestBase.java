@@ -1161,8 +1161,7 @@ public class BICTestBase {
       String checkoutPageIntUrl = data.get("guacBaseURL");
       String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
       constructGuacURL =
-          checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + data
-              .get(BICECEConstants.PRICE_ID);
+          checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + data.get("priceId");
       Util.printInfo("constructedCheckoutPageUrl " + constructGuacURL);
       getUrl(constructGuacURL);
     }
@@ -1489,7 +1488,10 @@ public class BICTestBase {
     navigateToCart(data);
 
     // Login to an existing account and add seats
-    loginAccount(data);
+    if (!data.get("guacDotComBaseURL").isEmpty()) {
+      loginAccount(data);
+    }
+
     Util.printInfo("Waiting for Add seats modal.");
     Util.sleep(5000);
     existingSubscriptionAddSeat(data);

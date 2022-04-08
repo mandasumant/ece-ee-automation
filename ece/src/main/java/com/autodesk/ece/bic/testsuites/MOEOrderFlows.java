@@ -29,6 +29,7 @@ public class MOEOrderFlows extends ECETestBase {
 
   private static final String defaultLocale = "en_US";
   private static final String defaultTaxOption = "undefined";
+  private static final String defaultPriceId = "24038";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
@@ -36,6 +37,7 @@ public class MOEOrderFlows extends ECETestBase {
   String locale = System.getProperty(BICECEConstants.LOCALE);
   String optyName, stage, fulfillment, account, projectCloseDate, email, sku = "";
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
+  String priceId = System.getProperty(BICECEConstants.PRICE_ID);
   private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
@@ -125,6 +127,11 @@ public class MOEOrderFlows extends ECETestBase {
       taxOptionEnabled = defaultTaxOption;
     }
     testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
+
+    if (priceId == null || priceId.trim().isEmpty()) {
+      priceId = defaultPriceId;
+    }
+    testDataForEachMethod.put("priceId", priceId);
   }
 
   @AfterMethod(alwaysRun = true)

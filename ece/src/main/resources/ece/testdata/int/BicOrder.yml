@@ -47,13 +47,11 @@ validateBicNativeOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "2"
-  priceId: "24115"
 
 validateBicRefundOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "2"
-  priceId: "24115"
 
 validateBicFlexOrder:
   productID: *FlexOrderPriceID
@@ -77,7 +75,6 @@ validateTrialDownloadUI:
 validateBicReturningUser:
   metaproductID: *bicMetaPriceID
   productID: *NativeOrderPriceID
-  priceId: "24115"
 
 validateBicAddSeats:
   productID: *NativeOrderPriceID
@@ -86,7 +83,6 @@ validateBicAddSeatNativeOrder:
   metaproductID: *bicMetaPriceID
   nativeproductID: *bicNativePriceID
   addSeatQty: "2"
-  priceId: "24115"
 
 validateBICAddSeatsFinancing:
   metaproductID: *bicMetaPriceID
@@ -112,7 +108,6 @@ createBicOrderMoe:
 validateBicNativeOrderMoe:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
-  priceId: "24115"
 
 validateMoeOpportunityFlow:
   productID: *NativeOrderPriceID
@@ -139,7 +134,7 @@ validateAlignBilling:
 
 promocodeBicOrder:
   nullTest: "1"
-  productID: "27125"
+  productID: "24115"
   languageStore: "en-US/"
 
 validateRestartSubscription:
@@ -151,7 +146,6 @@ validateRenewBicOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
-  priceId: "24115"
 
 validateBicNativeFinancingDeclinedOrder:
   productID: *NativeOrderPriceID
