@@ -535,6 +535,13 @@ public class BICTestBase {
         driver.findElement(By.xpath(stateXpath))
             .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
       }
+      String vatNumber = System.getProperty(BICECEConstants.VAT_NUMBER);
+      if(vatNumber != null && !vatNumber.isEmpty()){
+        if (bicPage.checkIfElementExistsInPage(BICECEConstants.VAT_NUMBER, 5)) {
+          Util.printInfo("Populating Vat Number: " + vatNumber);
+          bicPage.populateField("vatNumber", vatNumber);
+        }
+      }
     } catch (Exception e) {
       e.printStackTrace();
       Util.printTestFailedMessage("populateBillingDetails");
@@ -1076,7 +1083,6 @@ public class BICTestBase {
       }
     }
 
-    debugPageUrl("Step 6: Check to see if EXPORT COMPLIANCE issue or Null");
     validateBicOrderNumber(orderNumber);
 
     if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
@@ -1389,18 +1395,24 @@ public class BICTestBase {
     } else {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
+
+    data.put("finalTaxAmount" , String.valueOf(taxValueAmount));
   }
 
   private void validateBicOrderNumber(String orderNumber) {
-    Util.printInfo(orderNumber);
-    if (!((orderNumber.equalsIgnoreCase("EXPORT COMPLIANCE")) || (orderNumber
-        .equalsIgnoreCase("輸出コンプライアンス")))
-        || (orderNumber.equalsIgnoreCase("null"))) {
-      orderNumber = orderNumber.trim();
-    } else {
-      Util.printTestFailedMessage(" Cart order " + orderNumber);
-      AssertUtils.fail(" Cart order " + orderNumber);
-    }
+   if(orderNumber != null) {
+     Util.printInfo("Order No: " + orderNumber);
+     if (!((orderNumber.equalsIgnoreCase("EXPORT COMPLIANCE")) || (orderNumber
+         .equalsIgnoreCase("輸出コンプライアンス")))
+         || (orderNumber.equalsIgnoreCase("null"))) {
+       orderNumber = orderNumber.trim();
+     } else {
+       Util.printTestFailedMessage(" Cart order " + orderNumber);
+       AssertUtils.fail("Cart order " + orderNumber);
+     }
+   } else {
+     AssertUtils.fail("Can not place the order at the moment. Please contact #bic_estore.");
+   }
   }
 
   @SuppressWarnings("unused")
@@ -1416,7 +1428,6 @@ public class BICTestBase {
     if (!data.get("guacDotComBaseURL").isEmpty()) {
       switchToBICCartLoginPage();
       loginBICAccount(data);
-
       Util.sleep(3000);
     }
 
