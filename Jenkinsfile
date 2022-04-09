@@ -23,21 +23,21 @@ pipeline {
     }
 
     parameters {
-        booleanParam(name: 'CJT-STG',         defaultValue: false, description: 'Run CJT Regression on STG?')
-        booleanParam(name: 'CJT-INT',         defaultValue: false, description: 'Run CJT Regression on INT?')
+        booleanParam(name: 'CJT_STG',         defaultValue: false, description: 'Run CJT Regression on STG?')
+        booleanParam(name: 'CJT_INT',         defaultValue: false, description: 'Run CJT Regression on INT?')
 
-        booleanParam(name: 'APOLLO-US-STG',   defaultValue: false, description: 'Run US Apollo on STG?')
-        booleanParam(name: 'APOLLO-CAD-STG',  defaultValue: false, description: 'Run CAD Apollo on STG?')
-        booleanParam(name: 'APOLLO-EMEA-STG', defaultValue: false, description: 'Run EMEA Apollo on STG?')
-        booleanParam(name: 'APOLLO-AUS-STG',  defaultValue: false, description: 'Run AUS Apollo on STG?')
+        booleanParam(name: 'APOLLO_US_STG',   defaultValue: false, description: 'Run US Apollo on STG?')
+        booleanParam(name: 'APOLLO_CAD_STG',  defaultValue: false, description: 'Run CAD Apollo on STG?')
+        booleanParam(name: 'APOLLO_EMEA_STG', defaultValue: false, description: 'Run EMEA Apollo on STG?')
+        booleanParam(name: 'APOLLO_AUS_STG',  defaultValue: false, description: 'Run AUS Apollo on STG?')
 
-        booleanParam(name: 'APOLLO-US-INT',   defaultValue: false, description: 'Run US Apollo on INT?')
-        booleanParam(name: 'APOLLO-CAD-INT',  defaultValue: false, description: 'Run CAD Apollo on INT?')
-        booleanParam(name: 'APOLLO-EMEA-INT', defaultValue: false, description: 'Run EMEA Apollo on INT?')
-        booleanParam(name: 'APOLLO-AUS-INT',  defaultValue: false, description: 'Run AUS Apollo on INT?')
+        booleanParam(name: 'APOLLO_US_INT',   defaultValue: false, description: 'Run US Apollo on INT?')
+        booleanParam(name: 'APOLLO_CAD_INT',  defaultValue: false, description: 'Run CAD Apollo on INT?')
+        booleanParam(name: 'APOLLO_EMEA_INT', defaultValue: false, description: 'Run EMEA Apollo on INT?')
+        booleanParam(name: 'APOLLO_AUS_INT',  defaultValue: false, description: 'Run AUS Apollo on INT?')
 
-        booleanParam(name: 'APOLLO-STG',      defaultValue: false, description: 'Run Apollo Regression on STG?')
-        booleanParam(name: 'APOLLO-INT',      defaultValue: false, description: 'Run Apollo Regression on INT?')
+        booleanParam(name: 'APOLLO_STG',      defaultValue: false, description: 'Run Apollo Regression on STG?')
+        booleanParam(name: 'APOLLO_INT',      defaultValue: false, description: 'Run Apollo Regression on INT?')
     }
 
     stages {
@@ -47,18 +47,18 @@ pipeline {
                     anyOf {
                         triggeredBy 'TimerTrigger'
                         expression {
-                            params.CJT-STG == true ||
-                            params.CJT-INT == true ||
-                            params.APOLLO-US-STG == true ||
-                            params.APOLLO-CAD-STG == true ||
-                            params.APOLLO-EMEA-STG == true ||
-                            params.APOLLO-AUS-STG == true ||
-                            params.APOLLO-US-INT == true ||
-                            params.APOLLO-CAD-INT == true ||
-                            params.APOLLO-EMEA-INT == true ||
-                            params.APOLLO-AUS-INT == true ||
-                            params.APOLLO-STG == true ||
-                            params.APOLLO-INT == true
+                            params.CJT_STG == true ||
+                            params.CJT_INT == true ||
+                            params.APOLLO_US_STG == true ||
+                            params.APOLLO_CAD_STG == true ||
+                            params.APOLLO_EMEA_STG == true ||
+                            params.APOLLO_AUS_STG == true ||
+                            params.APOLLO_US_INT == true ||
+                            params.APOLLO_CAD_INT == true ||
+                            params.APOLLO_EMEA_INT == true ||
+                            params.APOLLO_AUS_INT == true ||
+                            params.APOLLO_STG == true ||
+                            params.APOLLO_INT == true
                         }
                     }
                 }
@@ -79,18 +79,18 @@ pipeline {
                     anyOf {
                         triggeredBy 'TimerTrigger'
                         expression {
-                            params.CJT-STG == true ||
-                            params.CJT-INT == true ||
-                            params.APOLLO-US-STG == true ||
-                            params.APOLLO-CAD-STG == true ||
-                            params.APOLLO-EMEA-STG == true ||
-                            params.APOLLO-AUS-STG == true ||
-                            params.APOLLO-US-INT == true ||
-                            params.APOLLO-CAD-INT == true ||
-                            params.APOLLO-EMEA-INT == true ||
-                            params.APOLLO-AUS-INT == true ||
-                            params.APOLLO-STG == true ||
-                            params.APOLLO-INT == true
+                            params.CJT_STG == true ||
+                            params.CJT_INT == true ||
+                            params.APOLLO_US_STG == true ||
+                            params.APOLLO_CAD_STG == true ||
+                            params.APOLLO_EMEA_STG == true ||
+                            params.APOLLO_AUS_STG == true ||
+                            params.APOLLO_US_INT == true ||
+                            params.APOLLO_CAD_INT == true ||
+                            params.APOLLO_EMEA_INT == true ||
+                            params.APOLLO_AUS_INT == true ||
+                            params.APOLLO_STG == true ||
+                            params.APOLLO_INT == true
                         }
                     }
                 }
@@ -115,18 +115,18 @@ pipeline {
                     anyOf {
                         triggeredBy 'TimerTrigger'
                         expression {
-                            params.CJT-STG == true ||
-                            params.CJT-INT == true ||
-                            params.APOLLO-US-STG == true ||
-                            params.APOLLO-CAD-STG == true ||
-                            params.APOLLO-EMEA-STG == true ||
-                            params.APOLLO-AUS-STG == true ||
-                            params.APOLLO-US-INT == true ||
-                            params.APOLLO-CAD-INT == true ||
-                            params.APOLLO-EMEA-INT == true ||
-                            params.APOLLO-AUS-INT == true ||
-                            params.APOLLO-STG == true ||
-                            params.APOLLO-INT == true
+                            params.CJT_STG == true ||
+                            params.CJT_INT == true ||
+                            params.APOLLO_US_STG == true ||
+                            params.APOLLO_CAD_STG == true ||
+                            params.APOLLO_EMEA_STG == true ||
+                            params.APOLLO_AUS_STG == true ||
+                            params.APOLLO_US_INT == true ||
+                            params.APOLLO_CAD_INT == true ||
+                            params.APOLLO_EMEA_INT == true ||
+                            params.APOLLO_AUS_INT == true ||
+                            params.APOLLO_STG == true ||
+                            params.APOLLO_INT == true
                         }
                     }
                 }
@@ -151,7 +151,7 @@ pipeline {
                 anyOf {
                     triggeredBy 'TimerTrigger'
                     expression {
-                        params.CJT-STG == true
+                        params.CJT_STG == true
                     }
                 }
             }
@@ -237,7 +237,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-STG == true
+                    params.APOLLO_STG == true
                 }
             }
             steps {
@@ -390,7 +390,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-US-STG == true
+                    params.APOLLO_US_STG == true
                 }
             }
             steps {
@@ -467,7 +467,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-CAD-STG == true
+                    params.APOLLO_CAD_STG == true
                 }
             }
             steps {
@@ -508,7 +508,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-AUS-STG == true
+                    params.APOLLO_AUS_STG == true
                 }
             }
             steps {
@@ -559,7 +559,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-EMEA-STG == true
+                    params.APOLLO_EMEA_STG == true
                 }
             }
             steps {
@@ -621,7 +621,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.REN-STG == true
+                    params.REN_STG == true
                 }
             }
             steps {
@@ -704,7 +704,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-INT == true
+                    params.APOLLO_INT == true
                 }
             }
             steps {
@@ -857,7 +857,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-US-INT == true
+                    params.APOLLO_US_INT == true
                 }
             }
             steps {
@@ -934,7 +934,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-CAD-INT == true
+                    params.APOLLO_CAD_INT == true
                 }
             }
             steps {
@@ -975,7 +975,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-AUS-INT == true
+                    params.APOLLO_AUS_INT == true
                 }
             }
             steps {
@@ -1026,7 +1026,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO-EMEA-INT == true
+                    params.APOLLO_EMEA_INT == true
                 }
             }
             steps {
@@ -1088,7 +1088,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.REN-INT == true
+                    params.REN_INT == true
                 }
             }
             steps {
@@ -1170,7 +1170,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.CJT-INT == true
+                    params.CJT_INT == true
                 }
             }
             steps {
