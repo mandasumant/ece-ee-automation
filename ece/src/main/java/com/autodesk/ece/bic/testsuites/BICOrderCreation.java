@@ -212,6 +212,9 @@ public class BICOrderCreation extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
+    //Compare tax in Checkout and Pelican
+    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT), results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 
@@ -570,6 +573,9 @@ public class BICOrderCreation extends ECETestBase {
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
+
+    //Validating the tax amount with Pelican
+    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT), results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -974,6 +980,9 @@ public class BICOrderCreation extends ECETestBase {
     // Getting a PurchaseOrder details
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
+    //Validating the tax amount with Pelican
+    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT), results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 
@@ -1048,5 +1057,15 @@ public class BICOrderCreation extends ECETestBase {
     driver.findElement(By.xpath("//settings-ui")).sendKeys(Keys.ENTER);
     WebDriverWait wait = new WebDriverWait(driver, 5);
     Util.sleep(2000);
+  }
+
+  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
+    if(checkoutTax != null) {
+      Double cartAmount = Double.valueOf(checkoutTax) * 100;
+      Double pelicanAmount = Double.valueOf(pelicanTax) * 100;
+      Util.printInfo("The total order amount on Cart " + cartAmount / 100);
+      Util.printInfo("The total order amount in Pelican " + pelicanAmount / 100);
+      AssertUtils.assertTrue(Double.compare(cartAmount, pelicanAmount) == 0, "Tax Amount in Pelican does not match with the tax amount on Checkout page");
+    }
   }
 }

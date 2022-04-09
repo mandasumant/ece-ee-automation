@@ -539,7 +539,9 @@ public class BICTestBase {
       if(vatNumber != null && !vatNumber.isEmpty()){
         if (bicPage.checkIfElementExistsInPage(BICECEConstants.VAT_NUMBER, 5)) {
           Util.printInfo("Populating Vat Number: " + vatNumber);
-          bicPage.populateField("vatNumber", vatNumber);
+          bicPage.populateField(BICECEConstants.VAT_NUMBER, vatNumber);
+          driver.findElement(By.xpath("//input[@name=\"vatNumber\"]"))
+              .sendKeys(Keys.TAB);
         }
       }
     } catch (Exception e) {
@@ -1090,7 +1092,14 @@ public class BICTestBase {
       String orderTotal = driver
           .findElement(By.xpath("//p[contains(@class,'checkout--order-confirmation--invoice-details--order-total ')]"))
           .getText();
-      AssertUtils.assertEquals(orderTotal, data.get("orderTotalCheckout"));
+
+      orderTotal = orderTotal.replaceAll("[^0-9.]", "");
+      String orderTotalCheckout =  data.get("orderTotalCheckout").replaceAll("[^0-9.]", "");
+      Util.printInfo("The total amount in Checkout page :" + orderTotalCheckout);
+      Util.printInfo("The total amount in Confirmation page :" + orderTotal);
+
+      data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
+      AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),"The checkout page total and confirmation page total do not match.");
     }
 
     return orderNumber;
@@ -1383,19 +1392,17 @@ public class BICTestBase {
         .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax']")).getText();
     taxValue = taxValue.replaceAll("[^0-9.]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
-    Util.printInfo("Tax amount is " + taxValueAmount);
-
+    data.put(BICECEConstants.FINAL_TAX_AMOUNT, String.valueOf(taxValueAmount));
+    Util.printInfo("The final Tax Amount : " + data.get(BICECEConstants.FINAL_TAX_AMOUNT));
     if (nonZeroTaxState.equals("Y")) {
-      AssertUtils.assertTrue(taxValueAmount > 0);
+      AssertUtils.assertTrue(taxValueAmount > 0,"Tax value is not greater than zero");
       Util.printInfo("This state collects tax.");
     } else if (nonZeroTaxState.equals("N")) {
-      AssertUtils.assertEquals(taxValueAmount, 0.00);
+      AssertUtils.assertEquals(taxValueAmount, 0.00, "Tax value is greater than zero");
       Util.printInfo("This state does not collect tax.");
     } else {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
-
-    data.put("finalTaxAmount" , String.valueOf(taxValueAmount));
   }
 
   private void validateBicOrderNumber(String orderNumber) {
