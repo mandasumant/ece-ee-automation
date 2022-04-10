@@ -42,6 +42,7 @@ default:
   account: "yfds91WdxydZM"
   emailid: "acdisttest1801@letscheck.pw"
   guacMoeSku: "057N1-WW3931-L830"
+  priceId: "24038"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
