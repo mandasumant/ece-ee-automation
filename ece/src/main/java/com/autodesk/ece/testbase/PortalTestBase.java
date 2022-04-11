@@ -210,9 +210,12 @@ public class PortalTestBase {
   }
 
   @Step("Open Subscriptions and Contracts link in Portal")
-  public void openSubscriptionsLink() {
-    //TO DO: update the method to open the url based on env once INT environment Subscriptions and Contacts page is fixed
-    openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
+  public void openSubscriptionsLink(HashMap<String, String> data) {
+    if (!data.get("guacDotComBaseURL").isEmpty()) {
+      openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
+    } else {
+      openPortalURL("https://int-manage.autodesk.com/billing/subscriptions-contracts");
+    }
   }
 
   @Step("Click on All Products & Services Link")
@@ -1368,13 +1371,13 @@ public class PortalTestBase {
   }
 
   @Step("Portal : Cancel subscription" + GlobalConstants.TAG_TESTINGHUB)
-  public void cancelSubscription(String portalUserName, String portalPassword)
+  public void cancelSubscription(HashMap<String, String> data, String portalUserName, String portalPassword)
       throws MetadataException {
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
     }
 
-    openSubscriptionsLink();
+    openSubscriptionsLink(data);
     clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
     closeAlertBanner();
