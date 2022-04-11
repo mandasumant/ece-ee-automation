@@ -539,7 +539,9 @@ public class BICTestBase {
       if (vatNumber != null && !vatNumber.isEmpty()) {
         if (bicPage.checkIfElementExistsInPage(BICECEConstants.VAT_NUMBER, 5)) {
           Util.printInfo("Populating Vat Number: " + vatNumber);
-          bicPage.populateField("vatNumber", vatNumber);
+          bicPage.populateField(BICECEConstants.VAT_NUMBER, vatNumber);
+          driver.findElement(By.xpath("//input[@name=\"vatNumber\"]"))
+              .sendKeys(Keys.TAB);
         }
       }
     } catch (Exception e) {
@@ -1090,7 +1092,14 @@ public class BICTestBase {
       String orderTotal = driver
           .findElement(By.xpath("//p[contains(@class,'checkout--order-confirmation--invoice-details--order-total ')]"))
           .getText();
-      AssertUtils.assertEquals(orderTotal, data.get("orderTotalCheckout"));
+
+      orderTotal = orderTotal.replaceAll("[^0-9]", "");
+      String orderTotalCheckout =  data.get("orderTotalCheckout").replaceAll("[^0-9]", "");
+      Util.printInfo("The total amount in Checkout page :" + Double.valueOf(orderTotalCheckout)/100);
+      Util.printInfo("The total amount in Confirmation page :" + Double.valueOf(orderTotal)/100);
+
+      data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
+      AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),"The checkout page total and confirmation page total do not match.");
     }
 
     return orderNumber;
@@ -1160,8 +1169,19 @@ public class BICTestBase {
       // Navigating directly to checkout page for INT env
       String checkoutPageIntUrl = data.get("guacBaseURL");
       String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
-      constructGuacURL =
-          checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + data.get("priceId");
+
+      String priceId = System.getProperty(BICECEConstants.PRICE_ID);
+      if (priceId != null && !priceId.isEmpty()) {
+        Util.printInfo("The Price is passed as parameter : " + priceId);
+      } else {
+        priceId = data.get(BICECEConstants.PRICE_ID);
+      }
+      Util.printInfo("Targetted Store : " + data.get("storeName"));
+      if(data.get("storeName").equals("STORE-EU")) {
+        constructGuacURL = checkoutPageIntUrl + data.get("countryDomain") + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
+      } else {
+        constructGuacURL =checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
+      }
       Util.printInfo("constructedCheckoutPageUrl " + constructGuacURL);
       getUrl(constructGuacURL);
     }
@@ -1381,15 +1401,15 @@ public class BICTestBase {
     }
     String taxValue = driver
         .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax']")).getText();
-    taxValue = taxValue.replaceAll("[^0-9.]", "");
+    taxValue = taxValue.replaceAll("[^0-9]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
-    Util.printInfo("Tax amount is " + taxValueAmount);
-
+    data.put(BICECEConstants.FINAL_TAX_AMOUNT, String.valueOf(taxValueAmount));
+    Util.printInfo("The final Tax Amount : " + taxValueAmount);
     if (nonZeroTaxState.equals("Y")) {
-      AssertUtils.assertTrue(taxValueAmount > 0);
+      AssertUtils.assertTrue(taxValueAmount > 0,"Tax value is  greater than zero");
       Util.printInfo("This state collects tax.");
     } else if (nonZeroTaxState.equals("N")) {
-      AssertUtils.assertEquals(taxValueAmount, 0.00);
+      AssertUtils.assertEquals(taxValueAmount, 0.00, "Tax value is equal to zero");
       Util.printInfo("This state does not collect tax.");
     } else {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");

@@ -41,6 +41,8 @@ public class BICECEConstants extends BICConstants {
   public static final String ORDER_STATE = "getPOReponse_orderState";
   public static final String FULFILLMENT_STATUS = "getPOReponse_fulfillmentStatus";
   public static final String FULFILLMENT_DATE = "getPOReponse_fulfillmentDate";
+  public static final String SUBTOTAL_WITH_TAX = "getPOResponse_subtotalAfterPromotionsWithTax";
+  public static final String FINAL_TAX_AMOUNT  = "finalTaxAmount";
   public static final String ORGANIZATION_NAME = "Organization_Name";
   public static final String FULL_ADDRESS = "Full_Address";
   public static final String ZIPCODE = "Zipcode";

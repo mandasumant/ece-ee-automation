@@ -36,7 +36,6 @@ public class BICOrderCreation extends ECETestBase {
   private static final String EMAIL = System.getProperty("email");
   private static final String defaultLocale = "en_US";
   private static final String defaultTaxOption = "undefined";
-  private static final String defaultPriceId = "24038";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   long startTime, stopTime, executionTime;
@@ -103,11 +102,6 @@ public class BICOrderCreation extends ECETestBase {
       taxOptionEnabled = defaultTaxOption;
     }
     testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
-
-    if (priceId == null || priceId.trim().isEmpty()) {
-      priceId = defaultPriceId;
-    }
-    testDataForEachMethod.put("priceId", priceId);
 
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
@@ -211,6 +205,9 @@ public class BICOrderCreation extends ECETestBase {
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
+
+    //Compare tax in Checkout and Pelican
+    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT), results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -570,6 +567,9 @@ public class BICOrderCreation extends ECETestBase {
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
+
+    //Validating the tax amount with Pelican
+    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT), results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
@@ -974,6 +974,9 @@ public class BICOrderCreation extends ECETestBase {
     // Getting a PurchaseOrder details
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
+    //Validating the tax amount with Pelican
+    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT), results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
     // Get find Subscription ById
     results.putAll(pelicantb.getSubscriptionById(results));
 
@@ -1048,5 +1051,15 @@ public class BICOrderCreation extends ECETestBase {
     driver.findElement(By.xpath("//settings-ui")).sendKeys(Keys.ENTER);
     WebDriverWait wait = new WebDriverWait(driver, 5);
     Util.sleep(2000);
+  }
+
+  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
+    if(checkoutTax != null) {
+      Double cartAmount = Double.valueOf(checkoutTax) ;
+      Double pelicanAmount = Double.valueOf(pelicanTax) ;
+      Util.printInfo("The total order amount on Cart " + cartAmount / 100);
+      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
+      AssertUtils.assertTrue(Double.compare(cartAmount/100, pelicanAmount) == 0, "Tax Amount in Pelican does not match with the tax amount on Checkout page");
+    }
   }
 }

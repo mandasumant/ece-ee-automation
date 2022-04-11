@@ -144,7 +144,7 @@ public class PelicanTestBase {
         results.put("response_quantityToReduce",
             String.valueOf(result.getData().getQuantityToReduce()));
         results.put("response_offeringExternalKey", result.getData().getOfferingExternalKey());
-        results.put("response_nextBillingUnitPriceD",
+        results.put("response_nextBillingUnitPrice",
             result.getData().getNextBillingInfo() != null ? String.valueOf(
                 result.getData().getNextBillingInfo().getUnitPrice()) : null);
         results.put("response_nextBillingChargeAmount",
@@ -430,6 +430,8 @@ public class PelicanTestBase {
           jp.get("content[0].lineItems[0].fulfillmentDate").toString());
       results.put("getPOResponse_promotionDiscount",
           jp.get("content[0].lineItems[0].lineItemTotals.promotionDiscount").toString());
+      results.put("getPOResponse_subtotalAfterPromotionsWithTax",
+          jp.get("content[0].lineItems[0].lineItemTotals.subtotalAfterPromotionsWithTax").toString());
       results.put("getPOReponse_paymentProcessor",
           jp.get("content[0].payments[0].paymentProcessor").toString());
       results.put("getPOReponse_last4Digits",
@@ -437,7 +439,6 @@ public class PelicanTestBase {
       results.put("getPOReponse_taxCode",
           jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey").toString());
       results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
-      results.put("getPOReponse_taxAmount", jp.get("content[0].taxAmount").toString());
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service");
     }
