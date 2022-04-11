@@ -144,7 +144,7 @@ public class PelicanTestBase {
         results.put("response_quantityToReduce",
             String.valueOf(result.getData().getQuantityToReduce()));
         results.put("response_offeringExternalKey", result.getData().getOfferingExternalKey());
-        results.put("response_nextBillingUnitPriceD",
+        results.put("response_nextBillingUnitPrice",
             result.getData().getNextBillingInfo() != null ? String.valueOf(
                 result.getData().getNextBillingInfo().getUnitPrice()) : null);
         results.put("response_nextBillingChargeAmount",
