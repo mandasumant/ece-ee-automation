@@ -1414,8 +1414,6 @@ public class BICTestBase {
     } else {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
-
-    data.put("finalTaxAmount", String.valueOf(taxValueAmount));
   }
 
   private void validateBicOrderNumber(String orderNumber) {
