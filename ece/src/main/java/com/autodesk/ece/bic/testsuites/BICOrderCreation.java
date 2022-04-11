@@ -900,7 +900,7 @@ public class BICOrderCreation extends ECETestBase {
             "ACTIVE");
 
     // Cancel Subscription in Portal
-    portaltb.cancelSubscription(
+    portaltb.cancelSubscription(testDataForEachMethod,
         results.get(TestingHubConstants.emailid), PASSWORD);
 
     // The End Date of the subscription should be the same as the Next Billing Date

@@ -536,7 +536,7 @@ public class BICTestBase {
             .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
       }
       String vatNumber = System.getProperty(BICECEConstants.VAT_NUMBER);
-      if(vatNumber != null && !vatNumber.isEmpty()){
+      if (vatNumber != null && !vatNumber.isEmpty()) {
         if (bicPage.checkIfElementExistsInPage(BICECEConstants.VAT_NUMBER, 5)) {
           Util.printInfo("Populating Vat Number: " + vatNumber);
           bicPage.populateField("vatNumber", vatNumber);
@@ -1395,23 +1395,23 @@ public class BICTestBase {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
 
-    data.put("finalTaxAmount" , String.valueOf(taxValueAmount));
+    data.put("finalTaxAmount", String.valueOf(taxValueAmount));
   }
 
   private void validateBicOrderNumber(String orderNumber) {
-   if(orderNumber != null) {
-     Util.printInfo("Order No: " + orderNumber);
-     if (!((orderNumber.equalsIgnoreCase("EXPORT COMPLIANCE")) || (orderNumber
-         .equalsIgnoreCase("輸出コンプライアンス")))
-         || (orderNumber.equalsIgnoreCase("null"))) {
-       orderNumber = orderNumber.trim();
-     } else {
-       Util.printTestFailedMessage(" Cart order " + orderNumber);
-       AssertUtils.fail("Cart order " + orderNumber);
-     }
-   } else {
-     AssertUtils.fail("Can not place the order at the moment. Please contact #bic_estore.");
-   }
+    if (orderNumber != null) {
+      Util.printInfo("Order No: " + orderNumber);
+      if (!((orderNumber.equalsIgnoreCase("EXPORT COMPLIANCE")) || (orderNumber
+          .equalsIgnoreCase("輸出コンプライアンス")))
+          || (orderNumber.equalsIgnoreCase("null"))) {
+        orderNumber = orderNumber.trim();
+      } else {
+        Util.printTestFailedMessage(" Cart order " + orderNumber);
+        AssertUtils.fail("Cart order " + orderNumber);
+      }
+    } else {
+      AssertUtils.fail("Can not place the order at the moment. Please contact #bic_estore.");
+    }
   }
 
   @SuppressWarnings("unused")
@@ -1462,7 +1462,9 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<>();
 
     navigateToCart(data);
-    loginAccount(data);
+    if (!data.get("guacDotComBaseURL").isEmpty()) {
+      loginAccount(data);
+    }
     Util.sleep(5000);
     skipAddSeats();
 
