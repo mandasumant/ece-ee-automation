@@ -1055,11 +1055,11 @@ public class BICOrderCreation extends ECETestBase {
 
   public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
     if(checkoutTax != null) {
-      Double cartAmount = Double.valueOf(checkoutTax) * 100;
-      Double pelicanAmount = Double.valueOf(pelicanTax) * 100;
+      Double cartAmount = Double.valueOf(checkoutTax) ;
+      Double pelicanAmount = Double.valueOf(pelicanTax) ;
       Util.printInfo("The total order amount on Cart " + cartAmount / 100);
-      Util.printInfo("The total order amount in Pelican " + pelicanAmount / 100);
-      AssertUtils.assertTrue(Double.compare(cartAmount, pelicanAmount) == 0, "Tax Amount in Pelican does not match with the tax amount on Checkout page");
+      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
+      AssertUtils.assertTrue(Double.compare(cartAmount/100, pelicanAmount) == 0, "Tax Amount in Pelican does not match with the tax amount on Checkout page");
     }
   }
 }
