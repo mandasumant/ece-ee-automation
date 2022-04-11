@@ -1169,8 +1169,15 @@ public class BICTestBase {
       // Navigating directly to checkout page for INT env
       String checkoutPageIntUrl = data.get("guacBaseURL");
       String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
+
+      String priceId = System.getProperty(BICECEConstants.PRICE_ID);
+      if (priceId != null && !priceId.isEmpty()) {
+        Util.printInfo("The Price is passed as parameter : " + priceId);
+      } else {
+        priceId = data.get(BICECEConstants.PRICE_ID);
+      }
       constructGuacURL =
-          checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + data.get("priceId");
+          checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
       Util.printInfo("constructedCheckoutPageUrl " + constructGuacURL);
       getUrl(constructGuacURL);
     }
