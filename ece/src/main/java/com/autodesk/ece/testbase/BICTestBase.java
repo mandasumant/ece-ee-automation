@@ -1176,8 +1176,12 @@ public class BICTestBase {
       } else {
         priceId = data.get(BICECEConstants.PRICE_ID);
       }
-      constructGuacURL =
-          checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
+      Util.printInfo("Targetted Store : " + data.get("storeName"));
+      if(data.get("storeName").equals("STORE-EU")) {
+        constructGuacURL = checkoutPageIntUrl + data.get("countryDomain") + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
+      } else {
+        constructGuacURL =checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
+      }
       Util.printInfo("constructedCheckoutPageUrl " + constructGuacURL);
       getUrl(constructGuacURL);
     }
@@ -1400,7 +1404,7 @@ public class BICTestBase {
     taxValue = taxValue.replaceAll("[^0-9]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
     data.put(BICECEConstants.FINAL_TAX_AMOUNT, String.valueOf(taxValueAmount));
-    Util.printInfo("The final Tax Amount : " + data.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    Util.printInfo("The final Tax Amount : " + taxValueAmount);
     if (nonZeroTaxState.equals("Y")) {
       AssertUtils.assertTrue(taxValueAmount > 0,"Tax value is  greater than zero");
       Util.printInfo("This state collects tax.");
