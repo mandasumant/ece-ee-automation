@@ -1094,12 +1094,13 @@ public class BICTestBase {
           .getText();
 
       orderTotal = orderTotal.replaceAll("[^0-9]", "");
-      String orderTotalCheckout =  data.get("orderTotalCheckout").replaceAll("[^0-9]", "");
-      Util.printInfo("The total amount in Checkout page :" + Double.valueOf(orderTotalCheckout)/100);
-      Util.printInfo("The total amount in Confirmation page :" + Double.valueOf(orderTotal)/100);
+      String orderTotalCheckout = data.get("orderTotalCheckout").replaceAll("[^0-9]", "");
+      Util.printInfo("The total amount in Checkout page :" + Double.valueOf(orderTotalCheckout) / 100);
+      Util.printInfo("The total amount in Confirmation page :" + Double.valueOf(orderTotal) / 100);
 
       data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
-      AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),"The checkout page total and confirmation page total do not match.");
+      AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
+          "The checkout page total and confirmation page total do not match.");
     }
 
     return orderNumber;
@@ -1129,8 +1130,8 @@ public class BICTestBase {
           System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
               BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
 
-        constructGuacURL = guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
-            .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
+      constructGuacURL = guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
+          .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
 
       Util.printInfo("constructGuacURL " + constructGuacURL);
       getUrl(constructGuacURL);
@@ -1182,7 +1183,7 @@ public class BICTestBase {
             checkoutPageIntUrl + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get(BICECEConstants.GUAC_PRICE_ID)
                 + priceId;
       } else {
-        constructGuacURL =checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
+        constructGuacURL = checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
       }
       Util.printInfo("constructedCheckoutPageUrl " + constructGuacURL);
       getUrl(constructGuacURL);
@@ -1408,7 +1409,7 @@ public class BICTestBase {
     data.put(BICECEConstants.FINAL_TAX_AMOUNT, String.valueOf(taxValueAmount));
     Util.printInfo("The final Tax Amount : " + taxValueAmount);
     if (nonZeroTaxState.equals("Y")) {
-      AssertUtils.assertTrue(taxValueAmount > 0,"Tax value is  greater than zero");
+      AssertUtils.assertTrue(taxValueAmount > 0, "Tax value is greater than zero");
       Util.printInfo("This state collects tax.");
     } else if (nonZeroTaxState.equals("N")) {
       AssertUtils.assertEquals(taxValueAmount, 0.00, "Tax value is equal to zero");
