@@ -1369,7 +1369,7 @@ public class PortalTestBase {
   }
 
   @Step("Portal : Cancel subscription" + GlobalConstants.TAG_TESTINGHUB)
-  public void cancelSubscription(HashMap<String, String> data, String portalUserName, String portalPassword)
+  public void cancelSubscription(String portalUserName, String portalPassword)
       throws MetadataException {
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
