@@ -33,7 +33,7 @@ public class BICOrderPromoCode extends ECETestBase {
   public void beforeClass() {
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-    String localeConfigFile = "LOCALE_CONFIG";
+    String localeConfigFile = "LOCALE_CONFIG_" + GlobalConstants.ENV.toUpperCase();
     localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
   }
 
