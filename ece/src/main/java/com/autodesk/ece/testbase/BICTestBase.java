@@ -1442,7 +1442,7 @@ public class BICTestBase {
 
     navigateToCart(data);
 
-    if (!data.get("guacDotComBaseURL").isEmpty()) {
+    if (!GlobalConstants.getENV().equals("INT")) {
       switchToBICCartLoginPage();
       loginBICAccount(data);
       Util.sleep(3000);
@@ -1480,7 +1480,7 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<>();
 
     navigateToCart(data);
-    if (!data.get("guacDotComBaseURL").isEmpty()) {
+    if (!GlobalConstants.getENV().equals("INT")) {
       loginAccount(data);
     }
     Util.sleep(5000);
@@ -1508,7 +1508,7 @@ public class BICTestBase {
     navigateToCart(data);
 
     // Login to an existing account and add seats
-    if (!data.get("guacDotComBaseURL").isEmpty()) {
+    if (!GlobalConstants.getENV().equals("INT")) {
       loginAccount(data);
     }
 

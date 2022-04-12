@@ -210,8 +210,8 @@ public class PortalTestBase {
   }
 
   @Step("Open Subscriptions and Contracts link in Portal")
-  public void openSubscriptionsLink(HashMap<String, String> data) {
-    if (!data.get("guacDotComBaseURL").isEmpty()) {
+  public void openSubscriptionsLink() {
+    if (!GlobalConstants.getENV().equals("INT")) {
       openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
     } else {
       openPortalURL("https://int-manage.autodesk.com/billing/subscriptions-contracts");
@@ -220,7 +220,6 @@ public class PortalTestBase {
 
   @Step("Click on All Products & Services Link")
   public void clickALLPSLink() {
-    boolean status = false;
     try {
       // portalPage.click("portalAllPSLink");
       // portalPage.clickUsingLowLevelActions("portalAllPSLink");
@@ -232,7 +231,6 @@ public class PortalTestBase {
       // portalPage.waitForPageToLoad();
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
-      status = true;
       // driver.findElement(By.xpath("//a[contains(text(),'All Products & Services')]")).click();
     } catch (Exception e) {
       e.printStackTrace();
@@ -1377,7 +1375,7 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
 
-    openSubscriptionsLink(data);
+    openSubscriptionsLink();
     clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
     closeAlertBanner();
