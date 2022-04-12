@@ -1129,9 +1129,8 @@ public class BICTestBase {
           System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
               BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
 
-      constructGuacURL =
-          guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
-              .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
+        constructGuacURL = guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
+            .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
 
       Util.printInfo("constructGuacURL " + constructGuacURL);
       getUrl(constructGuacURL);
@@ -1178,7 +1177,8 @@ public class BICTestBase {
       }
       Util.printInfo("Targetted Store : " + data.get("storeName"));
       if(data.get("storeName").equals("STORE-EU")) {
-        constructGuacURL = checkoutPageIntUrl + data.get("countryDomain") + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
+        constructGuacURL =
+            checkoutPageIntUrl + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
       } else {
         constructGuacURL =checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
       }
