@@ -1176,9 +1176,11 @@ public class BICTestBase {
         priceId = data.get(BICECEConstants.PRICE_ID);
       }
       Util.printInfo("Targetted Store : " + data.get("storeName"));
-      if(data.get("storeName").equals("STORE-EU")) {
+
+      if (data.get("storeName").equals("STORE-EU") || data.get("storeName").equals("STORE-AUS")) {
         constructGuacURL =
-            checkoutPageIntUrl + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
+            checkoutPageIntUrl + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get(BICECEConstants.GUAC_PRICE_ID)
+                + priceId;
       } else {
         constructGuacURL =checkoutPageIntUrl + locale + data.get(BICECEConstants.GUAC_PRICE_ID) + priceId;
       }
