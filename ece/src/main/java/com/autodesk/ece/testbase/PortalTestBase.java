@@ -211,13 +211,15 @@ public class PortalTestBase {
 
   @Step("Open Subscriptions and Contracts link in Portal")
   public void openSubscriptionsLink() {
-    //TO DO: update the method to open the url based on env once INT environment Subscriptions and Contacts page is fixed
-    openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
+    if (!GlobalConstants.getENV().equals("INT")) {
+      openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
+    } else {
+      openPortalURL("https://int-manage.autodesk.com/billing/subscriptions-contracts");
+    }
   }
 
   @Step("Click on All Products & Services Link")
   public void clickALLPSLink() {
-    boolean status = false;
     try {
       // portalPage.click("portalAllPSLink");
       // portalPage.clickUsingLowLevelActions("portalAllPSLink");
@@ -229,7 +231,6 @@ public class PortalTestBase {
       // portalPage.waitForPageToLoad();
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
-      status = true;
       // driver.findElement(By.xpath("//a[contains(text(),'All Products & Services')]")).click();
     } catch (Exception e) {
       e.printStackTrace();

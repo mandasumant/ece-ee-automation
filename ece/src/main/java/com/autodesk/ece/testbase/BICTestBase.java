@@ -536,7 +536,7 @@ public class BICTestBase {
             .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
       }
       String vatNumber = System.getProperty(BICECEConstants.VAT_NUMBER);
-      if(vatNumber != null && !vatNumber.isEmpty()){
+      if (vatNumber != null && !vatNumber.isEmpty()) {
         if (bicPage.checkIfElementExistsInPage(BICECEConstants.VAT_NUMBER, 5)) {
           Util.printInfo("Populating Vat Number: " + vatNumber);
           bicPage.populateField(BICECEConstants.VAT_NUMBER, vatNumber);
@@ -1419,7 +1419,7 @@ public class BICTestBase {
   }
 
   private void validateBicOrderNumber(String orderNumber) {
-    if(orderNumber != null) {
+    if (orderNumber != null) {
       Util.printInfo("Order No: " + orderNumber);
       if (!((orderNumber.equalsIgnoreCase("EXPORT COMPLIANCE")) || (orderNumber
           .equalsIgnoreCase("輸出コンプライアンス")))
@@ -1444,7 +1444,7 @@ public class BICTestBase {
 
     navigateToCart(data);
 
-    if (!data.get("guacDotComBaseURL").isEmpty()) {
+    if (!GlobalConstants.getENV().equals("INT")) {
       switchToBICCartLoginPage();
       loginBICAccount(data);
       Util.sleep(3000);
@@ -1482,7 +1482,9 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<>();
 
     navigateToCart(data);
-    loginAccount(data);
+    if (!GlobalConstants.getENV().equals("INT")) {
+      loginAccount(data);
+    }
     Util.sleep(5000);
     skipAddSeats();
 
@@ -1508,7 +1510,7 @@ public class BICTestBase {
     navigateToCart(data);
 
     // Login to an existing account and add seats
-    if (!data.get("guacDotComBaseURL").isEmpty()) {
+    if (!GlobalConstants.getENV().equals("INT")) {
       loginAccount(data);
     }
 
