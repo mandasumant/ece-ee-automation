@@ -430,7 +430,7 @@
     currencyStore: "AUD"
     countryDomain: "en-AU"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
-    address: "AutodeskAU@19728 Diamond Junctions@Osinskiton@96960@397202088@Marshall Island"
+    address: "AutodeskAU@PO Box 1258@Majuro@96960@397202088@Marshall Island"
     isTaxed: "N"
 
   en_NU:
