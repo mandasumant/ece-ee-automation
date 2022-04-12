@@ -238,6 +238,18 @@ public class BICOrderCreation extends ECETestBase {
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
 
+    //Tibco call to SAP, waits for Create Order call to be successful
+    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber),TestingHubConstants.tibco_createorder);
+
+    //Returns SAP Order number
+    String orderNumberSAP = getSAPOrderNumberUsingPO(results.get(BICConstants.orderNumber));
+    Util.printInfo("SAP order Number: " + orderNumberSAP);
+
+    //Put the SAP Order number into results map
+    results.put("SAPOrderNumber", orderNumberSAP);
+
+    updateTestingHub(results);
+
   }
 
   @Test(groups = {
@@ -598,6 +610,18 @@ public class BICOrderCreation extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     updateTestingHub(testResults);
+
+    //Tibco call to SAP, waits for Create Order call to be successful
+    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber),TestingHubConstants.tibco_createorder);
+
+    //Returns SAP Order number
+    String orderNumberSAP = getSAPOrderNumberUsingPO(results.get(BICConstants.orderNumber));
+    Util.printInfo("SAP order Number: " + orderNumberSAP);
+
+    //Put the SAP Order number into results map
+    results.put("SAPOrderNumber", orderNumberSAP);
+
+    updateTestingHub(results);
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
@@ -1026,6 +1050,18 @@ public class BICOrderCreation extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
+
+    //Tibco call to SAP, waits for Create Order call to be successful
+    tibcotb.waitTillProcessCompletes(results.get(BICConstants.orderNumber),TestingHubConstants.tibco_createorder);
+
+    //Returns SAP Order number
+    String orderNumberSAP = getSAPOrderNumberUsingPO(results.get(BICConstants.orderNumber));
+    Util.printInfo("SAP order Number: " + orderNumberSAP);
+
+    //Put the SAP Order number into results map
+    results.put("SAPOrderNumber", orderNumberSAP);
+
+    updateTestingHub(results);
 
   }
 
