@@ -15,6 +15,7 @@ import com.google.common.base.Strings;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -725,8 +726,6 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(results);
     testDataForEachMethod.putAll(results);
 
-    resetDriver();
-
     testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get(
         BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing second order for the returning user.");
@@ -1052,7 +1051,7 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(2000);
     driver.get("chrome://settings/clearBrowserData");
     driver.findElement(By.xpath("//settings-ui")).sendKeys(Keys.ENTER);
-    WebDriverWait wait = new WebDriverWait(driver, 5);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     Util.sleep(2000);
   }
 

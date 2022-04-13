@@ -16,6 +16,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -209,7 +210,7 @@ public class EDUTestBase {
       String sheerUploadLocator = eduPage.getFirstFieldLocator("sheerUpload");
       String signupSuccessLocator = eduPage.getFirstFieldLocator("eduSignSuccess");
 
-      WebDriverWait wait = new WebDriverWait(driver, 60);
+      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
       wait.until(ExpectedConditions.or(
           ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(sheerUploadLocator)),
           ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(signupSuccessLocator))
@@ -316,7 +317,7 @@ public class EDUTestBase {
   @Step("Verify Education Status" + GlobalConstants.TAG_TESTINGHUB)
   private void verifyEducationStatus() {
     String xPath = eduPage.getFirstFieldLocator("eduStatus");
-    WebDriverWait wait = new WebDriverWait(driver, 30);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
     String status = driver.findElement(By.xpath(xPath)).getText();
     Util.printInfo("Current status: " + status);
@@ -372,7 +373,7 @@ public class EDUTestBase {
     Util.sleep(2500);
 
     // Wait for the download button to appear
-    WebDriverWait wait = new WebDriverWait(driver, 20);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id(websdk)));
 
     // Click on the download button
@@ -459,7 +460,7 @@ public class EDUTestBase {
       eduPage.clickUsingLowLevelActions("educationConfirmButton");
 
       // Wait time because it takes up to 15 sec sometimes to load assignUsersButton
-      WebDriverWait wait = new WebDriverWait(driver, 15);
+      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
       wait.until(
           ExpectedConditions.invisibilityOfElementLocated(By.className("model-body--loading")));
 

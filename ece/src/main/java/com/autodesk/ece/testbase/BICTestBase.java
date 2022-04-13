@@ -17,6 +17,7 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -214,30 +215,27 @@ public class BICTestBase {
 
   @Step("Login BIC account")
   public void loginBICAccount(HashMap<String, String> data) {
+    bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     Util.printInfo(BICECEConstants.AUTODESK_ID + " is Present " + bicPage
         .isFieldPresent(BICECEConstants.AUTODESK_ID));
     bicPage.click(BICECEConstants.AUTODESK_ID);
-    bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, data.get(BICConstants.emailid));
     bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
-    Util.sleep(5000);
-    bicPage.click(BICECEConstants.LOGIN_PASSWORD);
+    Util.sleep(3000);
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 30000);
+    bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.populateField(BICECEConstants.LOGIN_PASSWORD,
         ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
+    bicPage.waitForField(BICECEConstants.LOGIN_BUTTON, true, 30000);
     bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
-    bicPage.waitForPageToLoad();
-    Util.sleep(5000);
-    boolean status =
-        bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK) || bicPage.isFieldPresent(
-            BICECEConstants.GET_STARTED_SKIP_LINK)
-            || bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK);
+
+    bicPage.waitForField(BICECEConstants.GET_STARTED_SKIP_LINK, true, 30000);
+
+    boolean status = bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK);
 
     if (status) {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
     }
-
-    waitForLoadingSpinnerToComplete();
 
     skipAddSeats();
 
@@ -250,30 +248,49 @@ public class BICTestBase {
    */
   @Step("Skip add seats modal")
   public void skipAddSeats() {
-    Util.printInfo("Finding the skip Button");
-    Util.sleep(5000);
+    Boolean isSkipAddSeatsDisplayed = true;
+    Integer attempt = 0;
 
-    try {
-      int count = 0;
-      while (driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]"))
-          .isDisplayed()) {
-        Util.printInfo("Add seats modal is present");
-        driver.findElement(By.xpath("//*[@data-testid=\"addSeats-modal-skip-button\"]")).click();
-        Util.sleep(3000);
-        count++;
-        if (count > 3) {
-          AssertUtils.fail("Failed to find or click on Skip Add seats button.");
-          break;
-        }
+    Util.printInfo("Finding the 'Skip' button");
+    while (isSkipAddSeatsDisplayed) {
+      Util.sleep(3000);
+      attempt++;
+
+      if (attempt > 4) {
+        Util.printInfo("Retry logic: Failed to find or click on 'Skip' button, attempt, #" + attempt);
+        Util.printInfo("Session Storage: set 'nonsensitiveHasAddSeatsBeenProcessed' to true.");
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasAddSeatsBeenProcessed\",\"true\");");
+        driver.navigate().refresh();
+        waitForLoadingSpinnerToComplete();
+        break;
       }
-    } catch (Exception e) {
-      Util.printInfo("Unable to skip 'Add Seats' modal");
+
+      try {
+        Util.printInfo("Attempt: " + attempt);
+        bicPage.waitForField("addSeatsReturnUser", true, 30000);
+        isSkipAddSeatsDisplayed = driver.findElement(
+            By.xpath(bicPage.getFirstFieldLocator("addSeatsReturnUser"))).isDisplayed();
+        Util.printInfo("The 'Skip' button from add seats modal is displayed. Attempt no " + attempt + " to close it.");
+        bicPage.clickUsingLowLevelActions("addSeatsReturnUser");
+        Util.sleep(2000);
+        Util.printInfo("Click action performed on 'Skip' button from add seats modal.");
+      } catch (Exception e) {
+        Util.printInfo("The 'Skip' button from add seats modal is not present.");
+        isSkipAddSeatsDisplayed = false;
+      }
+    }
+
+    List<WebElement> submitButton = driver.findElements(By.cssSelector(
+        "[data-testid=\"order-summary-section\"] .checkout--order-summary-section--submit-order .checkout--order-summary-section--submit-order--button-container button"));
+    if (submitButton.size() == 0) {
+      AssertUtils.fail("The 'Submit order' button is not displayed.");
     }
   }
 
   @Step("Wait for loading spinner to complete")
   public void waitForLoadingSpinnerToComplete() {
-    Util.sleep(2000);
+    Util.sleep(5000);
     try {
       int count = 0;
       while (driver.findElement(By.xpath("//*[@data-testid=\"loading\"]"))
@@ -356,7 +373,13 @@ public class BICTestBase {
     Util.sleep(5000);
     bicPage.waitForField("guacAddToCart", true, 3000);
     bicPage.clickToSubmit("guacAddToCart", 3000);
-    bicPage.waitForPageToLoad();
+
+    try {
+      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+      wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id=\"checkout\"]")));
+    } catch (Exception e) {
+      AssertUtils.fail("Unable to redirect to checkout page.");
+    }
   }
 
   @Step("Populate billing address")
@@ -499,7 +522,7 @@ public class BICTestBase {
       stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
 
-      WebDriverWait wait = new WebDriverWait(driver, 60);
+      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
       status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
 
@@ -1033,7 +1056,7 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-          "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
         Util.printWarning(
             "Export compliance issue is present. Checking for order number in the Pelican response");
@@ -1053,7 +1076,7 @@ public class BICTestBase {
     debugPageUrl("Step 1: Check order number is Null");
     try {
       orderNumber = driver.findElement(By.xpath(
-          "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+              "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
           .getText();
     } catch (Exception e) {
       debugPageUrl("Step 2: Check order number is Null");
@@ -1070,7 +1093,7 @@ public class BICTestBase {
       bicPage.waitForPageToLoad();
       try {
         orderNumber = driver.findElement(By.xpath(
-            "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+                "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
             .getText();
       } catch (Exception e) {
         debugPageUrl("Step 4: Check order number is Null");
@@ -1486,10 +1509,12 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<>();
 
     navigateToCart(data);
+
     if (!GlobalConstants.getENV().equals("INT")) {
       loginAccount(data);
     }
     Util.sleep(5000);
+
     skipAddSeats();
 
     if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
@@ -1557,7 +1582,7 @@ public class BICTestBase {
       if (count > 3) {
         break;
       }
-    } while (!(new WebDriverWait(driver, 20).until(
+    } while (!(new WebDriverWait(driver, Duration.ofSeconds(20)).until(
         webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState")
             .equals("complete"))));
   }

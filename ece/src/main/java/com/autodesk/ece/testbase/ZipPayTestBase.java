@@ -8,6 +8,7 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +57,7 @@ public class ZipPayTestBase {
     String verificationCodeXPath = zipPage.getFirstFieldLocator(ZIP_PAY_VERIFICATION_CODE_KEY);
     String paymentOptionXPath = zipPage.getFirstFieldLocator(ZIP_PAY_OPTION);
 
-    WebDriverWait wait = new WebDriverWait(driver, 10);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     wait.until(ExpectedConditions.or(
         ExpectedConditions.presenceOfElementLocated(By.xpath(paymentOptionXPath)),
         ExpectedConditions.presenceOfElementLocated(By.xpath(verificationCodeXPath))
@@ -108,7 +109,7 @@ public class ZipPayTestBase {
       zipPage.click("zipPayLogin");
 
       try {
-        WebDriverWait wait = new WebDriverWait(driver, 30);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(loginXPath)));
       } catch (Exception e) {
         Util.printWarning("Zip login button still present after login attempt");
@@ -138,7 +139,7 @@ public class ZipPayTestBase {
       zipPage.click("zipPayVerificationSubmit");
 
       try {
-        WebDriverWait wait = new WebDriverWait(driver, 30);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(verifyXPath)));
       } catch (Exception e) {
         Util.printWarning("Zip verify button still present after verify attempt");
@@ -245,7 +246,7 @@ public class ZipPayTestBase {
     String smsVerificationXPath = zipPage.getFirstFieldLocator("zipPayVerificationTitle");
     String amountXPath = zipPage.getFirstFieldLocator(ZIP_PAY_DASHBOARD_AMOUNT);
 
-    WebDriverWait wait = new WebDriverWait(driver, 60);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
     wait.until(ExpectedConditions.or(
         ExpectedConditions.presenceOfElementLocated(By.xpath(amountXPath)),
         ExpectedConditions.presenceOfElementLocated(By.xpath(smsVerificationXPath))

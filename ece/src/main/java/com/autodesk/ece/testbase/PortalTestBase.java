@@ -15,6 +15,7 @@ import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -1170,7 +1171,7 @@ public class PortalTestBase {
     }
 
     Util.sleep(3000);
-    WebDriverWait wait = new WebDriverWait(driver, 60);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(orgNameXpath)));
     status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
 
