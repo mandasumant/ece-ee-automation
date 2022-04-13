@@ -1048,6 +1048,7 @@ public class BICOrderCreation extends ECETestBase {
     driver.manage().deleteAllCookies();
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("localStorage.clear();sessionStorage.clear();");
+    getBicTestBase().setStorageData();
     Util.sleep(2000);
     driver.get("chrome://settings/clearBrowserData");
     driver.findElement(By.xpath("//settings-ui")).sendKeys(Keys.ENTER);

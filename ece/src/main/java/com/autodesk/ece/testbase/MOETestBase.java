@@ -87,7 +87,7 @@ public class MOETestBase {
 
     // Navigate to Url
     bicTestBase.getUrl(constructMoeURLWithOpptyId);
-    bicTestBase.disableChatSession();
+    bicTestBase.setStorageData();
 
     // TODO: Validate that the correct locale has been loaded i.e. the locale on GUAC MOE matches the country value that's in the Opportunity in Salesforce.
 

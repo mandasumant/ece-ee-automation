@@ -1134,7 +1134,7 @@ public class BICTestBase {
 
       Util.printInfo("constructGuacURL " + constructGuacURL);
       getUrl(constructGuacURL);
-      disableChatSession();
+      setStorageData();
 
       // Selecting monthly for Non-Flex, Non-Financing
       if (productType.equals("flex")) {
@@ -1219,10 +1219,13 @@ public class BICTestBase {
     return results;
   }
 
-  public void disableChatSession() {
+  public void setStorageData() {
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
+      Util.printInfo("Session Storage: set 'nonsensitiveHasProactiveChatLaunched' to true.");
       js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");");
+      Util.printInfo("Local Storage: set 'usi_launched' to true.");
+      js.executeScript("window.localStorage.setItem(\"usi_launched\",\"true\");");
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       e2.printStackTrace();
