@@ -430,7 +430,7 @@
     currencyStore: "AUD"
     countryDomain: ".com.au"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
-    address: "AutodeskAU@19728 Diamond Junctions@Osinskiton@96960@397202088@Marshall Island"
+    address: "AutodeskAU@PO Box 1258@Majuro@96960@397202088@Marshall Island"
     isTaxed: "N"
 
   en_NU:
@@ -457,7 +457,7 @@
     currencyStore: "AUD"
     countryDomain: ".com.au"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
-    address: "AutodeskAU@742 Gina Stream@Ngeremlengui@96940@397202088@Palau"
+    address: "AutodeskAU@Malakal Island@Koror@96940@397202088@Palau"
     isTaxed: "N"
 
   en_PN:
