@@ -473,7 +473,7 @@ public class BICTestBase {
         continueButton.get(0).click();
       }
 
-      bicPage.waitForPageToLoad();
+      waitForLoadingSpinnerToComplete();
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to click on Save button on billing details page...");
