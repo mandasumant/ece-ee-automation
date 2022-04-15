@@ -290,14 +290,14 @@ public class BICTestBase {
 
   @Step("Wait for loading spinner to complete")
   public void waitForLoadingSpinnerToComplete() {
-    Util.sleep(5000);
+    Util.sleep(3000);
     try {
       int count = 0;
       while (driver.findElement(By.xpath("//*[@data-testid=\"loading\"]"))
           .isDisplayed()) {
         count++;
         Util.sleep(1000);
-        if (count == 20) {
+        if (count > 20) {
           break;
         }
         Util.printInfo("Loading spinner visible: " + count + " second(s)");
@@ -305,6 +305,7 @@ public class BICTestBase {
     } catch (Exception e) {
       Util.printInfo("There is no loading spinner element.");
     }
+    Util.sleep(2000);
   }
 
   @Step("Login to an existing BIC account")
@@ -565,6 +566,7 @@ public class BICTestBase {
           bicPage.populateField(BICECEConstants.VAT_NUMBER, vatNumber);
           driver.findElement(By.xpath("//input[@name=\"vatNumber\"]"))
               .sendKeys(Keys.TAB);
+          waitForLoadingSpinnerToComplete();
         }
       }
     } catch (Exception e) {
@@ -647,7 +649,6 @@ public class BICTestBase {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter Card details to make payment");
     }
-    Util.sleep(20000);
   }
 
   @Step("Populate Direct Debit payment details")
@@ -1424,6 +1425,7 @@ public class BICTestBase {
 
   @Step("Assert that tax value matches the tax parameter.")
   private void checkIfTaxValueIsCorrect(HashMap<String, String> data) {
+    Util.sleep(5000);
     String nonZeroTaxState = data.get("taxOptionEnabled");
     if (nonZeroTaxState.equals("undefined")) {
       return;
