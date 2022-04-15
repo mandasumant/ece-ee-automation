@@ -304,6 +304,19 @@ public class PortalTestBase {
     }
   }
 
+  @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)
+  public void validateBICOrderTotal(String orderTotal) {
+    try {
+      portalPage.click("portalOrderHistory");
+      portalPage.waitForFieldPresent("portalOrderHistoryPrice");
+      String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
+      AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
+          "Validate order total in history matches order total on checkout");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
   public void switchTermInUserPortal(String cepURL, String portalUserName,
       String portalPassword) {
@@ -813,7 +826,7 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-          BICECEConstants.PORTAL_PAYMENT_METHOD)
+              BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data);

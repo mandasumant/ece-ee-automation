@@ -238,6 +238,8 @@ public class BICOrderCreation extends ECETestBase {
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+
     updateTestingHub(testResults);
 
   }
