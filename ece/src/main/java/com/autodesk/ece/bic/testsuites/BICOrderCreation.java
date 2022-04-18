@@ -1064,7 +1064,7 @@ public class BICOrderCreation extends ECETestBase {
       Util.printInfo("The total order amount on Cart " + cartAmount / 100);
       Util.printInfo("The total order amount in Pelican " + pelicanAmount);
       AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
-          "Tax Amount in Pelican does not match with the tax amount on Checkout page");
+          "Tax Amount in Pelican matches with the tax amount on Checkout page");
     }
   }
 }
