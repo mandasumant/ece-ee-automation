@@ -1001,23 +1001,23 @@ public class BICOrderCreation extends ECETestBase {
       e.printStackTrace();
     }
 
-    // Trigger the payport renewal job to renew the subscription
-    triggerPayportRenewalJob(results);
-
-    // Get the subscription in pelican to check if it has renewed
-    results.putAll(pelicantb.getSubscriptionById(results));
-
-    try {
-      // Ensure that the subscription renews in the future
-      String nextBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
-      Util.printInfo("New Billing Date: " + nextBillingDateString);
-      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
-          nextBillingDateString);
-      Assert.assertTrue(newBillingDate.after(new Date()),
-          "Check that the subscription has been renewed");
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
+//    // Trigger the payport renewal job to renew the subscription
+//    triggerPayportRenewalJob(results);
+//
+//    // Get the subscription in pelican to check if it has renewed
+//    results.putAll(pelicantb.getSubscriptionById(results));
+//
+//    try {
+//      // Ensure that the subscription renews in the future
+//      String nextBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
+//      Util.printInfo("New Billing Date: " + nextBillingDateString);
+//      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+//          nextBillingDateString);
+//      Assert.assertTrue(newBillingDate.after(new Date()),
+//          "Check that the subscription has been renewed");
+//    } catch (ParseException e) {
+//      e.printStackTrace();
+//    }
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
