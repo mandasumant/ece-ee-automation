@@ -27,12 +27,15 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -134,17 +137,24 @@ public class BICTestBase {
   public void createBICAccount(Names names, String emailID, String password) {
     switchToBICCartLoginPage();
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
-    bicPage.waitForField("createNewUserGUAC", true, 30000);
-    bicPage.click("createNewUserGUAC");
-    bicPage.waitForField(BICECEConstants.BIC_FN, true, 30000);
-    bicPage.click(BICECEConstants.BIC_FN);
-    bicPage.populateField(BICECEConstants.BIC_FN, names.firstName);
-    bicPage.waitForField("bic_LN", true, 30000);
-    bicPage.populateField("bic_LN", names.lastName);
-    bicPage.populateField("bic_New_Email", emailID);
-    bicPage.populateField("bic_New_ConfirmEmail", emailID);
-    bicPage.waitForField("bic_Password", true, 30000);
-    bicPage.populateField("bic_Password", password);
+
+    try {
+      bicPage.waitForFieldPresent("createNewUserGUAC", 30000);
+      bicPage.clickUsingLowLevelActions("createNewUserGUAC");
+      bicPage.waitForFieldPresent(BICECEConstants.BIC_FN, 30000);
+      bicPage.clickUsingLowLevelActions(BICECEConstants.BIC_FN);
+      bicPage.populateField(BICECEConstants.BIC_FN, names.firstName);
+      bicPage.waitForFieldPresent("bic_LN", 30000);
+      bicPage.populateField("bic_LN", names.lastName);
+      bicPage.populateField("bic_New_Email", emailID);
+      bicPage.populateField("bic_New_ConfirmEmail", emailID);
+      bicPage.waitForFieldPresent("bic_Password", 30000);
+      bicPage.populateField("bic_Password", password);
+    } catch (MetadataException e) {
+      e.printStackTrace();
+      Assert.fail("Failed to populate values in Create Account");
+    }
+
 
     try {
 
@@ -369,10 +379,19 @@ public class BICTestBase {
     Util.sleep(2000);
   }
 
-  @Step("Adding to cart")
-  public void subscribeAndAddToCart() {
+  @Step("Adding Product to Cart from DotCom")
+  public String subscribeAndAddToCart() {
+    String url = null;
+
     Util.sleep(5000);
     bicPage.waitForField("guacAddToCart", true, 3000);
+    try {
+      url = bicPage.getMultipleWebElementsfromField("guacAddToCart")
+          .get(0).getAttribute("href");
+    } catch (MetadataException e) {
+      Assert.fail("Failed to get Cart URL from DotCom.");
+    }
+    
     bicPage.clickToSubmit("guacAddToCart", 3000);
 
     try {
@@ -381,6 +400,7 @@ public class BICTestBase {
     } catch (Exception e) {
       AssertUtils.fail("Unable to redirect to checkout page.");
     }
+    return url;
   }
 
   @Step("Populate billing address")
@@ -1130,35 +1150,35 @@ public class BICTestBase {
     return orderNumber;
   }
 
-  public void printConsole(String OrderNumber, String emailID,
-      Map<String, String> address,
-      String firstName, String lastName, String paymentMethod) {
+  public void printConsole(String OrderNumber, LinkedHashMap<String, String> data, Map<String, String> address) {
     Util.printInfo("*************************************************************" + "\n");
-    Util.printAssertingMessage("Email Id for the account :: " + emailID);
-    Util.printAssertingMessage("First name of the account :: " + firstName);
-    Util.printAssertingMessage("Last name of the account  :: " + lastName);
+    Util.printAssertingMessage("Email Id for the account :: " + data.get(BICECEConstants.emailid));
+    Util.printAssertingMessage("First name of the account :: " + data.get(BICECEConstants.FIRSTNAME));
+    Util.printAssertingMessage("Last name of the account  :: " + data.get(BICECEConstants.LASTNAME));
     Util.printAssertingMessage("Address used to place order :: " + address);
-    Util.printAssertingMessage("paymentMethod used to place order :: " + paymentMethod);
+    Util.printAssertingMessage("paymentMethod used to place order :: " + System.getProperty(BICECEConstants.PAYMENT));
     Util.printAssertingMessage("Order placed successfully :: " + OrderNumber + "\n");
     Util.printInfo("*************************************************************");
   }
 
-  public void navigateToCart(LinkedHashMap<String, String> data) throws MetadataException {
+  public String navigateToCart(LinkedHashMap<String, String> data) throws MetadataException {
     String productType = data.get("productType");
     String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String constructGuacURL;
+    String constructDotComURL;
+    String constructGuacURL = null;
+    String priceId = null;
 
     // Starting from dot com page for STG environment
-    if (!guacBaseDotComURL.isEmpty()) {
+    if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG)) {
       String productName =
           System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
               BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
 
-      constructGuacURL = guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
+      constructDotComURL = guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
           .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
 
-      Util.printInfo("constructGuacURL " + constructGuacURL);
-      getUrl(constructGuacURL);
+      Util.printInfo("constructDotComURL " + constructDotComURL);
+      getUrl(constructDotComURL);
       setStorageData();
 
       // Selecting monthly for Non-Flex, Non-Financing
@@ -1187,14 +1207,15 @@ public class BICTestBase {
         } else {
           selectMonthlySubscription(driver);
         }
-        subscribeAndAddToCart();
+        constructGuacURL = subscribeAndAddToCart();
+        priceId = StringUtils.substringBetween(constructGuacURL, "priceIds=", "&");
       }
-    } else {
+    } else if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_INT)) {
       // Navigating directly to checkout page for INT env
       String checkoutPageIntUrl = data.get("guacBaseURL");
       String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
 
-      String priceId = System.getProperty(BICECEConstants.PRICE_ID);
+      priceId = System.getProperty(BICECEConstants.PRICE_ID);
       if (priceId != null && !priceId.isEmpty()) {
         Util.printInfo("The Price is passed as parameter : " + priceId);
       } else {
@@ -1211,8 +1232,14 @@ public class BICTestBase {
       }
       Util.printInfo("constructedCheckoutPageUrl " + constructGuacURL);
       getUrl(constructGuacURL);
+    } else {
+      Assert.fail("Environment is neither STG or INT in Maven parameter.");
     }
+
     acceptCookiesAndUSSiteLink();
+    waitForLoadingSpinnerToComplete();
+
+    return priceId;
   }
 
   @SuppressWarnings({"static-access", "unused"})
@@ -1224,13 +1251,11 @@ public class BICTestBase {
     String quantity = "";
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
-    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
-    String promoCode = data.get(BICECEConstants.PROMO_CODE);
 
     String emailID = generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
 
-    String orderNumber = createBICOrderDotCom(data, emailID, password, promoCode);
+    String orderNumber = createBICOrderDotCom(data, false);
 
     if (data.get(BICECEConstants.PAYMENT_TYPE)
         .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
@@ -1242,6 +1267,55 @@ public class BICTestBase {
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
+  }
+
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Guac: Place GUAC Multi Line item Dot Com Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createGUACBICMultilineItemOrderDotCom(LinkedHashMap<String, String> data)
+      throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    String term = "";
+    String quantity = "";
+    String userType = data.get(BICECEConstants.USER_TYPE);
+    String region = data.get(BICECEConstants.REGION);
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+    String promoCode1 = data.get(BICECEConstants.PROMO_CODE);
+
+    String emailID = generateUniqueEmailID();
+    data.put(BICECEConstants.emailid, emailID);
+
+    String priceId = navigateToCart(data);
+
+    Names names = generateFirstAndLastNames();
+    createBICAccount(names, emailID, password);
+    data.putAll(names.getMap());
+
+    updateQuantity(priceId, BICECEConstants.MULTI_LINE_ITEM_QUANTITY_2);
+    driver.switchTo().newWindow(WindowType.TAB);
+
+    data.put(BICECEConstants.QUANTITY, BICECEConstants.MULTI_LINE_ITEM_QUANTITY_1);
+    data.put(BICECEConstants.PRODUCT_NAME, data.get(BICECEConstants.PRODUCT_NAME_2));
+    data.put(BICECEConstants.PRICE_ID, data.get(BICECEConstants.PRICE_ID_2));
+
+    String orderNumber = createBICOrderDotCom(data, true);
+
+    if (data.get(BICECEConstants.PAYMENT_TYPE)
+        .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      financingTestBase.setTestData(data);
+      financingTestBase.completeFinancingApplication();
+    }
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
+  private void updateQuantity(String priceId, String quantity) {
+    String paymentTypeXpath = bicPage.getFirstFieldLocator("cartQuantity").replace("<PRICEID>", priceId);
+    clearTextInputValue(driver.findElement(By.xpath(paymentTypeXpath)));
+    driver.findElement(By.xpath(paymentTypeXpath)).sendKeys(quantity);
+    waitForLoadingSpinnerToComplete();
   }
 
   public void setStorageData() {
@@ -1286,28 +1360,20 @@ public class BICTestBase {
     }
   }
 
-  private String createBICOrderDotCom(LinkedHashMap<String, String> data, String emailID,
-      String password, String promoCode) throws MetadataException {
+  private String createBICOrderDotCom(LinkedHashMap<String, String> data, Boolean isLoggedIn) throws MetadataException {
     String orderNumber = null;
     Map<String, String> address = null;
+    Names names = null;
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    String priceId = navigateToCart(data);
+    address = getBillingAddress(data);
 
-    navigateToCart(data);
-
-    String region = data.get(BICECEConstants.REGION);
-
-    String billingAddress;
-    String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
-    if (addressViaParam != null && !addressViaParam.isEmpty()) {
-      Util.printInfo("The address is passed as parameter : " + addressViaParam);
-      billingAddress = addressViaParam;
-    } else {
-      billingAddress = data.get(BICECEConstants.ADDRESS);
+    if (!(isLoggedIn)) {
+      names = generateFirstAndLastNames();
+      createBICAccount(names, data.get(BICECEConstants.emailid),
+          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
+      data.putAll(names.getMap());
     }
-    address = getBillingAddress(region, billingAddress);
-
-    Names names = generateFirstAndLastNames();
-    createBICAccount(names, emailID, password);
 
     if (data.get(BICECEConstants.REDUCE_SEATS) != null && data.get(BICECEConstants.REDUCE_SEATS)
         .equals(BICECEConstants.TRUE)
@@ -1325,15 +1391,11 @@ public class BICTestBase {
       }
     }
 
-    /* temporary commenting out
-    if (data.get("productType").equals("flex")) {
-      Select flexOffers = new Select(driver.findElement(By.id("product-term")));
-      flexOffers.selectByVisibleText("100 Tokens");
+    if (data.containsKey(BICECEConstants.QUANTITY)) {
+      updateQuantity(priceId, data.get(BICECEConstants.QUANTITY));
     }
-    */
 
-    data.putAll(names.getMap());
-
+    String promoCode = data.get(BICECEConstants.PROMO_CODE);
     // Apply promo if exists
     if (promoCode != null && !promoCode.isEmpty()) {
       populatePromoCode(promoCode, data);
@@ -1347,12 +1409,24 @@ public class BICTestBase {
       }
       orderNumber = getOrderNumber(data);
 
-      printConsole(orderNumber, emailID, address, names.firstName,
-          names.lastName,
-          paymentMethod);
+      printConsole(orderNumber, data, address);
     }
 
     return orderNumber;
+  }
+
+  private Map<String, String> getBillingAddress(LinkedHashMap<String, String>data) {
+    String region = data.get(BICECEConstants.REGION);
+
+    String billingAddress;
+    String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
+    if (addressViaParam != null && !addressViaParam.isEmpty()) {
+      Util.printInfo("The address is passed as parameter : " + addressViaParam);
+      billingAddress = addressViaParam;
+    } else {
+      billingAddress = data.get(BICECEConstants.ADDRESS);
+    }
+    return getBillingAddress(region, billingAddress);
   }
 
   public void enterBillingDetails(LinkedHashMap<String, String> data,
@@ -1394,7 +1468,8 @@ public class BICTestBase {
       Util.printInfo("Step : Entering promo code " + promoCode + "\n" + " priceBeforePromo : "
           + priceBeforePromo);
 
-      bicPage.clickUsingLowLevelActions("promoCodeLink");
+      driver.findElement(By.linkText("Promotion code")).click();
+      bicPage.waitForFieldPresent("promoCodeInput", 10000);
       bicPage.clickUsingLowLevelActions("promoCodeInput");
       bicPage.populateField("promoCodeInput", promoCode);
       bicPage.clickUsingLowLevelActions("promoCodeSubmit");
@@ -1473,7 +1548,7 @@ public class BICTestBase {
 
     navigateToCart(data);
 
-    if (!GlobalConstants.getENV().equals("INT")) {
+    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
       switchToBICCartLoginPage();
       loginBICAccount(data);
       Util.sleep(3000);
@@ -1512,7 +1587,7 @@ public class BICTestBase {
 
     navigateToCart(data);
 
-    if (!GlobalConstants.getENV().equals("INT")) {
+    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
       loginAccount(data);
     }
     Util.sleep(5000);
@@ -1541,7 +1616,7 @@ public class BICTestBase {
     navigateToCart(data);
 
     // Login to an existing account and add seats
-    if (!GlobalConstants.getENV().equals("INT")) {
+    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
       loginAccount(data);
     }
 

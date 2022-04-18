@@ -151,3 +151,7 @@ validateBicNativeFinancingDeclinedOrder:
 validateBicNativeFinancingCanceledOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
+
+validateMultiLineItemBicNativeOrder:
+  multiProduct2: "3ds-max"
+  quantity: "3"

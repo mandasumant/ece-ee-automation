@@ -1032,6 +1032,63 @@ public class BICOrderCreation extends ECETestBase {
 
   }
 
+  /**
+   * This test is for Multi line item with multi quantity use case, with bundle promo
+   *
+   * @throws MetadataException
+   */
+  @Test(groups = {"bic-multiline-bicorder"}, description = "Validation of Create Multiline item BIC Order")
+  public void validateMultiLineItemBicNativeOrder() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    startTime = System.nanoTime();
+
+    if (testDataForEachMethod.get("promoCode") == null || testDataForEachMethod.isEmpty()) {
+      testDataForEachMethod.put("promoCode", BICECEConstants.BUNDLE_PROMO);
+    }
+    HashMap<String, String> results = getBicTestBase()
+        .createGUACBICMultilineItemOrderDotCom(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
+
+    // Get find Subscription ById
+    results.putAll(pelicantb.getSubscriptionById(results));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults.put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults.put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+    updateTestingHub(testResults);
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid), PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    updateTestingHub(testResults);
+
+  }
+
+
   private void triggerPayportRenewalJob(
       HashMap<String, String> results) {
     PayportTestBase payportTB = new PayportTestBase(results);

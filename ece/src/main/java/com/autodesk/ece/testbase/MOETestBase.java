@@ -338,6 +338,7 @@ public class MOETestBase {
     Names names = bicTestBase.generateFirstAndLastNames();
     data.putAll(names.getMap());
     String emailID = bicTestBase.generateUniqueEmailID();
+    data.put(BICECEConstants.emailid, emailID);
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
 
@@ -348,7 +349,7 @@ public class MOETestBase {
 
     bicTestBase.submitOrder(data);
     String orderNumber = bicTestBase.getOrderNumber(data);
-    bicTestBase.printConsole(orderNumber, emailID, address, names.firstName, names.lastName, paymentMethod);
+    bicTestBase.printConsole(orderNumber, data, address);
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
@@ -368,8 +369,8 @@ public class MOETestBase {
 
     Names names = bicTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password);
-
     data.putAll(names.getMap());
+    data.put(BICECEConstants.emailid, emailID);
 
     String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
@@ -391,10 +392,7 @@ public class MOETestBase {
     emulateUser(emailID, names);
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
-    bicTestBase
-        .printConsole(orderNumber, emailID, address, names.firstName,
-            names.lastName,
-            paymentMethod);
+    bicTestBase.printConsole(orderNumber, data, address);
 
     loginToPortalWithUserAccount(data, emailID, password);
 
@@ -414,8 +412,8 @@ public class MOETestBase {
 
     Names names = bicTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password);
-
     data.putAll(names.getMap());
+    data.put(BICECEConstants.emailid, emailID);
 
     String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
@@ -445,10 +443,7 @@ public class MOETestBase {
 
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
-    bicTestBase
-        .printConsole(orderNumber, emailID, address, names.firstName,
-            names.lastName,
-            paymentMethod);
+    bicTestBase.printConsole(orderNumber, data, address);
 
     loginToPortalWithUserAccount(data, emailID, password);
 

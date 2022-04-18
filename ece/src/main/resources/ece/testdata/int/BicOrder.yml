@@ -155,3 +155,7 @@ validateBicNativeFinancingDeclinedOrder:
 validateBicNativeFinancingCanceledOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
+
+validateMultiLineItemBicNativeOrder:
+  multiProductPrice2: "23756"
+  quantity: "3"

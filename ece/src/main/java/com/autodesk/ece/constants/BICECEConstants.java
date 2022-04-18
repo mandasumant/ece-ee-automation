@@ -14,7 +14,7 @@ public class BICECEConstants extends BICConstants {
   public static final String LOCALE_CONFIG = "LocaleConfig";
   public static final String STORE_NAME = "storeName";
   public static final String STORE = "store";
-  public static final String CLDCR_PLC = "CLDCR";
+  public static final String ENVIRONMENT = "environment";
   public static final String SUBSCRIPTION_ID = "getPOReponse_subscriptionId";
   public static final String SUBSCRIPTION_PERIOD_START_DATE = "getPOReponse_subscriptionPeriodStartDate";
   public static final String SUBSCRIPTION_PERIOD_END_DATE = "getPOReponse_subscriptionPeriodEndDate";
@@ -161,5 +161,15 @@ public class BICECEConstants extends BICConstants {
   public static final String TAX_OPTION = "isTaxed";
   public static final String VAT_NUMBER = "vatNumber";
   public static final String GET_HELP_IFRAME = "getHelpIframe";
+  public static final String BUNDLE_PROMO = "BUNDLE20";
+  public static final String QUANTITY = "quantity";
+  public static final String PRODUCT_NAME_2 = "multiProduct2";
+  public static final String PRICE_ID_2 = "multiProductPrice2";
+
+  public static final String MULTI_LINE_ITEM_QUANTITY_1 = "3";
+  public static final String MULTI_LINE_ITEM_QUANTITY_2 = "2";
+  public static final String ENV_STG = "STG";
+  public static final String ENV_INT = "INT";
+  public static final String ENV_PRD = "PRD";
 }
 
