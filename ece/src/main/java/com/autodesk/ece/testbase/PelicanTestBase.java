@@ -378,6 +378,40 @@ public class PelicanTestBase {
     Util.PrintInfo(BICECEConstants.RESULT + result);
   }
 
+  @Step("Renew Pelican Subscription" + GlobalConstants.TAG_TESTINGHUB)
+  public void renewSubscription(HashMap<String, String> data) {
+    String pelicanRenewSubscriptionUrl = data.get("pelicanRenewalURL");
+    String getRenewSubscriptionUrl = addTokenInResourceUrl(pelicanRenewSubscriptionUrl,
+        data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
+    Util.printInfo("Pelican Renew Subscription Url : " + getRenewSubscriptionUrl);
+    String sig_details = getPelicanSignature(data);
+    String hmacSignature = sig_details.split("::")[0];
+    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
+    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
+
+    // String Content_Type="application/x-www-form-urlencoded; charset=UTF-8";
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
+
+    Map<String, String> header = new HashMap<>();
+    header.put("x-e2-hmac-signature", hmacSignature);
+    header.put("x-e2-partnerid", X_E2_PartnerId);
+    header.put("x-e2-appfamilyid", X_E2_AppFamilyId);
+    header.put("x-e2-hmac-timestamp", X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.ACCEPT, Content_Type);
+
+    Response response = RestAssured.given().headers(header).post(getRenewSubscriptionUrl);
+
+    int statusCode = response.getStatusCode();
+    Util.PrintInfo("Renew Subscription Response HTTP Status Code: " + statusCode);
+
+    if (statusCode != 200) {
+      String result = response.getBody().asString();
+      Assert.fail("Renew Subscription gave none HTTP.OK response. Status Code: " + result);
+    }
+  }
+
   private String getPelicanSignature(HashMap<String, String> data) {
     String signature = "";
     String timestamp = "";
