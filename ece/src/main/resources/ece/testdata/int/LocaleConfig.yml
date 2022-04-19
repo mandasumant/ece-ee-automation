@@ -14,7 +14,7 @@
     currencyStore: "CAD"
     countryDomain: ".ca/en"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@750 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec"
+    address: "Autodesk@750 Rue Ann@MONTREAL@H3Z 2Y7@9916800100@Canada@Quebec"
     isTaxed: "Y"
 
   fr_CA:
