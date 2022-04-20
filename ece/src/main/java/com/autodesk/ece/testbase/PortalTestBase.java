@@ -307,7 +307,15 @@ public class PortalTestBase {
   @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderTotal(String orderTotal) {
     try {
-      portalPage.click("portalOrderHistory");
+      switch (GlobalConstants.getENV().toLowerCase()) {
+        case "int":
+          openPortalURL("https://int-manage.autodesk.com/cep/#orders/order-history");
+          break;
+        case "stg":
+        default:
+          openPortalURL("https://stg-manage.autodesk.com/cep/#orders/order-history");
+          break;
+      }
       portalPage.waitForFieldPresent("portalOrderHistoryPrice");
       String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
       AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
