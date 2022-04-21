@@ -1373,23 +1373,7 @@ public class BICTestBase {
       data.putAll(names.getMap());
     }
 
-    if (data.get(BICECEConstants.REDUCE_SEATS) != null && data.get(BICECEConstants.REDUCE_SEATS)
-        .equals(BICECEConstants.TRUE)
-        && data.get(BICECEConstants.ADD_SEAT_QTY) != null && !data.get(BICECEConstants.ADD_SEAT_QTY)
-        .isEmpty()) {
-      Util.printInfo("Getting into Reduce Seats ...");
-      bicPage.waitForFieldPresent(BICECEConstants.GUAC_CART_EDIT_QUANTITY, 5000);
-      try {
-        bicPage.populateField(BICECEConstants.GUAC_CART_EDIT_QUANTITY, Keys.BACK_SPACE.name());
-        bicPage.populateField(BICECEConstants.GUAC_CART_EDIT_QUANTITY,
-            data.get(BICECEConstants.ADD_SEAT_QTY));
-        Util.sleep(5000);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
-    if (data.containsKey(BICECEConstants.QUANTITY)) {
+    if ((!data.get("productType").equals("flex")) && data.containsKey(BICECEConstants.QUANTITY)) {
       updateQuantity(priceId, data.get(BICECEConstants.QUANTITY));
     }
 

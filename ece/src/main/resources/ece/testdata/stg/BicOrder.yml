@@ -87,7 +87,7 @@ validateBICAddSeatsFinancing:
 
 validateBicReduceSeats:
   nativeproductID: *bicNativePriceID
-  addSeatQty: "2"
+  quantity: "2"
 
 validateBICChangePaymentProfile:
   getPaymentDetails: "https://api.pelicanstg.autodesk.com/tfel2rs/v2/paymentProfiles?userExternalKey=passtoken&fr.skipCount=true"

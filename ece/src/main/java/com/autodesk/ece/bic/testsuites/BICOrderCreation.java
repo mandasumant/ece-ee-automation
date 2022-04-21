@@ -492,9 +492,8 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBicReduceSeats() throws MetadataException {
     testDataForEachMethod
         .put(BICECEConstants.PRODUCT_ID, testDataForEachMethod.get("nativeproductID"));
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     startTime = System.nanoTime();
-    testDataForEachMethod.put(BICECEConstants.REDUCE_SEATS, BICECEConstants.TRUE);
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
