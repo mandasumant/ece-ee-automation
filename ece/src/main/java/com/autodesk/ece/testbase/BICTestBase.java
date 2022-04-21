@@ -33,6 +33,7 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WindowType;
@@ -154,7 +155,6 @@ public class BICTestBase {
       e.printStackTrace();
       Assert.fail("Failed to populate values in Create Account");
     }
-
 
     try {
 
@@ -391,7 +391,7 @@ public class BICTestBase {
     } catch (MetadataException e) {
       Assert.fail("Failed to get Cart URL from DotCom.");
     }
-    
+
     bicPage.clickToSubmit("guacAddToCart", 3000);
 
     try {
@@ -477,25 +477,23 @@ public class BICTestBase {
     try {
       Util.sleep(2000);
       Util.printInfo("Clicking on Save button...");
-      List<WebElement> continueButton = bicPage.getMultipleWebElementsfromField("continueButton");
 
-      if (paymentType.equalsIgnoreCase(BICConstants.paymentTypePayPal)
-          || paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)
-          || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_BACS)
-          || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)
-          || paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)
-      ) {
-        continueButton.get(1).click();
-      } else if (paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
-        continueButton.get(3).click();
-      } else if (paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-        continueButton.get(2).click();
-      } else {
-        continueButton.get(0).click();
+      String tabKey = paymentType.toLowerCase();
+      if (paymentType.equalsIgnoreCase(BICECEConstants.VISA)) {
+        tabKey = "credit-card";
       }
 
+      WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
+      WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
+      continueButton.click();
+
       waitForLoadingSpinnerToComplete();
-    } catch (MetadataException e) {
+
+      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+      wait.until(ExpectedConditions.invisibilityOf(continueButton));
+
+      Util.printInfo("Save button no longer present");
+    } catch (TimeoutException e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to click on Save button on billing details page...");
     }
@@ -1415,7 +1413,7 @@ public class BICTestBase {
     return orderNumber;
   }
 
-  private Map<String, String> getBillingAddress(LinkedHashMap<String, String>data) {
+  private Map<String, String> getBillingAddress(LinkedHashMap<String, String> data) {
     String region = data.get(BICECEConstants.REGION);
 
     String billingAddress;
@@ -1512,11 +1510,11 @@ public class BICTestBase {
     data.put(BICECEConstants.FINAL_TAX_AMOUNT, String.valueOf(taxValueAmount));
     Util.printInfo("The final Tax Amount : " + taxValueAmount);
     if (nonZeroTaxState.equals("Y")) {
-      AssertUtils.assertTrue(taxValueAmount > 0, "Tax value is greater than zero");
       Util.printInfo("This state collects tax.");
+      AssertUtils.assertTrue(taxValueAmount > 0, "Tax value is greater than zero");
     } else if (nonZeroTaxState.equals("N")) {
-      AssertUtils.assertEquals(taxValueAmount, 0.00, "Tax value is equal to zero");
       Util.printInfo("This state does not collect tax.");
+      AssertUtils.assertEquals(taxValueAmount, 0.00, "Tax value is equal to zero");
     } else {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
