@@ -479,7 +479,8 @@ public class BICTestBase {
       Util.printInfo("Clicking on Save button...");
 
       String tabKey = paymentType.toLowerCase();
-      if (paymentType.equalsIgnoreCase(BICECEConstants.VISA)) {
+      if (paymentType.equalsIgnoreCase(BICECEConstants.VISA) || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
+          || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD)) {
         tabKey = "credit-card";
       }
 
