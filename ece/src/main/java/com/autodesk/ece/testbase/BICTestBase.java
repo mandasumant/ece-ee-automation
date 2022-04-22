@@ -474,30 +474,42 @@ public class BICTestBase {
   }
 
   public void clickOnContinueBtn(String paymentType) {
-    try {
-      Util.sleep(2000);
-      Util.printInfo("Clicking on Save button...");
+    Util.sleep(2000);
+    Util.printInfo("Clicking on Save button...");
 
-      String tabKey = paymentType.toLowerCase();
-      if (paymentType.equalsIgnoreCase(BICECEConstants.VISA) || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
-          || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD)) {
-        tabKey = "credit-card";
-      }
-
-      WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
-      WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
-      continueButton.click();
-
-      waitForLoadingSpinnerToComplete();
-
-      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-      wait.until(ExpectedConditions.invisibilityOf(continueButton));
-
-      Util.printInfo("Save button no longer present");
-    } catch (TimeoutException e) {
-      e.printStackTrace();
-      AssertUtils.fail("Failed to click on Save button on billing details page...");
+    String tabKey = paymentType.toLowerCase();
+    if (paymentType.equalsIgnoreCase(BICECEConstants.VISA) || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
+        || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD)) {
+      tabKey = "credit-card";
     }
+
+    WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
+    WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
+
+    int attempts = 0;
+
+    while (attempts < 5) {
+      try {
+        continueButton.click();
+
+        waitForLoadingSpinnerToComplete();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.invisibilityOf(continueButton));
+
+        Util.printInfo("Save button no longer present");
+        break;
+      } catch (TimeoutException e) {
+        e.printStackTrace();
+        Util.printInfo("Save button still present, retrying");
+        attempts++;
+        if (attempts == 5) {
+          AssertUtils.fail("Failed to click on Save button on billing details page...");
+        }
+        Util.sleep(2000);
+      }
+    }
+
   }
 
   @Step("Populate Billing Details")
