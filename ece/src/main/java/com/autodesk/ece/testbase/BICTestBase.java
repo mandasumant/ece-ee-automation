@@ -1508,10 +1508,10 @@ public class BICTestBase {
     Util.printInfo("The final Tax Amount : " + taxValueAmount);
     if (nonZeroTaxState.equals("Y")) {
       Util.printInfo("This state collects tax.");
-      AssertUtils.assertTrue(taxValueAmount > 0, "Tax value is greater than zero");
+      AssertUtils.assertTrue(taxValueAmount / 100 > 0, "Tax value is greater than zero");
     } else if (nonZeroTaxState.equals("N")) {
       Util.printInfo("This state does not collect tax.");
-      AssertUtils.assertEquals(taxValueAmount, 0.00, "Tax value is equal to zero");
+      AssertUtils.assertEquals(taxValueAmount / 100 , 0.00, "Tax value is equal to zero");
     } else {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
