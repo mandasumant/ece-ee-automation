@@ -1234,7 +1234,7 @@ public class BICTestBase {
       }
       Util.printInfo("Targetted Store : " + data.get("storeName"));
 
-      if (!data.get("storeName").equals("STORE-NAMER")) {
+      if (data.get("storeName").equals("STORE-EU") || data.get("storeName").equals("STORE-AUS")) {
         constructGuacURL =
             checkoutPageIntUrl + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get(BICECEConstants.GUAC_PRICE_ID)
                 + priceId;
