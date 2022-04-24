@@ -372,12 +372,13 @@ public class MOETestBase {
     data.putAll(names.getMap());
     data.put(BICECEConstants.emailid, emailID);
 
+    bicTestBase.getUrl(constructGuacMoeURL);
+    loginToMoe();
+    emulateUser(emailID, names);
+
     String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
     bicTestBase.debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
-
-    // Get Payment details
-    bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
 
     // Enter billing details
     if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
@@ -387,9 +388,6 @@ public class MOETestBase {
       bicTestBase.debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
 
-    bicTestBase.getUrl(constructGuacMoeURL);
-    loginToMoe();
-    emulateUser(emailID, names);
     String orderNumber = savePaymentProfileAndSubmitOrder(data, address, paymentCardDetails);
 
     bicTestBase.printConsole(orderNumber, data, address);
@@ -530,14 +528,9 @@ public class MOETestBase {
   @Step("Save payment profile and submit order")
   private String savePaymentProfileAndSubmitOrder(LinkedHashMap<String, String> data,
       Map<String, String> address, String[] paymentCardDetails) {
-    bicTestBase.populateBillingAddress(address, data);
     bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
-    try {
-      moePage.clickUsingLowLevelActions("savePaymentProfile");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    Util.sleep(5000);
+    bicTestBase.populateBillingAddress(address, data);
+
     bicTestBase.agreeToTerm();
 
     if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
