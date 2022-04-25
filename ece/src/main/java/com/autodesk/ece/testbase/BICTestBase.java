@@ -1191,6 +1191,7 @@ public class BICTestBase {
       Util.printInfo("constructDotComURL " + constructDotComURL);
       getUrl(constructDotComURL);
       setStorageData();
+      acceptCookiesAndUSSiteLink();
 
       // Selecting monthly for Non-Flex, Non-Financing
       if (productType.equals("flex")) {
@@ -1247,8 +1248,8 @@ public class BICTestBase {
       Assert.fail("Environment is neither STG or INT in Maven parameter.");
     }
 
-    acceptCookiesAndUSSiteLink();
     waitForLoadingSpinnerToComplete();
+    clickToStayOnSameSite();
 
     return priceId;
   }
@@ -1681,18 +1682,17 @@ public class BICTestBase {
   }
 
   public void acceptCookiesAndUSSiteLink() {
-    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+    Util.sleep(3000);
     try {
       WebElement cookieButton = driver.findElement(
-          By.xpath("button[@id=\"adsk-eprivacy-yes-to-all\" and .=\"OK\"]"));
+          By.xpath("//div[@class=\"adsk-gdpr-confirm\"]/button[2]"));
       cookieButton.click();
-      Util.printInfo("Cookies accepted...");
+      Util.printInfo("Cookies accepted.");
     } catch (Exception e) {
-      Util.printInfo("Cookies accept box does not appear on the page...");
+      Util.printInfo("Cookies accept box does not appear on the page.");
     }
 
     clickToStayOnSameSite();
-    driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
   }
 
   @Step("Guac: Test Trial Download  " + GlobalConstants.TAG_TESTINGHUB)
