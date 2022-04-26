@@ -4,6 +4,7 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.database.DBValidations;
 import com.autodesk.testinghub.core.testbase.DynamoDBValidation;
+import com.autodesk.testinghub.core.testbase.SAPTestBase;
 import com.autodesk.testinghub.core.testbase.SFDCTestBase;
 import com.autodesk.testinghub.core.testbase.SOAPTestBase;
 import com.autodesk.testinghub.core.testbase.TestinghubUtil;
@@ -17,12 +18,14 @@ public class ECETestBase {
 
   protected static DBValidations dbValtb = null;
   protected static TestinghubUtil thutil = null;
+  protected static SAPTestBase saptb = null;
   protected SFDCTestBase sfdctb = null;
   protected SOAPTestBase soaptb = null;
   protected PortalTestBase portaltb = null;
   protected DynamoDBValidation dynamotb = null;
   protected ApigeeTestBase resttb = null;
   protected PelicanTestBase pelicantb = null;
+  protected AutomationTibcoTestBase tibcotb = null;
   LinkedHashMap<String, String> localeConfig;
   private WebDriver webdriver = null;
   private GlobalTestBase testbase = null;
@@ -40,6 +43,8 @@ public class ECETestBase {
     dynamotb = new DynamoDBValidation();
     pelicantb = new PelicanTestBase();
     thutil = new TestinghubUtil(testbase);
+    tibcotb = new AutomationTibcoTestBase();
+    saptb = new SAPTestBase();
   }
 
   public static void updateTestingHub(HashMap<String, String> results) {
@@ -63,6 +68,17 @@ public class ECETestBase {
       bictb = new BICTestBase(webdriver, testbase);
     }
     return bictb;
+  }
+
+  public String getSAPOrderNumberUsingPO(String poNumber){
+    String orderNumber = "";
+    if(saptb.sapConnector.isBAPIEnabled()) {
+      saptb.sapConnector.connectSAPBAPI();
+      orderNumber = saptb.sapConnector.getOrderNumberUsingPO(poNumber);
+    } else {
+      orderNumber = saptb.getOrderFromSAP(poNumber);
+    }
+    return orderNumber;
   }
 
   @AfterTest(alwaysRun = true)

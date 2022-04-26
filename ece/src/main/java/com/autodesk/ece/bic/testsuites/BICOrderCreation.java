@@ -240,8 +240,10 @@ public class BICOrderCreation extends ECETestBase {
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
 
-    updateTestingHub(testResults);
+    // Put the SAP Order number into results map
+    testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
 
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {
@@ -601,6 +603,10 @@ public class BICOrderCreation extends ECETestBase {
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+
+    // Put the SAP Order number into results map
+    testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
+
     updateTestingHub(testResults);
 
     stopTime = System.nanoTime();
@@ -1027,8 +1033,11 @@ public class BICOrderCreation extends ECETestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
-    updateTestingHub(testResults);
 
+    // Put the SAP Order number into results map
+    testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
+
+    updateTestingHub(testResults);
   }
 
   /**
@@ -1121,4 +1130,18 @@ public class BICOrderCreation extends ECETestBase {
           "Tax Amount in Pelican matches with the tax amount on Checkout page");
     }
   }
+
+  private String getSAPOrderNumber(String orderNumber) {
+    //Tibco call to SAP, waits for Create Order call to be successful
+    boolean sapStatusSuccess = tibcotb.waitTillProcessCompletesStatus(orderNumber,
+        TestingHubConstants.tibco_createorder);
+    String orderNumberSAP = "null";
+    if (sapStatusSuccess) {
+      //Returns SAP Order number
+      orderNumberSAP = getSAPOrderNumberUsingPO(orderNumber);
+      Util.printInfo("SAP order Number: " + orderNumberSAP);
+    }
+    return orderNumberSAP;
+  }
+
 }
