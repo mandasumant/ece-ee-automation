@@ -223,36 +223,6 @@ public class BICTestBase {
     driver.switchTo().frame(element);
   }
 
-  @Step("Login BIC account")
-  public void loginBICAccount(HashMap<String, String> data) {
-    bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
-    Util.printInfo(BICECEConstants.AUTODESK_ID + " is Present " + bicPage
-        .isFieldPresent(BICECEConstants.AUTODESK_ID));
-    bicPage.click(BICECEConstants.AUTODESK_ID);
-    bicPage.populateField(BICECEConstants.AUTODESK_ID, data.get(BICConstants.emailid));
-    bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
-    Util.sleep(3000);
-    bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 30000);
-    bicPage.click(BICECEConstants.LOGIN_PASSWORD);
-    bicPage.populateField(BICECEConstants.LOGIN_PASSWORD,
-        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
-    bicPage.waitForField(BICECEConstants.LOGIN_BUTTON, true, 30000);
-    bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
-
-    bicPage.waitForField(BICECEConstants.GET_STARTED_SKIP_LINK, true, 30000);
-
-    boolean status = bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK);
-
-    if (status) {
-      bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
-    }
-
-    skipAddSeats();
-
-    Util.printInfo("Successfully logged into Bic");
-
-  }
-
   /**
    * Skip the adding of seats in the "Adds Seats" modal
    */
@@ -322,28 +292,34 @@ public class BICTestBase {
   public void loginAccount(HashMap<String, String> data) {
     switchToBICCartLoginPage();
 
-    bicPage.click(BICECEConstants.AUTODESK_ID);
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
+
+    Util.printInfo(BICECEConstants.AUTODESK_ID + " is Present " + bicPage
+        .isFieldPresent(BICECEConstants.AUTODESK_ID));
+    bicPage.click(BICECEConstants.AUTODESK_ID);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, data.get(BICConstants.emailid));
+
     bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
-    bicPage.click(BICECEConstants.LOGIN_PASSWORD);
+    Util.sleep(3000);
+
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 30000);
+    bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.populateField(BICECEConstants.LOGIN_PASSWORD,
         ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
-    bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
-    bicPage.waitForPageToLoad();
 
-    boolean status =
-        bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK) || bicPage.isFieldPresent(
-            BICECEConstants.GET_STARTED_SKIP_LINK)
-            || bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK);
+    bicPage.waitForField(BICECEConstants.LOGIN_BUTTON, true, 30000);
+    bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
+
+    bicPage.waitForField(BICECEConstants.GET_STARTED_SKIP_LINK, true, 30000);
+    boolean status = bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK);
 
     if (status) {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
     }
 
     driver.switchTo().defaultContent();
-    bicPage.waitForPageToLoad();
+    waitForLoadingSpinnerToComplete();
+    Util.printInfo("Successfully logged into Bic");
   }
 
   @Step("Add a seat from the existing subscription popup")
@@ -1512,7 +1488,7 @@ public class BICTestBase {
       AssertUtils.assertTrue(taxValueAmount / 100 > 0, "Tax value is greater than zero");
     } else if (nonZeroTaxState.equals("N")) {
       Util.printInfo("This state does not collect tax.");
-      AssertUtils.assertEquals(taxValueAmount / 100 , 0.00, "Tax value is equal to zero");
+      AssertUtils.assertEquals(taxValueAmount / 100, 0.00, "Tax value is equal to zero");
     } else {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
@@ -1545,9 +1521,8 @@ public class BICTestBase {
     navigateToCart(data);
 
     if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      switchToBICCartLoginPage();
-      loginBICAccount(data);
-      Util.sleep(3000);
+      loginAccount(data);
+      skipAddSeats();
     }
 
     // If the submit button is disabled, fill the payment information out again
@@ -1586,7 +1561,6 @@ public class BICTestBase {
     if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
       loginAccount(data);
     }
-    Util.sleep(5000);
 
     skipAddSeats();
 
