@@ -1478,7 +1478,8 @@ public class BICTestBase {
       return;
     }
     String taxValue = driver
-        .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax']")).getText();
+        .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax'][@data-pricing-source=\"PQ\"]"))
+        .getText();
     taxValue = taxValue.replaceAll("[^0-9]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
     data.put(BICECEConstants.FINAL_TAX_AMOUNT, String.valueOf(taxValueAmount));

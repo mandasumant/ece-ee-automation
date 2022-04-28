@@ -496,7 +496,7 @@ public class PelicanTestBase {
   public String retryGetPurchaseOrder(HashMap<String, String> results, boolean silent) {
     String response = "";
     boolean subscriptionIdFound = false;
-    for (int i = 1; i < 15; i++) {
+    for (int i = 1; i < 20; i++) {
       response = getPurchaseOrder(results);
       int intIndex = response.indexOf("subscriptionId");
       if (intIndex == -1) {
