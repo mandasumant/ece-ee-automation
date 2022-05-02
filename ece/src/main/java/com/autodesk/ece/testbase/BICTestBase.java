@@ -566,12 +566,22 @@ public class BICTestBase {
         driver.findElement(By.xpath(stateXpath))
             .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
       }
-      String vatNumber = System.getProperty(BICECEConstants.VAT_NUMBER);
-      if (vatNumber != null && !vatNumber.isEmpty()) {
-        if (bicPage.checkIfElementExistsInPage(BICECEConstants.VAT_NUMBER, 5)) {
-          Util.printInfo("Populating Vat Number: " + vatNumber);
-          bicPage.populateField(BICECEConstants.VAT_NUMBER, vatNumber);
-          driver.findElement(By.xpath("//input[@name=\"vatNumber\"]"))
+      String taxId = System.getProperty(BICECEConstants.TAX_ID);
+      if (taxId != null && !taxId.isEmpty()) {
+       String numberKey;
+       switch (System.getProperty(BICECEConstants.STORE)){
+         case "STORE-AUS":
+           numberKey = BICECEConstants.ABN_NUMBER;
+           break;
+         default:
+           numberKey = BICECEConstants.VAT_NUMBER;
+           break;
+        }
+        
+        if (bicPage.checkIfElementExistsInPage(numberKey, 5)) {
+          Util.printInfo("Populating" + numberKey + ": " + taxId);
+          bicPage.populateField(numberKey, taxId);
+          driver.findElement(By.xpath("//input[@name=\"" + numberKey + "\"]"))
               .sendKeys(Keys.TAB);
           waitForLoadingSpinnerToComplete();
         }
