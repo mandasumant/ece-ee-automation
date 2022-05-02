@@ -5,6 +5,7 @@ default:
   paymentMethod: "VISA"
   password: "iAg7eLGIEYMczxIlN8R0AA==:ewmfKH9qq0dmWn91Yw3pRA=="
   cepURL: "https://customer-stg.autodesk.com/"
+  accountPortalURL: https://stg-manage.autodesk.com
   guacBaseURL: "https://checkout-pt.autodesk.com/"
   guacDotComBaseURL: "https://www-pt.autodesk"
   guacResourceURL: "checkout?priceIds="

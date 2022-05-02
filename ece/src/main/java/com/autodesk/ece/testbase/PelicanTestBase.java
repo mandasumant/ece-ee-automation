@@ -470,6 +470,14 @@ public class PelicanTestBase {
           jp.get("content[0].lineItems[0].lineItemTotals.subtotalAfterPromotionsWithTax").toString());
       results.put("getPOReponse_paymentProcessor",
           jp.get("content[0].payments[0].paymentProcessor").toString());
+      results.put("getPOReponse_firstName",
+          jp.get("content[0].billingInfo.firstName"));
+      results.put("getPOReponse_lastName",
+          jp.get("content[0].billingInfo.lastName"));
+      results.put("getPOReponse_street",
+          jp.get("content[0].billingInfo.street"));
+      results.put("getPOReponse_city",
+          jp.get("content[0].billingInfo.city"));
       results.put("getPOReponse_last4Digits",
           jp.get("content[0].billingInfo.lastDigits"));
       results.put("getPOReponse_taxCode",

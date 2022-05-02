@@ -10,12 +10,19 @@ import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.CustomSoftAssert;
+import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +33,9 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.RandomStringUtils;
+import org.json.JSONObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -276,7 +285,6 @@ public class PortalTestBase {
         Util.printInfo("HTML code - After Clicking portalEmailPopupYesButton");
         Util.sleep(15000);
         debugPageUrl("After Clicking portalEmailPopupYesButton");
-
       }
     } catch (Exception e) {
       Util.printInfo("Email popup does not appeared on screen...");
@@ -307,15 +315,7 @@ public class PortalTestBase {
   @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderTotal(String orderTotal) {
     try {
-      switch (GlobalConstants.getENV().toLowerCase()) {
-        case "int":
-          openPortalURL("https://int-manage.autodesk.com/cep/#orders/order-history");
-          break;
-        case "stg":
-        default:
-          openPortalURL("https://stg-manage.autodesk.com/cep/#orders/order-history");
-          break;
-      }
+      navigateToOrderHistory();
       portalPage.waitForFieldPresent("portalOrderHistoryPrice");
       String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
       AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
@@ -323,6 +323,107 @@ public class PortalTestBase {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  public void navigateToOrderHistory() {
+    switch (GlobalConstants.getENV().toLowerCase()) {
+      case "int":
+        openPortalURL("https://int-manage.autodesk.com/cep/#orders/order-history");
+        break;
+      case "stg":
+      default:
+        openPortalURL("https://stg-manage.autodesk.com/cep/#orders/order-history");
+        break;
+    }
+  }
+
+  @Step("CEP : Validating  Tax Invoice " + GlobalConstants.TAG_TESTINGHUB)
+  public String validateBICOrderTaxInvoice(Map<String,String> results) {
+    String error_message = null;
+    String pdfContent = null;
+    String url = null;
+    navigateToOrderHistory();
+
+    Util.sleep(5000);
+    try {
+      int attempts = 0;
+      while (attempts < 12) {
+        if(portalPage.checkIfElementExistsInPage("portalOrderInvoiceLink", 10)) {
+          portalPage.clickUsingLowLevelActions("portalOrderInvoiceLink");
+          try {
+            error_message = driver.findElement(By.className("error-msg")).getText();
+          } catch (Exception e) {
+            error_message = "";
+          }
+
+          if (error_message.contains("We're having some issues right now.")) {
+            Util.printInfo("Invoice is not ready yet, we saw this text -> " + error_message);
+            attempts++;
+            Util.printInfo("Waiting for another 5 minutes on attempt #" + attempts);
+            Util.sleep(300000);
+            driver.navigate().refresh();
+            // As per Account Portal this can take upto 6 sec so considering 10sec
+            Util.sleep(10000);
+          } else {
+            Util.PrintInfo("Found Invoice now need to validate the invoice pop up with ");
+
+            switch (GlobalConstants.getENV().toLowerCase()) {
+              case "int":
+                url = "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
+                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
+                break;
+              case "stg":
+              default:
+                url = "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
+                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
+                break;
+            }
+            Util.printInfo("URL for Invoice data: " + url);
+            driver.navigate().to(url);
+            break;
+          }
+        } else {
+          driver.navigate().refresh();
+        }
+      }
+    } catch (Exception e) {
+      AssertUtils.fail("Failed to validate Invoice in Account Portal");
+    }
+
+    String content = driver.findElement(By.tagName("body")).getText();
+    Util.printInfo("Json Data from S4 PDF API: " + new JSONObject(content).get("data").toString());
+    byte[] decoder = Base64.getDecoder().decode(new JSONObject(content).get("data").toString());
+    File file = Paths.get(System.getProperty("user.home"), "Downloads/invoice.pdf").toFile();
+    try ( FileOutputStream fos = new FileOutputStream(file); ) {
+      fos.write(decoder);
+      Util.printInfo("PDF File Saved");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      pdfContent = new PDFReader().readPDF(file.getPath());
+    } catch (Exception e) {
+      Assert.fail("Failed to reach/read the PDF: " + e.getCause());
+    }
+
+    if( !assertPDFContent(pdfContent, results)) {
+      Assert.fail("Invoice is missing Crucial data");
+    }
+
+    return pdfContent;
+  }
+
+  private Boolean assertPDFContent(String pdfContent, Map<String,String> results) {
+    return pdfContent.contains(results.get(BICECEConstants.ORDER_ID)) &&
+        pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)) &&
+        pdfContent.contains(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)) &&
+        pdfContent.toUpperCase().contains(results.get("getPOReponse_paymentProcessor")) &&
+        pdfContent.contains(results.get("getPOResponse_subtotalAfterPromotionsWithTax")) &&
+        pdfContent.contains(results.get("getPOReponse_firstName")) &&
+        pdfContent.contains(results.get("getPOReponse_lastName")) &&
+        pdfContent.contains(results.get("getPOReponse_street")) &&
+        pdfContent.contains(results.get("getPOReponse_city"));
+
   }
 
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
@@ -1073,7 +1174,6 @@ public class PortalTestBase {
   }
 
   public boolean populateBillingAddress(HashMap<String, String> data, String userType) {
-
     boolean status = false;
     String paymentType = data.get(BICECEConstants.PAYMENT_TYPE);
     String firstNameXpath = "";

@@ -5,6 +5,7 @@ default:
   paymentMethod: "VISA"
   password: "iAg7eLGIEYMczxIlN8R0AA==:ewmfKH9qq0dmWn91Yw3pRA=="
   cepURL: "https://customer-int.autodesk.com/"
+  accountPortalURL: https://int-manage.autodesk.com
   guacBaseURL: "https://checkout-apollo.autodesk.com/"
   guacDotComBaseURL: ""
   guacResourceURL: "checkout?priceIds="
