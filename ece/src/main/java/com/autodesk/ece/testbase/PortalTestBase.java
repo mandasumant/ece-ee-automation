@@ -353,9 +353,12 @@ public class PortalTestBase {
             error_message = "";
           }
 
-          if (error_message.contains("We're having some issues right now.")) {
+          if (!error_message.isEmpty()) {
             Util.printInfo("Invoice is not ready yet, we saw this text -> " + error_message);
             attempts++;
+            if (attempts > 12) {
+              Assert.fail("Failed to find Invoice PDF in Order History Page, after " + attempts + " attempts");
+            }
             Util.printInfo("Waiting for another 5 minutes on attempt #" + attempts);
             Util.sleep(300000);
             driver.navigate().refresh();
