@@ -182,7 +182,7 @@ public class PelicanTestBase {
   public HashMap<String, String> forwardNextBillingCycleForRenewal(HashMap<String, String> data) {
     //Temporary sleep until we pick up story to address the retry logic to wait for Order charge. 
     Util.sleep(240000);
-    
+
     String getPurchaseOrderDetailsUrl = data.get("getSubscriptionByIdUrl");
     getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
         data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));

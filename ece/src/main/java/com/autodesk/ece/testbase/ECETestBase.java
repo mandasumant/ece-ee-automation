@@ -70,9 +70,9 @@ public class ECETestBase {
     return bictb;
   }
 
-  public String getSAPOrderNumberUsingPO(String poNumber){
+  public String getSAPOrderNumberUsingPO(String poNumber) {
     String orderNumber = "";
-    if(saptb.sapConnector.isBAPIEnabled()) {
+    if (saptb.sapConnector.isBAPIEnabled()) {
       saptb.sapConnector.connectSAPBAPI();
       orderNumber = saptb.sapConnector.getOrderNumberUsingPO(poNumber);
     } else {

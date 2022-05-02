@@ -303,7 +303,7 @@ public class MOETestBase {
 
         Util.sleep(15000);
         String optyid = driver.findElement(By.xpath(
-            "//lightning-formatted-rich-text[@class='slds-rich-text-editor__output' and contains(., 'A-')]"))
+                "//lightning-formatted-rich-text[@class='slds-rich-text-editor__output' and contains(., 'A-')]"))
             .getText();
         Util.printInfo(optyid);
         results.put("opportunityid", optyid);
@@ -576,7 +576,7 @@ public class MOETestBase {
 
     // TODO: replace static data with product name added in Salesforce while creating the optyId
     String productTitle = driver.findElement(By.xpath(
-        "//h5[@class=\"checkout--product-bar--info-column--name-sub-column--name wd-mr-24\"]"))
+            "//h5[@class=\"checkout--product-bar--info-column--name-sub-column--name wd-mr-24\"]"))
         .getText();
     Util.printInfo("Product title: " + productTitle);
     AssertUtils.assertEquals(title, productTitle);

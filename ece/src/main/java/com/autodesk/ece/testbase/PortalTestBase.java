@@ -14,8 +14,6 @@ import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
@@ -35,7 +33,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.RandomStringUtils;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -338,7 +335,7 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Validating  Tax Invoice " + GlobalConstants.TAG_TESTINGHUB)
-  public String validateBICOrderTaxInvoice(Map<String,String> results) {
+  public String validateBICOrderTaxInvoice(Map<String, String> results) {
     String error_message = null;
     String pdfContent = null;
     String url = null;
@@ -348,7 +345,7 @@ public class PortalTestBase {
     try {
       int attempts = 0;
       while (attempts < 12) {
-        if(portalPage.checkIfElementExistsInPage("portalOrderInvoiceLink", 10)) {
+        if (portalPage.checkIfElementExistsInPage("portalOrderInvoiceLink", 10)) {
           portalPage.clickUsingLowLevelActions("portalOrderInvoiceLink");
           try {
             error_message = driver.findElement(By.className("error-msg")).getText();
@@ -394,7 +391,7 @@ public class PortalTestBase {
     Util.printInfo("Json Data from S4 PDF API: " + new JSONObject(content).get("data").toString());
     byte[] decoder = Base64.getDecoder().decode(new JSONObject(content).get("data").toString());
     File file = Paths.get(System.getProperty("user.home"), "Downloads/invoice.pdf").toFile();
-    try ( FileOutputStream fos = new FileOutputStream(file); ) {
+    try (FileOutputStream fos = new FileOutputStream(file)) {
       fos.write(decoder);
       Util.printInfo("PDF File Saved");
     } catch (Exception e) {
@@ -406,14 +403,14 @@ public class PortalTestBase {
       Assert.fail("Failed to reach/read the PDF: " + e.getCause());
     }
 
-    if( !assertPDFContent(pdfContent, results)) {
+    if (!assertPDFContent(pdfContent, results)) {
       Assert.fail("Invoice is missing Crucial data");
     }
 
     return pdfContent;
   }
 
-  private Boolean assertPDFContent(String pdfContent, Map<String,String> results) {
+  private Boolean assertPDFContent(String pdfContent, Map<String, String> results) {
     return pdfContent.contains(results.get(BICECEConstants.ORDER_ID)) &&
         pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)) &&
         pdfContent.contains(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)) &&

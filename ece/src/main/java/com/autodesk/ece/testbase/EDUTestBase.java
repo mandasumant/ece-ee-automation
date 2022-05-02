@@ -170,7 +170,7 @@ public class EDUTestBase {
   public void verifyUser(String oxygenId) {
     String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
     given().auth().basic(testData.get("eduAEMUser"),
-        ProtectedConfigFile.decrypt(testData.get("eduAEMPassword"))).when()
+            ProtectedConfigFile.decrypt(testData.get("eduAEMPassword"))).when()
         .get(baseUrl);
   }
 
@@ -247,9 +247,8 @@ public class EDUTestBase {
         WebElement landingPageHeader = driver.findElement(
             By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
 
-
         // Sometimes the Submit Action is not working, so retrying one last time
-        if(!(landingPageHeader.getText().contains("Thank you"))) {
+        if (!(landingPageHeader.getText().contains("Thank you"))) {
 
           overviewPageHeader = driver.findElement(
               By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));

@@ -191,7 +191,7 @@ public class BICFinancingOrder extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-            BICECEConstants.ADD_SEAT_QTY),
+                BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
 

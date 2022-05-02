@@ -60,10 +60,8 @@ public class BICRefundOrder extends ECETestBase {
     Util.printInfo(
         "Validating the store for the locale :" + locale + " Store: " + System.getProperty(BICECEConstants.STORE));
 
-    boolean isValidStore = false;
-    if (testDataForEachMethod.get(BICECEConstants.STORE_NAME).equals(System.getProperty(BICECEConstants.STORE))) {
-      isValidStore = true;
-    }
+    boolean isValidStore = testDataForEachMethod.get(BICECEConstants.STORE_NAME)
+        .equals(System.getProperty(BICECEConstants.STORE));
 
     if (!isValidStore) {
       AssertUtils

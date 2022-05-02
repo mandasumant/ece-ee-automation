@@ -42,7 +42,7 @@ public class BICECEConstants extends BICConstants {
   public static final String FULFILLMENT_STATUS = "getPOReponse_fulfillmentStatus";
   public static final String FULFILLMENT_DATE = "getPOReponse_fulfillmentDate";
   public static final String SUBTOTAL_WITH_TAX = "getPOResponse_subtotalAfterPromotionsWithTax";
-  public static final String FINAL_TAX_AMOUNT  = "finalTaxAmount";
+  public static final String FINAL_TAX_AMOUNT = "finalTaxAmount";
   public static final String ORGANIZATION_NAME = "Organization_Name";
   public static final String FULL_ADDRESS = "Full_Address";
   public static final String ZIPCODE = "Zipcode";
@@ -58,7 +58,7 @@ public class BICECEConstants extends BICConstants {
   public static final String LOGIN_PASSWORD = "loginPassword";
   public static final String LOGIN_BUTTON = "loginButton";
   public static final String GET_STARTED_SKIP_LINK = "getStartedSkipLink";
-  public static final String ADD_SEATS_MODAL_SKIP_BUTTON = "//*[@data-testid=\'addSeats-modal-skip-button\']";
+  public static final String ADD_SEATS_MODAL_SKIP_BUTTON = "//*[@data-testid='addSeats-modal-skip-button']";
   public static final String PAYMENT = "payment";
   public static final String PAYMENT_TYPE = "paymentType";
   public static final String PAYMENT_METHODS = "paymentMethods";

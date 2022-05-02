@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.persistence.criteria.Order;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -404,7 +403,7 @@ public class BICOrderCreation extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-            BICECEConstants.ADD_SEAT_QTY),
+                BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
@@ -929,7 +928,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get(
-            BICECEConstants.RESPONSE_END_DATE),
+                BICECEConstants.RESPONSE_END_DATE),
             results.get(BICECEConstants.NEXT_BILLING_DATE));
     Assert.assertEquals(results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "false",
         "Auto renew is off.");

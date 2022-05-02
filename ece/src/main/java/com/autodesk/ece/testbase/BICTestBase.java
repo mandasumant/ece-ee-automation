@@ -1793,12 +1793,36 @@ public class BICTestBase {
   }
 
   private void clickToStayOnSameSite() {
-    try {
-      bicPage.waitForFieldPresent("bicStayOnSameSite", 5000);
-      bicPage.clickUsingLowLevelActions("bicStayOnSameSite");
-      Util.printInfo("Clicked on Stay On Same page link...");
-    } catch (Exception e) {
-      Util.printInfo("Stay on US Site link is not displayed...");
+    Boolean isLocaleSiteModalVisible = true;
+    Integer attempt = 0;
+
+    Util.printInfo("Local modal: Stay on same site.");
+    while (isLocaleSiteModalVisible) {
+      attempt++;
+
+      if (attempt > 3) {
+        Util.printInfo("Retry logic: Failed to find or click on 'Stay on same site' link, attempt, #" + attempt);
+        Util.printInfo("Session Storage: set 'nonsensitiveHasNonLocalModalLaunched' to true.");
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
+        driver.navigate().refresh();
+        waitForLoadingSpinnerToComplete();
+        break;
+      }
+
+      try {
+        Util.printInfo("Attempt: " + attempt);
+        bicPage.waitForField("bicStayOnSameSite", true, 5000);
+        isLocaleSiteModalVisible = driver.findElement(
+            By.xpath(bicPage.getFirstFieldLocator("bicStayOnSameSite"))).isDisplayed();
+        Util.printInfo("The link 'Stay on same site' is displayed. Attempt no " + attempt + " to close local modal.");
+        bicPage.clickUsingLowLevelActions("bicStayOnSameSite");
+        Util.sleep(2000);
+        Util.printInfo("Click action performed on the link 'Stay on same site'.");
+      } catch (Exception e) {
+        Util.printInfo("The link 'Stay on same site' is not present.");
+        isLocaleSiteModalVisible = false;
+      }
     }
   }
 
