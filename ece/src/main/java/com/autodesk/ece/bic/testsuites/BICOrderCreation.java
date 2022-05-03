@@ -243,9 +243,9 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     // Validating Tax and Refund Invoice for INT env only
-//     if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-//       portaltb.validateBICOrderTaxInvoice(results);
-//     }
+    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      portaltb.validateBICOrderTaxInvoice(results);
+    }
 
     // Put the SAP Order number into results map
     testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
