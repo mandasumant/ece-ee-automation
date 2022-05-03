@@ -356,7 +356,7 @@ public class PortalTestBase {
           if (!error_message.isEmpty()) {
             Util.printInfo("Invoice is not ready yet, we saw this text -> " + error_message);
             attempts++;
-            if (attempts > 12) {
+            if (attempts > 11) {
               Assert.fail("Failed to find Invoice PDF in Order History Page, after " + attempts + " attempts");
             }
             Util.printInfo("Waiting for another 5 minutes on attempt #" + attempts);
@@ -413,11 +413,23 @@ public class PortalTestBase {
     return pdfContent;
   }
 
-  private Boolean assertPDFContent(String pdfContent, Map<String, String> results) {
+  private Boolean assertPDFContent(String pdfContent, Map<String,String> results) {
+    Util.printInfo("PDF String Content: " + pdfContent);
+    Util.printInfo("Is Order ID found in Invoice: " + pdfContent.contains(results.get(BICECEConstants.ORDER_ID)));
+    Util.printInfo("Is Subscription ID found in Invoice: " +
+        pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)));
+    Util.printInfo("Is SUBTOTAL_WITH_TAX found in Invoice: " +
+        pdfContent.contains(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)));
+    Util.printInfo("Is subtotalAfterPromotionsWithTax found in Invoice: " +
+        pdfContent.contains(results.get("getPOResponse_subtotalAfterPromotionsWithTax")));
+    Util.printInfo("Is firstName found in Invoice: " + pdfContent.contains(results.get("getPOReponse_firstName")));
+    Util.printInfo("Is lastName found in Invoice: " + pdfContent.contains(results.get("getPOReponse_lastName")));
+    Util.printInfo("Is street found in Invoice: " + pdfContent.contains(results.get("getPOReponse_street")));
+    Util.printInfo("Is city found in Invoice: " + pdfContent.contains(results.get("getPOReponse_city")));
+
     return pdfContent.contains(results.get(BICECEConstants.ORDER_ID)) &&
         pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)) &&
         pdfContent.contains(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)) &&
-        pdfContent.toUpperCase().contains(results.get("getPOReponse_paymentProcessor")) &&
         pdfContent.contains(results.get("getPOResponse_subtotalAfterPromotionsWithTax")) &&
         pdfContent.contains(results.get("getPOReponse_firstName")) &&
         pdfContent.contains(results.get("getPOReponse_lastName")) &&

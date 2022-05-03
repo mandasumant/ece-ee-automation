@@ -611,6 +611,11 @@ public class BICOrderCreation extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
+    // Validating Tax and Refund Invoice for INT env only
+    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      portaltb.validateBICOrderTaxInvoice(results);
+    }
+
     // Put the SAP Order number into results map
     testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
 
@@ -1099,6 +1104,11 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid), PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+
+    // Validating Tax and Refund Invoice for INT env only
+    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      portaltb.validateBICOrderTaxInvoice(results);
+    }
     updateTestingHub(testResults);
 
   }
