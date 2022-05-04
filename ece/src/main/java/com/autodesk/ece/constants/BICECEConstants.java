@@ -45,6 +45,7 @@ public class BICECEConstants extends BICConstants {
   public static final String FINAL_TAX_AMOUNT = "finalTaxAmount";
   public static final String ORGANIZATION_NAME = "Organization_Name";
   public static final String FULL_ADDRESS = "Full_Address";
+  public static final String IS_BUSINESS_ORG_NO ="isBusinessOrgNo";
   public static final String ZIPCODE = "Zipcode";
   public static final String PHONE_NUMBER = "Phone_Number";
   public static final String COUNTRY = "Country";

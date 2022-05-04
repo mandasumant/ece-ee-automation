@@ -495,7 +495,7 @@ public class BICTestBase {
     try {
       Util.printInfo("Adding billing details...");
       Util.printInfo("Address Details :" + address);
-      String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
+      String isOrgBusinessNoXpath = "", orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
           stateXpath = "";
       String paymentTypeToken = null;
       switch (paymentType.toUpperCase()) {
@@ -515,6 +515,8 @@ public class BICTestBase {
           break;
       }
 
+      isOrgBusinessNoXpath =  bicPage.getFirstFieldLocator(BICECEConstants.IS_BUSINESS_ORG_NO)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
       orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
       fullAddrXpath = bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
@@ -537,9 +539,12 @@ public class BICTestBase {
       if (!status) {
         AssertUtils.fail("Organization_Name not available.");
       }
-      driver.findElement(By.xpath(orgNameXpath))
+
+      driver.findElement(By.xpath(isOrgBusinessNoXpath)).click();
+
+      /*driver.findElement(By.xpath(orgNameXpath))
           .sendKeys(address.get(
-              BICECEConstants.ORGANIZATION_NAME));
+              BICECEConstants.ORGANIZATION_NAME));*/
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       driver.findElement(By.xpath(fullAddrXpath))
           .sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
@@ -577,7 +582,7 @@ public class BICTestBase {
            numberKey = BICECEConstants.VAT_NUMBER;
            break;
         }
-        
+
         if (bicPage.checkIfElementExistsInPage(numberKey, 5)) {
           Util.printInfo("Populating" + numberKey + ": " + taxId);
           bicPage.populateField(numberKey, taxId);
