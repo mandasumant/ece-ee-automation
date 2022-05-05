@@ -540,11 +540,6 @@ public class BICTestBase {
         AssertUtils.fail("Organization_Name not available.");
       }
 
-      driver.findElement(By.xpath(isBusinessOrgNoSelection)).click();
-
-      /*driver.findElement(By.xpath(orgNameXpath))
-          .sendKeys(address.get(
-              BICECEConstants.ORGANIZATION_NAME));*/
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       driver.findElement(By.xpath(fullAddrXpath))
           .sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
@@ -571,7 +566,9 @@ public class BICTestBase {
         driver.findElement(By.xpath(stateXpath))
             .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
       }
+
       String taxId = System.getProperty(BICECEConstants.TAX_ID);
+
       if (taxId != null && !taxId.isEmpty()) {
        String numberKey;
        switch (System.getProperty(BICECEConstants.STORE)){
@@ -582,6 +579,9 @@ public class BICTestBase {
            numberKey = BICECEConstants.VAT_NUMBER;
            break;
         }
+        driver.findElement(By.xpath(orgNameXpath))
+            .sendKeys(address.get(
+                BICECEConstants.ORGANIZATION_NAME) + " " + RandomStringUtils.random(6, true, false));
 
         if (bicPage.checkIfElementExistsInPage(numberKey, 5)) {
           Util.printInfo("Populating" + numberKey + ": " + taxId);
@@ -590,6 +590,8 @@ public class BICTestBase {
               .sendKeys(Keys.TAB);
           waitForLoadingSpinnerToComplete();
         }
+      } else {
+        driver.findElement(By.xpath(isBusinessOrgNoSelection)).click();
       }
     } catch (Exception e) {
       e.printStackTrace();
