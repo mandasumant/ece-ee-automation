@@ -60,7 +60,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@2e verdieping@Goetsenhovenvijve@1209@06-65533273@Belgium"
+    address: "Autodesk@2E Verdieping@Goetsenhovenvijve@1209@06-65533273@Belgium"
     isTaxed: "Y"
 
   fr_BE:
@@ -69,7 +69,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@2e verdieping@Goetsenhovenvijve@1209@06-65533273@Belgium"
+    address: "Autodesk@2E Verdieping@Goetsenhovenvijve@1209@06-65533273@Belgium"
     isTaxed: "Y"
 
   pl_PL:
@@ -140,7 +140,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
-    address: "Autodesk@Visiokatu 60@KankaanpÄÄ@38710@03230700940@Finland"
+    address: "Autodesk@Visiokatu 60@Kankaanpää@38710@03230700940@Finland"
     isTaxed: "Y"
 
   hu_HU:
@@ -176,7 +176,7 @@
     currencyStore: "SEK"
     countryDomainSTG: ".se"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Hammarvägen 42@SmÖgen@450 43@03230700940@Sverige"
+    address: "Autodesk@Hammarvägen 42@Smögen@450 43@03230700940@Sverige"
     isTaxed: "Y"
 
   no_NO:
@@ -256,7 +256,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
-    address: "Autodesk@Poljanice pete 14@Zagreb@10000@231412341@Croatia"
+    address: "Autodesk@Poljanice Pete 14@Zagreb@10000@231412341@Croatia"
     isTaxed: "Y"
 
   en_LI:
