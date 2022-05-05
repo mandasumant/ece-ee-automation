@@ -154,7 +154,7 @@ public class MOEOrderFlows extends ECETestBase {
     moeResults.putAll(testDataForEachMethod);
 
     // Getting a PurchaseOrder details from pelican
-    String pelicanResponse = pelicantb.retryGetPurchaseOrder(moeResults, true);
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(moeResults, true, false);
 
     moeResults.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
@@ -186,7 +186,7 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     // Getting a PurchaseOrder details from pelican
-    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true, false);
 
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
@@ -229,7 +229,7 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     // Getting a PurchaseOrder details from pelican
-    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true, false);
 
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
@@ -258,7 +258,7 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(testDataForEachMethod);
 
     // Getting a PurchaseOrder details from pelican
-    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true, false);
 
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 

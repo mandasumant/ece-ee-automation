@@ -352,6 +352,35 @@ public class PelicanTestBase {
     return result;
   }
 
+  @Step("Get Purchase Order V4 API" + GlobalConstants.TAG_TESTINGHUB)
+  public String getPurchaseOrderV4(HashMap<String, String> data) {
+    String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsV4Url");
+    getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
+        data.get(BICECEConstants.orderNumber));
+
+    Util.printInfo("Get Purchase Order V4 Request URL: " + getPurchaseOrderDetailsUrl);
+    String sig_details = getPelicanSignature(data);
+    String hmacSignature = sig_details.split("::")[0];
+    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
+    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
+    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
+
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
+
+    Map<String, String> header = new HashMap<>();
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+
+    Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, null);
+    String result = response.getBody().asString();
+    Util.PrintInfo(BICECEConstants.RESULT + result);
+
+    return result;
+  }
+
   @Step("Create Refund Order" + GlobalConstants.TAG_TESTINGHUB)
   public void createRefundOrder(HashMap<String, String> data) {
     String purchaseOrderDetailsUrl = data.get("putPelicanRefundOrderUrl");
@@ -490,34 +519,120 @@ public class PelicanTestBase {
     return results;
   }
 
+  @Step("Subscription : Getting purchase order details from Order Service V4 API" + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> getPurchaseOrderV4Details(String poResponse) {
+    HashMap<String, String> results = new HashMap<>();
+    JsonPath jp = new JsonPath(poResponse);
+    try {
+      results.put("getPOResponse_origin", jp.get("origin").toString());
+      results.put("getPOResponse_orderId", jp.get("id").toString());
+      results.put("getPOResponse_storedPaymentProfileId",
+          jp.get("payment.paymentProfileId").toString());
+      results.put("getPOResponse_fulfillmentStatus",
+          jp.get("lineItems[0].fulfillmentStatus").toString());
+      results.put("getPOResponse_orderState", jp.get("content[0].orderState").toString());
+      results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+          jp.get("lineItems[0].subscriptionInfo.subscriptionId").toString());
+      results.put("getPOResponse_subscriptionPeriodStartDate",
+          jp.get("lineItems[0].subscriptionInfo.subscriptionPeriodStartDate").toString());
+      results.put("getPOResponse_subscriptionPeriodEndDate",
+          jp.get("lineItems[0].subscriptionInfo.subscriptionPeriodEndDate").toString());
+      results.put("getPOResponse_fulfillmentDate",
+          jp.get("lineItems[0].fulfillmentDate").toString());
+      results.put("getPOResponse_paymentProcessor",
+          jp.get("payments[0].paymentProcessor").toString());
+
+      results.put("getPOResponse_endCustomer_firstName",
+          jp.get("endCustomer.firstName"));
+      results.put("getPOResponse_endCustomer_lastName",
+          jp.get("endCustomer.lastName"));
+      results.put("getPOResponse_endCustomer_addressLine1",
+          jp.get("endCustomer.addressLine1"));
+      results.put("getPOResponse_endCustomer_city",
+          jp.get("endCustomer.city"));
+      results.put("getPOResponse_endCustomer_accountCsn",
+          jp.get("endCustomer.accountCsn"));
+      results.put("getPOResponse_endCustomer_contactCsn",
+          jp.get("endCustomer.contactCsn"));
+
+      results.put("getPOResponse_billingAddress_firstName",
+          jp.get("billingAddress.firstName"));
+      results.put("getPOResponse_billingAddress_lastName",
+          jp.get("billingAddress.lastName"));
+      results.put("getPOResponse_billingAddress_addressLine1",
+          jp.get("billingAddress.addressLine1"));
+      results.put("getPOResponse_billingAddress_city",
+          jp.get("billingAddress.city"));
+      results.put("getPOResponse_billingAddress_accountCsn",
+          jp.get("billingAddress.accountCsn"));
+      results.put("getPOResponse_billingAddress_contactCsn",
+          jp.get("billingAddress.contactCsn"));
+
+      results.put("getPOResponse_agentAccount_firstName",
+          jp.get("agentAccount.firstName"));
+      results.put("getPOResponse_agentAccount_lastName",
+          jp.get("agentAccount.lastName"));
+      results.put("getPOResponse_agentAccount_addressLine1",
+          jp.get("agentAccount.addressLine1"));
+      results.put("getPOResponse_agentAccount_city",
+          jp.get("agentAccount.city"));
+      results.put("getPOResponse_agentAccount_accountCsn",
+          jp.get("agentAccount.accountCsn"));
+      results.put("getPOResponse_agentAccount_contactCsn",
+          jp.get("agentAccount.contactCsn"));
+
+      results.put("getPOResponse_agentContact_firstName",
+          jp.get("agentContact.firstName"));
+      results.put("getPOResponse_agentContact_lastName",
+          jp.get("agentContact.lastName"));
+      results.put("getPOResponse_agentContact_addressLine1",
+          jp.get("agentContact.addressLine1"));
+      results.put("getPOResponse_agentContact_city",
+          jp.get("agentContact.city"));
+      results.put("getPOResponse_agentContact_accountCsn",
+          jp.get("agentContact.accountCsn"));
+      results.put("getPOResponse_agentContact_contactCsn",
+          jp.get("agentContact.contactCsn"));
+
+      results.put("getPOResponse_oxygenID", jp.get("purchaser.oxygenId").toString());
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service V4 API");
+    }
+    return results;
+  }
+
   public String addTokenInResourceUrl(String resourceUrl, String tokenString) {
     return resourceUrl.replace("passtoken", tokenString);
   }
 
   /**
-   * Retry a pelican call upto 3 times to find a subscription id
+   * Retry a pelican call upto 20 times to have PO CHARGED
    *
    * @param results - Data hashmap
-   * @param silent  - Whether a failure 3 times in a row causes the testcase to fail
+   * @param silent  - Whether a failure 20 times in a row causes the testcase to fail
    * @return - Pelican response
    */
-  public String retryGetPurchaseOrder(HashMap<String, String> results, boolean silent) {
+  public String retryGetPurchaseOrder(HashMap<String, String> results, boolean silent, boolean isO2P) {
     String response = "";
-    boolean subscriptionIdFound = false;
+    boolean isOrderCharged = false;
     for (int i = 1; i < 20; i++) {
-      response = getPurchaseOrder(results);
-      int intIndex = response.indexOf("subscriptionId");
+      if(isO2P) {
+        response = getPurchaseOrderV4(results);
+      } else {
+        response = getPurchaseOrder(results);
+      }
+      int intIndex = response.indexOf("CHARGED");
       if (intIndex == -1) {
-        Util.printInfo("SubscriptionId not found. Retry #" + i);
+        Util.printInfo("Purchase Order is not CHARGED yet. Retry #" + i);
         Util.sleep(30000);
       } else {
-        Util.printInfo("Found subscriptionId at index " + intIndex);
-        subscriptionIdFound = true;
+        Util.printInfo("BiC Purchase Order is Charged");
+        isOrderCharged = true;
         break;
       }
     }
-    if (!subscriptionIdFound && !silent) {
-      AssertUtils.fail("Failed: Could not find the subscription id for Order # " + results.get(
+    if (!isOrderCharged && !silent) {
+      AssertUtils.fail("Failed: Purchase Order not charged for PO # " + results.get(
           BICConstants.orderNumber) + ".");
     }
     return response;
@@ -530,6 +645,16 @@ public class PelicanTestBase {
    * @return - Pelican response
    */
   public String retryGetPurchaseOrder(HashMap<String, String> results) {
-    return retryGetPurchaseOrder(results, false);
+    return retryGetPurchaseOrder(results, false, false);
+  }
+
+  /**
+   * Retry a pelican call up to 3 times to find a subscription id
+   *
+   * @param results - Data hashmap
+   * @return - Pelican response
+   */
+  public String retryO2PGetPurchaseOrder(HashMap<String, String> results) {
+    return retryGetPurchaseOrder(results, false, true);
   }
 }

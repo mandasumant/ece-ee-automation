@@ -661,7 +661,7 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     // Getting a PurchaseOrder details from pelican
-    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true);
+    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true, false);
 
     if (!pelicanResponse.contains("subscriptionId")) {
       Util.printWarning("Failed to get subscription for Meta order, skipping rest of test");
