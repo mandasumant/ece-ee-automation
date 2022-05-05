@@ -515,7 +515,7 @@ public class BICTestBase {
           break;
       }
 
-      isBusinessOrgNoSelection =  bicPage.getFirstFieldLocator(BICECEConstants.IS_BUSINESS_ORG_NO)
+      isBusinessOrgNoSelection = bicPage.getFirstFieldLocator(BICECEConstants.IS_BUSINESS_ORG_NO_SELECTION)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
       orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
@@ -570,14 +570,14 @@ public class BICTestBase {
       String taxId = System.getProperty(BICECEConstants.TAX_ID);
 
       if (taxId != null && !taxId.isEmpty()) {
-       String numberKey;
-       switch (System.getProperty(BICECEConstants.STORE)){
-         case "STORE-AUS":
-           numberKey = BICECEConstants.ABN_NUMBER;
-           break;
-         default:
-           numberKey = BICECEConstants.VAT_NUMBER;
-           break;
+        String numberKey;
+        switch (System.getProperty(BICECEConstants.STORE)) {
+          case "STORE-AUS":
+            numberKey = BICECEConstants.ABN_NUMBER;
+            break;
+          default:
+            numberKey = BICECEConstants.VAT_NUMBER;
+            break;
         }
         driver.findElement(By.xpath(orgNameXpath))
             .sendKeys(address.get(
@@ -591,7 +591,12 @@ public class BICTestBase {
           waitForLoadingSpinnerToComplete();
         }
       } else {
-        driver.findElement(By.xpath(isBusinessOrgNoSelection)).click();
+        try {
+          Util.printInfo("Toggling off company name field");
+          driver.findElement(By.xpath(isBusinessOrgNoSelection)).click();
+        } catch (Exception e) {
+          Util.printInfo("Company name field optional");
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();
