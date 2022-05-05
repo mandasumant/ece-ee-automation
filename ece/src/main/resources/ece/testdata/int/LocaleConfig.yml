@@ -193,7 +193,7 @@
     currencyStore: "DKK"
     countryDomain: ".dk"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Eskelundsvej 11@MRegion Sjælland@1556@03230700940@Danmark"
+    address: "Autodesk@Eskelundsvej 11@Mregion Sjælland@1556@03230700940@Danmark"
     isTaxed: "Y"
 
   cs_CZ:
@@ -273,7 +273,7 @@
     currencyStore: "EUR"
     countryDomain: "europe"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Caka, bld. 136@Riga@1009@371(67)29-67-94@Latvia"
+    address: "Autodesk@Caka Bld 136@Riga@1009@371(67)29-67-94@Latvia"
     isTaxed: "Y"
 
   en_IS:
