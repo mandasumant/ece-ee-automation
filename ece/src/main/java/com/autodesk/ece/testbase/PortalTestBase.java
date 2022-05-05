@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Base64;
@@ -26,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -86,11 +88,11 @@ public class PortalTestBase {
     }
   }
 
-  public boolean openPortalBICLaunch(String data) {
+  public boolean openPortalBICLaunch(String url) {
     Util.printInfo("launch URL in browser");
     driver.manage().deleteAllCookies();
-    driver.navigate().to(data);
-    Util.printInfo("Opened:" + data);
+    driver.navigate().to(url);
+    Util.printInfo("Opened:" + url);
     return true;
   }
 
@@ -335,12 +337,12 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Validating  Tax Invoice " + GlobalConstants.TAG_TESTINGHUB)
-  public String validateBICOrderTaxInvoice(Map<String, String> results) {
+  public boolean validateBICOrderTaxInvoice(Map<String, String> results) {
     String error_message = null;
     String pdfContent = null;
     String url = null;
     navigateToOrderHistory();
-
+    boolean isValid = false;
     Util.sleep(5000);
     try {
       int attempts = 0;
@@ -409,32 +411,52 @@ public class PortalTestBase {
     if (!assertPDFContent(pdfContent, results)) {
       Assert.fail("Invoice is missing Crucial data");
     }
-
-    return pdfContent;
+    isValid = true;
+    return isValid;
   }
 
   private Boolean assertPDFContent(String pdfContent, Map<String,String> results) {
     Util.printInfo("PDF String Content: " + pdfContent);
+    Boolean orderFound = pdfContent.contains(results.get(BICECEConstants.ORDER_ID));
+    Boolean subscriptionFound = pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID));
+    Boolean firstNameFound = pdfContent.contains(results.get("getPOReponse_firstName"));
+    Boolean lastNameFound = pdfContent.contains(results.get("getPOReponse_lastName"));
+    Boolean streetFound = pdfContent.contains(results.get("getPOReponse_street"));
+    Boolean cityFound = pdfContent.contains(results.get("getPOReponse_city"));
     Util.printInfo("Is Order ID found in Invoice: " + pdfContent.contains(results.get(BICECEConstants.ORDER_ID)));
     Util.printInfo("Is Subscription ID found in Invoice: " +
         pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)));
-    Util.printInfo("Is SUBTOTAL_WITH_TAX found in Invoice: " +
-        pdfContent.contains(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)));
-    Util.printInfo("Is subtotalAfterPromotionsWithTax found in Invoice: " +
-        pdfContent.contains(results.get("getPOResponse_subtotalAfterPromotionsWithTax")));
     Util.printInfo("Is firstName found in Invoice: " + pdfContent.contains(results.get("getPOReponse_firstName")));
     Util.printInfo("Is lastName found in Invoice: " + pdfContent.contains(results.get("getPOReponse_lastName")));
     Util.printInfo("Is street found in Invoice: " + pdfContent.contains(results.get("getPOReponse_street")));
     Util.printInfo("Is city found in Invoice: " + pdfContent.contains(results.get("getPOReponse_city")));
 
-    return pdfContent.contains(results.get(BICECEConstants.ORDER_ID)) &&
-        pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)) &&
-        pdfContent.contains(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)) &&
-        pdfContent.contains(results.get("getPOResponse_subtotalAfterPromotionsWithTax")) &&
-        pdfContent.contains(results.get("getPOReponse_firstName")) &&
-        pdfContent.contains(results.get("getPOReponse_lastName")) &&
-        pdfContent.contains(results.get("getPOReponse_street")) &&
-        pdfContent.contains(results.get("getPOReponse_city"));
+    String[] localeSplit = results.get("language").split("-");
+    NumberFormat localeFormat = NumberFormat.getNumberInstance(new Locale(localeSplit[0], localeSplit[1]));
+    String totalAmountFormatted =
+        localeFormat.format(Double.valueOf(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)));
+    String totalAmountWithPromoCodeFormatted = localeFormat.format(Double.valueOf(results.get(
+        "getPOResponse_subtotalAfterPromotionsWithTax")));
+
+    String totalAmountTrimmed = totalAmountFormatted.replace(".","").replace(",","").replace("\u00a0","").replace("\u00A0","").trim();
+    String totalAmountWithPromoCodeTrimmed = totalAmountWithPromoCodeFormatted.replace(".","").replace(",","").replace("\u00a0","").replace("\u00A0","").trim();
+    String pdfContentTrimmed = pdfContent.replace(".","").replace(",","").replace("\u00a0","").replaceAll("\n", " ").trim();
+
+    Util.printInfo("PDF String Content #:" + pdfContentTrimmed);
+    Util.printInfo("totalAmountFormatted #:" + totalAmountTrimmed);
+    Util.printInfo("totalAmountWithPromoCodeFormatted #:" + totalAmountWithPromoCodeTrimmed);
+
+    Util.printInfo("Is SUBTOTAL_WITH_TAX found in Invoice: " + pdfContentTrimmed.contains(totalAmountTrimmed));
+    Util.printInfo("Is subtotalAfterPromotionsWithTax found in Invoice: " + pdfContentTrimmed.contains(totalAmountWithPromoCodeTrimmed));
+
+    return orderFound &&
+        subscriptionFound &&
+        pdfContentTrimmed.contains(totalAmountTrimmed) &&
+        pdfContentTrimmed.contains(totalAmountWithPromoCodeTrimmed) &&
+        firstNameFound &&
+        lastNameFound &&
+        streetFound &&
+        cityFound;
 
   }
 

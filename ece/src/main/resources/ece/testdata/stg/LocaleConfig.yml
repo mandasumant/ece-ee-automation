@@ -103,7 +103,7 @@
     currencyStore: "EUR"
     countryDomain: ".de"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY,SOFORT"
-    address: "Autodesk@Güntzelstrasse 118@Rorodt@1826 GN@65043235263@Deutschland"
+    address: "Autodesk@Schöneggweg 21@Babenhausen@87727@65043235263@Deutschland"
     isTaxed: "Y"
 
   it_IT:
@@ -246,7 +246,7 @@
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
-    address: "Autodesk@ 21 Vyzantiou@Nicosia@2064@143233421@Cyprus"
+    address: "Autodesk@21 Vyzantiou@Nicosia@2064@143233421@Cyprus"
     isTaxed: "Y"
 
   en_HR:
@@ -300,7 +300,7 @@
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@ Raua põik 7@Raasiku@75203@1234@Estonia"
+    address: "Autodesk@Raua põik 7@Raasiku@75203@1234@Estonia"
     isTaxed: "Y"
 
   en_MT:
@@ -336,7 +336,7 @@
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@ Prokopova 345/42@Bratislava@85101@223435@Slovakia"
+    address: "Autodesk@Prokopova 345/42@Bratislava@85101@223435@Slovakia"
     isTaxed: "Y"
 
   en_IE:
@@ -345,7 +345,7 @@
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@ Irish St.@Ardee@47545@041-6857993@Ireland"
+    address: "Autodesk@Irish St.@Ardee@47545@041-6857993@Ireland"
     isTaxed: "Y"
 
   en_RO:

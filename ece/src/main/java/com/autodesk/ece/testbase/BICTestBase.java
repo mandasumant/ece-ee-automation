@@ -495,7 +495,7 @@ public class BICTestBase {
     try {
       Util.printInfo("Adding billing details...");
       Util.printInfo("Address Details :" + address);
-      String isOrgBusinessNoXpath = "", orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
+      String isBusinessOrgNoSelection = "", orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
           stateXpath = "";
       String paymentTypeToken = null;
       switch (paymentType.toUpperCase()) {
@@ -515,7 +515,7 @@ public class BICTestBase {
           break;
       }
 
-      isOrgBusinessNoXpath = bicPage.getFirstFieldLocator(BICECEConstants.IS_BUSINESS_ORG_NO)
+      isBusinessOrgNoSelection =  bicPage.getFirstFieldLocator(BICECEConstants.IS_BUSINESS_ORG_NO)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
       orgNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
@@ -540,7 +540,7 @@ public class BICTestBase {
         AssertUtils.fail("Organization_Name not available.");
       }
 
-      driver.findElement(By.xpath(isOrgBusinessNoXpath)).click();
+      driver.findElement(By.xpath(isBusinessOrgNoSelection)).click();
 
       /*driver.findElement(By.xpath(orgNameXpath))
           .sendKeys(address.get(
@@ -573,14 +573,14 @@ public class BICTestBase {
       }
       String taxId = System.getProperty(BICECEConstants.TAX_ID);
       if (taxId != null && !taxId.isEmpty()) {
-        String numberKey;
-        switch (System.getProperty(BICECEConstants.STORE)) {
-          case "STORE-AUS":
-            numberKey = BICECEConstants.ABN_NUMBER;
-            break;
-          default:
-            numberKey = BICECEConstants.VAT_NUMBER;
-            break;
+       String numberKey;
+       switch (System.getProperty(BICECEConstants.STORE)){
+         case "STORE-AUS":
+           numberKey = BICECEConstants.ABN_NUMBER;
+           break;
+         default:
+           numberKey = BICECEConstants.VAT_NUMBER;
+           break;
         }
 
         if (bicPage.checkIfElementExistsInPage(numberKey, 5)) {
@@ -1538,9 +1538,8 @@ public class BICTestBase {
 
     if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
       loginAccount(data);
+      skipAddSeats();
     }
-
-    skipAddSeats();
 
     // If the submit button is disabled, fill the payment information out again
     List<WebElement> submitButton = driver.findElements(By.cssSelector(

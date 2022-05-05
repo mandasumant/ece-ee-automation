@@ -480,9 +480,9 @@ public class PelicanTestBase {
           jp.get("content[0].billingInfo.city"));
       results.put("getPOReponse_last4Digits",
           jp.get("content[0].billingInfo.lastDigits"));
-      results.put("getPOReponse_taxCode",
-          jp.get("content[0].lineItems[0].additionalFees[0].feeCollectorExternalKey").toString());
       results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
+      results.put("language", jp.get("content[0].language").toString());
+      results.put(BICConstants.emailid, jp.get("content[0].email").toString());
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service");
     }
