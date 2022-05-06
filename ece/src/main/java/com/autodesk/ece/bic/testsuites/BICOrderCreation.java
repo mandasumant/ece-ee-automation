@@ -403,7 +403,7 @@ public class BICOrderCreation extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-                BICECEConstants.ADD_SEAT_QTY),
+            BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
@@ -933,7 +933,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get(
-                BICECEConstants.RESPONSE_END_DATE),
+            BICECEConstants.RESPONSE_END_DATE),
             results.get(BICECEConstants.NEXT_BILLING_DATE));
     Assert.assertEquals(results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "false",
         "Auto renew is off.");
@@ -1003,11 +1003,6 @@ public class BICOrderCreation extends ECETestBase {
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-
-    // Validating Tax and Refund Invoice for INT env only
-    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      portaltb.validateBICOrderTaxInvoice(results);
-    }
 
     // Update the subscription so that it is expired, which will allow us to renew it
     pelicantb.forwardNextBillingCycleForRenewal(results);
@@ -1168,13 +1163,18 @@ public class BICOrderCreation extends ECETestBase {
 
   private String getSAPOrderNumber(String orderNumber) {
     //Tibco call to SAP, waits for Create Order call to be successful
-    boolean sapStatusSuccess = tibcotb.waitTillProcessCompletesStatus(orderNumber,
-        TestingHubConstants.tibco_createorder);
     String orderNumberSAP = "null";
-    if (sapStatusSuccess) {
-      //Returns SAP Order number
-      orderNumberSAP = getSAPOrderNumberUsingPO(orderNumber);
-      Util.printInfo("SAP order Number: " + orderNumberSAP);
+    try {
+      boolean sapStatusSuccess = tibcotb.waitTillProcessCompletesStatus(orderNumber,
+          TestingHubConstants.tibco_createorder);
+      if (sapStatusSuccess) {
+        //Returns SAP Order number
+        orderNumberSAP = getSAPOrderNumberUsingPO(orderNumber);
+        Util.printInfo("SAP order Number: " + orderNumberSAP);
+      }
+    } catch (Exception e) {
+      Util.printInfo("Error while retrieving SAP order.");
+      e.printStackTrace();
     }
     return orderNumberSAP;
   }
