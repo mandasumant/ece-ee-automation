@@ -431,7 +431,7 @@ public class PortalTestBase {
     Util.printInfo("Is street found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_street").toUpperCase()));
     Util.printInfo("Is city found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_city").toUpperCase()));
 
-    String locale = System.getProperty("lcoale");
+    String locale = System.getProperty("locale");
     if(locale == null || locale.isEmpty()){
       locale = "en_US";
     }
