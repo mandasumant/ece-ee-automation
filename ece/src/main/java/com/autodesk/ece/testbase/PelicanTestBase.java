@@ -330,21 +330,16 @@ public class PelicanTestBase {
     String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsV4Url");
     getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
         data.get(BICECEConstants.orderNumber));
-
     Util.printInfo("Get Purchase Order V4 Request URL: " + getPurchaseOrderDetailsUrl);
-    String sig_details = getPelicanSignature(data);
-    String hmacSignature = sig_details.split("::")[0];
-    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
     String Content_Type = BICECEConstants.APPLICATION_JSON;
+    PelicanSignature signature = requestSigner.generateSignature();
 
     Map<String, String> header = new HashMap<>();
-    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
-    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
-    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
-    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, signature.xE2HMACSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, signature.xE2PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, signature.xE2AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
     Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, null);
@@ -373,6 +368,29 @@ public class PelicanTestBase {
     header.put(BICECEConstants.ACCEPT, Content_Type);
 
     Response response = createRefundOrder(getPurchaseOrderDetailsUrl, header);
+    String result = response.getBody().asString();
+    Util.PrintInfo(BICECEConstants.RESULT + result);
+  }
+
+  @Step("Refund O2P Orders" + GlobalConstants.TAG_TESTINGHUB)
+  public void createRefundOrderV4(HashMap<String, String> data) {
+    String refundPurchaseOrderUrl = data.get("putPelicanRefundOrderV4Url");
+    String refundPurchaseOrderV4Url = addTokenInResourceUrl(refundPurchaseOrderUrl,
+        data.get(BICConstants.orderNumber));
+    Util.printInfo("Order Service Refund Url : " + refundPurchaseOrderV4Url);
+
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
+    PelicanSignature signature = requestSigner.generateSignature();
+
+    Map<String, String> header = new HashMap<>();
+    header.put("x-e2-hmac-signature", signature.xE2HMACSignature);
+    header.put("x-e2-partnerid", signature.xE2PartnerId);
+    header.put("x-e2-appfamilyid", signature.xE2AppFamilyId);
+    header.put("x-e2-hmac-timestamp", signature.xE2HMACTimestamp);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.ACCEPT, Content_Type);
+
+    Response response = createRefundOrder(refundPurchaseOrderV4Url, header);
     String result = response.getBody().asString();
     Util.PrintInfo(BICECEConstants.RESULT + result);
   }

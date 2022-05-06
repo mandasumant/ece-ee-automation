@@ -25,6 +25,7 @@ default:
   getPurchaseOrderDetailsUrl: "https://api.pelicanstg.autodesk.com/orders/v3/filters"
   getPurchaseOrderDetailsV4Url: "https://api.pelicanstg.autodesk.com/orders/v4/passtoken"
   putPelicanRefundOrderUrl: "https://api.pelicanstg.autodesk.com/orders/v3/passtoken/operation"
+  putPelicanRefundOrderV4Url: "https://api.pelicanstg.autodesk.com/orders/v4/passtoken/operation"
   getSubscriptionByIdUrl: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
   postReportsFinancePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/reports/finance"
   getPelicanBaseUrl: "https://api.pelicanstg.autodesk.com"
