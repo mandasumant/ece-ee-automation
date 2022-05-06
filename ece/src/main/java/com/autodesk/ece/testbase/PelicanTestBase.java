@@ -2,16 +2,17 @@ package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.ece.utilities.PelicanRequestSigner;
+import com.autodesk.ece.utilities.PelicanRequestSigner.PelicanSignature;
 import com.autodesk.platformautomation.ApiClient;
 import com.autodesk.platformautomation.ApiException;
 import com.autodesk.platformautomation.Configuration;
-import com.autodesk.platformautomation.bmse2pelicansubscription.SubscriptionControllerApi;
-import com.autodesk.platformautomation.bmse2pelicansubscription.models.SubscriptionSuccess;
+import com.autodesk.platformautomation.bmse2pelicansubscriptionv3.SubscriptionControllerApi;
+import com.autodesk.platformautomation.bmse2pelicansubscriptionv3.models.SubscriptionSuccess;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
@@ -20,19 +21,16 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
 
 public class PelicanTestBase {
+
+  private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
 
   public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
@@ -61,14 +59,6 @@ public class PelicanTestBase {
       AssertUtils.fail("Error while Refunding the Order -" + message);
     }
     return response;
-  }
-
-  public static String hex(byte[] bytes) {
-    StringBuilder result = new StringBuilder();
-    for (byte aByte : bytes) {
-      result.append(String.format("%02x", aByte));
-    }
-    return result.toString();
   }
 
   public static Response getRestResponse(String baseUrl, Map<String, String> header, String requestJson) {
@@ -105,16 +95,10 @@ public class PelicanTestBase {
     ApiClient defaultClient = Configuration.getDefaultApiClient();
     defaultClient.setBasePath(data.get("getPelicanBaseUrl"));
     SubscriptionControllerApi apiInstance = new SubscriptionControllerApi(defaultClient);
+    PelicanSignature signature = requestSigner.generateSignature();
 
-    String sig_details = getPelicanSignature(data);
-    String xE2PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String xE2AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
-    String xE2HMACTimestamp = sig_details.split("::")[1];
-    String xE2HMACSignature = sig_details.split("::")[0];
     String testId = data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID);
     Long id = Long.parseLong(testId);
-    String xRequestRef = UUID.randomUUID()
-        .toString();
 
     HashMap<String, String> results = new HashMap<String, String>();
 
@@ -130,8 +114,9 @@ public class PelicanTestBase {
         break;
       }
       try {
-        SubscriptionSuccess result = apiInstance.findSubscriptionById(xE2PartnerId, xE2AppFamilyId,
-            xE2HMACTimestamp, xE2HMACSignature, id, xRequestRef);
+        SubscriptionSuccess result = apiInstance.findSubscriptionById(signature.xE2PartnerId,
+            signature.xE2AppFamilyId, signature.xE2HMACTimestamp, signature.xE2HMACSignature, id,
+            signature.xRequestRef);
         Util.PrintInfo(BICECEConstants.RESULT + result);
 
         results.put("response_priceID",
@@ -180,26 +165,23 @@ public class PelicanTestBase {
 
   @Step("Update next billing cycle with before date " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> forwardNextBillingCycleForRenewal(HashMap<String, String> data) {
-    //Temporary sleep until we pick up story to address the retry logic to wait for Order charge. 
+    //Temporary sleep until we pick up story to address the retry logic to wait for Order charge.
     Util.sleep(240000);
 
     String getPurchaseOrderDetailsUrl = data.get("getSubscriptionByIdUrl");
     getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
         data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
     Util.printInfo("getPriceDetails baseURL : " + getPurchaseOrderDetailsUrl);
-    String sig_details = getPelicanSignature(data);
-    String hmacSignature = sig_details.split("::")[0];
-    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
+
+    PelicanSignature signature = requestSigner.generateSignature();
 
     String Content_Type = BICECEConstants.APPLICATION_JSON;
     String accept = BICECEConstants.APPLICATION_VNDAPI_JSON;
     HashMap<String, String> header = new HashMap<>();
-    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
-    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
-    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
-    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, signature.xE2HMACSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, signature.xE2PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, signature.xE2AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
     header.put("X-Request-Ref", UUID.randomUUID().toString());
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
     header.put(BICECEConstants.ACCEPT, accept);
@@ -285,21 +267,16 @@ public class PelicanTestBase {
 
     String requestJson = filters.toJSONString();
     data.put("pelican_postReportsFinancePelicanAPIUrl", postReportsFinancePelicanAPIUrl);
-    HashMap<String, String> results = new HashMap<String, String>();
     Util.printInfo("postReportsFinancePelicanAPIUrl : " + postReportsFinancePelicanAPIUrl);
-    String sig_details = getPelicanSignature(data);
-    String hmacSignature = sig_details.split("::")[0];
-    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
+    PelicanSignature signature = requestSigner.generateSignature();
     String Content_Type = BICECEConstants.APPLICATION_JSON;
 
     Map<String, String> header = new HashMap<>();
-    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
-    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
-    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
-    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, signature.xE2HMACSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, signature.xE2PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, signature.xE2AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
     Response response = getRestResponse(postReportsFinancePelicanAPIUrl, header, requestJson);
@@ -330,19 +307,15 @@ public class PelicanTestBase {
     String requestJson = filters.toJSONString();
     data.put("pelican_getPurchaseOrderDetailsUrl", getPurchaseOrderDetailsUrl);
     Util.printInfo("getPurchaseOrderDetailsUrl : " + getPurchaseOrderDetailsUrl);
-    String sig_details = getPelicanSignature(data);
-    String hmacSignature = sig_details.split("::")[0];
-    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
     String Content_Type = BICECEConstants.APPLICATION_JSON;
+    PelicanSignature signature = requestSigner.generateSignature();
 
     Map<String, String> header = new HashMap<>();
-    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, hmacSignature);
-    header.put(BICECEConstants.X_E2_PARTNER_ID, X_E2_PartnerId);
-    header.put(BICECEConstants.X_E2_APPFAMILY_ID, X_E2_AppFamilyId);
-    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, X_E2_HMAC_Timestamp);
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, signature.xE2HMACSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, signature.xE2PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, signature.xE2AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
     Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, requestJson);
@@ -387,20 +360,15 @@ public class PelicanTestBase {
     String getPurchaseOrderDetailsUrl = addTokenInResourceUrl(purchaseOrderDetailsUrl,
         data.get(BICConstants.orderNumber));
     Util.printInfo("putPelicanRefund details Url : " + getPurchaseOrderDetailsUrl);
-    String sig_details = getPelicanSignature(data);
-    String hmacSignature = sig_details.split("::")[0];
-    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
-    // String Content_Type="application/x-www-form-urlencoded; charset=UTF-8";
     String Content_Type = BICECEConstants.APPLICATION_JSON;
+    PelicanSignature signature = requestSigner.generateSignature();
 
     Map<String, String> header = new HashMap<>();
-    header.put("x-e2-hmac-signature", hmacSignature);
-    header.put("x-e2-partnerid", X_E2_PartnerId);
-    header.put("x-e2-appfamilyid", X_E2_AppFamilyId);
-    header.put("x-e2-hmac-timestamp", X_E2_HMAC_Timestamp);
+    header.put("x-e2-hmac-signature", signature.xE2HMACSignature);
+    header.put("x-e2-partnerid", signature.xE2PartnerId);
+    header.put("x-e2-appfamilyid", signature.xE2AppFamilyId);
+    header.put("x-e2-hmac-timestamp", signature.xE2HMACTimestamp);
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
     header.put(BICECEConstants.ACCEPT, Content_Type);
 
@@ -415,20 +383,15 @@ public class PelicanTestBase {
     String getRenewSubscriptionUrl = addTokenInResourceUrl(pelicanRenewSubscriptionUrl,
         data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
     Util.printInfo("Pelican Renew Subscription Url : " + getRenewSubscriptionUrl);
-    String sig_details = getPelicanSignature(data);
-    String hmacSignature = sig_details.split("::")[0];
-    String X_E2_HMAC_Timestamp = sig_details.split("::")[1];
-    String X_E2_PartnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-    String X_E2_AppFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
 
-    // String Content_Type="application/x-www-form-urlencoded; charset=UTF-8";
     String Content_Type = BICECEConstants.APPLICATION_JSON;
+    PelicanSignature signature = requestSigner.generateSignature();
 
     Map<String, String> header = new HashMap<>();
-    header.put("x-e2-hmac-signature", hmacSignature);
-    header.put("x-e2-partnerid", X_E2_PartnerId);
-    header.put("x-e2-appfamilyid", X_E2_AppFamilyId);
-    header.put("x-e2-hmac-timestamp", X_E2_HMAC_Timestamp);
+    header.put("x-e2-hmac-signature", signature.xE2HMACSignature);
+    header.put("x-e2-partnerid", signature.xE2PartnerId);
+    header.put("x-e2-appfamilyid", signature.xE2AppFamilyId);
+    header.put("x-e2-hmac-timestamp", signature.xE2HMACTimestamp);
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
     header.put(BICECEConstants.ACCEPT, Content_Type);
 
@@ -441,32 +404,6 @@ public class PelicanTestBase {
       String result = response.getBody().asString();
       Assert.fail("Renew Subscription gave none HTTP.OK response. Status Code: " + result);
     }
-  }
-
-  private String getPelicanSignature(HashMap<String, String> data) {
-    String signature = "";
-    String timestamp = "";
-    try {
-      Mac mac = Mac.getInstance("HmacSHA256");
-      String terceS = ProtectedConfigFile.decrypt(data.get("getPelicanActorSecret"));
-      SecretKeySpec keySpec = new SecretKeySpec(terceS.getBytes(), "HmacSHA256");
-      mac.init(keySpec);
-
-      String appFamilyId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_APPFAMILY_ID);
-      String partnerId = data.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);
-
-      Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-      timestamp = String.valueOf(cal.getTimeInMillis() / 1000);
-
-      String message = partnerId + appFamilyId + timestamp;
-
-      byte[] signatureBytes = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
-      signature = hex(signatureBytes);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return signature + "::" + timestamp;
   }
 
   @Step("Subscription : Getting purchase order details from Order Service " + GlobalConstants.TAG_TESTINGHUB)

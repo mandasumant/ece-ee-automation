@@ -101,7 +101,7 @@ public class BICRefundOrder extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
     results.put(BICECEConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrder(results);

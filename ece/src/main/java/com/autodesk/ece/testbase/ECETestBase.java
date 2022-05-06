@@ -25,6 +25,7 @@ public class ECETestBase {
   protected DynamoDBValidation dynamotb = null;
   protected ApigeeTestBase resttb = null;
   protected PelicanTestBase pelicantb = null;
+  protected SubscriptionServiceV4TestBase subscriptionServiceV4Testbase = null;
   protected AutomationTibcoTestBase tibcotb = null;
   LinkedHashMap<String, String> localeConfig;
   private WebDriver webdriver = null;
@@ -42,6 +43,7 @@ public class ECETestBase {
     resttb = new ApigeeTestBase();
     dynamotb = new DynamoDBValidation();
     pelicantb = new PelicanTestBase();
+    subscriptionServiceV4Testbase = new SubscriptionServiceV4TestBase();
     thutil = new TestinghubUtil(testbase);
     tibcotb = new AutomationTibcoTestBase();
     saptb = new SAPTestBase();

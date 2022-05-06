@@ -286,7 +286,7 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -323,7 +323,7 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // Get Finance Reports
     String result = pelicantb.postReportsFinancePelicanAPI(results);

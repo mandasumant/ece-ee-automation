@@ -53,10 +53,17 @@
 
     <dependencies>
         <dependency>
-            <artifactId>bms-e2-pelican-subscription-java-client</artifactId>
+            <artifactId>bms-e2-pelican-subscription-v3-java-client</artifactId>
             <groupId>com.autodesk.platformautomation</groupId>
             <scope>compile</scope>
             <version>3.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>bms-e2-pelican-subscription-v4-java-client</artifactId>
+            <groupId>com.autodesk.platformautomation</groupId>
+            <scope>compile</scope>
+            <version>4.0</version>
         </dependency>
 
         <dependency>

@@ -117,7 +117,7 @@ public class BICOrderPromoCode extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     String promotionDiscount = results.get("getPOResponse_promotionDiscount");
 

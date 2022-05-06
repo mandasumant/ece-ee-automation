@@ -212,7 +212,7 @@ public class BICOrderCreation extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -274,7 +274,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -338,7 +338,7 @@ public class BICOrderCreation extends ECETestBase {
       pelicantb.forwardNextBillingCycleForRenewal(results);
 
       // Lookup the subscription in pelican to confirm its renewal date
-      results.putAll(pelicantb.getSubscriptionById(results));
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
       // Verify that the subscription has actually moved to the past and is in a state to be renewed
       try {
@@ -356,7 +356,7 @@ public class BICOrderCreation extends ECETestBase {
       triggerPelicanRenewalJob(results);
 
       // Get the subscription in pelican to check if it has renewed
-      results.putAll(pelicantb.getSubscriptionById(results));
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
       try {
         // Ensure that the subscription renews in the future
@@ -415,7 +415,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -473,7 +473,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // Verify that a seat was added
     AssertUtils.assertEquals("Subscription should have 2 seats",
@@ -530,7 +530,7 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // Verify that a seat was reduced
     AssertUtils.assertEquals("Subscription was reduced by 1 seat",
@@ -585,7 +585,7 @@ public class BICOrderCreation extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -673,7 +673,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     //Validate if this is Meta order
     if (!results.get(BICECEConstants.RESPONSE_OFFERING_TYPE)
@@ -765,7 +765,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -833,7 +833,7 @@ public class BICOrderCreation extends ECETestBase {
     // Get the original billing date for the first subscription
     testDataForEachMethod
         .put(BICECEConstants.SUBSCRIPTION_ID, results.get(BICECEConstants.SUBSCRIPTION_ID));
-    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testDataForEachMethod));
     results.put(
         BICECEConstants.SUB1_NEXT_BILLING_DATE, results.get(BICECEConstants.NEXT_BILLING_DATE));
 
@@ -862,7 +862,7 @@ public class BICOrderCreation extends ECETestBase {
     Util.sleep(240000);
 
     // Get the billing date of the aligned subscription
-    results.putAll(pelicantb.getSubscriptionById(testDataForEachMethod));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testDataForEachMethod));
     results.put(
         BICECEConstants.SUB2_NEXT_BILLING_DATE, results.get(BICECEConstants.NEXT_BILLING_DATE));
 
@@ -904,7 +904,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // The End date of the subscription should be null and status Active
     results
@@ -923,7 +923,7 @@ public class BICOrderCreation extends ECETestBase {
     portaltb.cancelSubscription(results.get(TestingHubConstants.emailid), PASSWORD);
 
     // The End Date of the subscription should be the same as the Next Billing Date
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     results
         .put(BICECEConstants.SUBSCRIPTION_END_DATE, results.get(BICECEConstants.RESPONSE_END_DATE));
@@ -951,7 +951,7 @@ public class BICOrderCreation extends ECETestBase {
 
     // End date should be null, auto renew On, status Active and NBD the same
 
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     results
         .put(BICECEConstants.SUBSCRIPTION_END_DATE, results.get(BICECEConstants.RESPONSE_END_DATE));
@@ -998,13 +998,13 @@ public class BICOrderCreation extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // Update the subscription so that it is expired, which will allow us to renew it
     pelicantb.forwardNextBillingCycleForRenewal(results);
 
     // Lookup the subscription in pelican to confirm its renewal date
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // Verify that the subscription has actually moved to the past and is in a state to be renewed
     try {
@@ -1022,7 +1022,7 @@ public class BICOrderCreation extends ECETestBase {
     triggerPelicanRenewalJob(results);
 
     // Get the subscription in pelican to check if it has renewed
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     try {
       // Ensure that the subscription renews in the future
@@ -1081,7 +1081,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(pelicantb.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
