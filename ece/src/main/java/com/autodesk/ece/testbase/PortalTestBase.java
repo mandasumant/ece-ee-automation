@@ -419,17 +419,17 @@ public class PortalTestBase {
     Util.printInfo("PDF String Content: " + pdfContent);
     Boolean orderFound = pdfContent.contains(results.get(BICECEConstants.ORDER_ID));
     Boolean subscriptionFound = pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID));
-    Boolean firstNameFound = pdfContent.contains(results.get("getPOReponse_firstName"));
-    Boolean lastNameFound = pdfContent.contains(results.get("getPOReponse_lastName"));
-    Boolean streetFound = pdfContent.contains(results.get("getPOReponse_street"));
-    Boolean cityFound = pdfContent.contains(results.get("getPOReponse_city"));
+    Boolean firstNameFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_firstName").toUpperCase());
+    Boolean lastNameFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_lastName").toUpperCase());
+    Boolean streetFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_street").toUpperCase());
+    Boolean cityFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_city").toUpperCase());
     Util.printInfo("Is Order ID found in Invoice: " + pdfContent.contains(results.get(BICECEConstants.ORDER_ID)));
     Util.printInfo("Is Subscription ID found in Invoice: " +
         pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)));
-    Util.printInfo("Is firstName found in Invoice: " + pdfContent.contains(results.get("getPOReponse_firstName")));
-    Util.printInfo("Is lastName found in Invoice: " + pdfContent.contains(results.get("getPOReponse_lastName")));
-    Util.printInfo("Is street found in Invoice: " + pdfContent.contains(results.get("getPOReponse_street")));
-    Util.printInfo("Is city found in Invoice: " + pdfContent.contains(results.get("getPOReponse_city")));
+    Util.printInfo("Is firstName found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_firstName").toUpperCase()));
+    Util.printInfo("Is lastName found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_lastName").toUpperCase()));
+    Util.printInfo("Is street found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_street").toUpperCase()));
+    Util.printInfo("Is city found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_city").toUpperCase()));
 
     String[] localeSplit = results.get("language").split("-");
     NumberFormat localeFormat = NumberFormat.getNumberInstance(new Locale(localeSplit[0], localeSplit[1]));

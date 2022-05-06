@@ -118,8 +118,7 @@ public class PelicanTestBase {
             signature.xE2AppFamilyId, signature.xE2HMACTimestamp, signature.xE2HMACSignature, id,
             signature.xRequestRef);
         Util.PrintInfo(BICECEConstants.RESULT + result);
-
-        results.put("response_priceID",
+        results.put("response_renewalOrderNo",
             result.getData().getLastBillingInfo().getPurchaseOrderId() != null ? String.valueOf(
                 result.getData().getLastBillingInfo().getPurchaseOrderId()) : null);
         results.put("response_nextBillingDate", result.getData().getNextBillingDate());

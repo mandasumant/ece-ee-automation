@@ -60,7 +60,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@2E Verdieping@Goetsenhovenvijve@1209@06-65533273@Belgium"
+    address: "Autodesk@Rue Leon Delacroix 5@Anderlecht@1070@06-65533273@Belgium"
     isTaxed: "Y"
 
   fr_BE:
@@ -69,7 +69,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@2E Verdieping@Goetsenhovenvijve@1209@06-65533273@Belgium"
+    address: "Autodesk@Rue Leon Delacroix 5@Anderlecht@1070@06-65533273@Belgium"
     isTaxed: "Y"
 
   pl_PL:
@@ -149,7 +149,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Kis Diófa u. 63.@Csákánydoroszló@9919@03230700940@Hungary"
+    address: "Autodesk@Kis Diófa u. 63@Csákánydoroszló@9919@03230700940@Hungary"
     isTaxed: "Y"
 
   pt_PT:
@@ -158,7 +158,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@R Rei Lavrador 10@Grândola@7570-192@03230700940@Portugal"
+    address: "Autodesk@Rua Rei Lavrador 10@Grândola@7570-192@03230700940@Portugal"
     isTaxed: "Y"
 
   en_AT:
@@ -167,7 +167,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL,IDEAL,GIROPAY"
-    address: "Autodesk@Holzstrasse 80@Salchendorf@9064@03230700940@Austria"
+    address: "Autodesk@Holzstr 80@Salchendorf@9064@03230700940@Austria"
     isTaxed: "Y"
 
   sv_SE:
@@ -346,7 +346,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Irish St.@Ardee@47545@041-6857993@Ireland"
+    address: "Autodesk@Irish St@Ardee@47545@041-6857993@Ireland"
     isTaxed: "Y"
 
   en_RO:
@@ -364,7 +364,7 @@
     currencyStore: "EUR"
     countryDomainSTG: "europe"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@202 B Rue De Hamm@Luxembourg@1111@1234@Luxembourg"
+    address: "Autodesk@202 B Rue de Hamm@Luxembourg@1111@1234@Luxembourg"
     isTaxed: "Y"
 
   en_LT:

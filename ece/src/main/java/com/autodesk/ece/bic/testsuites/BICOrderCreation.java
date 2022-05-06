@@ -1000,6 +1000,15 @@ public class BICOrderCreation extends ECETestBase {
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+
+    // Validating Tax and Refund Invoice for INT env only
+    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      portaltb.validateBICOrderTaxInvoice(results);
+    }
+
     // Update the subscription so that it is expired, which will allow us to renew it
     pelicantb.forwardNextBillingCycleForRenewal(results);
 
@@ -1036,9 +1045,18 @@ public class BICOrderCreation extends ECETestBase {
       e.printStackTrace();
     }
 
+    // Validating Tax  Invoice After renewal
+    Util.printInfo("THE RENEWAL ORDER NO #"+results.get("response_renewalOrderNo"));
+    results.put(BICConstants.orderNumber,results.get("response_renewalOrderNo"));
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
+    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      portaltb.validateBICOrderTaxInvoice(results);
+    }
+
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put("renewalOrderNumber", results.get("response_renewalOrderNo"));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
