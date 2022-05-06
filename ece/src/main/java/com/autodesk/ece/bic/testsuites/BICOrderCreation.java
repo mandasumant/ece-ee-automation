@@ -1046,7 +1046,7 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     // Validating Tax  Invoice After renewal
-    Util.printInfo("THE RENEWAL ORDER NO #"+results.get("response_renewalOrderNo"));
+    Util.printInfo("The Renewal Order No #"+results.get("response_renewalOrderNo"));
     results.put(BICConstants.orderNumber,results.get("response_renewalOrderNo"));
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
     if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {

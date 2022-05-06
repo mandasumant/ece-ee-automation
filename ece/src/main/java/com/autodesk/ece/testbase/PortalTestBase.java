@@ -431,7 +431,12 @@ public class PortalTestBase {
     Util.printInfo("Is street found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_street").toUpperCase()));
     Util.printInfo("Is city found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_city").toUpperCase()));
 
-    String[] localeSplit = results.get("language").split("-");
+    String locale = System.getProperty("lcoale");
+    if(locale == null || locale.isEmpty()){
+      locale = "en_US";
+    }
+    String[] localeSplit = locale.split("_");
+
     NumberFormat localeFormat = NumberFormat.getNumberInstance(new Locale(localeSplit[0], localeSplit[1]));
     String totalAmountFormatted =
         localeFormat.format(Double.valueOf(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)));
