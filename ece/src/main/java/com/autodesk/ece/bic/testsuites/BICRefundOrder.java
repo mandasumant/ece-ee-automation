@@ -111,7 +111,7 @@ public class BICRefundOrder extends ECETestBase {
     Util.sleep(360000);
 
     // Getting a PurchaseOrder details from pelican
-    JsonPath jp = new JsonPath(pelicantb.retryGetPurchaseOrder(results));
+    JsonPath jp = new JsonPath(pelicantb.getPurchaseOrder(results));
     results.put("refund_orderState", jp.get("content[0].orderState").toString());
     results.put("refund_fulfillmentStatus", jp.get("content[0].fulfillmentStatus"));
     results.put("refund_paymentMethodType", jp.get("content[0].billingInfo.paymentMethodType"));
