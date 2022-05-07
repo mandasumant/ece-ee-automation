@@ -103,7 +103,7 @@
     currencyStore: "EUR"
     countryDomain: ".de"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY,SOFORT"
-    address: "Autodesk@Schöneggweg 21@Babenhausen@87727@65043235263@Deutschland"
+    address: "Autodesk@Schoeneggweg 21@Babenhausen@87727@65043235263@Deutschland"
     isTaxed: "Y"
 
   it_IT:

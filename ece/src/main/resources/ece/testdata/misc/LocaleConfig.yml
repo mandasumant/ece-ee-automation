@@ -102,9 +102,9 @@
     region: "DEDE"
     storeName: "STORE-DE"
     currencyStore: "EUR"
-    countryDomainSTG: ".de"
+    countryDomain: ".de"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY,SOFORT"
-    address: "Autodesk@Güntzelstrasse 118@Rorodt@1826 GN@65043235263@Deutschland"
+    address: "Autodesk@Schoeneggweg 21@Babenhausen@87727@65043235263@Deutschland"
     isTaxed: "Y"
 
   it_IT:
