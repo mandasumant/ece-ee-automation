@@ -59,7 +59,7 @@
     currencyStore: "EUR"
     countryDomain: ".be/nl"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
-    address: "Autodesk@Rue Leon Delacroix 5@Anderlecht@1070@06-65533273@Belgium"
+    address: "Autodesk@Rue Leon Delacroix 5@Anderlecht@1070@06-65533273@België"
     isTaxed: "Y"
 
   fr_BE:
@@ -103,7 +103,7 @@
     currencyStore: "EUR"
     countryDomain: ".de"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY,SOFORT"
-    address: "Autodesk@Schoeneggweg 21@Babenhausen@87727@65043235263@Deutschland"
+    address: "Autodesk@Schöneggweg 21@Babenhausen@87727@65043235263@Deutschland"
     isTaxed: "Y"
 
   it_IT:
