@@ -346,7 +346,7 @@ public class PortalTestBase {
     Util.sleep(5000);
     try {
       int attempts = 0;
-      while (attempts < 12) {
+      while (attempts < 18) {
         if (portalPage.checkIfElementExistsInPage("portalOrderInvoiceLink", 10)) {
           portalPage.clickUsingLowLevelActions("portalOrderInvoiceLink");
           try {
@@ -358,7 +358,7 @@ public class PortalTestBase {
           if (!error_message.isEmpty()) {
             Util.printInfo("Invoice is not ready yet, we saw this text -> " + error_message);
             attempts++;
-            if (attempts > 11) {
+            if (attempts > 17) {
               Assert.fail("Failed to find Invoice PDF in Order History Page, after " + attempts + " attempts");
             }
             Util.printInfo("Waiting for another 5 minutes on attempt #" + attempts);
