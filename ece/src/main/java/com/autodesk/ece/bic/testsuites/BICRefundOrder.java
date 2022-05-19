@@ -116,8 +116,6 @@ public class BICRefundOrder extends ECETestBase {
       portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
-    portaltb.validateBICOrderPDF(results,BICECEConstants.INVOICE);
-
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrder(results);
 
