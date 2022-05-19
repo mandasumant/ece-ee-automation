@@ -1086,7 +1086,7 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+          "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
         Util.printWarning(
             "Export compliance issue is present. Checking for order number in the Pelican response");
@@ -1106,7 +1106,7 @@ public class BICTestBase {
     debugPageUrl("Step 1: Check order number is Null");
     try {
       orderNumber = driver.findElement(By.xpath(
-              "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+          "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
           .getText();
     } catch (Exception e) {
       debugPageUrl("Step 2: Check order number is Null");
@@ -1123,7 +1123,7 @@ public class BICTestBase {
       bicPage.waitForPageToLoad();
       try {
         orderNumber = driver.findElement(By.xpath(
-                "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+            "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
             .getText();
       } catch (Exception e) {
         debugPageUrl("Step 4: Check order number is Null");
@@ -1172,43 +1172,22 @@ public class BICTestBase {
 
   public String navigateToCart(LinkedHashMap<String, String> data) throws MetadataException {
     String productType = data.get("productType");
-    String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String constructDotComURL;
-    String constructGuacURL = null;
+    String constructGuacURL;
     String priceId = null;
 
     // Starting from dot com page for STG environment
     if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG)) {
-      String productName =
-          System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
-              BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
-
-      constructDotComURL = guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
-          .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
-
-      Util.printInfo("constructDotComURL " + constructDotComURL);
-      getUrl(constructDotComURL);
-      setStorageData();
-      acceptCookiesAndUSSiteLink();
+      navigateToDotComPage(data);
 
       // Selecting monthly for Non-Flex, Non-Financing
       if (productType.equals("flex")) {
         bicPage.waitForFieldPresent("flexTab", 5000);
         bicPage.clickUsingLowLevelActions("flexTab");
+
         bicPage.waitForFieldPresent("buyTokensButton", 5000);
         Util.sleep(3000);
 
-        try {
-          WebElement getHelpIframe = bicPage
-              .getMultipleWebElementsfromField(BICECEConstants.GET_HELP_IFRAME).get(0);
-          driver.switchTo().frame(getHelpIframe);
-          bicPage.waitForFieldPresent("getHelpPopUpCloseButton", 2000);
-          bicPage.clickUsingLowLevelActions("getHelpPopUpCloseButton");
-          Util.printInfo("Get help pop up closed.");
-        } catch (Exception e) {
-          Util.printInfo("Get help pop up does not appear on the page.");
-        }
-        driver.switchTo().defaultContent();
+        closeGetHelpPopup();
 
         bicPage.clickUsingLowLevelActions("buyTokensButton");
       } else {
@@ -1319,6 +1298,89 @@ public class BICTestBase {
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
+  }
+
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Dot Com: Estimate price via Flex Token Estimator tool " + GlobalConstants.TAG_TESTINGHUB)
+  public void estimateFlexTokenPrice(LinkedHashMap<String, String> data) throws MetadataException {
+    Util.printInfo("Navigating to Dot Com page for Autocad product");
+    navigateToDotComPage(data);
+
+    Util.printInfo("Switching to Flex tab");
+    bicPage.waitForFieldPresent("flexTab", 5000);
+    bicPage.clickUsingLowLevelActions("flexTab");
+    closeGetHelpPopup();
+
+    Util.printInfo("Click on 'Estimate tokens needed' button");
+    bicPage.waitForFieldPresent("estimateTokensButton", 5000);
+    bicPage.clickUsingLowLevelActions("estimateTokensButton");
+
+    Util.printInfo("Making sure that correct product is selected on the new page");
+    bicPage.waitForFieldPresent("flexProductsDropdown", 5000);
+    bicPage.checkIfElementExistsInPage("flexProductsDropdown", 60);
+    bicPage.waitForFieldPresent("tableRowProductACD", 5000);
+    String autocadProduct = driver.findElement(By.xpath("//div[@class=\"fe-tablerow-product-name\"]")).getText();
+    AssertUtils.assertEquals("Product on the page should match expected product.", autocadProduct, "AutoCAD");
+
+    Util.printInfo("Updating users and days");
+    bicPage.waitForFieldPresent("usersAmountInput", 5000);
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]")).click();
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]/input")).sendKeys(Keys.BACK_SPACE);
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]/input")).sendKeys("4");
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]")).click();
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]/input")).sendKeys(Keys.BACK_SPACE);
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]/input")).sendKeys("2");
+
+    Util.printInfo("Assert that tokens amount updated in the Recommendation section");
+    String actualRecommendedTokens = driver
+        .findElement(By.xpath("//*[@data-testid=\"fe-summary-tokens\"]/div[@class=\"fe-rec-totals-fadeIn\"]"))
+        .getText();
+    AssertUtils
+        .assertEquals("Actual recommended token amount matches the expected amount.", actualRecommendedTokens,
+            "700/year");
+
+    Util.printInfo("Assert that the price updated in the Recommendation section");
+    String actualEstimatedPrice = driver
+        .findElement(By.xpath("//*[@data-testid=\"fe-summary-price\"]/div[@class=\"fe-rec-totals-fadeIn\"]")).getText();
+    AssertUtils
+        .assertEquals("Actual estimated price amount matches the expected amount.", actualEstimatedPrice, "$2,100");
+
+    Util.printInfo("Clicking on Buy tokens button");
+    bicPage.waitForFieldPresent("buyTokensButtonFlex", 5000);
+    bicPage.clickUsingLowLevelActions("buyTokensButtonFlex");
+
+    Util.printInfo("Signing to iframe");
+    loginAccount(data);
+
+    Util.printInfo("Asserting that estimated amount match actual amounts on Checkout page.");
+    int tokensForFirstLineItem = Integer.parseInt(driver
+        .findElements(By.xpath(
+            "//*[@data-testid=\"product-line-item-31530\"]//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
+        .get(0).getText()
+        .substring(0, 3));
+    int tokensForSecondLineItem = Integer.parseInt(driver
+        .findElements(By.xpath(
+            "//*[@data-testid=\"product-line-item-31498\"]//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
+        .get(0).getText()
+        .substring(0, 3));
+    int quantity1 = Integer.parseInt(driver
+        .findElement(By.xpath("//*[@name=\"quantity-31530\"]")).getAttribute("value"));
+    int quantity2 = Integer.parseInt(driver
+        .findElement(By.xpath("//*[@name=\"quantity-31498\"]")).getAttribute("value"));
+
+    int totalTokensCheckoutPage = (tokensForFirstLineItem * quantity1) + (tokensForSecondLineItem * quantity2);
+
+    AssertUtils
+        .assertEquals("Estimated tokens amount should match total amount of tokens on Checkout page.",
+            totalTokensCheckoutPage, Integer.parseInt(actualRecommendedTokens.substring(0, 3))
+        );
+
+    String totalPriceCheckoutPage = driver
+        .findElement(By.xpath("//*[@data-testid=\"checkout--cart-section--total\"]")).getText();
+    totalPriceCheckoutPage = totalPriceCheckoutPage.substring(0, 6);
+    AssertUtils
+        .assertEquals("Estimated total price should match total price on Checkout page.", totalPriceCheckoutPage,
+            actualEstimatedPrice);
   }
 
   private void updateQuantity(String priceId, String quantity) {
@@ -1846,6 +1908,34 @@ public class BICTestBase {
         isLocaleSiteModalVisible = false;
       }
     }
+  }
+
+  public void navigateToDotComPage(LinkedHashMap<String, String> data) {
+    String productName =
+        System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
+            BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
+
+    String constructDotComURL = data.get("guacDotComBaseURL") + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
+        .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
+
+    Util.printInfo("constructDotComURL " + constructDotComURL);
+    getUrl(constructDotComURL);
+    setStorageData();
+    acceptCookiesAndUSSiteLink();
+  }
+
+  private void closeGetHelpPopup() {
+    try {
+      WebElement getHelpIframe = bicPage
+          .getMultipleWebElementsfromField(BICECEConstants.GET_HELP_IFRAME).get(0);
+      driver.switchTo().frame(getHelpIframe);
+      bicPage.waitForFieldPresent("getHelpPopUpCloseButton", 2000);
+      bicPage.clickUsingLowLevelActions("getHelpPopUpCloseButton");
+      Util.printInfo("Get help pop up closed.");
+    } catch (Exception e) {
+      Util.printInfo("Get help pop up does not appear on the page.");
+    }
+    driver.switchTo().defaultContent();
   }
 
   public static class Names {
