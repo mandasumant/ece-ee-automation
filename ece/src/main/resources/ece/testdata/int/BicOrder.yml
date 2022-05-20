@@ -46,6 +46,10 @@ default:
   guacMoeSku: "057N1-WW3931-L830"
   priceId: "24038"
 
+  pwsClientId: "sR8Ye2YBRq5QAnUIiOxKWw0J3a92tDVJ"
+  pwsClientSecret: "+iFsysMrCCnJ84IqILULBg==:XEzSSr6nNaqPuBwIxnd/xIQP1LQVOgUETN/CGCZRohk="
+  pwsHostname: "enterprise-api-int.autodesk.com"
+
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID

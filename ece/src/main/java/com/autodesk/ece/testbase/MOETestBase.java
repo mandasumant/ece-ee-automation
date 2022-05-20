@@ -408,7 +408,7 @@ public class MOETestBase {
 
     address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION), data.get(BICECEConstants.ADDRESS));
 
-    Names names = bicTestBase.generateFirstAndLastNames();
+    Names names = BICTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password);
     data.putAll(names.getMap());
     data.put(BICECEConstants.emailid, emailID);

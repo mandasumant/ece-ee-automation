@@ -1,6 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
@@ -23,7 +24,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
@@ -67,8 +67,17 @@ public class BICTestBase {
 
   }
 
+  public static Names generateFirstAndLastNames() {
+    String randomString = RandomStringUtils.random(6, true, false);
+    String firstName = "FN" + randomString;
+    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
+    String lastName = "LN" + randomString;
+    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
+    return new Names(firstName, lastName);
+  }
+
   @Step("Generate email id")
-  public String generateUniqueEmailID() {
+  public static String generateUniqueEmailID() {
     String storeKey = System.getProperty("store").replace("-", "");
     String sourceName = "thub";
     String emailDomain = "letscheck.pw";
@@ -88,17 +97,19 @@ public class BICTestBase {
   public Map<String, String> getBillingAddress(String region, String address) {
     Map<String, String> ba = null;
 
-    String[] billingAddress = address.split("@");
-    ba = new HashMap<String, String>();
-    ba.put(BICECEConstants.ORGANIZATION_NAME, billingAddress[0]);
-    ba.put(BICECEConstants.FULL_ADDRESS, billingAddress[1]);
-    ba.put(BICECEConstants.CITY, billingAddress[2]);
-    ba.put(BICECEConstants.ZIPCODE, billingAddress[3]);
-    ba.put(BICECEConstants.PHONE_NUMBER, getRandomMobileNumber());
-    ba.put(BICECEConstants.COUNTRY, billingAddress[5]);
+    Address newAddress = new Address(address);
 
-    if (billingAddress.length == 7) {
-      ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
+    // TODO: Replace address maps with address object (ECEEPLT-2724)
+    ba = new HashMap<String, String>();
+    ba.put(BICECEConstants.ORGANIZATION_NAME, newAddress.company);
+    ba.put(BICECEConstants.FULL_ADDRESS, newAddress.addressLine1);
+    ba.put(BICECEConstants.CITY, newAddress.city);
+    ba.put(BICECEConstants.ZIPCODE, newAddress.postalCode);
+    ba.put(BICECEConstants.PHONE_NUMBER, newAddress.phoneNumber);
+    ba.put(BICECEConstants.COUNTRY, newAddress.country);
+
+    if (newAddress.province != null) {
+      ba.put(BICECEConstants.STATE_PROVINCE, newAddress.province);
     }
 
     return ba;
@@ -1657,14 +1668,6 @@ public class BICTestBase {
             .equals("complete"))));
   }
 
-  public String getRandomMobileNumber() {
-    Random rnd = new Random();
-    long number = rnd.nextInt(999999999);
-    number = number + 1000000000;
-
-    return String.format("%09d", number);
-  }
-
   public String getRandomIntString() {
     Date date = new Date();
     long time = date.getTime();
@@ -1786,15 +1789,6 @@ public class BICTestBase {
     }
 
     Util.printInfo("Successfully logged in");
-  }
-
-  public Names generateFirstAndLastNames() {
-    String randomString = RandomStringUtils.random(6, true, false);
-    String firstName = "FN" + randomString;
-    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
-    String lastName = "LN" + randomString;
-    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
-    return new Names(firstName, lastName);
   }
 
   public void signOutFromCheckoutPage() {
