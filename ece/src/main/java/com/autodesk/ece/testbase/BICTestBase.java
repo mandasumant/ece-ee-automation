@@ -1316,8 +1316,6 @@ public class BICTestBase {
     bicPage.clickUsingLowLevelActions("estimateTokensButton");
 
     Util.printInfo("Making sure that correct product is selected on the new page");
-    bicPage.waitForFieldPresent("flexProductsDropdown", 5000);
-    bicPage.checkIfElementExistsInPage("flexProductsDropdown", 60);
     bicPage.waitForFieldPresent("tableRowProductACD", 5000);
     String autocadProduct = driver.findElement(By.xpath("//div[@class=\"fe-tablerow-product-name\"]")).getText();
     AssertUtils.assertEquals("Product on the page should match expected product.", autocadProduct, "AutoCAD");
@@ -1331,23 +1329,18 @@ public class BICTestBase {
     driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]/input")).sendKeys(Keys.BACK_SPACE);
     driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]/input")).sendKeys("2");
 
-    Util.printInfo("Assert that tokens amount updated in the Recommendation section");
-    String actualRecommendedTokens = driver
+    String recommendedTokens = driver
         .findElement(By.xpath("//*[@data-testid=\"fe-summary-tokens\"]/div[@class=\"fe-rec-totals-fadeIn\"]"))
         .getText();
-    AssertUtils
-        .assertEquals("Actual recommended token amount matches the expected amount.", actualRecommendedTokens,
-            "700/year");
 
-    Util.printInfo("Assert that the price updated in the Recommendation section");
-    String actualEstimatedPrice = driver
+    String estimatedPrice = driver
         .findElement(By.xpath("//*[@data-testid=\"fe-summary-price\"]/div[@class=\"fe-rec-totals-fadeIn\"]")).getText();
-    AssertUtils
-        .assertEquals("Actual estimated price amount matches the expected amount.", actualEstimatedPrice, "$2,100");
 
     Util.printInfo("Clicking on Buy tokens button");
     bicPage.waitForFieldPresent("buyTokensButtonFlex", 5000);
     bicPage.clickUsingLowLevelActions("buyTokensButtonFlex");
+
+    clickToStayOnSameSite();
 
     Util.printInfo("Signing to iframe");
     loginAccount(data);
@@ -1355,32 +1348,40 @@ public class BICTestBase {
     Util.printInfo("Asserting that estimated amount match actual amounts on Checkout page.");
     int tokensForFirstLineItem = Integer.parseInt(driver
         .findElements(By.xpath(
-            "//*[@data-testid=\"product-line-item-31530\"]//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
+            "//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
         .get(0).getText()
         .substring(0, 3));
     int tokensForSecondLineItem = Integer.parseInt(driver
         .findElements(By.xpath(
-            "//*[@data-testid=\"product-line-item-31498\"]//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
-        .get(0).getText()
+            "//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
+        .get(2).getText()
         .substring(0, 3));
+
     int quantity1 = Integer.parseInt(driver
-        .findElement(By.xpath("//*[@name=\"quantity-31530\"]")).getAttribute("value"));
+        .findElements(
+            By.xpath(" //input[contains(@id,'checkout--product-bar--info-column--quantities-sub-column--quantity--')]"))
+        .get(0).getAttribute("value"));
     int quantity2 = Integer.parseInt(driver
-        .findElement(By.xpath("//*[@name=\"quantity-31498\"]")).getAttribute("value"));
+        .findElements(
+            By.xpath(" //input[contains(@id,'checkout--product-bar--info-column--quantities-sub-column--quantity--')]"))
+        .get(1).getAttribute("value"));
 
     int totalTokensCheckoutPage = (tokensForFirstLineItem * quantity1) + (tokensForSecondLineItem * quantity2);
 
     AssertUtils
         .assertEquals("Estimated tokens amount should match total amount of tokens on Checkout page.",
-            totalTokensCheckoutPage, Integer.parseInt(actualRecommendedTokens.substring(0, 3))
+            totalTokensCheckoutPage, Integer.parseInt(recommendedTokens.substring(0, 3))
         );
 
     String totalPriceCheckoutPage = driver
         .findElement(By.xpath("//*[@data-testid=\"checkout--cart-section--total\"]")).getText();
-    totalPriceCheckoutPage = totalPriceCheckoutPage.substring(0, 6);
+
+    int totalPriceCheckoutPageInt = (Integer.parseInt(totalPriceCheckoutPage.replaceAll("[^0-9]", ""))) / 100;
+    int estimatedPriceInt = Integer.parseInt(estimatedPrice.replaceAll("[^0-9]", ""));
+
     AssertUtils
-        .assertEquals("Estimated total price should match total price on Checkout page.", totalPriceCheckoutPage,
-            actualEstimatedPrice);
+        .assertEquals("Estimated total price should match total price on Checkout page.", totalPriceCheckoutPageInt,
+            estimatedPriceInt);
   }
 
   private void updateQuantity(String priceId, String quantity) {
