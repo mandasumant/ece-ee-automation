@@ -218,15 +218,6 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("Open Subscriptions and Contracts link in Portal")
-  public void openSubscriptionsLink() {
-    if (!GlobalConstants.getENV().equals("INT")) {
-      openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
-    } else {
-      openPortalURL("https://int-manage.autodesk.com/billing/subscriptions-contracts");
-    }
-  }
-
   @Step("Click on All Products & Services Link")
   public void clickALLPSLink() {
     try {
@@ -255,11 +246,7 @@ public class PortalTestBase {
   @Step("Click on Upcoming Payments Link")
   public void navigateToUpcomingPaymentsLink() {
     try {
-      if (GlobalConstants.getENV().equalsIgnoreCase("stg")) {
-        openPortalURL("https://stg-manage.autodesk.com/cep/#orders/invoices");
-      } else if (GlobalConstants.getENV().equalsIgnoreCase("int")) {
-        openPortalURL("https://int-manage.autodesk.com/cep/#orders/invoices");
-      }
+      openPortalURL("accountsPortalOrdersInvoicesUrl");
       portalPage.waitForPageToLoad();
       checkEmailVerificationPopupAndClick();
     } catch (Exception e) {
@@ -340,9 +327,8 @@ public class PortalTestBase {
   public boolean validateBICOrderTaxInvoice(Map<String, String> results) {
     String error_message = null;
     String pdfContent = null;
-    String url = null;
-    navigateToOrderHistory();
-    boolean isValid = false;
+    String url;
+    openPortalURL("accountsPortalOrderHistoryUrl");
     Util.sleep(5000);
     try {
       int attempts = 0;
@@ -360,28 +346,20 @@ public class PortalTestBase {
             Util.printInfo("Invoice is not ready yet, we saw this text -> " + error_message);
             attempts++;
 
-            if (attempts > 29) {
+            if (attempts > 30) {
               Assert.fail("Failed to find Invoice PDF in Order History Page, after " + attempts + " attempts");
             }
             Util.printInfo("Waiting for another 5 minutes on attempt #" + attempts);
             Util.sleep(300000);
             driver.navigate().refresh();
-            // As per Account Portal this can take upto 6 sec so considering 10sec
+            // As per Account Portal this can take upto 6 sec so considering 10 sec
             Util.sleep(10000);
           } else {
             Util.PrintInfo("Found Invoice. Now need to validate the invoice pop up with ");
 
-            switch (GlobalConstants.getENV().toLowerCase()) {
-              case "int":
-                url = "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
-                break;
-              case "stg":
-              default:
-                url = "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
-                break;
-            }
+            url = "accountsPortalInvoiceUrl"
+                + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
+
             Util.printInfo("URL for Invoice data: " + url);
             driver.navigate().to(url);
             break;
@@ -697,7 +675,7 @@ public class PortalTestBase {
 
         if (status) {
           Util.printInfo("Hardcoding the redirect to subscriptions-contracts page");
-          driver.get("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
+          driver.get("accountsPortalSubscriptionsUrl");
           portalPage.clickUsingLowLevelActions(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION);
           Util.sleep(30000);
           debugPageUrl("Final attempt");
@@ -1638,7 +1616,7 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
 
-    openSubscriptionsLink();
+    openPortalURL("accountsPortalSubscriptionsUrl");
     clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
     closeAlertBanner();

@@ -36,6 +36,13 @@ default:
   quantity: "1"
   productType: "bic"
 
+  accountsPortalOrdersInvoicesUrl: "https://int-manage.autodesk.com/cep/#orders/invoices"
+  accountsPortalSubscriptionsUrl: "https://int-manage.autodesk.com/billing/subscriptions-contracts"
+  accountsPortalInvoiceUrl: "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
+  accountsPortalOrderHistoryUrl: "https://int-manage.autodesk.com/cep/#orders/order-history"
+  accountsPortalProductsServicesUrl: "https://int-manage.autodesk.com/cep/#products-services/all"
+  accountsPortalAddSeatsUrl: "https://int-manage.autodesk.com/billing/add-seats"
+
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
   bicNativePriceID: &bicNativePriceID "27239"
