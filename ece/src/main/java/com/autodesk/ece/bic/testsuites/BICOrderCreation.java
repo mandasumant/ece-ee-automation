@@ -209,7 +209,7 @@ public class BICOrderCreation extends ECETestBase {
       results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
       //Compare tax in Checkout and Pelican
-      validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+      getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
           results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
       // Get find Subscription ById
@@ -580,7 +580,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     //Validating the tax amount with Pelican
-    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
@@ -990,7 +990,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     //Validating the tax amount with Pelican
-    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
@@ -1138,17 +1138,6 @@ public class BICOrderCreation extends ECETestBase {
     driver.findElement(By.xpath("//settings-ui")).sendKeys(Keys.ENTER);
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     Util.sleep(2000);
-  }
-
-  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
-    if (checkoutTax != null) {
-      Double cartAmount = Double.valueOf(checkoutTax);
-      Double pelicanAmount = Double.valueOf(pelicanTax);
-      Util.printInfo("The total order amount on Cart " + cartAmount / 100);
-      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
-      AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
-          "Tax Amount in Pelican matches with the tax amount on Checkout page");
-    }
   }
 
   private String getSAPOrderNumber(String orderNumber) {

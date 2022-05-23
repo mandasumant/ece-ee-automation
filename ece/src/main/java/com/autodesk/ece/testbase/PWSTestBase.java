@@ -1,7 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
-import com.autodesk.ece.testbase.BICTestBase.Names;
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
@@ -68,12 +68,12 @@ public class PWSTestBase {
     return "";
   }
 
-  private String createQuoteBody(String email, Names names, Address address, String currency) {
+  private String createQuoteBody(LinkedHashMap<String, String> data, Address address) {
     LinkedHashMap<String, Object> dataSet = new LinkedHashMap<>();
-    dataSet.put("email", email);
-    dataSet.put("firstName", names.firstName);
-    dataSet.put("lastName", names.lastName);
-    dataSet.put("currency", currency);
+    dataSet.put("email", data.get(BICECEConstants.emailid));
+    dataSet.put("firstName", data.get(BICECEConstants.FIRSTNAME));
+    dataSet.put("lastName", data.get(BICECEConstants.LASTNAME));
+    dataSet.put("currency", data.get(BICECEConstants.currencyStore));
     dataSet.put("addressLine1", address.addressLine1);
     dataSet.put("city", address.city);
     dataSet.put("stateProvinceCode", address.province);
@@ -86,10 +86,11 @@ public class PWSTestBase {
     return LoadJsonWithValue.loadJson(dataSet, jsonFile).toString();
   }
 
-  @Step("Create quote" + GlobalConstants.TAG_TESTINGHUB)
-  public String createQuote(String email, Names names, Address address, String currency) {
+  @Step("Create and Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
+  public String createAndFinalizeQuote(Address address, LinkedHashMap<String, String> data) {
     PWSAccessInfo access_token = getAccessToken();
     String signature = signString(access_token.token, clientSecret, access_token.timestamp);
+    String quoteNumber = null;
 
     Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
       put("Authorization", "Bearer " + access_token.token);
@@ -98,7 +99,7 @@ public class PWSTestBase {
       put("timestamp", access_token.timestamp);
     }};
 
-    String payloadBody = createQuoteBody(email, names, address, currency);
+    String payloadBody = createQuoteBody(data, address);
     Response response = given()
         .headers(pwsRequestHeaders)
         .body(payloadBody)
@@ -110,26 +111,67 @@ public class PWSTestBase {
 
     int attempts = 0;
 
-    while (attempts < 8) {
+    while (attempts < 10) {
       attempts++;
       Util.sleep((long) (1000L * Math.pow(attempts, 2)));
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
-      response = given()
-          .headers(pwsRequestHeaders)
-          .get("https://" + hostname + "/v1/quotes/status?transactionId=" + transactionId)
-          .then().extract().response();
+      response = getQuoteStatus(pwsRequestHeaders, transactionId);
 
       String status = response.jsonPath().getString("status");
 
       if (status.equals("CREATED")) {
-        String quoteNumber = response.jsonPath().getString("quoteNumber");
+        quoteNumber = response.jsonPath().getString("quoteNumber");
         Util.printInfo("Got quote: " + quoteNumber);
-        return quoteNumber;
+        break;
+      } else if (attempts > 10) {
+        AssertUtils.fail("Failed to get quote Created");
       } else {
         Util.printInfo("Quote not ready yet, status: " + status);
       }
     }
-    AssertUtils.fail("Failed to get quote number");
+
+    return finalizeQuote(quoteNumber, transactionId);
+  }
+
+  @Step("Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
+  private String finalizeQuote(String quoteId, String transactionId) {
+    PWSAccessInfo access_token = getAccessToken();
+    String signature = signString(access_token.token, clientSecret, access_token.timestamp);
+
+    Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
+      put("Authorization", "Bearer " + access_token.token);
+      put("CSN", "0070176510");
+      put("signature", signature);
+      put("timestamp", access_token.timestamp);
+    }};
+
+    Response response = given()
+        .headers(pwsRequestHeaders)
+        .patch("https://" + hostname + "/v1/quotes/finalize/" + quoteId)
+        .then().extract().response();
+
+    if (response.getStatusCode() != 202) {
+      AssertUtils.fail("Finalize Quote API returned a non 202 response. Response code: " + response.getStatusCode());
+    }
+
+    int attempts = 0;
+
+    while (attempts < 10) {
+      attempts++;
+      Util.sleep((long) (1000L * Math.pow(attempts, 2)));
+      Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
+      response = getQuoteStatus(pwsRequestHeaders, transactionId);
+
+      String status = response.jsonPath().getString("status");
+
+      if (status.equals("QUOTED")) {
+        Util.printInfo("Got quote in QUOTED state: " + quoteId);
+        return quoteId;
+      } else {
+        Util.printInfo("Quote not ready yet, status: " + status);
+      }
+    }
+    AssertUtils.fail("Failed to change quote status to QUOTED");
     return "";
   }
 
@@ -141,5 +183,12 @@ public class PWSTestBase {
       this.timestamp = timestamp;
       this.token = token;
     }
+  }
+
+  private Response getQuoteStatus(Map<String, String> headers, String transactionId) {
+    return given()
+        .headers(headers)
+        .get("https://" + hostname + "/v1/quotes/status?transactionId=" + transactionId)
+        .then().extract().response();
   }
 }

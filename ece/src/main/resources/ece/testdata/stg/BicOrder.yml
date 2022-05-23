@@ -7,6 +7,7 @@ default:
   cepURL: "https://customer-stg.autodesk.com/"
   accountPortalURL: https://stg-manage.autodesk.com
   guacBaseURL: "https://checkout-pt.autodesk.com/"
+  Quote2OrderBaseURL: "https://checkout-qa.autodesk.com/en-US/cart?quoteNumber="
   guacDotComBaseURL: "https://www-pt.autodesk"
   guacResourceURL: "checkout?priceIds="
   productsPath: "/products/"
@@ -157,3 +158,6 @@ validateBicNativeFinancingCanceledOrder:
 validateMultiLineItemBicNativeOrder:
   multiProduct2: "3ds-max"
   quantity: "3"
+
+validateBicQuoteOrder:
+  dummy: "dummy"

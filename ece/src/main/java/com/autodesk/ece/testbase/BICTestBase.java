@@ -146,8 +146,10 @@ public class BICTestBase {
   }
 
   @Step("Create BIC account")
-  public void createBICAccount(Names names, String emailID, String password) {
-    switchToBICCartLoginPage();
+  public void createBICAccount(Names names, String emailID, String password, Boolean skipIframe) {
+    if(!skipIframe) {
+      switchToBICCartLoginPage();
+    }
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
 
     try {
@@ -1308,7 +1310,7 @@ public class BICTestBase {
     String priceId = navigateToCart(data);
 
     Names names = generateFirstAndLastNames();
-    createBICAccount(names, emailID, password);
+    createBICAccount(names, emailID, password, false);
     data.putAll(names.getMap());
 
     updateQuantity(priceId, BICECEConstants.MULTI_LINE_ITEM_QUANTITY_2);
@@ -1331,6 +1333,37 @@ public class BICTestBase {
 
     return results;
   }
+
+  @Step("Quote2Order: Place Quote Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    String orderNumber = null;
+    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID);
+    getUrl(url);
+
+    createBICAccount(new Names(data.get(BICECEConstants.FIRSTNAME), data.get(BICECEConstants.LASTNAME)),
+        data.get(BICECEConstants.emailid),
+        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), true);
+
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    Map<String, String> address = getBillingAddress(data);
+    enterBillingDetails(data, address, paymentMethod);
+
+    if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        submitOrder(data);
+      }
+      orderNumber = getOrderNumber(data);
+
+      printConsole(orderNumber, data, address);
+    }
+
+    results.put(BICConstants.emailid, data.get(BICConstants.emailid));
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
 
   private void updateQuantity(String priceId, String quantity) {
     String paymentTypeXpath = bicPage.getFirstFieldLocator("cartQuantity").replace("<PRICEID>", priceId);
@@ -1392,7 +1425,7 @@ public class BICTestBase {
     if (!(isLoggedIn)) {
       names = generateFirstAndLastNames();
       createBICAccount(names, data.get(BICECEConstants.emailid),
-          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
+          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
       data.putAll(names.getMap());
     }
 
@@ -1451,7 +1484,9 @@ public class BICTestBase {
     }
 
     Util.printInfo("Checking if Chat Popup Present. Done");
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
+    if (null != data.get(BICECEConstants.QUOTE_ID)) {
+      clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
+    } else if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
@@ -1857,6 +1892,17 @@ public class BICTestBase {
         put(BICECEConstants.FIRSTNAME, firstName);
         put(BICECEConstants.LASTNAME, lastName);
       }};
+    }
+  }
+
+  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
+    if (checkoutTax != null) {
+      Double cartAmount = Double.valueOf(checkoutTax);
+      Double pelicanAmount = Double.valueOf(pelicanTax);
+      Util.printInfo("The total order amount on Cart " + cartAmount / 100);
+      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
+      AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
+          "Tax Amount in Pelican matches with the tax amount on Checkout page");
     }
   }
 }
