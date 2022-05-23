@@ -223,11 +223,7 @@ public class PortalTestBase {
     try {
       // portalPage.click("portalAllPSLink");
       // portalPage.clickUsingLowLevelActions("portalAllPSLink");
-      if (GlobalConstants.getENV().equalsIgnoreCase("stg")) {
-        openPortalURL("https://stg-manage.autodesk.com/cep/#products-services/all");
-      } else if (GlobalConstants.getENV().equalsIgnoreCase("int")) {
-        openPortalURL("https://int-manage.autodesk.com/cep/#products-services/all");
-      }
+      openPortalURL("accountsPortalProductsServicesUrl");
       // portalPage.waitForPageToLoad();
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
@@ -301,7 +297,7 @@ public class PortalTestBase {
   @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderTotal(String orderTotal) {
     try {
-      navigateToOrderHistory();
+      openPortalURL("accountsPortalOrderHistoryUrl");
       portalPage.waitForFieldPresent("portalOrderHistoryPrice");
       String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
       AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
@@ -311,20 +307,8 @@ public class PortalTestBase {
     }
   }
 
-  public void navigateToOrderHistory() {
-    switch (GlobalConstants.getENV().toLowerCase()) {
-      case "int":
-        openPortalURL("https://int-manage.autodesk.com/cep/#orders/order-history");
-        break;
-      case "stg":
-      default:
-        openPortalURL("https://stg-manage.autodesk.com/cep/#orders/order-history");
-        break;
-    }
-  }
-
   @Step("CEP : Validating  Tax Invoice " + GlobalConstants.TAG_TESTINGHUB)
-  public boolean validateBICOrderTaxInvoice(Map<String, String> results) {
+  public void validateBICOrderTaxInvoice(Map<String, String> results) {
     String error_message = null;
     String pdfContent = null;
     String url;
@@ -393,8 +377,6 @@ public class PortalTestBase {
     if (!assertPDFContent(pdfContent, results)) {
       Assert.fail("Invoice is missing Crucial data");
     }
-    isValid = true;
-    return isValid;
   }
 
   private Boolean assertPDFContent(String pdfContent, Map<String, String> results) {
@@ -460,12 +442,11 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Validating  Inovice or Credit Note  " + GlobalConstants.TAG_TESTINGHUB)
-  public boolean validateBICOrderPDF(Map<String, String> results, String pdfType) {
-    String error_message = null;
+  public void validateBICOrderPDF(Map<String, String> results, String pdfType) {
+    String error_message;
     String pdfContent = null;
-    String url = null;
-    navigateToOrderHistory();
-    boolean isValid = false;
+    String url;
+    openPortalURL("accountsPortalOrderHistoryUrl");
     Util.sleep(5000);
     try {
       int attempts = 0;
@@ -482,7 +463,7 @@ public class PortalTestBase {
           if (!error_message.isEmpty()) {
             Util.printInfo(pdfType + " is not ready yet, we saw this text -> " + error_message);
             attempts++;
-            if (attempts > 14) {
+            if (attempts > 15) {
               Assert.fail("Failed to find " + pdfType + " PDF in Order History Page, after " + attempts + " attempts");
             }
             Util.printInfo("Waiting for another 10 minutes on attempt #" + attempts);
@@ -498,17 +479,9 @@ public class PortalTestBase {
               requestType = "re";
             }
 
-            switch (GlobalConstants.getENV().toLowerCase()) {
-              case "int":
-                url = "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
-                break;
-              case "stg":
-              default:
-                url = "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
-                break;
-            }
+            url = "accountsPortalInvoiceUrl"
+                + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
+
             Util.printInfo("URL for " + pdfType + " data: " + url);
             driver.navigate().to(url);
             break;
@@ -541,8 +514,6 @@ public class PortalTestBase {
     if (!assertPDFContent(pdfContent, results)) {
       Assert.fail("Credit Note is missing Crucial data");
     }
-    isValid = true;
-    return isValid;
   }
 
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
@@ -779,7 +750,7 @@ public class PortalTestBase {
 
         if (!status) {
           Util.printInfo("Attempt2 to redirect with hardcoded URL " + currentURL);
-          driver.get("https://stg-manage.autodesk.com/billing/add-seats");
+          driver.get("accountsPortalAddSeatsUrl");
           driver.navigate().refresh();
           Util.sleep(20000);
           currentURL = driver.getCurrentUrl();
