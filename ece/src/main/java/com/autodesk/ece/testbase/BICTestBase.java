@@ -545,14 +545,6 @@ public class BICTestBase {
       stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
 
-      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-      wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
-      status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
-
-      if (!status) {
-        AssertUtils.fail("Organization_Name not available.");
-      }
-
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       driver.findElement(By.xpath(fullAddrXpath))
           .sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
@@ -1484,7 +1476,7 @@ public class BICTestBase {
     }
 
     Util.printInfo("Checking if Chat Popup Present. Done");
-    if (null != data.get(BICECEConstants.QUOTE_ID)) {
+    if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
