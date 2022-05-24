@@ -5,7 +5,6 @@ import com.autodesk.testinghub.core.constants.BICConstants;
 public class BICECEConstants extends BICConstants {
 
   public static final String EMAIL = "email";
-  public static final String EMAIL_ID = "email_id";
   public static final String PASSWORD = "password";
   public static final String DOWNLOAD_STATUS = "downloadStatus";
   public static final String LOCALE = "locale";
@@ -24,10 +23,7 @@ public class BICECEConstants extends BICConstants {
   public static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss z";
   public static final String PRODUCT_ID = "productID";
   public static final String ADD_SEAT_QTY = "addSeatQty";
-  public static final String REDUCE_SEATS = "reduceSeats";
   public static final String E2E_EXECUTION_TIME = "e2e_ExecutionTime";
-  public static final String ORDER_CREATION = "CreateOrder";
-  public static final String ORDER_NUMBER_LABEL = "orderNumberLabel";
   public static final String ORDER_ID = "getPOReponse_orderId";
   public static final String SUB1_ID = "sub1ID";
   public static final String SUB2_ID = "sub2ID";
@@ -59,7 +55,6 @@ public class BICECEConstants extends BICConstants {
   public static final String LOGIN_PASSWORD = "loginPassword";
   public static final String LOGIN_BUTTON = "loginButton";
   public static final String GET_STARTED_SKIP_LINK = "getStartedSkipLink";
-  public static final String ADD_SEATS_MODAL_SKIP_BUTTON = "//*[@data-testid='addSeats-modal-skip-button']";
   public static final String PAYMENT = "payment";
   public static final String PAYMENT_TYPE = "paymentType";
   public static final String PAYMENT_METHODS = "paymentMethods";
@@ -100,7 +95,6 @@ public class BICECEConstants extends BICConstants {
   public static final String ENTER_BILLING_DETAILS = "Enter billing details";
   public static final String AFTER_ENTERING_BILLING_DETAILS = "After entering billing details";
   public static final String BILLING_DETAILS_ADDED = "billingDetailAdded";
-  public static final String GUAC_CART_EDIT_QUANTITY = "guacCartEditQuantity";
   public static final String ORDER_NUMBER = "OrderNumber  :: ";
   public static final String DOWNLOAD_FREE_TRIAL_LOGIN_FRAME = "downloadFreeTrialLoginFrame";
   public static final String MOE_LOGIN_USERNAME_FIELD = "moeLoginUsernameField";
@@ -137,7 +131,6 @@ public class BICECEConstants extends BICConstants {
   public static final String PORTAL_ADD_SEAT_BUTTON = "portalAddSeatButton";
   public static final String ADD_SEATS = "add-seats";
   public static final String PORTAL_REDUCE_SEATS_BUTTON = "portalReduceSeatsButton";
-  public static final String PORTAL_REDUCE_SEATS_COUNT = "portalRenewingSeatsCount";
   public static final String PORTAL_PAYMENT_METHOD = "portalPaymentMethod";
   public static final String PAYMENTOPTION = "<PAYMENTOPTION>";
   public static final String PORTAL_CARD_SAVE_BTN = "portalCardSaveBtn";
@@ -154,11 +147,9 @@ public class BICECEConstants extends BICConstants {
   public static final String GUAC_MOE_ORDER_ORIGIN = "GUAC_MOE_DIRECT";
   public static final String GUAC_DTC_ORDER_ORIGIN = "GUAC_MOE_DTC";
   public static final String BUYER_EXTERNAL_KEY = "BUYER_EXTERNAL_KEY";
-  public static final String GET_GUAC_MOE_QUOTE_ID = "getPOReponse_quoteId";
   public static final String VISA = "VISA";
   public static final String MASTERCARD = "MASTERCARD";
   public static final String CREDITCARD = "CREDITCARD";
-  public static final String EDU_OVERVIEW_HEADER = "Check that your information below is correct, then click Confirm";
   public static final String NA = "N/A";
   public static final String TAX_OPTION = "isTaxed";
   public static final String TAX_ID = "taxId";

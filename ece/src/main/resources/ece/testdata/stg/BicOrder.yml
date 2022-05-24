@@ -159,5 +159,10 @@ validateMultiLineItemBicNativeOrder:
   multiProduct2: "3ds-max"
   quantity: "3"
 
+validateFlexTokenEstimatorTool:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "1"
+
 validateBicQuoteOrder:
   dummy: "dummy"

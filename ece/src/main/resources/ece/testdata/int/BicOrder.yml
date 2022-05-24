@@ -167,5 +167,10 @@ validateMultiLineItemBicNativeOrder:
   multiProductPrice2: "23756"
   quantity: "3"
 
+validateFlexTokenEstimatorTool:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "1"
+
 validateBicQuoteOrder:
   dummy: "dummy"

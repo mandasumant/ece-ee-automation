@@ -623,6 +623,18 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  @Test(groups = {"flex-token-estimator"}, description = "Validation of Flex token estimator tool")
+  public void validateFlexTokenEstimatorTool() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    startTime = System.nanoTime();
+    getBicTestBase().estimateFlexTokenPrice(testDataForEachMethod);
+
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    updateTestingHub(testResults);
+  }
+
   @Test(groups = {"trialDownload-UI"}, description = "Testing Download Trial version")
   public void validateTrialDownloadUI() {
     HashMap<String, String> testResults = new HashMap<String, String>();
@@ -1037,8 +1049,8 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     // Validating Tax  Invoice After renewal
-    Util.printInfo("The Renewal Order No #"+results.get("response_renewalOrderNo"));
-    results.put(BICConstants.orderNumber,results.get("response_renewalOrderNo"));
+    Util.printInfo("The Renewal Order No #" + results.get("response_renewalOrderNo"));
+    results.put(BICConstants.orderNumber, results.get("response_renewalOrderNo"));
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
     portaltb.validateBICOrderTaxInvoice(results);
 
