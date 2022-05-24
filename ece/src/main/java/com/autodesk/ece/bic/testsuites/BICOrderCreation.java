@@ -44,7 +44,6 @@ public class BICOrderCreation extends ECETestBase {
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
-  String priceId = System.getProperty(BICECEConstants.PRICE_ID);
   private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)

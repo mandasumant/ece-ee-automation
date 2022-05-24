@@ -13,16 +13,15 @@ import com.autodesk.testinghub.core.utils.CustomSoftAssert;
 import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.qameta.allure.Step;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -51,6 +50,15 @@ public class PortalTestBase {
   ZipPayTestBase zipTestBase;
   BICTestBase bicTestBase;
 
+  String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
+  Map<?, ?> loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
+  String accountsPortalOrdersInvoicesUrl = (String) loadYaml.get("accountsPortalOrdersInvoicesUrl");
+  String accountsPortalSubscriptionsUrl = (String) loadYaml.get("accountsPortalSubscriptionsUrl");
+  String accountsPortalInvoiceUrl = (String) loadYaml.get("accountsPortalInvoiceUrl");
+  String accountsPortalOrderHistoryUrl = (String) loadYaml.get("accountsPortalOrderHistoryUrl");
+  String accountsPortalProductsServicesUrl = (String) loadYaml.get("accountsPortalProductsServicesUrl");
+  String accountsPortalAddSeatsUrl = (String) loadYaml.get("accountsPortalAddSeatsUrl");
+
   public PortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
     portalPage = testbase.createPage("PAGE_PORTAL");
@@ -58,14 +66,6 @@ public class PortalTestBase {
     new BICTestBase(driver, testbase);
     zipTestBase = new ZipPayTestBase(testbase);
     bicTestBase = new BICTestBase(driver, testbase);
-  }
-
-  public static String timestamp() {
-    String strDate = null;
-    Date date = Calendar.getInstance().getTime();
-    DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
-    strDate = dateFormat.format(date).replace(" ", "").replace("-", "").replace(":", "");
-    return strDate;
   }
 
   private void clickWithJavaScriptExecutor(JavascriptExecutor executor, String elementXpath) {
@@ -223,7 +223,7 @@ public class PortalTestBase {
     try {
       // portalPage.click("portalAllPSLink");
       // portalPage.clickUsingLowLevelActions("portalAllPSLink");
-      openPortalURL("accountsPortalProductsServicesUrl");
+      openPortalURL(accountsPortalProductsServicesUrl);
       // portalPage.waitForPageToLoad();
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
@@ -242,7 +242,7 @@ public class PortalTestBase {
   @Step("Click on Upcoming Payments Link")
   public void navigateToUpcomingPaymentsLink() {
     try {
-      openPortalURL("accountsPortalOrdersInvoicesUrl");
+      openPortalURL(accountsPortalOrdersInvoicesUrl);
       portalPage.waitForPageToLoad();
       checkEmailVerificationPopupAndClick();
     } catch (Exception e) {
@@ -297,7 +297,7 @@ public class PortalTestBase {
   @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderTotal(String orderTotal) {
     try {
-      openPortalURL("accountsPortalOrderHistoryUrl");
+      openPortalURL(accountsPortalOrderHistoryUrl);
       portalPage.waitForFieldPresent("portalOrderHistoryPrice");
       String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
       AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
@@ -312,7 +312,7 @@ public class PortalTestBase {
     String error_message = null;
     String pdfContent = null;
     String url;
-    openPortalURL("accountsPortalOrderHistoryUrl");
+    openPortalURL(accountsPortalOrderHistoryUrl);
     Util.sleep(5000);
     try {
       int attempts = 0;
@@ -330,7 +330,7 @@ public class PortalTestBase {
             Util.printInfo("Invoice is not ready yet, we saw this text -> " + error_message);
             attempts++;
 
-            if (attempts > 30) {
+            if (attempts > 29) {
               Assert.fail("Failed to find Invoice PDF in Order History Page, after " + attempts + " attempts");
             }
             Util.printInfo("Waiting for another 5 minutes on attempt #" + attempts);
@@ -341,7 +341,7 @@ public class PortalTestBase {
           } else {
             Util.PrintInfo("Found Invoice. Now need to validate the invoice pop up with ");
 
-            url = "accountsPortalInvoiceUrl"
+            url = accountsPortalInvoiceUrl
                 + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
 
             Util.printInfo("URL for Invoice data: " + url);
@@ -446,7 +446,7 @@ public class PortalTestBase {
     String error_message;
     String pdfContent = null;
     String url;
-    openPortalURL("accountsPortalOrderHistoryUrl");
+    openPortalURL(accountsPortalOrderHistoryUrl);
     Util.sleep(5000);
     try {
       int attempts = 0;
@@ -463,7 +463,7 @@ public class PortalTestBase {
           if (!error_message.isEmpty()) {
             Util.printInfo(pdfType + " is not ready yet, we saw this text -> " + error_message);
             attempts++;
-            if (attempts > 15) {
+            if (attempts > 14) {
               Assert.fail("Failed to find " + pdfType + " PDF in Order History Page, after " + attempts + " attempts");
             }
             Util.printInfo("Waiting for another 10 minutes on attempt #" + attempts);
@@ -479,7 +479,7 @@ public class PortalTestBase {
               requestType = "re";
             }
 
-            url = "accountsPortalInvoiceUrl"
+            url = accountsPortalInvoiceUrl
                 + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
 
             Util.printInfo("URL for " + pdfType + " data: " + url);
@@ -646,7 +646,7 @@ public class PortalTestBase {
 
         if (status) {
           Util.printInfo("Hardcoding the redirect to subscriptions-contracts page");
-          driver.get("accountsPortalSubscriptionsUrl");
+          driver.get(accountsPortalSubscriptionsUrl);
           portalPage.clickUsingLowLevelActions(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION);
           Util.sleep(30000);
           debugPageUrl("Final attempt");
@@ -750,7 +750,7 @@ public class PortalTestBase {
 
         if (!status) {
           Util.printInfo("Attempt2 to redirect with hardcoded URL " + currentURL);
-          driver.get("accountsPortalAddSeatsUrl");
+          driver.get(accountsPortalAddSeatsUrl);
           driver.navigate().refresh();
           Util.sleep(20000);
           currentURL = driver.getCurrentUrl();
@@ -1587,7 +1587,7 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
 
-    openPortalURL("accountsPortalSubscriptionsUrl");
+    openPortalURL(accountsPortalSubscriptionsUrl);
     clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
     closeAlertBanner();
