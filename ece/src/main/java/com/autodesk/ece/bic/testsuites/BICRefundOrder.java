@@ -37,7 +37,7 @@ public class BICRefundOrder extends ECETestBase {
   public void beforeClass() {
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-    String localeConfigFile = "LOCALE_CONFIG_" + GlobalConstants.ENV.toUpperCase();
+    String localeConfigFile = "LOCALE_CONFIG";
     localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
   }
 
