@@ -18,10 +18,12 @@ import io.qameta.allure.Step;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -66,6 +68,14 @@ public class PortalTestBase {
     new BICTestBase(driver, testbase);
     zipTestBase = new ZipPayTestBase(testbase);
     bicTestBase = new BICTestBase(driver, testbase);
+  }
+
+  public static String timestamp() {
+    String strDate = null;
+    Date date = Calendar.getInstance().getTime();
+    DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+    strDate = dateFormat.format(date).replace(" ", "").replace("-", "").replace(":", "");
+    return strDate;
   }
 
   private void clickWithJavaScriptExecutor(JavascriptExecutor executor, String elementXpath) {
