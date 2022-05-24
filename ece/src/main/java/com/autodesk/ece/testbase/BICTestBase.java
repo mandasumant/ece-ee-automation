@@ -1,6 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
@@ -23,7 +24,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
@@ -67,8 +67,17 @@ public class BICTestBase {
 
   }
 
+  public static Names generateFirstAndLastNames() {
+    String randomString = RandomStringUtils.random(6, true, false);
+    String firstName = "FN" + randomString;
+    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
+    String lastName = "LN" + randomString;
+    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
+    return new Names(firstName, lastName);
+  }
+
   @Step("Generate email id")
-  public String generateUniqueEmailID() {
+  public static String generateUniqueEmailID() {
     String storeKey = System.getProperty("store").replace("-", "");
     String sourceName = "thub";
     String emailDomain = "letscheck.pw";
@@ -88,17 +97,19 @@ public class BICTestBase {
   public Map<String, String> getBillingAddress(String region, String address) {
     Map<String, String> ba = null;
 
-    String[] billingAddress = address.split("@");
-    ba = new HashMap<String, String>();
-    ba.put(BICECEConstants.ORGANIZATION_NAME, billingAddress[0]);
-    ba.put(BICECEConstants.FULL_ADDRESS, billingAddress[1]);
-    ba.put(BICECEConstants.CITY, billingAddress[2]);
-    ba.put(BICECEConstants.ZIPCODE, billingAddress[3]);
-    ba.put(BICECEConstants.PHONE_NUMBER, getRandomMobileNumber());
-    ba.put(BICECEConstants.COUNTRY, billingAddress[5]);
+    Address newAddress = new Address(address);
 
-    if (billingAddress.length == 7) {
-      ba.put(BICECEConstants.STATE_PROVINCE, billingAddress[6]);
+    // TODO: Replace address maps with address object (ECEEPLT-2724)
+    ba = new HashMap<String, String>();
+    ba.put(BICECEConstants.ORGANIZATION_NAME, newAddress.company);
+    ba.put(BICECEConstants.FULL_ADDRESS, newAddress.addressLine1);
+    ba.put(BICECEConstants.CITY, newAddress.city);
+    ba.put(BICECEConstants.ZIPCODE, newAddress.postalCode);
+    ba.put(BICECEConstants.PHONE_NUMBER, newAddress.phoneNumber);
+    ba.put(BICECEConstants.COUNTRY, newAddress.country);
+
+    if (newAddress.province != null) {
+      ba.put(BICECEConstants.STATE_PROVINCE, newAddress.province);
     }
 
     return ba;
@@ -135,8 +146,10 @@ public class BICTestBase {
   }
 
   @Step("Create BIC account")
-  public void createBICAccount(Names names, String emailID, String password) {
-    switchToBICCartLoginPage();
+  public void createBICAccount(Names names, String emailID, String password, Boolean skipIframe) {
+    if(!skipIframe) {
+      switchToBICCartLoginPage();
+    }
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
 
     try {
@@ -531,14 +544,6 @@ public class BICTestBase {
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
       stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
-
-      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-      wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
-      status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
-
-      if (!status) {
-        AssertUtils.fail("Organization_Name not available.");
-      }
 
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       driver.findElement(By.xpath(fullAddrXpath))
@@ -1276,7 +1281,7 @@ public class BICTestBase {
     String priceId = navigateToCart(data);
 
     Names names = generateFirstAndLastNames();
-    createBICAccount(names, emailID, password);
+    createBICAccount(names, emailID, password, false);
     data.putAll(names.getMap());
 
     updateQuantity(priceId, BICECEConstants.MULTI_LINE_ITEM_QUANTITY_2);
@@ -1299,6 +1304,37 @@ public class BICTestBase {
 
     return results;
   }
+
+  @Step("Quote2Order: Place Quote Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    String orderNumber = null;
+    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID);
+    getUrl(url);
+
+    createBICAccount(new Names(data.get(BICECEConstants.FIRSTNAME), data.get(BICECEConstants.LASTNAME)),
+        data.get(BICECEConstants.emailid),
+        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), true);
+
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    Map<String, String> address = getBillingAddress(data);
+    enterBillingDetails(data, address, paymentMethod);
+
+    if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        submitOrder(data);
+      }
+      orderNumber = getOrderNumber(data);
+
+      printConsole(orderNumber, data, address);
+    }
+
+    results.put(BICConstants.emailid, data.get(BICConstants.emailid));
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
 
   @SuppressWarnings({"static-access", "unused"})
   @Step("Dot Com: Estimate price via Flex Token Estimator tool " + GlobalConstants.TAG_TESTINGHUB)
@@ -1444,7 +1480,7 @@ public class BICTestBase {
     if (!(isLoggedIn)) {
       names = generateFirstAndLastNames();
       createBICAccount(names, data.get(BICECEConstants.emailid),
-          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
+          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
       data.putAll(names.getMap());
     }
 
@@ -1503,7 +1539,9 @@ public class BICTestBase {
     }
 
     Util.printInfo("Checking if Chat Popup Present. Done");
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
+    if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)) {
+      clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
+    } else if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
@@ -1720,14 +1758,6 @@ public class BICTestBase {
             .equals("complete"))));
   }
 
-  public String getRandomMobileNumber() {
-    Random rnd = new Random();
-    long number = rnd.nextInt(999999999);
-    number = number + 1000000000;
-
-    return String.format("%09d", number);
-  }
-
   public String getRandomIntString() {
     Date date = new Date();
     long time = date.getTime();
@@ -1851,15 +1881,6 @@ public class BICTestBase {
     Util.printInfo("Successfully logged in");
   }
 
-  public Names generateFirstAndLastNames() {
-    String randomString = RandomStringUtils.random(6, true, false);
-    String firstName = "FN" + randomString;
-    Util.printInfo(BICECEConstants.FIRST_NAME1 + firstName);
-    String lastName = "LN" + randomString;
-    Util.printInfo(BICECEConstants.LAST_NAME1 + lastName);
-    return new Names(firstName, lastName);
-  }
-
   public void signOutFromCheckoutPage() {
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -1954,6 +1975,17 @@ public class BICTestBase {
         put(BICECEConstants.FIRSTNAME, firstName);
         put(BICECEConstants.LASTNAME, lastName);
       }};
+    }
+  }
+
+  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
+    if (checkoutTax != null) {
+      Double cartAmount = Double.valueOf(checkoutTax);
+      Double pelicanAmount = Double.valueOf(pelicanTax);
+      Util.printInfo("The total order amount on Cart " + cartAmount / 100);
+      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
+      AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
+          "Tax Amount in Pelican matches with the tax amount on Checkout page");
     }
   }
 }

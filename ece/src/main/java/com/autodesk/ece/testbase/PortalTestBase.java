@@ -346,7 +346,8 @@ public class PortalTestBase {
     Util.sleep(5000);
     try {
       int attempts = 0;
-      while (attempts < 12) {
+
+      while (attempts < 30) {
         if (portalPage.checkIfElementExistsInPage("portalOrderInvoiceLink", 10)) {
           portalPage.clickUsingLowLevelActions("portalOrderInvoiceLink");
           try {
@@ -358,7 +359,8 @@ public class PortalTestBase {
           if (!error_message.isEmpty()) {
             Util.printInfo("Invoice is not ready yet, we saw this text -> " + error_message);
             attempts++;
-            if (attempts > 11) {
+
+            if (attempts > 29) {
               Assert.fail("Failed to find Invoice PDF in Order History Page, after " + attempts + " attempts");
             }
             Util.printInfo("Waiting for another 5 minutes on attempt #" + attempts);
@@ -367,7 +369,7 @@ public class PortalTestBase {
             // As per Account Portal this can take upto 6 sec so considering 10sec
             Util.sleep(10000);
           } else {
-            Util.PrintInfo("Found Invoice now need to validate the invoice pop up with ");
+            Util.PrintInfo("Found Invoice. Now need to validate the invoice pop up with ");
 
             switch (GlobalConstants.getENV().toLowerCase()) {
               case "int":
@@ -393,6 +395,8 @@ public class PortalTestBase {
     }
 
     String content = driver.findElement(By.tagName("body")).getText();
+    Util.printInfo("The Response : " + content);
+
     Util.printInfo("Json Data from S4 PDF API: " + new JSONObject(content).get("data").toString());
     byte[] decoder = Base64.getDecoder().decode(new JSONObject(content).get("data").toString());
     File file = Paths.get(System.getProperty("user.home"), "Downloads/invoice.pdf").toFile();
@@ -405,9 +409,9 @@ public class PortalTestBase {
     try {
       pdfContent = new PDFReader().readPDF(file.getPath());
     } catch (Exception e) {
-      Assert.fail("Failed to reach/read the PDF: " + e.getCause());
+      Assert.fail("Failed to reach/read the Invoice PDF: " + e.getCause());
     }
-
+    results.put(BICECEConstants.PDF_TYPE, BICECEConstants.INVOICE);
     if (!assertPDFContent(pdfContent, results)) {
       Assert.fail("Invoice is missing Crucial data");
     }
@@ -415,7 +419,7 @@ public class PortalTestBase {
     return isValid;
   }
 
-  private Boolean assertPDFContent(String pdfContent, Map<String,String> results) {
+  private Boolean assertPDFContent(String pdfContent, Map<String, String> results) {
     Util.printInfo("PDF String Content: " + pdfContent);
     Boolean orderFound = pdfContent.contains(results.get(BICECEConstants.ORDER_ID));
     Boolean subscriptionFound = pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -426,13 +430,17 @@ public class PortalTestBase {
     Util.printInfo("Is Order ID found in Invoice: " + pdfContent.contains(results.get(BICECEConstants.ORDER_ID)));
     Util.printInfo("Is Subscription ID found in Invoice: " +
         pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)));
-    Util.printInfo("Is firstName found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_firstName").toUpperCase()));
-    Util.printInfo("Is lastName found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_lastName").toUpperCase()));
-    Util.printInfo("Is street found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_street").toUpperCase()));
-    Util.printInfo("Is city found in Invoice: " + pdfContent.toUpperCase().contains(results.get("getPOReponse_city").toUpperCase()));
+    Util.printInfo("Is firstName found in Invoice: " + pdfContent.toUpperCase()
+        .contains(results.get("getPOReponse_firstName").toUpperCase()));
+    Util.printInfo("Is lastName found in Invoice: " + pdfContent.toUpperCase()
+        .contains(results.get("getPOReponse_lastName").toUpperCase()));
+    Util.printInfo("Is street found in Invoice: " + pdfContent.toUpperCase()
+        .contains(results.get("getPOReponse_street").toUpperCase()));
+    Util.printInfo("Is city found in Invoice: " + pdfContent.toUpperCase()
+        .contains(results.get("getPOReponse_city").toUpperCase()));
 
     String locale = System.getProperty("locale");
-    if(locale == null || locale.isEmpty()){
+    if (locale == null || locale.isEmpty()) {
       locale = "en_US";
     }
     String[] localeSplit = locale.split("_");
@@ -443,16 +451,25 @@ public class PortalTestBase {
     String totalAmountWithPromoCodeFormatted = localeFormat.format(Double.valueOf(results.get(
         "getPOResponse_subtotalAfterPromotionsWithTax")));
 
-    String totalAmountTrimmed = totalAmountFormatted.replace(".","").replace(",","").replace("\u00a0","").replace("\u00A0","").trim();
-    String totalAmountWithPromoCodeTrimmed = totalAmountWithPromoCodeFormatted.replace(".","").replace(",","").replace("\u00a0","").replace("\u00A0","").trim();
-    String pdfContentTrimmed = pdfContent.replace(".","").replace(",","").replace("\u00a0","").replaceAll("\n", " ").trim();
+    String totalAmountTrimmed = totalAmountFormatted.replace(".", "").replace(",", "").replace("\u00a0", "")
+        .replace("\u00A0", "").trim();
+    String totalAmountWithPromoCodeTrimmed = totalAmountWithPromoCodeFormatted.replace(".", "").replace(",", "")
+        .replace("\u00a0", "").replace("\u00A0", "").trim();
+    String pdfContentTrimmed = pdfContent.replace(".", "").replace(",", "").replace("\u00a0", "").replaceAll("\n", " ")
+        .trim();
+
+    if (results.get(BICECEConstants.PDF_TYPE).equalsIgnoreCase(BICECEConstants.CREDIT_NOTE)) {
+      totalAmountTrimmed = "-" + totalAmountTrimmed;
+      totalAmountWithPromoCodeTrimmed = "-" + totalAmountWithPromoCodeTrimmed;
+    }
 
     Util.printInfo("PDF String Content #:" + pdfContentTrimmed);
     Util.printInfo("totalAmountFormatted #:" + totalAmountTrimmed);
     Util.printInfo("totalAmountWithPromoCodeFormatted #:" + totalAmountWithPromoCodeTrimmed);
 
     Util.printInfo("Is SUBTOTAL_WITH_TAX found in Invoice: " + pdfContentTrimmed.contains(totalAmountTrimmed));
-    Util.printInfo("Is subtotalAfterPromotionsWithTax found in Invoice: " + pdfContentTrimmed.contains(totalAmountWithPromoCodeTrimmed));
+    Util.printInfo("Is subtotalAfterPromotionsWithTax found in Invoice: " + pdfContentTrimmed
+        .contains(totalAmountWithPromoCodeTrimmed));
 
     return orderFound &&
         subscriptionFound &&
@@ -462,7 +479,92 @@ public class PortalTestBase {
         lastNameFound &&
         streetFound &&
         cityFound;
+  }
 
+  @Step("CEP : Validating  Inovice or Credit Note  " + GlobalConstants.TAG_TESTINGHUB)
+  public boolean validateBICOrderPDF(Map<String, String> results, String pdfType) {
+    String error_message = null;
+    String pdfContent = null;
+    String url = null;
+    navigateToOrderHistory();
+    boolean isValid = false;
+    Util.sleep(5000);
+    try {
+      int attempts = 0;
+      while (attempts < 15) {
+        if (portalPage.checkIfElementExistsInPage("portalOrder" + pdfType + "Link", 10)) {
+          portalPage.clickUsingLowLevelActions("portalOrder" + pdfType + "Link");
+          try {
+            Util.sleep(5000);
+            error_message = driver.findElement(By.className("error-msg")).getText();
+          } catch (Exception e) {
+            error_message = "";
+          }
+
+          if (!error_message.isEmpty()) {
+            Util.printInfo(pdfType + " is not ready yet, we saw this text -> " + error_message);
+            attempts++;
+            if (attempts > 14) {
+              Assert.fail("Failed to find " + pdfType + " PDF in Order History Page, after " + attempts + " attempts");
+            }
+            Util.printInfo("Waiting for another 10 minutes on attempt #" + attempts);
+            Util.sleep(600000);
+            driver.navigate().refresh();
+            // As per Account Portal this can take upto 6 sec so considering 10sec
+            Util.sleep(10000);
+          } else {
+            Util.PrintInfo("Found " + pdfType + ". Now need to validate the invoice pop up with ");
+            String requestType = "bc";
+
+            if (pdfType.equalsIgnoreCase(BICECEConstants.CREDIT_NOTE)) {
+              requestType = "re";
+            }
+
+            switch (GlobalConstants.getENV().toLowerCase()) {
+              case "int":
+                url = "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
+                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
+                break;
+              case "stg":
+              default:
+                url = "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
+                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
+                break;
+            }
+            Util.printInfo("URL for " + pdfType + " data: " + url);
+            driver.navigate().to(url);
+            break;
+          }
+        } else {
+          driver.navigate().refresh();
+        }
+      }
+    } catch (Exception e) {
+      AssertUtils.fail("Failed to validate " + pdfType + " in Account Portal");
+    }
+
+    String content = driver.findElement(By.tagName("body")).getText();
+    Util.printInfo("Json Data from S4 PDF API: " + new JSONObject(content).get("data").toString());
+    byte[] decoder = Base64.getDecoder().decode(new JSONObject(content).get("data").toString());
+    File file = Paths.get(System.getProperty("user.home"), "Downloads/" + pdfType + ".pdf").toFile();
+    try (FileOutputStream fos = new FileOutputStream(file)) {
+      fos.write(decoder);
+      Util.printInfo("PDF File Saved");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      pdfContent = new PDFReader().readPDF(file.getPath());
+    } catch (Exception e) {
+      Assert.fail("Failed to reach/read the " + pdfType + " PDF: " + e.getCause());
+    }
+
+    results.put(BICECEConstants.PDF_TYPE, pdfType);
+    if (!assertPDFContent(pdfContent, results)) {
+      Assert.fail("Credit Note is missing Crucial data");
+    }
+    isValid = true;
+    return isValid;
   }
 
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
@@ -974,7 +1076,7 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-              BICECEConstants.PORTAL_PAYMENT_METHOD)
+          BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data);

@@ -300,7 +300,14 @@ public class EDUTestBase {
     eduPage.click("eduSubmit");
 
     eduPage.waitForField("eduSkipTFA", true, 5000);
-    eduPage.click("eduSkipTFA");
+
+    try {
+      if (eduPage.checkIfElementExistsInPage("eduSkipTFA", 10)) {
+        eduPage.click("eduSkipTFA");
+      }
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
   }
 
   @Step("Dismiss registration success message" + GlobalConstants.TAG_TESTINGHUB)

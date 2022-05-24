@@ -165,5 +165,9 @@ public class BICECEConstants extends BICConstants {
   public static final String ENV_STG = "STG";
   public static final String ENV_INT = "INT";
   public static final String ENV_PRD = "PRD";
+  public static final String PDF_TYPE = "pdfType";
+  public static final String INVOICE = "Invoice";
+  public static final String CREDIT_NOTE = "CreditNote";
+  public static final String QUOTE_ID = "quote_id";
 }
 

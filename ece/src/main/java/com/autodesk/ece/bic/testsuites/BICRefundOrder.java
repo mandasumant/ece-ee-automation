@@ -3,11 +3,13 @@ package com.autodesk.ece.bic.testsuites;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ public class BICRefundOrder extends ECETestBase {
   String locale = null;
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
   String priceId = System.getProperty(BICECEConstants.PRICE_ID);
+  private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -80,6 +83,8 @@ public class BICRefundOrder extends ECETestBase {
       priceId = defaultPriceId;
     }
     testDataForEachMethod.put("priceId", priceId);
+
+    PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
   }
 
   @Test(groups = {"bic-RefundOrder"}, description = "BIC refund order")
@@ -102,6 +107,14 @@ public class BICRefundOrder extends ECETestBase {
     results.put(BICECEConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    // Validate Portal
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
 
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrder(results);
@@ -132,6 +145,8 @@ public class BICRefundOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
+    // Validate Credit Note for the order
+    portaltb.validateBICOrderPDF(results,BICECEConstants.CREDIT_NOTE);
     updateTestingHub(testResults);
   }
 }
