@@ -36,6 +36,13 @@ default:
   quantity: "1"
   productType: "bic"
 
+  accountsPortalOrdersInvoicesUrl: "https://stg-manage.autodesk.com/cep/#orders/invoices"
+  accountsPortalSubscriptionsUrl: "https://stg-manage.autodesk.com/billing/subscriptions-contracts"
+  accountsPortalInvoiceUrl: "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
+  accountsPortalOrderHistoryUrl: "https://stg-manage.autodesk.com/cep/#orders/order-history"
+  accountsPortalProductsServicesUrl: "https://stg-manage.autodesk.com/cep/#products-services/all"
+  accountsPortalAddSeatsUrl: "https://stg-manage.autodesk.com/billing/add-seats"
+
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
   bicNativePriceID: &bicNativePriceID "27239"

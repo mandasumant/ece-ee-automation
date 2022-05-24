@@ -13,6 +13,7 @@ import com.autodesk.testinghub.core.utils.CustomSoftAssert;
 import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.qameta.allure.Step;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,6 +51,15 @@ public class PortalTestBase {
   public WebDriver driver = null;
   ZipPayTestBase zipTestBase;
   BICTestBase bicTestBase;
+
+  String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
+  Map<?, ?> loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
+  String accountsPortalOrdersInvoicesUrl = (String) loadYaml.get("accountsPortalOrdersInvoicesUrl");
+  String accountsPortalSubscriptionsUrl = (String) loadYaml.get("accountsPortalSubscriptionsUrl");
+  String accountsPortalInvoiceUrl = (String) loadYaml.get("accountsPortalInvoiceUrl");
+  String accountsPortalOrderHistoryUrl = (String) loadYaml.get("accountsPortalOrderHistoryUrl");
+  String accountsPortalProductsServicesUrl = (String) loadYaml.get("accountsPortalProductsServicesUrl");
+  String accountsPortalAddSeatsUrl = (String) loadYaml.get("accountsPortalAddSeatsUrl");
 
   public PortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
@@ -218,25 +228,12 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("Open Subscriptions and Contracts link in Portal")
-  public void openSubscriptionsLink() {
-    if (!GlobalConstants.getENV().equals("INT")) {
-      openPortalURL("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
-    } else {
-      openPortalURL("https://int-manage.autodesk.com/billing/subscriptions-contracts");
-    }
-  }
-
   @Step("Click on All Products & Services Link")
   public void clickALLPSLink() {
     try {
       // portalPage.click("portalAllPSLink");
       // portalPage.clickUsingLowLevelActions("portalAllPSLink");
-      if (GlobalConstants.getENV().equalsIgnoreCase("stg")) {
-        openPortalURL("https://stg-manage.autodesk.com/cep/#products-services/all");
-      } else if (GlobalConstants.getENV().equalsIgnoreCase("int")) {
-        openPortalURL("https://int-manage.autodesk.com/cep/#products-services/all");
-      }
+      openPortalURL(accountsPortalProductsServicesUrl);
       // portalPage.waitForPageToLoad();
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
@@ -255,11 +252,7 @@ public class PortalTestBase {
   @Step("Click on Upcoming Payments Link")
   public void navigateToUpcomingPaymentsLink() {
     try {
-      if (GlobalConstants.getENV().equalsIgnoreCase("stg")) {
-        openPortalURL("https://stg-manage.autodesk.com/cep/#orders/invoices");
-      } else if (GlobalConstants.getENV().equalsIgnoreCase("int")) {
-        openPortalURL("https://int-manage.autodesk.com/cep/#orders/invoices");
-      }
+      openPortalURL(accountsPortalOrdersInvoicesUrl);
       portalPage.waitForPageToLoad();
       checkEmailVerificationPopupAndClick();
     } catch (Exception e) {
@@ -314,7 +307,7 @@ public class PortalTestBase {
   @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderTotal(String orderTotal) {
     try {
-      navigateToOrderHistory();
+      openPortalURL(accountsPortalOrderHistoryUrl);
       portalPage.waitForFieldPresent("portalOrderHistoryPrice");
       String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
       AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
@@ -324,25 +317,12 @@ public class PortalTestBase {
     }
   }
 
-  public void navigateToOrderHistory() {
-    switch (GlobalConstants.getENV().toLowerCase()) {
-      case "int":
-        openPortalURL("https://int-manage.autodesk.com/cep/#orders/order-history");
-        break;
-      case "stg":
-      default:
-        openPortalURL("https://stg-manage.autodesk.com/cep/#orders/order-history");
-        break;
-    }
-  }
-
   @Step("CEP : Validating  Tax Invoice " + GlobalConstants.TAG_TESTINGHUB)
-  public boolean validateBICOrderTaxInvoice(Map<String, String> results) {
+  public void validateBICOrderTaxInvoice(Map<String, String> results) {
     String error_message = null;
     String pdfContent = null;
-    String url = null;
-    navigateToOrderHistory();
-    boolean isValid = false;
+    String url;
+    openPortalURL(accountsPortalOrderHistoryUrl);
     Util.sleep(5000);
     try {
       int attempts = 0;
@@ -366,22 +346,14 @@ public class PortalTestBase {
             Util.printInfo("Waiting for another 5 minutes on attempt #" + attempts);
             Util.sleep(300000);
             driver.navigate().refresh();
-            // As per Account Portal this can take upto 6 sec so considering 10sec
+            // As per Account Portal this can take upto 6 sec so considering 10 sec
             Util.sleep(10000);
           } else {
             Util.PrintInfo("Found Invoice. Now need to validate the invoice pop up with ");
 
-            switch (GlobalConstants.getENV().toLowerCase()) {
-              case "int":
-                url = "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
-                break;
-              case "stg":
-              default:
-                url = "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
-                break;
-            }
+            url = accountsPortalInvoiceUrl
+                + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
+
             Util.printInfo("URL for Invoice data: " + url);
             driver.navigate().to(url);
             break;
@@ -415,8 +387,6 @@ public class PortalTestBase {
     if (!assertPDFContent(pdfContent, results)) {
       Assert.fail("Invoice is missing Crucial data");
     }
-    isValid = true;
-    return isValid;
   }
 
   private Boolean assertPDFContent(String pdfContent, Map<String, String> results) {
@@ -482,12 +452,11 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Validating  Inovice or Credit Note  " + GlobalConstants.TAG_TESTINGHUB)
-  public boolean validateBICOrderPDF(Map<String, String> results, String pdfType) {
-    String error_message = null;
+  public void validateBICOrderPDF(Map<String, String> results, String pdfType) {
+    String error_message;
     String pdfContent = null;
-    String url = null;
-    navigateToOrderHistory();
-    boolean isValid = false;
+    String url;
+    openPortalURL(accountsPortalOrderHistoryUrl);
     Util.sleep(5000);
     try {
       int attempts = 0;
@@ -520,17 +489,9 @@ public class PortalTestBase {
               requestType = "re";
             }
 
-            switch (GlobalConstants.getENV().toLowerCase()) {
-              case "int":
-                url = "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
-                break;
-              case "stg":
-              default:
-                url = "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
-                break;
-            }
+            url = accountsPortalInvoiceUrl
+                + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
+
             Util.printInfo("URL for " + pdfType + " data: " + url);
             driver.navigate().to(url);
             break;
@@ -563,8 +524,6 @@ public class PortalTestBase {
     if (!assertPDFContent(pdfContent, results)) {
       Assert.fail("Credit Note is missing Crucial data");
     }
-    isValid = true;
-    return isValid;
   }
 
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
@@ -697,7 +656,7 @@ public class PortalTestBase {
 
         if (status) {
           Util.printInfo("Hardcoding the redirect to subscriptions-contracts page");
-          driver.get("https://stg-manage.autodesk.com/billing/subscriptions-contracts");
+          driver.get(accountsPortalSubscriptionsUrl);
           portalPage.clickUsingLowLevelActions(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION);
           Util.sleep(30000);
           debugPageUrl("Final attempt");
@@ -801,7 +760,7 @@ public class PortalTestBase {
 
         if (!status) {
           Util.printInfo("Attempt2 to redirect with hardcoded URL " + currentURL);
-          driver.get("https://stg-manage.autodesk.com/billing/add-seats");
+          driver.get(accountsPortalAddSeatsUrl);
           driver.navigate().refresh();
           Util.sleep(20000);
           currentURL = driver.getCurrentUrl();
@@ -1638,7 +1597,7 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
 
-    openSubscriptionsLink();
+    openPortalURL(accountsPortalSubscriptionsUrl);
     clickOnSubscriptionRow();
     checkEmailVerificationPopupAndClick();
     closeAlertBanner();
