@@ -368,7 +368,7 @@ public class MOETestBase {
     address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION), data.get(BICECEConstants.ADDRESS));
 
     Names names = bicTestBase.generateFirstAndLastNames();
-    bicTestBase.createBICAccount(names, emailID, password);
+    bicTestBase.createBICAccount(names, emailID, password, false);
     data.putAll(names.getMap());
     data.put(BICECEConstants.emailid, emailID);
 
@@ -409,7 +409,7 @@ public class MOETestBase {
     address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION), data.get(BICECEConstants.ADDRESS));
 
     Names names = BICTestBase.generateFirstAndLastNames();
-    bicTestBase.createBICAccount(names, emailID, password);
+    bicTestBase.createBICAccount(names, emailID, password, false);
     data.putAll(names.getMap());
     data.put(BICECEConstants.emailid, emailID);
 
@@ -855,6 +855,6 @@ public class MOETestBase {
     bicTestBase.signOutFromCheckoutPage();
 
     // Create new user and sign in
-    bicTestBase.createBICAccount(names, emailID, password);
+    bicTestBase.createBICAccount(names, emailID, password, false);
   }
 }

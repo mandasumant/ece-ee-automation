@@ -209,7 +209,7 @@ public class BICOrderCreation extends ECETestBase {
       results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
       //Compare tax in Checkout and Pelican
-      validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+      getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
           results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
       // Get find Subscription ById
@@ -580,7 +580,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     //Validating the tax amount with Pelican
-    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
@@ -616,6 +616,18 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
 
     updateTestingHub(testResults);
+
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    updateTestingHub(testResults);
+  }
+
+  @Test(groups = {"flex-token-estimator"}, description = "Validation of Flex token estimator tool")
+  public void validateFlexTokenEstimatorTool() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    startTime = System.nanoTime();
+    getBicTestBase().estimateFlexTokenPrice(testDataForEachMethod);
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
@@ -990,7 +1002,7 @@ public class BICOrderCreation extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     //Validating the tax amount with Pelican
-    validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
@@ -1037,8 +1049,8 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     // Validating Tax  Invoice After renewal
-    Util.printInfo("The Renewal Order No #"+results.get("response_renewalOrderNo"));
-    results.put(BICConstants.orderNumber,results.get("response_renewalOrderNo"));
+    Util.printInfo("The Renewal Order No #" + results.get("response_renewalOrderNo"));
+    results.put(BICConstants.orderNumber, results.get("response_renewalOrderNo"));
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
     portaltb.validateBICOrderTaxInvoice(results);
 
@@ -1138,17 +1150,6 @@ public class BICOrderCreation extends ECETestBase {
     driver.findElement(By.xpath("//settings-ui")).sendKeys(Keys.ENTER);
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     Util.sleep(2000);
-  }
-
-  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
-    if (checkoutTax != null) {
-      Double cartAmount = Double.valueOf(checkoutTax);
-      Double pelicanAmount = Double.valueOf(pelicanTax);
-      Util.printInfo("The total order amount on Cart " + cartAmount / 100);
-      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
-      AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
-          "Tax Amount in Pelican matches with the tax amount on Checkout page");
-    }
   }
 
   private String getSAPOrderNumber(String orderNumber) {

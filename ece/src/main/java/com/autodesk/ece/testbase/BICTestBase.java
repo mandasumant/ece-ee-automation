@@ -146,8 +146,10 @@ public class BICTestBase {
   }
 
   @Step("Create BIC account")
-  public void createBICAccount(Names names, String emailID, String password) {
-    switchToBICCartLoginPage();
+  public void createBICAccount(Names names, String emailID, String password, Boolean skipIframe) {
+    if(!skipIframe) {
+      switchToBICCartLoginPage();
+    }
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
 
     try {
@@ -542,14 +544,6 @@ public class BICTestBase {
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
       stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
-
-      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-      wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(orgNameXpath)));
-      status = driver.findElement(By.xpath(orgNameXpath)).isDisplayed();
-
-      if (!status) {
-        AssertUtils.fail("Organization_Name not available.");
-      }
 
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       driver.findElement(By.xpath(fullAddrXpath))
@@ -1097,7 +1091,7 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+          "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
         Util.printWarning(
             "Export compliance issue is present. Checking for order number in the Pelican response");
@@ -1117,7 +1111,7 @@ public class BICTestBase {
     debugPageUrl("Step 1: Check order number is Null");
     try {
       orderNumber = driver.findElement(By.xpath(
-              "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+          "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
           .getText();
     } catch (Exception e) {
       debugPageUrl("Step 2: Check order number is Null");
@@ -1134,7 +1128,7 @@ public class BICTestBase {
       bicPage.waitForPageToLoad();
       try {
         orderNumber = driver.findElement(By.xpath(
-                "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+            "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
             .getText();
       } catch (Exception e) {
         debugPageUrl("Step 4: Check order number is Null");
@@ -1183,43 +1177,22 @@ public class BICTestBase {
 
   public String navigateToCart(LinkedHashMap<String, String> data) throws MetadataException {
     String productType = data.get("productType");
-    String guacBaseDotComURL = data.get("guacDotComBaseURL");
-    String constructDotComURL;
-    String constructGuacURL = null;
+    String constructGuacURL;
     String priceId = null;
 
     // Starting from dot com page for STG environment
     if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG)) {
-      String productName =
-          System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
-              BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
-
-      constructDotComURL = guacBaseDotComURL + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
-          .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
-
-      Util.printInfo("constructDotComURL " + constructDotComURL);
-      getUrl(constructDotComURL);
-      setStorageData();
-      acceptCookiesAndUSSiteLink();
+      navigateToDotComPage(data);
 
       // Selecting monthly for Non-Flex, Non-Financing
       if (productType.equals("flex")) {
         bicPage.waitForFieldPresent("flexTab", 5000);
         bicPage.clickUsingLowLevelActions("flexTab");
+
         bicPage.waitForFieldPresent("buyTokensButton", 5000);
         Util.sleep(3000);
 
-        try {
-          WebElement getHelpIframe = bicPage
-              .getMultipleWebElementsfromField(BICECEConstants.GET_HELP_IFRAME).get(0);
-          driver.switchTo().frame(getHelpIframe);
-          bicPage.waitForFieldPresent("getHelpPopUpCloseButton", 2000);
-          bicPage.clickUsingLowLevelActions("getHelpPopUpCloseButton");
-          Util.printInfo("Get help pop up closed.");
-        } catch (Exception e) {
-          Util.printInfo("Get help pop up does not appear on the page.");
-        }
-        driver.switchTo().defaultContent();
+        closeGetHelpPopup();
 
         bicPage.clickUsingLowLevelActions("buyTokensButton");
       } else {
@@ -1308,7 +1281,7 @@ public class BICTestBase {
     String priceId = navigateToCart(data);
 
     Names names = generateFirstAndLastNames();
-    createBICAccount(names, emailID, password);
+    createBICAccount(names, emailID, password, false);
     data.putAll(names.getMap());
 
     updateQuantity(priceId, BICECEConstants.MULTI_LINE_ITEM_QUANTITY_2);
@@ -1330,6 +1303,121 @@ public class BICTestBase {
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
+  }
+
+  @Step("Quote2Order: Place Quote Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    String orderNumber = null;
+    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID);
+    getUrl(url);
+
+    createBICAccount(new Names(data.get(BICECEConstants.FIRSTNAME), data.get(BICECEConstants.LASTNAME)),
+        data.get(BICECEConstants.emailid),
+        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), true);
+
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    Map<String, String> address = getBillingAddress(data);
+    enterBillingDetails(data, address, paymentMethod);
+
+    if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        submitOrder(data);
+      }
+      orderNumber = getOrderNumber(data);
+
+      printConsole(orderNumber, data, address);
+    }
+
+    results.put(BICConstants.emailid, data.get(BICConstants.emailid));
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
+
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Dot Com: Estimate price via Flex Token Estimator tool " + GlobalConstants.TAG_TESTINGHUB)
+  public void estimateFlexTokenPrice(LinkedHashMap<String, String> data) throws MetadataException {
+    Util.printInfo("Navigating to Dot Com page for Autocad product");
+    navigateToDotComPage(data);
+
+    Util.printInfo("Switching to Flex tab");
+    bicPage.waitForFieldPresent("flexTab", 5000);
+    bicPage.clickUsingLowLevelActions("flexTab");
+    closeGetHelpPopup();
+
+    Util.printInfo("Click on 'Estimate tokens needed' button");
+    bicPage.waitForFieldPresent("estimateTokensButton", 5000);
+    bicPage.clickUsingLowLevelActions("estimateTokensButton");
+
+    Util.printInfo("Making sure that correct product is selected on the new page");
+    bicPage.waitForFieldPresent("tableRowProductACD", 5000);
+    String autocadProduct = driver.findElement(By.xpath("//div[@class=\"fe-tablerow-product-name\"]")).getText();
+    AssertUtils.assertEquals("Product on the page should match expected product.", autocadProduct, "AutoCAD");
+
+    Util.printInfo("Updating users and days");
+    bicPage.waitForFieldPresent("usersAmountInput", 5000);
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]")).click();
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]/input")).sendKeys(Keys.BACK_SPACE);
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]/input")).sendKeys("4");
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]")).click();
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]/input")).sendKeys(Keys.BACK_SPACE);
+    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]/input")).sendKeys("2");
+
+    String recommendedTokens = driver
+        .findElement(By.xpath("//*[@data-testid=\"fe-summary-tokens\"]/div[@class=\"fe-rec-totals-fadeIn\"]"))
+        .getText();
+
+    String estimatedPrice = driver
+        .findElement(By.xpath("//*[@data-testid=\"fe-summary-price\"]/div[@class=\"fe-rec-totals-fadeIn\"]")).getText();
+
+    Util.printInfo("Clicking on Buy tokens button");
+    bicPage.waitForFieldPresent("buyTokensButtonFlex", 5000);
+    bicPage.clickUsingLowLevelActions("buyTokensButtonFlex");
+
+    clickToStayOnSameSite();
+
+    Util.printInfo("Signing to iframe");
+    loginAccount(data);
+
+    Util.printInfo("Asserting that estimated amount match actual amounts on Checkout page.");
+    int tokensForFirstLineItem = Integer.parseInt(driver
+        .findElements(By.xpath(
+            "//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
+        .get(0).getText()
+        .substring(0, 3));
+    int tokensForSecondLineItem = Integer.parseInt(driver
+        .findElements(By.xpath(
+            "//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
+        .get(2).getText()
+        .substring(0, 3));
+
+    int quantity1 = Integer.parseInt(driver
+        .findElements(
+            By.xpath(" //input[contains(@id,'checkout--product-bar--info-column--quantities-sub-column--quantity--')]"))
+        .get(0).getAttribute("value"));
+    int quantity2 = Integer.parseInt(driver
+        .findElements(
+            By.xpath(" //input[contains(@id,'checkout--product-bar--info-column--quantities-sub-column--quantity--')]"))
+        .get(1).getAttribute("value"));
+
+    int totalTokensCheckoutPage = (tokensForFirstLineItem * quantity1) + (tokensForSecondLineItem * quantity2);
+
+    AssertUtils
+        .assertEquals("Estimated tokens amount should match total amount of tokens on Checkout page.",
+            totalTokensCheckoutPage, Integer.parseInt(recommendedTokens.substring(0, 3))
+        );
+
+    String totalPriceCheckoutPage = driver
+        .findElement(By.xpath("//*[@data-testid=\"checkout--cart-section--total\"]")).getText();
+
+    int totalPriceCheckoutPageInt = (Integer.parseInt(totalPriceCheckoutPage.replaceAll("[^0-9]", ""))) / 100;
+    int estimatedPriceInt = Integer.parseInt(estimatedPrice.replaceAll("[^0-9]", ""));
+
+    AssertUtils
+        .assertEquals("Estimated total price should match total price on Checkout page.", totalPriceCheckoutPageInt,
+            estimatedPriceInt);
   }
 
   private void updateQuantity(String priceId, String quantity) {
@@ -1392,7 +1480,7 @@ public class BICTestBase {
     if (!(isLoggedIn)) {
       names = generateFirstAndLastNames();
       createBICAccount(names, data.get(BICECEConstants.emailid),
-          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
+          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
       data.putAll(names.getMap());
     }
 
@@ -1451,7 +1539,9 @@ public class BICTestBase {
     }
 
     Util.printInfo("Checking if Chat Popup Present. Done");
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
+    if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)) {
+      clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
+    } else if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
@@ -1842,6 +1932,34 @@ public class BICTestBase {
     }
   }
 
+  public void navigateToDotComPage(LinkedHashMap<String, String> data) {
+    String productName =
+        System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
+            BICECEConstants.PRODUCT_NAME) : data.get(BICECEConstants.PRODUCT_NAME);
+
+    String constructDotComURL = data.get("guacDotComBaseURL") + data.get(BICECEConstants.COUNTRY_DOMAIN) + data
+        .get(BICECEConstants.PRODUCTS_PATH) + productName + BICECEConstants.OVERVIEW;
+
+    Util.printInfo("constructDotComURL " + constructDotComURL);
+    getUrl(constructDotComURL);
+    setStorageData();
+    acceptCookiesAndUSSiteLink();
+  }
+
+  private void closeGetHelpPopup() {
+    try {
+      WebElement getHelpIframe = bicPage
+          .getMultipleWebElementsfromField(BICECEConstants.GET_HELP_IFRAME).get(0);
+      driver.switchTo().frame(getHelpIframe);
+      bicPage.waitForFieldPresent("getHelpPopUpCloseButton", 2000);
+      bicPage.clickUsingLowLevelActions("getHelpPopUpCloseButton");
+      Util.printInfo("Get help pop up closed.");
+    } catch (Exception e) {
+      Util.printInfo("Get help pop up does not appear on the page.");
+    }
+    driver.switchTo().defaultContent();
+  }
+
   public static class Names {
 
     public final String firstName;
@@ -1857,6 +1975,17 @@ public class BICTestBase {
         put(BICECEConstants.FIRSTNAME, firstName);
         put(BICECEConstants.LASTNAME, lastName);
       }};
+    }
+  }
+
+  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
+    if (checkoutTax != null) {
+      Double cartAmount = Double.valueOf(checkoutTax);
+      Double pelicanAmount = Double.valueOf(pelicanTax);
+      Util.printInfo("The total order amount on Cart " + cartAmount / 100);
+      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
+      AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
+          "Tax Amount in Pelican matches with the tax amount on Checkout page");
     }
   }
 }
