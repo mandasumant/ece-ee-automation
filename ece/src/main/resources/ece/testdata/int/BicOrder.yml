@@ -57,6 +57,7 @@ default:
   pwsClientId: "sR8Ye2YBRq5QAnUIiOxKWw0J3a92tDVJ"
   pwsClientSecret: "+iFsysMrCCnJ84IqILULBg==:XEzSSr6nNaqPuBwIxnd/xIQP1LQVOgUETN/CGCZRohk="
   pwsHostname: "enterprise-api-int.autodesk.com"
+  quoteAgentCsnAccount: "0070176510"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
@@ -180,4 +181,5 @@ validateFlexTokenEstimatorTool:
   quantity: "1"
 
 validateBicQuoteOrder:
-  dummy: "dummy"
+  term: "Annual"
+  accessModel: "Flex"

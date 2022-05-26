@@ -21,6 +21,8 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYMENT_PROFILE_ID = "getPOReponse_storedPaymentProfileId";
   public static final String TESTINGHUB_UPDATE_FAILURE_MESSAGE = "Failed to update results to Testing hub.";
   public static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss z";
+  public static final String QUOTE_SUBSCRIPTION_START_DATE = "yyyy-MM-dd";
+  public static final String QUOTE_NOTES = "Notefromagenttocustomer.";
   public static final String PRODUCT_ID = "productID";
   public static final String ADD_SEAT_QTY = "addSeatQty";
   public static final String E2E_EXECUTION_TIME = "e2e_ExecutionTime";
@@ -169,5 +171,8 @@ public class BICECEConstants extends BICConstants {
   public static final String INVOICE = "Invoice";
   public static final String CREDIT_NOTE = "CreditNote";
   public static final String QUOTE_ID = "quote_id";
+  public static final String FLEX_TOKENS = "tokens";
+  public static final String TERM = "term";
+  public static final String ACCESS_MODEL = "accessModel";
 }
 

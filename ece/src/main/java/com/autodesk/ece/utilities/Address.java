@@ -5,6 +5,8 @@ import java.util.Random;
 public class Address {
   public String company;
   public String addressLine1;
+  public String addressLine2 = "";
+  public String addressLine3 = "";
   public String city;
   public String postalCode;
   public String phoneNumber;

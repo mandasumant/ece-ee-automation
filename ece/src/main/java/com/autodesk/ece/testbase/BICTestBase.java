@@ -1310,6 +1310,7 @@ public class BICTestBase {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
     String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID);
+    Util.printInfo("Quote URL: " + url);
     getUrl(url);
 
     createBICAccount(new Names(data.get(BICECEConstants.FIRSTNAME), data.get(BICECEConstants.LASTNAME)),

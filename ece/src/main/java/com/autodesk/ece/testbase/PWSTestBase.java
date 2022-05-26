@@ -2,23 +2,33 @@ package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.ece.dto.AgentAccountDTO;
+import com.autodesk.ece.dto.AgentContactDTO;
+import com.autodesk.ece.dto.EndCustomerDTO;
+import com.autodesk.ece.dto.LineItemDTO;
+import com.autodesk.ece.dto.OfferDTO;
+import com.autodesk.ece.dto.PurchaserDTO;
+import com.autodesk.ece.dto.QuoteDTO;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.LoadJsonWithValue;
 import com.autodesk.testinghub.core.utils.Util;
+import com.google.gson.Gson;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TimeZone;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -69,21 +79,22 @@ public class PWSTestBase {
   }
 
   private String createQuoteBody(LinkedHashMap<String, String> data, Address address) {
-    LinkedHashMap<String, Object> dataSet = new LinkedHashMap<>();
-    dataSet.put("email", data.get(BICECEConstants.emailid));
-    dataSet.put("firstName", data.get(BICECEConstants.FIRSTNAME));
-    dataSet.put("lastName", data.get(BICECEConstants.LASTNAME));
-    dataSet.put("currency", data.get(BICECEConstants.currencyStore));
-    dataSet.put("addressLine1", address.addressLine1);
-    dataSet.put("city", address.city);
-    dataSet.put("stateProvinceCode", address.province);
-    dataSet.put("postalCode", address.postalCode);
-    dataSet.put("countryCode", address.countryCode);
+    EndCustomerDTO endCustomer = new EndCustomerDTO(data, address);
+    PurchaserDTO purchaser = new PurchaserDTO(data);
+    AgentContactDTO agentContact = new AgentContactDTO();
+    AgentAccountDTO agentAccount = new AgentAccountDTO(data);
+    OfferDTO offer = new OfferDTO(data);
+    LineItemDTO lineItem = new LineItemDTO(data);
+    List<LineItemDTO> lineItems = new ArrayList<>();
+    lineItem.setOffer(offer);
+    lineItems.add(lineItem);
 
-    ClassLoader classLoader = this.getClass().getClassLoader();
-    String jsonFile = Objects.requireNonNull(
-        classLoader.getResource("ece/payload/createQuoteRequest.json")).getPath();
-    return LoadJsonWithValue.loadJson(dataSet, jsonFile).toString();
+    QuoteDTO quote =
+        QuoteDTO.builder().lineItems(lineItems).purchaser(purchaser).endCustomer(endCustomer)
+            .agentContact(agentContact).agentAccount(agentAccount).currency(data.get(BICECEConstants.currencyStore))
+            .currency(data.get(BICECEConstants.currencyStore)).quoteNote(BICECEConstants.QUOTE_NOTES).build();
+
+    return new Gson().toJson(quote);
   }
 
   @Step("Create and Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
@@ -100,6 +111,7 @@ public class PWSTestBase {
     }};
 
     String payloadBody = createQuoteBody(data, address);
+    Util.printInfo("Create Quote Payload: " + payloadBody);
     Response response = given()
         .headers(pwsRequestHeaders)
         .body(payloadBody)
@@ -111,7 +123,7 @@ public class PWSTestBase {
 
     int attempts = 0;
 
-    while (attempts < 10) {
+    while (attempts < 20) {
       attempts++;
       Util.sleep((long) (1000L * Math.pow(attempts, 2)));
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
@@ -121,10 +133,10 @@ public class PWSTestBase {
 
       if (status.equals("CREATED")) {
         quoteNumber = response.jsonPath().getString("quoteNumber");
-        Util.printInfo("Got quote: " + quoteNumber);
+        Util.printInfo("Quote is Created : " + quoteNumber);
         break;
-      } else if (attempts > 10) {
-        AssertUtils.fail("Failed to get quote Created");
+      } else if (attempts >= 19) {
+        AssertUtils.fail("Retry exhausted: Failed to get quote in Created");
       } else {
         Util.printInfo("Quote not ready yet, status: " + status);
       }
@@ -190,5 +202,14 @@ public class PWSTestBase {
         .headers(headers)
         .get("https://" + hostname + "/v1/quotes/status?transactionId=" + transactionId)
         .then().extract().response();
+  }
+
+  public static String getQuoteStartDateAsString() {
+    final SimpleDateFormat sdf = new SimpleDateFormat(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
+    Calendar c = Calendar.getInstance();
+    c.setTime(new Date());
+    c.add(Calendar.DATE, 5);
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    return sdf.format(c.getTime());
   }
 }

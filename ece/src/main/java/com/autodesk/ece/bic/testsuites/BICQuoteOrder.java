@@ -109,6 +109,12 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.FIRSTNAME, names.firstName);
     testDataForEachMethod.put(BICECEConstants.LASTNAME, names.lastName);
     testDataForEachMethod.put(BICECEConstants.emailid, BICTestBase.generateUniqueEmailID());
+
+    testDataForEachMethod.put(BICECEConstants.FLEX_TOKENS,
+        String.valueOf((int) ((Math.random() * (10000 - 100)) + 1000)));
+
+    testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
+        pwsTestBase.getQuoteStartDateAsString());
   }
 
   @Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
@@ -314,8 +320,7 @@ public class BICQuoteOrder extends ECETestBase {
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));
-    testResults.put(TestingHubConstants.orderNumber, results.get(TestingHubConstants.orderNumber));
+    testResults.putAll(results);
     updateTestingHub(testResults);
 
     Util.sleep(120000);

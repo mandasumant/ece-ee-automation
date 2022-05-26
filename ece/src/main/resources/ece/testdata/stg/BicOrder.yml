@@ -52,6 +52,11 @@ default:
   emailid: "acdisttest1801@letscheck.pw"
   guacMoeSku: "057N1-WW3931-L830"
 
+  pwsClientId: "to be added soon"
+  pwsClientSecret: "to be added soon"
+  pwsHostname: "to be added soon"
+  quoteAgentCsnAccount: "to be added soon"
+
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
@@ -172,4 +177,5 @@ validateFlexTokenEstimatorTool:
   quantity: "1"
 
 validateBicQuoteOrder:
-  dummy: "dummy"
+  term: "Annual"
+  accessModel: "Flex"
