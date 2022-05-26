@@ -8,7 +8,7 @@ default:
   accountPortalURL: https://int-manage.autodesk.com
   guacBaseURL: "https://checkout-apollo.autodesk.com/"
   Quote2OrderBaseURL: "https://checkout-apollo.autodesk.com/en-US/cart?quoteNumber="
-  guacDotComBaseURL: ""
+  guacDotComBaseURL: "https://www-int.autodesk"
   guacResourceURL: "checkout?priceIds="
   guacPriceId: "?priceIds="
   productsPath: "/products/"
