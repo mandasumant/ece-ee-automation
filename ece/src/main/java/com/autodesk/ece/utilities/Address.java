@@ -1,8 +1,13 @@
 package com.autodesk.ece.utilities;
 
+
+import io.restassured.path.json.JsonPath;
+import java.io.File;
+import java.util.Objects;
 import java.util.Random;
 
 public class Address {
+
   public String company;
   public String addressLine1;
   public String addressLine2 = "";
@@ -14,7 +19,7 @@ public class Address {
   public String countryCode;
   public String province;
 
-  public Address(String localeMap, String countryCode) {
+  public Address(String localeMap) {
     String[] billingAddress = localeMap.split("@");
     this.company = billingAddress[0];
     this.addressLine1 = billingAddress[1];
@@ -22,15 +27,17 @@ public class Address {
     this.postalCode = billingAddress[3];
     this.phoneNumber = getRandomMobileNumber();
     this.country = billingAddress[5];
-    this.countryCode = countryCode;
 
     if (billingAddress.length == 7) {
       this.province = billingAddress[6];
     }
-  }
 
-  public Address(String localeMap) {
-    this(localeMap, "");
+    ClassLoader classLoader = this.getClass().getClassLoader();
+    String jsonFilePath = Objects.requireNonNull(
+        classLoader.getResource("ece/payload/countryCodes.json")).getPath();
+    File jsonFile = new File(jsonFilePath);
+    JsonPath jp = new JsonPath(jsonFile);
+    countryCode = jp.getString("find { it.Name == '" + this.country + "' }.Code");
   }
 
   private String getRandomMobileNumber() {

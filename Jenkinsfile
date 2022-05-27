@@ -36,6 +36,8 @@ pipeline {
 
         booleanParam(name: 'REN_STG', defaultValue: false, description: 'Run Apollo Renewal Tests on STG?')
         booleanParam(name: 'REN_INT', defaultValue: false, description: 'Run Apollo Renewal Tests on INT?')
+
+        booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order on INT?')
     }
 
     stages {

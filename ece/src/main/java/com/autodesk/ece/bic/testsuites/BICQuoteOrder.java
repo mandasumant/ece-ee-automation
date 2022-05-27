@@ -121,8 +121,7 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateBicQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
-    Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS),
-        testDataForEachMethod.get("addressCountryCode"));
+    Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);

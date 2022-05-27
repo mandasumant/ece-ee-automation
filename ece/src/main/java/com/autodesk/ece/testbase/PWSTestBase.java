@@ -45,6 +45,15 @@ public class PWSTestBase {
     this.hostname = hostname;
   }
 
+  public static String getQuoteStartDateAsString() {
+    final SimpleDateFormat sdf = new SimpleDateFormat(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
+    Calendar c = Calendar.getInstance();
+    c.setTime(new Date());
+    c.add(Calendar.DATE, 5);
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    return sdf.format(c.getTime());
+  }
+
   public PWSAccessInfo getAccessToken() {
     String base64_header = new String(Base64.getEncoder().encode((clientId + ":" + clientSecret).getBytes()));
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -117,6 +126,7 @@ public class PWSTestBase {
         .body(payloadBody)
         .post("https://" + hostname + "/v1/quotes")
         .then().extract().response();
+    response.prettyPrint();
 
     String transactionId = response.jsonPath().getString("transactionId");
     Util.printInfo("Quote requested, transactionId: " + transactionId);
@@ -133,7 +143,7 @@ public class PWSTestBase {
 
       if (status.equals("CREATED")) {
         quoteNumber = response.jsonPath().getString("quoteNumber");
-        Util.printInfo("Quote is Created : " + quoteNumber);
+        Util.printInfo("Got quote in CREATED status, quote number: " + quoteNumber);
         break;
       } else if (attempts >= 19) {
         AssertUtils.fail("Retry exhausted: Failed to get quote in Created");
@@ -141,6 +151,8 @@ public class PWSTestBase {
         Util.printInfo("Quote not ready yet, status: " + status);
       }
     }
+
+    Util.sleep(30000);
 
     return finalizeQuote(quoteNumber, transactionId);
   }
@@ -157,6 +169,7 @@ public class PWSTestBase {
       put("timestamp", access_token.timestamp);
     }};
 
+    Util.printInfo("Finalizing quote");
     Response response = given()
         .headers(pwsRequestHeaders)
         .patch("https://" + hostname + "/v1/quotes/finalize/" + quoteId)
@@ -187,6 +200,13 @@ public class PWSTestBase {
     return "";
   }
 
+  private Response getQuoteStatus(Map<String, String> headers, String transactionId) {
+    return given()
+        .headers(headers)
+        .get("https://" + hostname + "/v1/quotes/status?transactionId=" + transactionId)
+        .then().extract().response();
+  }
+
   public static class PWSAccessInfo {
     public String timestamp;
     public String token;
@@ -195,21 +215,5 @@ public class PWSTestBase {
       this.timestamp = timestamp;
       this.token = token;
     }
-  }
-
-  private Response getQuoteStatus(Map<String, String> headers, String transactionId) {
-    return given()
-        .headers(headers)
-        .get("https://" + hostname + "/v1/quotes/status?transactionId=" + transactionId)
-        .then().extract().response();
-  }
-
-  public static String getQuoteStartDateAsString() {
-    final SimpleDateFormat sdf = new SimpleDateFormat(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
-    Calendar c = Calendar.getInstance();
-    c.setTime(new Date());
-    c.add(Calendar.DATE, 5);
-    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-    return sdf.format(c.getTime());
   }
 }
