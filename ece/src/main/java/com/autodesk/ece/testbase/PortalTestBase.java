@@ -46,28 +46,32 @@ import org.testng.Assert;
 
 public class PortalTestBase {
 
-  public static Page_ portalPage = null;
-  public static Page_ studentPage = null;
+  private final Page_ portalPage;
+  private final String accountsPortalOrdersInvoicesUrl;
+  private final String accountsPortalSubscriptionsUrl;
+  private final String accountsPortalInvoiceUrl;
+  private final String accountsPortalOrderHistoryUrl;
+  private final String accountsPortalProductsServicesUrl;
+  private final String accountsPortalAddSeatsUrl;
+  private final ZipPayTestBase zipTestBase;
   public WebDriver driver = null;
-  ZipPayTestBase zipTestBase;
-  BICTestBase bicTestBase;
-
-  String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
-  Map<?, ?> loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-  String accountsPortalOrdersInvoicesUrl = (String) loadYaml.get("accountsPortalOrdersInvoicesUrl");
-  String accountsPortalSubscriptionsUrl = (String) loadYaml.get("accountsPortalSubscriptionsUrl");
-  String accountsPortalInvoiceUrl = (String) loadYaml.get("accountsPortalInvoiceUrl");
-  String accountsPortalOrderHistoryUrl = (String) loadYaml.get("accountsPortalOrderHistoryUrl");
-  String accountsPortalProductsServicesUrl = (String) loadYaml.get("accountsPortalProductsServicesUrl");
-  String accountsPortalAddSeatsUrl = (String) loadYaml.get("accountsPortalAddSeatsUrl");
 
   public PortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
     portalPage = testbase.createPage("PAGE_PORTAL");
-    studentPage = testbase.createCommonPage("PAGE_STUDENT");
     new BICTestBase(driver, testbase);
     zipTestBase = new ZipPayTestBase(testbase);
-    bicTestBase = new BICTestBase(driver, testbase);
+
+    String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
+    Map<?, ?> loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
+    LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml
+        .get("default");
+    accountsPortalOrdersInvoicesUrl = defaultvalues.get("accountsPortalOrdersInvoicesUrl");
+    accountsPortalSubscriptionsUrl = defaultvalues.get("accountsPortalSubscriptionsUrl");
+    accountsPortalInvoiceUrl = defaultvalues.get("accountsPortalInvoiceUrl");
+    accountsPortalOrderHistoryUrl = defaultvalues.get("accountsPortalOrderHistoryUrl");
+    accountsPortalProductsServicesUrl = defaultvalues.get("accountsPortalProductsServicesUrl");
+    accountsPortalAddSeatsUrl = defaultvalues.get("accountsPortalAddSeatsUrl");
   }
 
   public static String timestamp() {
