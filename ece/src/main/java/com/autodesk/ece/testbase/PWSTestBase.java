@@ -148,7 +148,7 @@ public class PWSTestBase {
       } else if (attempts >= 19) {
         AssertUtils.fail("Retry exhausted: Failed to get quote in Created");
       } else {
-        Util.printInfo("Quote not ready yet, status: " + status);
+        Util.printInfo("Quote not created yet, status: " + status);
       }
     }
 
@@ -193,7 +193,7 @@ public class PWSTestBase {
         Util.printInfo("Got quote in QUOTED state: " + quoteId);
         return quoteId;
       } else {
-        Util.printInfo("Quote not ready yet, status: " + status);
+        Util.printInfo("Quote not finalized yet, status: " + status);
       }
     }
     AssertUtils.fail("Failed to change quote status to QUOTED");
