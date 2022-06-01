@@ -183,3 +183,7 @@ validateFlexTokenEstimatorTool:
 validateBicQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+
+validateMultiLineItemQuoteOrder:
+  term: "Annual"
+  accessModel: "Flex"

@@ -1091,7 +1091,7 @@ public class BICTestBase {
 
     try {
       if (driver.findElement(By.xpath(
-          "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
           .isDisplayed()) {
         Util.printWarning(
             "Export compliance issue is present. Checking for order number in the Pelican response");
@@ -1111,7 +1111,7 @@ public class BICTestBase {
     debugPageUrl("Step 1: Check order number is Null");
     try {
       orderNumber = driver.findElement(By.xpath(
-          "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+              "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
           .getText();
     } catch (Exception e) {
       debugPageUrl("Step 2: Check order number is Null");
@@ -1128,7 +1128,7 @@ public class BICTestBase {
       bicPage.waitForPageToLoad();
       try {
         orderNumber = driver.findElement(By.xpath(
-            "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
+                "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
             .getText();
       } catch (Exception e) {
         debugPageUrl("Step 4: Check order number is Null");
@@ -1285,7 +1285,7 @@ public class BICTestBase {
   }
 
   @Step("Quote2Order: Place Quote Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) throws MetadataException {
+  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
     String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID);

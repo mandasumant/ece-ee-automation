@@ -114,11 +114,11 @@ public class BICQuoteOrder extends ECETestBase {
         String.valueOf((int) ((Math.random() * (10000 - 100)) + 1000)));
 
     testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
-        pwsTestBase.getQuoteStartDateAsString());
+        PWSTestBase.getQuoteStartDateAsString());
   }
 
   @Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
-  public void validateBicQuoteOrder() throws MetadataException {
+  public void validateBicQuoteOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
@@ -128,7 +128,9 @@ public class BICQuoteOrder extends ECETestBase {
             testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
         PASSWORD, true);
 
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod);
+    String payloadBody = PWSTestBase.createQuoteBody(testDataForEachMethod, address, false);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(payloadBody);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
@@ -249,7 +251,7 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Validating Tax  Invoice After renewal
     Util.printInfo("The Renewal Order No #" + results.get("response_renewalOrderNo"));
-    results.put(BICConstants.orderNumber,results.get("response_renewalOrderNo"));
+    results.put(BICConstants.orderNumber, results.get("response_renewalOrderNo"));
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
     portaltb.validateBICOrderTaxInvoice(results);
 
@@ -268,10 +270,21 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
-  public void validateMultiLineItemQuoteOrder() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<String, String>();
+  public void validateMultiLineItemQuoteOrder() {
+    HashMap<String, String> testResults = new HashMap<>();
+
+    Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
 
     //Create Quote Code with multi line items
+    String payloadBody = PWSTestBase.createQuoteBody(testDataForEachMethod, address, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(payloadBody);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
