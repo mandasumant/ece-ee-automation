@@ -1292,9 +1292,7 @@ public class BICTestBase {
     Util.printInfo("Quote URL: " + url);
     getUrl(url);
 
-    createBICAccount(new Names(data.get(BICECEConstants.FIRSTNAME), data.get(BICECEConstants.LASTNAME)),
-        data.get(BICECEConstants.emailid),
-        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), true);
+    clickToStayOnSameSite();
 
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     Map<String, String> address = getBillingAddress(data);
@@ -1940,6 +1938,25 @@ public class BICTestBase {
     driver.switchTo().defaultContent();
   }
 
+  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
+    if (checkoutTax != null) {
+      Double cartAmount = Double.valueOf(checkoutTax);
+      Double pelicanAmount = Double.valueOf(pelicanTax);
+      Util.printInfo("The total order amount in Cart " + cartAmount / 100);
+      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
+      AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
+          "Tax Amount in Pelican matches with the tax amount on Checkout page");
+    }
+  }
+
+  public void goToDotcomSignin(LinkedHashMap<String, String> data) {
+    String constructDotComURL = data.get("guacDotComBaseURL") + ".com";
+
+    bicPage.navigateToURL(constructDotComURL);
+    bicPage.waitForFieldPresent("signInButton", 2000);
+    bicPage.click("signInButton");
+  }
+
   public static class Names {
 
     public final String firstName;
@@ -1955,17 +1972,6 @@ public class BICTestBase {
         put(BICECEConstants.FIRSTNAME, firstName);
         put(BICECEConstants.LASTNAME, lastName);
       }};
-    }
-  }
-
-  public void validatePelicanTaxWithCheckoutTax(String checkoutTax, String pelicanTax) {
-    if (checkoutTax != null) {
-      Double cartAmount = Double.valueOf(checkoutTax);
-      Double pelicanAmount = Double.valueOf(pelicanTax);
-      Util.printInfo("The total order amount on Cart " + cartAmount / 100);
-      Util.printInfo("The total order amount in Pelican " + pelicanAmount);
-      AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
-          "Tax Amount in Pelican matches with the tax amount on Checkout page");
     }
   }
 }

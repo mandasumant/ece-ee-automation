@@ -123,6 +123,11 @@ public class BICQuoteOrder extends ECETestBase {
 
     Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
 
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
+
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 

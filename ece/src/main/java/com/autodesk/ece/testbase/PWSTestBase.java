@@ -88,7 +88,7 @@ public class PWSTestBase {
   }
 
   private String createQuoteBody(LinkedHashMap<String, String> data, Address address) {
-    EndCustomerDTO endCustomer = new EndCustomerDTO(data, address);
+    EndCustomerDTO endCustomer = new EndCustomerDTO(address);
     PurchaserDTO purchaser = new PurchaserDTO(data);
     AgentContactDTO agentContact = new AgentContactDTO();
     AgentAccountDTO agentAccount = new AgentAccountDTO(data);
