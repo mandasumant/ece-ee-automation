@@ -54,7 +54,7 @@ public class PWSTestBase {
     return sdf.format(c.getTime());
   }
 
-  public static String createQuoteBody(LinkedHashMap<String, String> data, Address address, Boolean isMultiLineItem) {
+  private String createQuoteBody(LinkedHashMap<String, String> data, Address address, Boolean isMultiLineItem) {
     EndCustomerDTO endCustomer = new EndCustomerDTO(address);
     PurchaserDTO purchaser = new PurchaserDTO(data);
     AgentContactDTO agentContact = new AgentContactDTO();
@@ -112,7 +112,7 @@ public class PWSTestBase {
   }
 
   @Step("Create and Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
-  public String createAndFinalizeQuote(String payloadBody) {
+  public String createAndFinalizeQuote(Address address, LinkedHashMap<String, String> data, Boolean isMultiLineItem) {
     PWSAccessInfo access_token = getAccessToken();
     String signature = signString(access_token.token, clientSecret, access_token.timestamp);
     String quoteNumber = null;
@@ -124,6 +124,7 @@ public class PWSTestBase {
       put("timestamp", access_token.timestamp);
     }};
 
+    String payloadBody = createQuoteBody(data, address, isMultiLineItem);
     Util.printInfo("Create Quote Payload: " + payloadBody);
     Response response = given()
         .headers(pwsRequestHeaders)
@@ -159,6 +160,10 @@ public class PWSTestBase {
     Util.sleep(30000);
 
     return finalizeQuote(quoteNumber, transactionId);
+  }
+
+  public String createAndFinalizeQuote(Address address, LinkedHashMap<String, String> data) {
+    return this.createAndFinalizeQuote(address, data, false);
   }
 
   @Step("Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)

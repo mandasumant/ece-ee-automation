@@ -17,13 +17,9 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -128,9 +124,7 @@ public class BICQuoteOrder extends ECETestBase {
             testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
         PASSWORD, true);
 
-    String payloadBody = PWSTestBase.createQuoteBody(testDataForEachMethod, address, false);
-
-    String quoteId = pwsTestBase.createAndFinalizeQuote(payloadBody);
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
@@ -187,88 +181,6 @@ public class BICQuoteOrder extends ECETestBase {
     }
   }
 
-  @Test(groups = {"renew-quote-order"}, description = "Validation of Quote Renewal Order")
-  public void validateRenewQuoteOrder() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<String, String>();
-
-    //Create Quote Code order for renewal
-
-    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
-    results.putAll(testDataForEachMethod);
-
-    testResults.putAll(results);
-    updateTestingHub(testResults);
-
-    // Getting a PurchaseOrder details
-    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
-
-    //Validating the tax amount with Pelican
-    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
-        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-
-    // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-
-    // Update the subscription so that it is expired, which will allow us to renew it
-    pelicantb.forwardNextBillingCycleForRenewal(results);
-
-    // Lookup the subscription in pelican to confirm its renewal date
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-
-    // Verify that the subscription has actually moved to the past and is in a state to be renewed
-    try {
-      String originalBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
-      Util.printInfo("Original Billing Date: " + originalBillingDateString);
-      Date originalBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
-          originalBillingDateString);
-      Assert.assertTrue(originalBillingDate.before(new Date()),
-          "Check that the subscription is ready to be renewed");
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-
-    // Trigger the pelican renewal job to renew the subscription
-    triggerPelicanRenewalJob(results);
-
-    // Get the subscription in pelican to check if it has renewed
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-
-    try {
-      // Ensure that the subscription renews in the future
-      String nextBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
-      Util.printInfo("New Billing Date: " + nextBillingDateString);
-      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
-          nextBillingDateString);
-      Assert.assertTrue(newBillingDate.after(new Date()),
-          "Check that the subscription has been renewed");
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-
-    // Validating Tax  Invoice After renewal
-    Util.printInfo("The Renewal Order No #" + results.get("response_renewalOrderNo"));
-    results.put(BICConstants.orderNumber, results.get("response_renewalOrderNo"));
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
-    portaltb.validateBICOrderTaxInvoice(results);
-
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-      testResults.put("renewalOrderNumber", results.get("response_renewalOrderNo"));
-      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
-
-    updateTestingHub(testResults);
-  }
-
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
   public void validateMultiLineItemQuoteOrder() {
     HashMap<String, String> testResults = new HashMap<>();
@@ -276,14 +188,12 @@ public class BICQuoteOrder extends ECETestBase {
     Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
 
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
             testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
         PASSWORD, true);
 
-    //Create Quote Code with multi line items
-    String payloadBody = PWSTestBase.createQuoteBody(testDataForEachMethod, address, true);
-
-    String quoteId = pwsTestBase.createAndFinalizeQuote(payloadBody);
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod, true);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
@@ -348,6 +258,14 @@ public class BICQuoteOrder extends ECETestBase {
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
+    // Validate Portal
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
+
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrderV4(results);
 
@@ -376,6 +294,9 @@ public class BICQuoteOrder extends ECETestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
+
+    // Validate Credit Note for the order
+    portaltb.validateBICOrderPDF(results, BICECEConstants.CREDIT_NOTE);
 
     updateTestingHub(testResults);
   }
