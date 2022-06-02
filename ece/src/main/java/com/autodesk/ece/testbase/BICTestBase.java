@@ -5,8 +5,10 @@ import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
+import com.autodesk.testinghub.core.common.services.TIBCOService;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.core.database.DBConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
@@ -28,6 +30,13 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.PeriodFormat;
+import org.joda.time.format.PeriodFormatter;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -1947,6 +1956,55 @@ public class BICTestBase {
       AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
           "Tax Amount in Pelican matches with the tax amount on Checkout page");
     }
+  }
+
+  public Boolean shouldValidateSAP() {
+    return null != System.getProperty(BICECEConstants.SAP_VALIDATION) ?
+        Boolean.valueOf(System.getProperty(BICECEConstants.SAP_VALIDATION)) :
+        BICECEConstants.DEFAULT_SAP_VALIDATION;
+  }
+
+  /**
+   * Calculate Time Delta between Pelican PO -> Subscription, PO -> ECC
+   * @param results
+   * @return
+   */
+  public HashMap<String, String> calculateFulfillmentTime(HashMap<String, String> results) {
+    PeriodFormatter periodFormatter = PeriodFormat.getDefault();
+    HashMap<String, String> report = new HashMap<>();
+
+    DateTimeFormatter poFormatter =
+        DateTimeFormat.forPattern(BICECEConstants.PO_DATE_FORMAT).withZone(DateTimeZone.UTC);
+    DateTimeFormatter subFormatter =
+        DateTimeFormat.forPattern(BICECEConstants.SUB_DATE_FORMAT).withZone(DateTimeZone.UTC);
+    DateTimeFormatter eccOrderFormatter =
+        DateTimeFormat.forPattern(BICECEConstants.ECC_ORDER_DATE_FORMAT).withZone(DateTimeZone.UTC);
+
+    DateTime poCreatedDate = poFormatter.parseDateTime(results.get("getPOReponse_CreatedDate"));
+    DateTime subCreatedDate = subFormatter.parseDateTime(results.get("response_subscriptionCreated"));
+
+    try {
+      TIBCOService tbService = new TIBCOService(DBConstants.tibcoConString, DBConstants.tibcoUserName,DBConstants.tibcoPassword);
+      Util.PrintInfo("Tibco connection set up successful. from core");
+      LinkedHashMap<String, String> checkExecutionTime = tbService.checkExecutionTime("CreateOrder", "SAP640", results.get(BICConstants.orderNumber));
+      results.put("eccCreatedDate", checkExecutionTime.get("processStartTime"));
+    } catch (Exception e) {
+      e.printStackTrace();
+      Util.printWarning("Failed to set up Tibco Database connection : "+ e.getMessage());
+    }
+
+    Period po2Sub = new Period(poCreatedDate, subCreatedDate);
+    report.put(BICECEConstants.PO_TO_SUBSCRIPTION, periodFormatter.print(po2Sub));
+    Util.printInfo("Pelican Order to Subscription time: " + periodFormatter.print(po2Sub));
+
+    if(results.get("eccCreatedDate") != null) {
+      DateTime eccCreatedDate = eccOrderFormatter.parseDateTime(results.get("eccCreatedDate"));
+      Period po2Ecc = new Period(poCreatedDate, eccCreatedDate);
+      report.put(BICECEConstants.PO_TO_ECCORDER, periodFormatter.print(po2Ecc));
+      Util.printInfo("Pelican Order to ECC Order create time: " + periodFormatter.print(po2Ecc));
+    }
+
+    return report;
   }
 
   public void goToDotcomSignin(LinkedHashMap<String, String> data) {
