@@ -179,3 +179,7 @@ validateFlexTokenEstimatorTool:
 validateBicQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+
+validateQuoteRefundOrder:
+  term: "Annual"
+  accessModel: "Flex"
