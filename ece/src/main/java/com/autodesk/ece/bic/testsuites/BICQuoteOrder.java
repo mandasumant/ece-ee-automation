@@ -181,6 +181,11 @@ public class BICQuoteOrder extends ECETestBase {
 
       portaltb.validateBICOrderTaxInvoice(results);
 
+      if (getBicTestBase().shouldValidateSAP()) {
+        portaltb.validateBICOrderTaxInvoice(results);
+        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+      }
+
       updateTestingHub(testResults);
     }
   }
@@ -230,6 +235,11 @@ public class BICQuoteOrder extends ECETestBase {
         results.get(BICConstants.emailid), PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
     portaltb.validateBICOrderTaxInvoice(results);
+
+    if (getBicTestBase().shouldValidateSAP()) {
+      portaltb.validateBICOrderTaxInvoice(results);
+      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+    }
     updateTestingHub(testResults);
   }
 
@@ -290,8 +300,11 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-    // Validate Credit Note for the order
-    portaltb.validateBICOrderPDF(results,BICECEConstants.CREDIT_NOTE);
+    if (getBicTestBase().shouldValidateSAP()) {
+      // Validate Credit Note for the order
+      portaltb.validateBICOrderPDF(results,BICECEConstants.CREDIT_NOTE);
+      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+    }
 
     updateTestingHub(testResults);
   }

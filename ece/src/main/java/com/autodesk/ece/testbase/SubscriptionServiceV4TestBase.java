@@ -61,6 +61,7 @@ public class SubscriptionServiceV4TestBase {
             result.getSwitchTermPriceId() != null ? String.valueOf(
                 result.getSwitchTermPriceId()) : null);
         results.put("response_status", String.valueOf(result.getStatus()));
+        results.put("response_subscriptionCreated", String.valueOf(result.getCreated()));
 
         success = true;
       } catch (ApiException e) {

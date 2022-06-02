@@ -445,6 +445,7 @@ public class PelicanTestBase {
           jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodStartDate").toString());
       results.put("getPOReponse_subscriptionPeriodEndDate",
           jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodEndDate").toString());
+      results.put("getPOReponse_CreatedDate", jp.get("content[0].created").toString());
       results.put("getPOReponse_fulfillmentDate",
           jp.get("content[0].lineItems[0].fulfillmentDate").toString());
       results.put("getPOResponse_promotionDiscount",

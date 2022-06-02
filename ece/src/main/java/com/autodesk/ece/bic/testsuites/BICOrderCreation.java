@@ -242,7 +242,10 @@ public class BICOrderCreation extends ECETestBase {
         portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
 
-      portaltb.validateBICOrderTaxInvoice(results);
+      if (getBicTestBase().shouldValidateSAP()) {
+          portaltb.validateBICOrderTaxInvoice(results);
+          testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+      }
 
       // Put the SAP Order number into results map
       testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
@@ -435,6 +438,11 @@ public class BICOrderCreation extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
     updateTestingHub(testResults);
+
+    if (getBicTestBase().shouldValidateSAP()) {
+      portaltb.validateBICOrderTaxInvoice(results);
+      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+    }
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
