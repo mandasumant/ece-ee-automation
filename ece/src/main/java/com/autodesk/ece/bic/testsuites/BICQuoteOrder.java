@@ -252,7 +252,16 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateQuoteRefundOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
+    Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
+
     //Create Quote Code to refund
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -260,7 +269,9 @@ public class BICQuoteOrder extends ECETestBase {
     testResults.putAll(results);
     updateTestingHub(testResults);
 
-    Util.sleep(120000);
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
