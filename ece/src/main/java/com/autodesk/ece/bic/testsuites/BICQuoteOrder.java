@@ -17,13 +17,9 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -114,11 +110,11 @@ public class BICQuoteOrder extends ECETestBase {
         String.valueOf((int) ((Math.random() * (10000 - 100)) + 1000)));
 
     testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
-        pwsTestBase.getQuoteStartDateAsString());
+        PWSTestBase.getQuoteStartDateAsString());
   }
 
   @Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
-  public void validateBicQuoteOrder() throws MetadataException {
+  public void validateBicQuoteOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
@@ -191,10 +187,19 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
-  public void validateMultiLineItemQuoteOrder() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<String, String>();
+  public void validateMultiLineItemQuoteOrder() {
+    HashMap<String, String> testResults = new HashMap<>();
 
-    //Create Quote Code with multi line items
+    Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod, true);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);

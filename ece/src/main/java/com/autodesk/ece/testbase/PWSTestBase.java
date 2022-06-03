@@ -54,6 +54,30 @@ public class PWSTestBase {
     return sdf.format(c.getTime());
   }
 
+  private String createQuoteBody(LinkedHashMap<String, String> data, Address address, Boolean isMultiLineItem) {
+    EndCustomerDTO endCustomer = new EndCustomerDTO(address);
+    PurchaserDTO purchaser = new PurchaserDTO(data);
+    AgentContactDTO agentContact = new AgentContactDTO();
+    AgentAccountDTO agentAccount = new AgentAccountDTO(data);
+    OfferDTO offer = new OfferDTO(data);
+    LineItemDTO lineItem = new LineItemDTO(data);
+    List<LineItemDTO> lineItems = new ArrayList<>();
+    lineItem.setOffer(offer);
+    lineItems.add(lineItem);
+    if (isMultiLineItem) {
+      LineItemDTO lineItemTwo = new LineItemDTO(data);
+      lineItemTwo.setOffer(offer);
+      lineItems.add(lineItemTwo);
+    }
+
+    QuoteDTO quote =
+        QuoteDTO.builder().lineItems(lineItems).purchaser(purchaser).endCustomer(endCustomer)
+            .agentContact(agentContact).agentAccount(agentAccount).currency(data.get(BICECEConstants.currencyStore))
+            .currency(data.get(BICECEConstants.currencyStore)).quoteNote(BICECEConstants.QUOTE_NOTES).build();
+
+    return new Gson().toJson(quote);
+  }
+
   public PWSAccessInfo getAccessToken() {
     String base64_header = new String(Base64.getEncoder().encode((clientId + ":" + clientSecret).getBytes()));
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -87,27 +111,8 @@ public class PWSTestBase {
     return "";
   }
 
-  private String createQuoteBody(LinkedHashMap<String, String> data, Address address) {
-    EndCustomerDTO endCustomer = new EndCustomerDTO(address);
-    PurchaserDTO purchaser = new PurchaserDTO(data);
-    AgentContactDTO agentContact = new AgentContactDTO();
-    AgentAccountDTO agentAccount = new AgentAccountDTO(data);
-    OfferDTO offer = new OfferDTO(data);
-    LineItemDTO lineItem = new LineItemDTO(data);
-    List<LineItemDTO> lineItems = new ArrayList<>();
-    lineItem.setOffer(offer);
-    lineItems.add(lineItem);
-
-    QuoteDTO quote =
-        QuoteDTO.builder().lineItems(lineItems).purchaser(purchaser).endCustomer(endCustomer)
-            .agentContact(agentContact).agentAccount(agentAccount).currency(data.get(BICECEConstants.currencyStore))
-            .currency(data.get(BICECEConstants.currencyStore)).quoteNote(BICECEConstants.QUOTE_NOTES).build();
-
-    return new Gson().toJson(quote);
-  }
-
   @Step("Create and Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
-  public String createAndFinalizeQuote(Address address, LinkedHashMap<String, String> data) {
+  public String createAndFinalizeQuote(Address address, LinkedHashMap<String, String> data, Boolean isMultiLineItem) {
     PWSAccessInfo access_token = getAccessToken();
     String signature = signString(access_token.token, clientSecret, access_token.timestamp);
     String quoteNumber = null;
@@ -119,7 +124,7 @@ public class PWSTestBase {
       put("timestamp", access_token.timestamp);
     }};
 
-    String payloadBody = createQuoteBody(data, address);
+    String payloadBody = createQuoteBody(data, address, isMultiLineItem);
     Util.printInfo("Create Quote Payload: " + payloadBody);
     Response response = given()
         .headers(pwsRequestHeaders)
@@ -155,6 +160,10 @@ public class PWSTestBase {
     Util.sleep(30000);
 
     return finalizeQuote(quoteNumber, transactionId);
+  }
+
+  public String createAndFinalizeQuote(Address address, LinkedHashMap<String, String> data) {
+    return this.createAndFinalizeQuote(address, data, false);
   }
 
   @Step("Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
@@ -208,6 +217,7 @@ public class PWSTestBase {
   }
 
   public static class PWSAccessInfo {
+
     public String timestamp;
     public String token;
 
