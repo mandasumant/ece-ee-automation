@@ -481,11 +481,12 @@ public class PelicanTestBase {
     try {
       results.put("getPOResponse_origin", jp.get("origin").toString());
       results.put("getPOResponse_orderId", jp.get("id").toString());
+      results.put("getPOResponse_orderState", jp.get("orderState").toString());
+
       results.put("getPOResponse_storedPaymentProfileId",
           jp.get("payment.paymentProfileId").toString());
       results.put("getPOResponse_fulfillmentStatus",
           jp.get("lineItems[0].fulfillmentStatus").toString());
-      results.put("getPOResponse_orderState", jp.get("content[0].orderState").toString());
       results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
           jp.get("lineItems[0].subscriptionInfo.subscriptionId").toString());
       results.put("getPOResponse_subscriptionPeriodStartDate",
@@ -495,7 +496,7 @@ public class PelicanTestBase {
       results.put("getPOResponse_fulfillmentDate",
           jp.get("lineItems[0].fulfillmentDate").toString());
       results.put("getPOResponse_paymentProcessor",
-          jp.get("payments[0].paymentProcessor").toString());
+          jp.get("payment.paymentProcessor").toString());
 
       results.put("getPOResponse_endCustomer_firstName",
           jp.get("endCustomer.firstName"));
@@ -550,8 +551,9 @@ public class PelicanTestBase {
           jp.get("agentContact.contactCsn"));
 
       results.put("getPOResponse_oxygenID", jp.get("purchaser.oxygenId").toString());
+      results.put(BICECEConstants.SUBTOTAL_WITH_TAX, jp.get("price.totalPrice").toString());
     } catch (Exception e) {
-      Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service V4 API");
+      Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service V4 API" + e.getMessage());
     }
     return results;
   }
@@ -571,7 +573,7 @@ public class PelicanTestBase {
     String response = "";
     boolean isOrderCharged = false;
     for (int i = 1; i < 20; i++) {
-      if(isO2P) {
+      if (isO2P) {
         response = getPurchaseOrderV4(results);
       } else {
         response = getPurchaseOrder(results);
