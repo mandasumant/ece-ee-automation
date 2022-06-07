@@ -54,11 +54,12 @@ public class PWSTestBase {
     return sdf.format(c.getTime());
   }
 
-  private String createQuoteBody(LinkedHashMap<String, String> data, Address address, Boolean isMultiLineItem) {
+  private String createQuoteBody(LinkedHashMap<String, String> data, Address address, String csn,
+      String agentContactEmail, Boolean isMultiLineItem) {
     EndCustomerDTO endCustomer = new EndCustomerDTO(address);
     PurchaserDTO purchaser = new PurchaserDTO(data);
-    AgentContactDTO agentContact = new AgentContactDTO();
-    AgentAccountDTO agentAccount = new AgentAccountDTO(data);
+    AgentContactDTO agentContact = new AgentContactDTO(agentContactEmail);
+    AgentAccountDTO agentAccount = new AgentAccountDTO(csn);
     OfferDTO offer = new OfferDTO(data);
     LineItemDTO lineItem = new LineItemDTO(data);
     List<LineItemDTO> lineItems = new ArrayList<>();
@@ -112,20 +113,23 @@ public class PWSTestBase {
   }
 
   @Step("Create and Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
-  public String createAndFinalizeQuote(Address address, LinkedHashMap<String, String> data, Boolean isMultiLineItem) {
+  public String createAndFinalizeQuote(Address address, String csn,
+      String agentContactEmail, LinkedHashMap<String, String> data, Boolean isMultiLineItem) {
     PWSAccessInfo access_token = getAccessToken();
     String signature = signString(access_token.token, clientSecret, access_token.timestamp);
     String quoteNumber = null;
 
     Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
       put("Authorization", "Bearer " + access_token.token);
-      put("CSN", "0070176510");
+      put("CSN", csn);
       put("signature", signature);
       put("timestamp", access_token.timestamp);
     }};
 
-    String payloadBody = createQuoteBody(data, address, isMultiLineItem);
+    String payloadBody = createQuoteBody(data, address, csn, agentContactEmail, isMultiLineItem);
     Util.printInfo("Create Quote Payload: " + payloadBody);
+    Util.printInfo("Headers: " + pwsRequestHeaders);
+
     Response response = given()
         .headers(pwsRequestHeaders)
         .body(payloadBody)
@@ -159,21 +163,22 @@ public class PWSTestBase {
 
     Util.sleep(30000);
 
-    return finalizeQuote(quoteNumber, transactionId);
+    return finalizeQuote(quoteNumber, transactionId, csn);
   }
 
-  public String createAndFinalizeQuote(Address address, LinkedHashMap<String, String> data) {
-    return this.createAndFinalizeQuote(address, data, false);
+  public String createAndFinalizeQuote(Address address, String csn, String agentContactEmail,
+      LinkedHashMap<String, String> data) {
+    return this.createAndFinalizeQuote(address, csn, agentContactEmail, data, false);
   }
 
   @Step("Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
-  private String finalizeQuote(String quoteId, String transactionId) {
+  private String finalizeQuote(String quoteId, String transactionId, String csn) {
     PWSAccessInfo access_token = getAccessToken();
     String signature = signString(access_token.token, clientSecret, access_token.timestamp);
 
     Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
       put("Authorization", "Bearer " + access_token.token);
-      put("CSN", "0070176510");
+      put("CSN", csn);
       put("signature", signature);
       put("timestamp", access_token.timestamp);
     }};

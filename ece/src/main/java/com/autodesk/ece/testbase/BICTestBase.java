@@ -1297,11 +1297,21 @@ public class BICTestBase {
   public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
-    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID);
+    String url =
+        data.get("Quote2OrderBaseURL").replace("{locale}", System.getProperty(BICECEConstants.LOCALE).replace('_', '-'))
+            + data.get(BICECEConstants.QUOTE_ID);
     Util.printInfo("Quote URL: " + url);
     getUrl(url);
 
     clickToStayOnSameSite();
+
+    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
+      try {
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      } catch (MetadataException e) {
+        e.printStackTrace();
+      }
+    }
 
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     Map<String, String> address = getBillingAddress(data);

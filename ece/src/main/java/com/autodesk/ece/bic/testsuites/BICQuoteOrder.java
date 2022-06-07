@@ -117,15 +117,19 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateBicQuoteOrder() {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
-    Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+    Address address = getBillingAddress();
 
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
             testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
         PASSWORD, true);
 
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod);
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    updateTestingHub(testResults);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -198,7 +202,8 @@ public class BICQuoteOrder extends ECETestBase {
             testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
         PASSWORD, true);
 
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod, true);
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, true);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
@@ -260,7 +265,8 @@ public class BICQuoteOrder extends ECETestBase {
 
     //Create Quote Code to refund
 
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod);
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
@@ -332,4 +338,16 @@ public class BICQuoteOrder extends ECETestBase {
     Util.sleep(600000);
   }
 
+  private Address getBillingAddress() {
+    String billingAddress;
+    String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
+    if (addressViaParam != null && !addressViaParam.isEmpty()) {
+      Util.printInfo("The address is passed as parameter : " + addressViaParam);
+      billingAddress = addressViaParam;
+    } else {
+      billingAddress = testDataForEachMethod.get(BICECEConstants.ADDRESS);
+    }
+
+    return new Address(billingAddress);
+  }
 }

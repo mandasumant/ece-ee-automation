@@ -7,7 +7,7 @@ default:
   cepURL: "https://customer-int.autodesk.com/"
   accountPortalURL: https://int-manage.autodesk.com
   guacBaseURL: "https://checkout-apollo.autodesk.com/"
-  Quote2OrderBaseURL: "https://checkout-apollo.autodesk.com/en-US/cart?quoteNumber="
+  Quote2OrderBaseURL: "https://checkout-apollo.autodesk.com/{locale}/cart?quoteNumber="
   guacDotComBaseURL: "https://www-int.autodesk"
   guacResourceURL: "checkout?priceIds="
   guacPriceId: "?priceIds="
@@ -58,6 +58,7 @@ default:
   pwsClientSecret: "+iFsysMrCCnJ84IqILULBg==:XEzSSr6nNaqPuBwIxnd/xIQP1LQVOgUETN/CGCZRohk="
   pwsHostname: "enterprise-api-int.autodesk.com"
   quoteAgentCsnAccount: "0070176510"
+  agentContactEmail: "jfmpefebcojbkcpdignkoepabklgedjn@null.autodesk.com"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID

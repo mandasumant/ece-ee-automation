@@ -30,6 +30,8 @@ public class Address {
 
     if (billingAddress.length == 7) {
       this.province = billingAddress[6];
+    } else {
+      this.province = "";
     }
 
     ClassLoader classLoader = this.getClass().getClassLoader();

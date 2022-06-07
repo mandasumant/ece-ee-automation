@@ -1,4 +1,4 @@
-﻿LocaleConfig:
+LocaleConfig:
   en_US:
     region: "ENUS"
     storeName: "STORE-NAMER"
@@ -16,6 +16,8 @@
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@750 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "0070176518"
+    agentContactEmail: "canadapartner@letscheck.email"
 
   fr_CA:
     region: "FRCA"
@@ -43,6 +45,8 @@
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
     address: "AutodeskAU@259-261 Colchester Road@Kilsyth@3137@397202088@Australia@Victoria"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070132992"
+    agentContactEmail: "australiauser1@letscheck.email"
 
   nl_NL:
     region: "NLNL"
@@ -168,6 +172,8 @@
     paymentMethods: "CREDITCARD,PAYPAL,IDEAL,GIROPAY"
     address: "Autodesk@Holzstr 80@Salchendorf@9064@03230700940@Austria"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5102844935"
+    agentContactEmail: "Germanyuser1@letscheck.email"
 
   sv_SE:
     region: "SVSE"
