@@ -124,36 +124,6 @@ public class BICTestBase {
     return ba;
   }
 
-  private String getAmericaAddress() {
-    String address = null;
-
-    switch (getRandomIntString()) {
-      case "0": {
-        address = "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO";
-        break;
-      }
-      case "1": {
-        address = "Thub@Novel Coworking Hooper Building@Cincinnati@45207@9916800100@United States@OH";
-        break;
-      }
-      case "2": {
-        address = "Thub@1550 Wewatta Street@Denver@80202@9916800100@United States@CO";
-        break;
-      }
-      case "3": {
-        address = "Thub@26200 Town Center Drive@Novi@48375@9916800100@United States@MI";
-        break;
-      }
-      case "4": {
-        address = "Thub@15800 Pines Blvd, Suite 338@Pittsburgh@15206@9916800100@United States@PA";
-        break;
-      }
-      default:
-        address = "Thub@9 Pier@San Francisco@94111@9916800100@United States@CA";
-    }
-    return address;
-  }
-
   @Step("Create BIC account")
   public void createBICAccount(Names names, String emailID, String password, Boolean skipIframe) {
     if (!skipIframe) {
@@ -1297,9 +1267,12 @@ public class BICTestBase {
   public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
-    String url =
-        data.get("Quote2OrderBaseURL").replace("{locale}", System.getProperty(BICECEConstants.LOCALE).replace('_', '-'))
-            + data.get(BICECEConstants.QUOTE_ID);
+    String language = "?lang=" + data.get(BICECEConstants.LOCALE).substring(0, 2);
+    String country = "&country=" + data.get(BICECEConstants.LOCALE).substring(3);
+    String currency = "&currency=" + data.get(BICECEConstants.currencyStore);
+    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID) + language + country
+        + currency;
+
     Util.printInfo("Quote URL: " + url);
     getUrl(url);
 
@@ -1976,6 +1949,7 @@ public class BICTestBase {
 
   /**
    * Calculate Time Delta between Pelican PO -> Subscription, PO -> ECC
+   *
    * @param results
    * @return
    */
@@ -1994,20 +1968,22 @@ public class BICTestBase {
     DateTime subCreatedDate = subFormatter.parseDateTime(results.get("response_subscriptionCreated"));
 
     try {
-      TIBCOService tbService = new TIBCOService(DBConstants.tibcoConString, DBConstants.tibcoUserName,DBConstants.tibcoPassword);
+      TIBCOService tbService = new TIBCOService(DBConstants.tibcoConString, DBConstants.tibcoUserName,
+          DBConstants.tibcoPassword);
       Util.PrintInfo("Tibco connection set up successful. from core");
-      LinkedHashMap<String, String> checkExecutionTime = tbService.checkExecutionTime("CreateOrder", "SAP640", results.get(BICConstants.orderNumber));
+      LinkedHashMap<String, String> checkExecutionTime = tbService.checkExecutionTime("CreateOrder", "SAP640",
+          results.get(BICConstants.orderNumber));
       results.put("eccCreatedDate", checkExecutionTime.get("processStartTime"));
     } catch (Exception e) {
       e.printStackTrace();
-      Util.printWarning("Failed to set up Tibco Database connection : "+ e.getMessage());
+      Util.printWarning("Failed to set up Tibco Database connection : " + e.getMessage());
     }
 
     Period po2Sub = new Period(poCreatedDate, subCreatedDate);
     report.put(BICECEConstants.PO_TO_SUBSCRIPTION, periodFormatter.print(po2Sub));
     Util.printInfo("Pelican Order to Subscription time: " + periodFormatter.print(po2Sub));
 
-    if(results.get("eccCreatedDate") != null) {
+    if (results.get("eccCreatedDate") != null) {
       DateTime eccCreatedDate = eccOrderFormatter.parseDateTime(results.get("eccCreatedDate"));
       Period po2Ecc = new Period(poCreatedDate, eccCreatedDate);
       report.put(BICECEConstants.PO_TO_ECCORDER, periodFormatter.print(po2Ecc));

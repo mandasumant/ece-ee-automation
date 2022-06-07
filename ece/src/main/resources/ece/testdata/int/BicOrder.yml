@@ -7,7 +7,7 @@ default:
   cepURL: "https://customer-int.autodesk.com/"
   accountPortalURL: https://int-manage.autodesk.com
   guacBaseURL: "https://checkout-apollo.autodesk.com/"
-  Quote2OrderBaseURL: "https://checkout-apollo.autodesk.com/{locale}/cart?quoteNumber="
+  Quote2OrderBaseURL: "https://checkoutservice-int.autodesk.com/quoteRedirect/"
   guacDotComBaseURL: "https://www-int.autodesk"
   guacResourceURL: "checkout?priceIds="
   guacPriceId: "?priceIds="
