@@ -5,7 +5,7 @@ LocaleConfig:
     currencyStore: "USD"
     countryDomain: ".com"
     paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH,FINANCING"
-    address: "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO"
+    address: "FNOIIRDQ LNOIIRDQ@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO"
     isTaxed: "Y"
 
   en_CA:
