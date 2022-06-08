@@ -1570,9 +1570,18 @@ public class BICTestBase {
     if (nonZeroTaxState.equals("undefined")) {
       return;
     }
-    String taxValue = driver
-        .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax'][@data-pricing-source=\"PQ\"]"))
-        .getText();
+
+    String taxValue;
+    if (data.get("productType").equals("flex")) {
+      taxValue = driver
+          .findElement(
+              By.xpath("//p[@data-testid='checkout--order-summary-section--tax'][@data-pricing-source=\"PQ\"]"))
+          .getText();
+    } else {
+      taxValue = driver
+          .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax'][@data-pricing-source=\"PQ\"]"))
+          .getText();
+    }
     taxValue = taxValue.replaceAll("[^0-9]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
     data.put(BICECEConstants.FINAL_TAX_AMOUNT, String.valueOf(taxValueAmount));

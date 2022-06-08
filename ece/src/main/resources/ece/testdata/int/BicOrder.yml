@@ -184,11 +184,14 @@ validateFlexTokenEstimatorTool:
 validateBicQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+  productType: "flex"
 
 validateQuoteRefundOrder:
   term: "Annual"
   accessModel: "Flex"
+  productType: "flex"
 
 validateMultiLineItemQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+  productType: "flex"
