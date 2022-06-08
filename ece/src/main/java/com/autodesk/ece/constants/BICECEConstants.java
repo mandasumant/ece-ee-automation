@@ -26,7 +26,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PRODUCT_ID = "productID";
   public static final String ADD_SEAT_QTY = "addSeatQty";
   public static final String E2E_EXECUTION_TIME = "e2e_ExecutionTime";
-  public static final String ORDER_ID = "getPOReponse_orderId";
+  public static final String ORDER_ID = "getPOResponse_orderId";
   public static final String SUB1_ID = "sub1ID";
   public static final String SUB2_ID = "sub2ID";
   public static final String SUB1_NEXT_BILLING_DATE = "sub1NextBillingDate";

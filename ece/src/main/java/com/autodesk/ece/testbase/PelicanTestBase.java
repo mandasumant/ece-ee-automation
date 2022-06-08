@@ -377,7 +377,6 @@ public class PelicanTestBase {
     String refundPurchaseOrderV4Url = addTokenInResourceUrl(refundPurchaseOrderUrl,
         data.get(BICConstants.orderNumber));
     Util.printInfo("Order Service Refund Url : " + refundPurchaseOrderV4Url);
-
     String Content_Type = BICECEConstants.APPLICATION_JSON;
     PelicanSignature signature = requestSigner.generateSignature();
 
@@ -429,7 +428,7 @@ public class PelicanTestBase {
     JsonPath jp = new JsonPath(purchaseOrderAPIresponse);
     try {
       results.put("getPOReponse_origin", jp.get("content[0].origin").toString());
-      results.put("getPOReponse_orderId", jp.get("content[0].id").toString());
+      results.put(BICECEConstants.ORDER_ID, jp.get("content[0].id").toString());
       results
           .put("getPOReponse_storeExternalKey", jp.get("content[0].storeExternalKey").toString());
       results
