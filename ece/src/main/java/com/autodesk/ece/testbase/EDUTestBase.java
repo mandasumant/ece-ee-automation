@@ -356,7 +356,7 @@ public class EDUTestBase {
     WebElement cardsContainer =
         driver.findElement(By.xpath(eduPage.getFirstFieldLocator("eduCardsContainer")));
     AssertUtils.assertTrue(
-        cardsContainer.getText().contains("Download, sign-in, and start designing!"));
+        cardsContainer.getText().contains("Download, sign-in, and start designing"));
 
     // Close the new tab and switch back to the old tab
     driver.close();
