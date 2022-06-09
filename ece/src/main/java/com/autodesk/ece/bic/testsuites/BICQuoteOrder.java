@@ -107,7 +107,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.emailid, BICTestBase.generateUniqueEmailID());
 
     testDataForEachMethod.put(BICECEConstants.FLEX_TOKENS,
-        String.valueOf((int) ((Math.random() * (10000 - 100)) + 1000)));
+        String.valueOf((int) ((Math.random() * (15000 - 100)) + 1000)));
 
     testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
         PWSTestBase.getQuoteStartDateAsString());
