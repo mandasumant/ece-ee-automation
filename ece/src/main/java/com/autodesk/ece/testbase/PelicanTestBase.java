@@ -479,7 +479,7 @@ public class PelicanTestBase {
     JsonPath jp = new JsonPath(poResponse);
     try {
       results.put("getPOResponse_origin", jp.get("origin").toString());
-      results.put("getPOResponse_orderId", jp.get("id").toString());
+      results.put(BICECEConstants.ORDER_ID, jp.get("id").toString());
       results.put("getPOResponse_orderState", jp.get("orderState").toString());
 
       results.put("getPOResponse_storedPaymentProfileId",

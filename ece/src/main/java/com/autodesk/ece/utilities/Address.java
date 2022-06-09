@@ -5,6 +5,7 @@ import io.restassured.path.json.JsonPath;
 import java.io.File;
 import java.util.Objects;
 import java.util.Random;
+import org.apache.commons.lang.RandomStringUtils;
 
 public class Address {
 
@@ -21,7 +22,7 @@ public class Address {
 
   public Address(String localeMap) {
     String[] billingAddress = localeMap.split("@");
-    this.company = billingAddress[0];
+    this.company = getRandomCompanyName();
     this.addressLine1 = billingAddress[1];
     this.city = billingAddress[2];
     this.postalCode = billingAddress[3];
@@ -48,5 +49,9 @@ public class Address {
     number = number + 1000000000;
 
     return String.format("%09d", number);
+  }
+
+  private String getRandomCompanyName(){
+    return  new RandomStringUtils().random(8, true, true);
   }
 }
