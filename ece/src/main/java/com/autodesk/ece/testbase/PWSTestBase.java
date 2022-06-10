@@ -150,9 +150,9 @@ public class PWSTestBase {
 
       String status = response.jsonPath().getString("status");
 
-      if (status.equals("CREATED")) {
+      if (status.equals("DRAFT-CREATED")) {
         quoteNumber = response.jsonPath().getString("quoteNumber");
-        Util.printInfo("Got quote in CREATED status, quote number: " + quoteNumber);
+        Util.printInfo("Got quote in DRAFT-CREATED status, quote number: " + quoteNumber);
         break;
       } else if (attempts >= 19) {
         AssertUtils.fail("Retry exhausted: Failed to get quote in Created");
