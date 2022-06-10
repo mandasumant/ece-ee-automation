@@ -51,7 +51,7 @@ public class Address {
     return String.format("%09d", number);
   }
 
-  private String getRandomCompanyName(){
-    return  new RandomStringUtils().random(8, true, true);
+  private String getRandomCompanyName() {
+    return new RandomStringUtils().random(8, true, false);
   }
 }
