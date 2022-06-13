@@ -1276,10 +1276,6 @@ public class BICTestBase {
 
     if (!(data.get("productType").equals("flex"))) {
       enterCustomerDetails(address);
-
-      // Temporary unchecking "Same as customer details" to be able to place an order
-      bicPage.checkIfElementExistsInPage("mandateAgreementCheckbox", 5000);
-      bicPage.clickUsingLowLevelActions("mandateAgreementCheckbox");
     }
 
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
@@ -1559,6 +1555,10 @@ public class BICTestBase {
     bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     bicPage.clickUsingLowLevelActions("customerDetailsAddress");
     bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+
+    // Temporary unchecking "Same as customer details" to be able to place an order
+    bicPage.checkIfElementExistsInPage("mandateAgreementCheckbox", 10000);
+    bicPage.clickUsingLowLevelActions("mandateAgreementCheckbox");
   }
 
   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
