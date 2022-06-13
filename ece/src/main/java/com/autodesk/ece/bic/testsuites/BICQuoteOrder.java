@@ -172,7 +172,7 @@ public class BICQuoteOrder extends ECETestBase {
       }
 
       updateTestingHub(testResults);
-      portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+      /*portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
@@ -186,7 +186,7 @@ public class BICQuoteOrder extends ECETestBase {
         testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
 
-      updateTestingHub(testResults);
+      updateTestingHub(testResults);*/
     }
   }
 
@@ -241,7 +241,7 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     updateTestingHub(testResults);
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+    /*portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid), PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
     portaltb.validateBICOrderTaxInvoice(results);
@@ -250,7 +250,7 @@ public class BICQuoteOrder extends ECETestBase {
       portaltb.validateBICOrderTaxInvoice(results);
       testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
     }
-    updateTestingHub(testResults);
+    updateTestingHub(testResults);*/
   }
 
   @Test(groups = {"quote-RefundOrder"}, description = "Quote refund order")
@@ -285,13 +285,13 @@ public class BICQuoteOrder extends ECETestBase {
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
-    // Validate Portal
+    /*// Validate Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
       portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
-    }
+    }*/
 
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrderV4(results);
@@ -322,11 +322,11 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-    if (getBicTestBase().shouldValidateSAP()) {
+    /*if (getBicTestBase().shouldValidateSAP()) {
       // Validate Credit Note for the order
       portaltb.validateBICOrderPDF(results,BICECEConstants.CREDIT_NOTE);
       testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
-    }
+    }*/
 
     updateTestingHub(testResults);
   }
