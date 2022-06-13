@@ -103,7 +103,7 @@ public class MOETestBase {
     // TODO: Validate that the address fields that are pre-filled in the payment section matches the address that's in the Opportunity in salesforce (passed to GUAC as part of get Opty call).
 
     // Populate Billing info and save payment profile
-    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION), data.get(BICECEConstants.ADDRESS));
+    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
@@ -342,8 +342,7 @@ public class MOETestBase {
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
 
-    String region = data.get(BICECEConstants.REGION);
-    address = bicTestBase.getBillingAddress(region, data.get(BICECEConstants.ADDRESS));
+    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
 
     bicTestBase.enterBillingDetails(data, address, paymentMethod);
 
@@ -365,7 +364,7 @@ public class MOETestBase {
     Util.printInfo("GuacMoeURL: " + constructGuacMoeURL);
     Map<String, String> address = null;
 
-    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION), data.get(BICECEConstants.ADDRESS));
+    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
 
     Names names = bicTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password, false);
@@ -406,7 +405,7 @@ public class MOETestBase {
     System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
     Map<String, String> address = null;
 
-    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.REGION), data.get(BICECEConstants.ADDRESS));
+    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
 
     Names names = BICTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password, false);

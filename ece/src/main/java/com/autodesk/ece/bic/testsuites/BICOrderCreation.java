@@ -243,8 +243,8 @@ public class BICOrderCreation extends ECETestBase {
       }
 
       if (getBicTestBase().shouldValidateSAP()) {
-          portaltb.validateBICOrderTaxInvoice(results);
-          testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+        portaltb.validateBICOrderTaxInvoice(results);
+        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
 
       // Put the SAP Order number into results map
@@ -404,7 +404,7 @@ public class BICOrderCreation extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-            BICECEConstants.ADD_SEAT_QTY),
+                BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
@@ -634,11 +634,61 @@ public class BICOrderCreation extends ECETestBase {
   public void validateFlexTokenEstimatorTool() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
     startTime = System.nanoTime();
+
     getBicTestBase().estimateFlexTokenPrice(testDataForEachMethod);
 
-    stopTime = System.nanoTime();
-    executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.putAll(results);
+    updateTestingHub(testResults);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    //Validating the tax amount with Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+    updateTestingHub(testResults);
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
+
+    portaltb.validateBICOrderTaxInvoice(results);
+
+    if (getBicTestBase().shouldValidateSAP()) {
+      portaltb.validateBICOrderTaxInvoice(results);
+      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+    }
+
     updateTestingHub(testResults);
   }
 
@@ -948,7 +998,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get(
-            BICECEConstants.RESPONSE_END_DATE),
+                BICECEConstants.RESPONSE_END_DATE),
             results.get(BICECEConstants.NEXT_BILLING_DATE));
     Assert.assertEquals(results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "false",
         "Auto renew is off.");

@@ -5,7 +5,6 @@ import com.autodesk.ece.testbase.BICTestBase;
 import com.autodesk.ece.testbase.BICTestBase.Names;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
-import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -114,7 +113,7 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
-  public void validateBicQuoteOrder() {
+  public void validateBicQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     Address address = getBillingAddress();
@@ -131,7 +130,7 @@ public class BICQuoteOrder extends ECETestBase {
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     updateTestingHub(testResults);
 
-    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.putAll(results);
@@ -191,7 +190,7 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
-  public void validateMultiLineItemQuoteOrder() {
+  public void validateMultiLineItemQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
 
     Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
@@ -206,7 +205,7 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, true);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
-    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.putAll(results);
@@ -269,7 +268,7 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
-    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.putAll(results);
@@ -329,13 +328,6 @@ public class BICQuoteOrder extends ECETestBase {
     }*/
 
     updateTestingHub(testResults);
-  }
-
-  private void triggerPelicanRenewalJob(HashMap<String, String> results) {
-    PelicanTestBase pelicanTB = new PelicanTestBase();
-    pelicanTB.renewSubscription(results);
-    // Wait for the Pelican job to complete
-    Util.sleep(600000);
   }
 
   private Address getBillingAddress() {
