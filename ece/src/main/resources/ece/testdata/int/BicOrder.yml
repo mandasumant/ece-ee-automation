@@ -182,7 +182,6 @@ validateFlexTokenEstimatorTool:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
-  productType: "flexTokens"
 
 validateBicQuoteOrder:
   term: "Annual"
