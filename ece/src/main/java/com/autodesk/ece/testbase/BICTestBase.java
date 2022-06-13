@@ -1348,7 +1348,7 @@ public class BICTestBase {
 
     clickToStayOnSameSite();
 
-    Util.printInfo("Signing to iframe");
+    // Login to an existing account
     loginAccount(data);
 
     Util.printInfo("Asserting that estimated amount match actual amounts on Checkout page.");
@@ -1623,10 +1623,10 @@ public class BICTestBase {
 
     navigateToCart(data);
 
-    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      loginAccount(data);
-      skipAddSeats();
-    }
+    // Login to an existing account
+    loginAccount(data);
+
+    skipAddSeats();
 
     // If the submit button is disabled, fill the payment information out again
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
@@ -1661,9 +1661,8 @@ public class BICTestBase {
 
     navigateToCart(data);
 
-    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      loginAccount(data);
-    }
+    // Login to an existing account
+    loginAccount(data);
 
     skipAddSeats();
 
@@ -1689,9 +1688,7 @@ public class BICTestBase {
     navigateToCart(data);
 
     // Login to an existing account and add seats
-    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      loginAccount(data);
-    }
+    loginAccount(data);
 
     Util.printInfo("Waiting for Add seats modal.");
     Util.sleep(5000);

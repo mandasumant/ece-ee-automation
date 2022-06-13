@@ -455,7 +455,7 @@ public class PortalTestBase {
         cityFound;
   }
 
-  @Step("CEP : Validating  Inovice or Credit Note  " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("CEP : Validating Invoice or Credit Note  " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderPDF(Map<String, String> results, String pdfType) {
     String error_message;
     String pdfContent = null;
