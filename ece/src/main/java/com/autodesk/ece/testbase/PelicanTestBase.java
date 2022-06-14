@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
+import com.autodesk.ece.utilities.Address;
 
 public class PelicanTestBase {
 
@@ -480,10 +481,16 @@ public class PelicanTestBase {
     try {
       results.put("getPOResponse_origin", jp.get("origin").toString());
       results.put(BICECEConstants.ORDER_ID, jp.get("id").toString());
+      results.put("getPOResponse_quoteId", jp.get("quoteId").toString());
+      results.put("getPOResponse_salesChannelType", jp.get("salesChannelType").toString());
       results.put("getPOResponse_orderState", jp.get("orderState").toString());
 
       results.put("getPOResponse_storedPaymentProfileId",
           jp.get("payment.paymentProfileId").toString());
+      results.put("getPOResponse_productType", jp.get("lineItems[0].offering.name").toString());
+      results.put("getPOResponse_quantity", jp.get("lineItems[0].quantity").toString());
+      results.put("getPOResponse_offeringId", jp.get("lineItems[0].offering.id").toString());
+
       results.put("getPOResponse_fulfillmentStatus",
           jp.get("lineItems[0].fulfillmentStatus").toString());
       results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
@@ -497,6 +504,8 @@ public class PelicanTestBase {
       results.put("getPOResponse_paymentProcessor",
           jp.get("payment.paymentProcessor").toString());
 
+      results.put("getPOResponse_endCustomer_company",
+          jp.get("endCustomer.company"));
       results.put("getPOResponse_endCustomer_firstName",
           jp.get("endCustomer.firstName"));
       results.put("getPOResponse_endCustomer_lastName",
@@ -505,6 +514,12 @@ public class PelicanTestBase {
           jp.get("endCustomer.addressLine1"));
       results.put("getPOResponse_endCustomer_city",
           jp.get("endCustomer.city"));
+      results.put("getPOResponse_endCustomer_state",
+          jp.get("endCustomer.state"));
+      results.put("getPOResponse_endCustomer_country",
+          jp.get("endCustomer.country"));
+      results.put("getPOResponse_endCustomer_postalCode",
+          jp.get("endCustomer.postalCode"));
       results.put("getPOResponse_endCustomer_accountCsn",
           jp.get("endCustomer.accountCsn"));
       results.put("getPOResponse_endCustomer_contactCsn",
@@ -612,5 +627,38 @@ public class PelicanTestBase {
    */
   public String retryO2PGetPurchaseOrder(HashMap<String, String> results) {
     return retryGetPurchaseOrder(results, false, true);
+  }
+
+
+  /**
+   * @param quoteInputMap     - input Quote map
+   * @param pelicanResponseMap - Pelican response V4
+   */
+  public void validateQuoteDetailsWithPelican(Map<String, String> quoteInputMap,
+      Map<String, String> pelicanResponseMap, Address address) {
+
+    AssertUtils.assertEquals("Quote Id should match.", quoteInputMap.get("quote_id"),
+        pelicanResponseMap.get("getPOResponse_quoteId"));
+    //AssertUtils.assertEquals("",quoteInputMap.get("OpportuntiyId"),pelcanResonseMap.get(""));
+    AssertUtils.assertEquals("Quantity should match.", quoteInputMap.get("tokens"),
+        pelicanResponseMap.get("tokens"));
+    AssertUtils.assertEquals("EndCustomer First Name should match.", quoteInputMap.get("firstname"),
+        pelicanResponseMap.get("getPOResponse_endCustomer_firstName"));
+    AssertUtils.assertEquals("EndCustomer Last Name should match.", quoteInputMap.get("lastname"),
+        pelicanResponseMap.get("getPOResponse_endCustomer_lastName"));
+    AssertUtils.assertEquals("EndCustomer Company should match",
+        pelicanResponseMap.get("getPOResponse_endCustomer_company").toUpperCase(),address.company.toUpperCase());
+    AssertUtils.assertEquals("EndCustomer Street Name should match.",
+        pelicanResponseMap.get("getPOResponse_endCustomer_addressLine1").toUpperCase(),address.addressLine1.toUpperCase());
+    AssertUtils.assertEquals("EndCustomer City should match.",
+       pelicanResponseMap.get("getPOResponse_endCustomer_city").toUpperCase(),address.city.toUpperCase());
+    AssertUtils.assertEquals("EndCustomer State should match.",
+       pelicanResponseMap.get("getPOResponse_endCustomer_state").toUpperCase(), address.province.toUpperCase());
+    AssertUtils.assertEquals("EndCustomer Country should match.",
+       pelicanResponseMap.get("getPOResponse_endCustomer_country").toUpperCase(), address.countryCode.toUpperCase());
+    AssertUtils.assertEquals("EndCustomer Postal Code should match.",
+       pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 4), address.postalCode.substring(0, 4));
+    AssertUtils.assertEquals("Product Type should match.", quoteInputMap.get("productType").toUpperCase(),
+        pelicanResponseMap.get("getPOResponse_productType").toUpperCase());
   }
 }

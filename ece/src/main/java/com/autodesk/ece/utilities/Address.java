@@ -52,6 +52,6 @@ public class Address {
   }
 
   private String getRandomCompanyName() {
-    return new RandomStringUtils().random(8, true, false);
+    return new RandomStringUtils().random(8, true, false).toUpperCase();
   }
 }
