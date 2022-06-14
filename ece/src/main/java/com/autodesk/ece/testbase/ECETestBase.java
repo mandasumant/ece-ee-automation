@@ -74,12 +74,20 @@ public class ECETestBase {
 
   public String getSAPOrderNumberUsingPO(String poNumber) {
     String orderNumber = "";
-    if (saptb.sapConnector.isBAPIEnabled()) {
-      saptb.sapConnector.connectSAPBAPI();
-      orderNumber = saptb.sapConnector.getOrderNumberUsingPO(poNumber);
-    } else {
-      orderNumber = saptb.getOrderFromSAP(poNumber);
+    String OS = System.getProperty("os.name").toLowerCase();
+
+    try {
+      if (saptb.sapConnector.isBAPIEnabled()) {
+        saptb.sapConnector.connectSAPBAPI();
+        orderNumber = saptb.sapConnector.getOrderNumberUsingPO(poNumber);
+      } else {
+        orderNumber = saptb.getOrderFromSAP(poNumber);
+      }
+    } catch (NoClassDefFoundError e) {
+      Util.printWarning("SAP Initialization wont work with " + OS + ", so skipping SAP validation due to ,"
+          + e.getMessage());
     }
+
     return orderNumber;
   }
 

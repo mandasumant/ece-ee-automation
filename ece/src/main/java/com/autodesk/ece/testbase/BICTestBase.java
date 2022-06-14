@@ -5,11 +5,10 @@ import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
-import com.autodesk.testinghub.core.common.services.TIBCOService;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.database.DBConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
+import com.autodesk.testinghub.core.testbase.SAPTestBase;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
@@ -1960,40 +1959,44 @@ public class BICTestBase {
    * @return
    */
   public HashMap<String, String> calculateFulfillmentTime(HashMap<String, String> results) {
+    String OS = System.getProperty("os.name").toLowerCase();
     PeriodFormatter periodFormatter = PeriodFormat.getDefault();
+    SAPTestBase saptb = new SAPTestBase();
     HashMap<String, String> report = new HashMap<>();
 
     DateTimeFormatter poFormatter =
         DateTimeFormat.forPattern(BICECEConstants.PO_DATE_FORMAT).withZone(DateTimeZone.UTC);
     DateTimeFormatter subFormatter =
         DateTimeFormat.forPattern(BICECEConstants.SUB_DATE_FORMAT).withZone(DateTimeZone.UTC);
-    DateTimeFormatter eccOrderFormatter =
-        DateTimeFormat.forPattern(BICECEConstants.ECC_ORDER_DATE_FORMAT).withZone(DateTimeZone.UTC);
+    DateTimeFormatter somOrderFormatter =
+        DateTimeFormat.forPattern(BICECEConstants.PO_DATE_FORMAT).withZone(DateTimeZone.UTC);
 
     DateTime poCreatedDate = poFormatter.parseDateTime(results.get("getPOReponse_CreatedDate"));
     DateTime subCreatedDate = subFormatter.parseDateTime(results.get("response_subscriptionCreated"));
 
     try {
-      TIBCOService tbService = new TIBCOService(DBConstants.tibcoConString, DBConstants.tibcoUserName,
-          DBConstants.tibcoPassword);
-      Util.PrintInfo("Tibco connection set up successful. from core");
-      LinkedHashMap<String, String> checkExecutionTime = tbService.checkExecutionTime("CreateOrder", "SAP640",
-          results.get(BICConstants.orderNumber));
-      results.put("eccCreatedDate", checkExecutionTime.get("processStartTime"));
-    } catch (Exception e) {
-      e.printStackTrace();
-      Util.printWarning("Failed to set up Tibco Database connection : " + e.getMessage());
+      saptb.sapConnector.connectSAPBAPI();
+      String orderNumber = saptb.sapConnector.getOrderNumberUsingPO(results.get(BICConstants.orderNumber));
+      HashMap<String, String> somOrder = saptb.sapConnector.getOrderDetails(orderNumber, "");
+      report.put("SOMOrderNumber", somOrder.get("somOrderNumber"));
+      saptb.sapConnector.connectSAPBAPIS4();
+      HashMap<String, String> somOrderDetails = saptb.sapConnector.getSOMOrderDetailsFromTable(somOrder.get(
+          "somOrderNumber"));
+      results.put("somCreatedDate", somOrderDetails.get("createdTime"));
+    } catch (ExceptionInInitializerError e) {
+      Util.printWarning("SAP Initialization wont work with " + OS + ", so skipping SAP validation due to ,"
+          + e.getMessage());
     }
 
     Period po2Sub = new Period(poCreatedDate, subCreatedDate);
     report.put(BICECEConstants.PO_TO_SUBSCRIPTION, periodFormatter.print(po2Sub));
     Util.printInfo("Pelican Order to Subscription time: " + periodFormatter.print(po2Sub));
 
-    if (results.get("eccCreatedDate") != null) {
-      DateTime eccCreatedDate = eccOrderFormatter.parseDateTime(results.get("eccCreatedDate"));
-      Period po2Ecc = new Period(poCreatedDate, eccCreatedDate);
-      report.put(BICECEConstants.PO_TO_ECCORDER, periodFormatter.print(po2Ecc));
-      Util.printInfo("Pelican Order to ECC Order create time: " + periodFormatter.print(po2Ecc));
+    if(results.get("somCreatedDate") != null) {
+      DateTime somCreatedDate = somOrderFormatter.parseDateTime(results.get("somCreatedDate"));
+      Period po2Som = new Period(poCreatedDate, somCreatedDate);
+      report.put(BICECEConstants.PO_TO_SOMORDER, periodFormatter.print(po2Som));
+      Util.printInfo("Pelican Order to SOM Order create time: " + periodFormatter.print(po2Som));
     }
 
     return report;
