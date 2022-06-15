@@ -242,8 +242,8 @@ public class BICOrderCreation extends ECETestBase {
       }
 
       if (getBicTestBase().shouldValidateSAP()) {
-          portaltb.validateBICOrderTaxInvoice(results);
-          testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+        portaltb.validateBICOrderTaxInvoice(results);
+        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
 
       // Put the SAP Order number into results map
@@ -403,7 +403,7 @@ public class BICOrderCreation extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-            BICECEConstants.ADD_SEAT_QTY),
+                BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
@@ -629,15 +629,34 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  @Test(groups = {"bic-flexorder-new"}, description = "Validation of Create BIC Flex Order New Cart")
+  public void validateBicFlexOrderNew() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    startTime = System.nanoTime();
+    HashMap<String, String> results = getBicTestBase()
+        .buyTokensDotCom(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    //Validations will be added later once we can place the order successfully
+
+    updateTestingHub(testResults);
+  }
+
   @Test(groups = {"flex-token-estimator"}, description = "Validation of Flex token estimator tool")
   public void validateFlexTokenEstimatorTool() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
     startTime = System.nanoTime();
+
     getBicTestBase().estimateFlexTokenPrice(testDataForEachMethod);
 
-    stopTime = System.nanoTime();
-    executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    //Validations will be added later once we can place the order successfully
+
     updateTestingHub(testResults);
   }
 
@@ -947,7 +966,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get(
-            BICECEConstants.RESPONSE_END_DATE),
+                BICECEConstants.RESPONSE_END_DATE),
             results.get(BICECEConstants.NEXT_BILLING_DATE));
     Assert.assertEquals(results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "false",
         "Auto renew is off.");

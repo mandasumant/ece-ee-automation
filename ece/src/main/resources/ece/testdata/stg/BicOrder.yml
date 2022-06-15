@@ -43,6 +43,8 @@ default:
   accountsPortalProductsServicesUrl: "https://stg-manage.autodesk.com/cep/#products-services/all"
   accountsPortalAddSeatsUrl: "https://stg-manage.autodesk.com/billing/add-seats"
 
+  flexTokensEstimatorUrl: "https://www-pt.autodesk.com/benefits/flex.com"
+
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
   bicNativePriceID: &bicNativePriceID "27239"
@@ -183,7 +185,11 @@ validateBicQuoteOrder:
 validateQuoteRefundOrder:
   term: "Annual"
   accessModel: "Flex"
-  
+
 validateMultiLineItemQuoteOrder:
+  term: "Annual"
+  accessModel: "Flex"
+
+validateBicFlexOrderNew:
   term: "Annual"
   accessModel: "Flex"
