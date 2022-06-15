@@ -5,7 +5,6 @@ import com.autodesk.ece.testbase.BICTestBase;
 import com.autodesk.ece.testbase.BICTestBase.Names;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
-import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -130,6 +129,8 @@ public class BICQuoteOrder extends ECETestBase {
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     updateTestingHub(testResults);
     testResults.putAll(testDataForEachMethod);
+
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -210,6 +211,7 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, true);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -273,6 +275,7 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -331,11 +334,67 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  private void triggerPelicanRenewalJob(HashMap<String, String> results) {
-    PelicanTestBase pelicanTB = new PelicanTestBase();
-    pelicanTB.renewSubscription(results);
-    // Wait for the Pelican job to complete
-    Util.sleep(600000);
+  @Test(groups = {"quote-accountportal"}, description = "Validation of Quote purchase from account portal")
+  public void validateAccountPortalQuoteOrder() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    Address address = getBillingAddress();
+
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+
+    portaltb.purchaseQuoteInAccount(testDataForEachMethod.get(BICConstants.cepURL),
+        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+
+    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    //Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+    updateTestingHub(testResults);
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
+
+    updateTestingHub(testResults);
   }
 
   private Address getBillingAddress() {

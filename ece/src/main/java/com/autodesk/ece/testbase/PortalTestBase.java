@@ -53,6 +53,7 @@ public class PortalTestBase {
   private final String accountsPortalOrderHistoryUrl;
   private final String accountsPortalProductsServicesUrl;
   private final String accountsPortalAddSeatsUrl;
+  private final String accountsPortalQuoteUrl;
   private final ZipPayTestBase zipTestBase;
   public WebDriver driver = null;
 
@@ -72,6 +73,7 @@ public class PortalTestBase {
     accountsPortalOrderHistoryUrl = defaultvalues.get("accountsPortalOrderHistoryUrl");
     accountsPortalProductsServicesUrl = defaultvalues.get("accountsPortalProductsServicesUrl");
     accountsPortalAddSeatsUrl = defaultvalues.get("accountsPortalAddSeatsUrl");
+    accountsPortalQuoteUrl = defaultvalues.get("accountsPortalQuoteUrl");
   }
 
   public static String timestamp() {
@@ -306,6 +308,20 @@ public class PortalTestBase {
     if (!status) {
       AssertUtils.fail(BICECEConstants.PRODUCT_IS_DISPLAYED_IN_PORTAL + BICECEConstants.FALSE);
     }
+  }
+
+  public void purchaseQuoteInAccount(String cepURL, String portalUserName,
+      String portalPassword) {
+    openPortalBICLaunch(cepURL);
+
+    openPortalURL(accountsPortalQuoteUrl);
+    portalPage.click("portalQuoteBuyButton");
+
+    // Buy will open a new tab, this closes the original tab and switches to the new tab
+    driver.close();
+    Set<String> windowHandles = driver.getWindowHandles();
+    String newTabHandle = windowHandles.iterator().next();
+    driver.switchTo().window(newTabHandle);
   }
 
   @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)

@@ -1262,10 +1262,8 @@ public class BICTestBase {
     return results;
   }
 
-  @Step("Quote2Order: Place Quote Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) {
-    HashMap<String, String> results = new HashMap<>();
-    String orderNumber = null;
+  @Step("Quote2Order: Navigate to quote checkout " + GlobalConstants.TAG_TESTINGHUB)
+  public void navigateToQuoteCheckout(LinkedHashMap<String, String> data) {
     String language = "?lang=" + data.get(BICECEConstants.LOCALE).substring(0, 2);
     String country = "&country=" + data.get(BICECEConstants.LOCALE).substring(3);
     String currency = "&currency=" + data.get(BICECEConstants.currencyStore);
@@ -1274,6 +1272,12 @@ public class BICTestBase {
 
     Util.printInfo("Quote URL: " + url);
     getUrl(url);
+  }
+
+  @Step("Quote2Order: Place Quote Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) {
+    HashMap<String, String> results = new HashMap<>();
+    String orderNumber = null;
 
     clickToStayOnSameSite();
 
