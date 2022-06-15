@@ -174,8 +174,8 @@ public class BICQuoteOrder extends ECETestBase {
       }
 
       updateTestingHub(testResults);
-    
-     //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
+
+      //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
      /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -305,10 +305,9 @@ public class BICQuoteOrder extends ECETestBase {
     Util.sleep(360000);
 
     // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
-    results.put("refund_orderState", results.get("getPOResponse_orderState"));
-    results.put("refund_fulfillmentStatus", results.get("getPOResponse_fulfillmentStatus"));
-    results.put("refund_paymentMethodType", results.get("paymentMethod"));
+    JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
+    results.put("refund_orderState", jp.get("orderState").toString());
+    results.put("refund_fulfillmentStatus", jp.get("fulfillmentStatus"));
 
     // Verify that Order status is Refunded
     AssertUtils.assertEquals("Order status is NOT REFUNDED",
@@ -323,13 +322,12 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-    /*
-    if (getBicTestBase().shouldValidateSAP()) {
+   /* if (getBicTestBase().shouldValidateSAP()) {
       // Validate Credit Note for the order
-      portaltb.validateBICOrderPDF(results, BICECEConstants.CREDIT_NOTE);
+      portaltb.validateBICOrderPDF(results,BICECEConstants.CREDIT_NOTE);
       testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
-    }
-    */
+    }*/
+
     updateTestingHub(testResults);
   }
 
