@@ -1,11 +1,47 @@
 import com.autodesk.wpe.dsl.build.BuildInfo
 import com.autodesk.wpe.dsl.build.ServicesBuildHelper
+import groovy.json.JsonBuilder
 
 @Library(['PSL@master', 'jenkins-shared-lib', 'jenkins-modules', 'wpe-shared-library@psl_2.0']) _
 
 def common_sonar
 def buildInfo = new BuildInfo(currentBuild: currentBuild, moduleName: "testinghub-autobot", stack: "test")
 def serviceBuildHelper = new ServicesBuildHelper(this, 'svc_d_artifactory', buildInfo)
+
+def testcases = [
+    "validateAccountPortalQuoteOrder": [
+        displaynamePrefix: "Account Q2O",
+        testcasename: "27830d55",
+        descriptionPrefix: "Account Q2P",
+        testClass: "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup: "quote-accountportal",
+        testMethod: "validateAccountPortalQuoteOrder"
+    ]
+]
+
+def generateTest(name, testcase, address, sapValidation) {
+    def testData = [
+        usertype: "new",
+        password: "",
+        sapValidation: sapValidation,
+    ]
+    testData.putAll(address)
+    return new JsonBuilder([
+        displayname: testcase.displaynamePrefix + " " + name,
+        testcasename: testcase.testcasename,
+        description: testcase.descriptionPrefix + " " + name,
+        testClass: testcase.testClass,
+        testGroup: testcase.testGroup,
+        testMethod: testcase.testMethod,
+        os: "windows",
+        parameters: [
+            application: "ece"
+        ],
+        testdata: testData,
+        notsupportedenv: [],
+        wiki: ""
+    ]).toPrettyString()
+}
 
 pipeline {
 
@@ -713,6 +749,7 @@ pipeline {
                 echo 'Initiating Apollo UAT - Regression (INT)'
                 script {
                     println("Building Testing Hub API Input Map - estore")
+
                     def testingHubInputMap = [:]
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
@@ -778,6 +815,9 @@ pipeline {
                 echo 'Initiating Apollo Quote 2 Order - All'
                 script {
                     println("Building Testing Hub API Input Map - All")
+
+                    def addresses = readJSON file: "./testdata/addresses.json"
+
                     def testingHubInputMap = [:]
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
                     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
@@ -907,7 +947,16 @@ pipeline {
                             '{"displayname":"Refund Q2O USA","testcasename":"49e55920","description":"Refund Q2O USA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","locale":"en_US","sapValidation":"True"},"notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Refund Q2O Canada","testcasename":"49e55920","description":"Refund Q2O Canada","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","locale":"en_CA","sapValidation":"True"},"notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Refund Q2O EMEA","testcasename":"49e55920","description":"Refund Q2O EMEA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-EU","sku":"default:1","email":"","isTaxed":"Y","locale":"nl_NL","sapValidation":"True"},"notsupportedenv":[],"wiki":""},' +
-                            '{"displayname":"Refund Q2O AUS","testcasename":"49e55920","description":"Refund Q2O AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"True"},"notsupportedenv":[],"wiki":""}' +
+                            '{"displayname":"Refund Q2O AUS","testcasename":"49e55920","description":"Refund Q2O AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"True"},"notsupportedenv":[],"wiki":""},' +
+                            [
+                                generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[4], true),
+                                generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[15], true),
+                                generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses[58], true),
+                                generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses[61], true),
+                                generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses[86], true),
+                                generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses[89], true),
+                                generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses[100], true)
+                            ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {

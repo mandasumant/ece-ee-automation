@@ -1268,14 +1268,22 @@ public class BICTestBase {
     return results;
   }
 
+  @Step("Quote2Order: Navigate to quote checkout " + GlobalConstants.TAG_TESTINGHUB)
+  public void navigateToQuoteCheckout(LinkedHashMap<String, String> data) {
+    String language = "?lang=" + data.get(BICECEConstants.LOCALE).substring(0, 2);
+    String country = "&country=" + data.get(BICECEConstants.LOCALE).substring(3);
+    String currency = "&currency=" + data.get(BICECEConstants.currencyStore);
+    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID) + language + country
+        + currency;
+
+    Util.printInfo("Quote URL: " + url);
+    getUrl(url);
+  }
+
   @Step("Quote2Order: Place Flex Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> placeFlexOrder(LinkedHashMap<String, String> data)
-      throws MetadataException {
+  public HashMap<String, String> placeFlexOrder(LinkedHashMap<String, String> data) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
-    if (data.get("isQuoteOrder").equals("true")) {
-      constructQuoteOrderUrl(data);
-    }
 
     Map<String, String> address = getBillingAddress(data);
 
@@ -2015,6 +2023,8 @@ public class BICTestBase {
         DateTimeFormat.forPattern(BICECEConstants.SUB_DATE_FORMAT).withZone(DateTimeZone.UTC);
     DateTimeFormatter somOrderFormatter =
         DateTimeFormat.forPattern(BICECEConstants.PO_DATE_FORMAT).withZone(DateTimeZone.UTC);
+    DateTimeFormatter invoiceFormatter =
+        DateTimeFormat.forPattern(BICECEConstants.INVOICE_DATE_FORMAT).withZone(DateTimeZone.UTC);
 
     DateTime poCreatedDate = poFormatter.parseDateTime(results.get("getPOReponse_CreatedDate"));
     DateTime subCreatedDate = subFormatter.parseDateTime(results.get("response_subscriptionCreated"));
@@ -2023,11 +2033,16 @@ public class BICTestBase {
       saptb.sapConnector.connectSAPBAPI();
       String orderNumber = saptb.sapConnector.getOrderNumberUsingPO(results.get(BICConstants.orderNumber));
       HashMap<String, String> somOrder = saptb.sapConnector.getOrderDetails(orderNumber, "");
-      report.put("SOMOrderNumber", somOrder.get("somOrderNumber"));
       saptb.sapConnector.connectSAPBAPIS4();
       HashMap<String, String> somOrderDetails = saptb.sapConnector.getSOMOrderDetailsFromTable(somOrder.get(
           "somOrderNumber"));
-      results.put("somCreatedDate", somOrderDetails.get("createdTime"));
+      report.put("somOrderNumber", somOrder.get("somOrderNumber"));
+      report.put("somCreatedDate", somOrderDetails.get("createdTime"));
+
+      HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTable(results.get(
+          BICConstants.orderNumber));
+      report.put("invoiceNumber", invoiceDetails.get("invoiceNumber"));
+      report.put("invoiceCreatedDate", invoiceDetails.get("createdTime"));
     } catch (ExceptionInInitializerError e) {
       Util.printWarning("SAP Initialization wont work with " + OS + ", so skipping SAP validation due to ,"
           + e.getMessage());
@@ -2038,10 +2053,17 @@ public class BICTestBase {
     Util.printInfo("Pelican Order to Subscription time: " + periodFormatter.print(po2Sub));
 
     if (results.get("somCreatedDate") != null) {
-      DateTime somCreatedDate = somOrderFormatter.parseDateTime(results.get("somCreatedDate"));
+      DateTime somCreatedDate = somOrderFormatter.parseDateTime(report.get("somCreatedDate"));
       Period po2Som = new Period(poCreatedDate, somCreatedDate);
-      report.put(BICECEConstants.PO_TO_SOMORDER, periodFormatter.print(po2Som));
+      report.put(BICECEConstants.PO_TO_SOM_ORDER, periodFormatter.print(po2Som));
       Util.printInfo("Pelican Order to SOM Order create time: " + periodFormatter.print(po2Som));
+    }
+
+    if (results.get("invoiceCreatedDate") != null) {
+      DateTime invoiceCreatedDate = invoiceFormatter.parseDateTime(report.get("invoiceCreatedDate"));
+      Period po2inv = new Period(poCreatedDate, invoiceCreatedDate);
+      report.put(BICECEConstants.PO_TO_INVOICE, periodFormatter.print(po2inv));
+      Util.printInfo("Pelican Order to Invoice create time: " + periodFormatter.print(po2inv));
     }
 
     return report;

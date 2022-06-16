@@ -177,18 +177,22 @@ validateFlexTokenEstimatorTool:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
+  isQuoteOrder: "false"
 
 validateBicQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+  isQuoteOrder: "true"
 
 validateQuoteRefundOrder:
   term: "Annual"
   accessModel: "Flex"
+  isQuoteOrder: "true"
 
 validateMultiLineItemQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+  isQuoteOrder: "true"
 
 validateBicFlexOrderNew:
   term: "Annual"

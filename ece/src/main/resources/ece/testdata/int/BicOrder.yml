@@ -43,6 +43,7 @@ default:
   accountsPortalOrderHistoryUrl: "https://int-manage.autodesk.com/cep/#orders/order-history"
   accountsPortalProductsServicesUrl: "https://int-manage.autodesk.com/cep/#products-services/all"
   accountsPortalAddSeatsUrl: "https://int-manage.autodesk.com/billing/add-seats"
+  accountsPortalQuoteUrl: "https://int-manage.autodesk.com/billing/quotes"
 
   flexTokensEstimatorUrl: "https://www-int.autodesk.com/benefits/flex.com"
 
@@ -197,9 +198,9 @@ validateQuoteRefundOrder:
 validateMultiLineItemQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+  productType: "flex"
   isQuoteOrder: "true"
 
-validateBicFlexOrderNew:
+validateAccountPortalQuoteOrder:
   term: "Annual"
-  accessModel: "Flex"
-  isQuoteOrder: "false"
+  productType: "flex"

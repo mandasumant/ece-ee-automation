@@ -178,7 +178,7 @@ public class BICECEConstants extends BICConstants {
   public static final String SUB_DATE_FORMAT = "MM/dd/yyyy HH:mm:ss z";
   public static final String INVOICE_DATE_FORMAT = "MM/dd/yyyy HH:mm:ss z";
   public static final String PO_TO_SUBSCRIPTION = "po2Sub";
-  public static final String PO_TO_SOMORDER = "po2SOM";
+  public static final String PO_TO_SOM_ORDER = "po2SOM";
   public static final String PO_TO_INVOICE = "po2Inv";
   public static final String SAP_VALIDATION = "sapValidation";
   public static final Boolean DEFAULT_SAP_VALIDATION = false;
