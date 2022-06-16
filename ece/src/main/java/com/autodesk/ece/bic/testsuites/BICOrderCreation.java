@@ -633,13 +633,12 @@ public class BICOrderCreation extends ECETestBase {
   public void validateFlexTokenEstimatorTool() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
     startTime = System.nanoTime();
-
     getBicTestBase().estimateFlexTokenPrice(testDataForEachMethod);
 
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Validations will be added later once we can test them
+    // Validations will be added later once all issues are fixed
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);

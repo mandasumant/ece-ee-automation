@@ -372,13 +372,6 @@ public class BICTestBase {
 
   @Step("Populate billing address")
   public boolean populateBillingAddress(Map<String, String> address, Map<String, String> data) {
-    // Temporary solution because currently it does not allow to submit an order with the address from Customer details section
-    if (data.get("isQuoteOrder").equals("false")) {
-      Util.sleep(20000);
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
-    }
-
     boolean status = false;
     try {
       String paymentType = System.getProperty(BICECEConstants.PAYMENT);
@@ -401,6 +394,13 @@ public class BICTestBase {
         default:
           paymentProfile = BICECEConstants.CREDIT_CARD;
           break;
+      }
+
+      // Temporary solution because currently it does not allow to submit an order with the address from Customer details section
+      if (data.get("isQuoteOrder").equals("false")) {
+        Util.sleep(20000);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
       }
 
       String firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
