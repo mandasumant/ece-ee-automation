@@ -193,7 +193,3 @@ validateMultiLineItemQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
   isQuoteOrder: "true"
-
-validateBicFlexOrderNew:
-  term: "Annual"
-  accessModel: "Flex"
