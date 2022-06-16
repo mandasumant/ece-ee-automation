@@ -10,9 +10,9 @@ def serviceBuildHelper = new ServicesBuildHelper(this, 'svc_d_artifactory', buil
 
 def testcases = [
     "validateAccountPortalQuoteOrder": [
-        displaynamePrefix: "Account Q2O",
+        displaynamePrefix: "Account Portal Q2O",
         testcasename: "27830d55",
-        descriptionPrefix: "Account Q2P",
+        descriptionPrefix: "Account Portal Q2O",
         testClass: "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
         testGroup: "quote-accountportal",
         testMethod: "validateAccountPortalQuoteOrder"
