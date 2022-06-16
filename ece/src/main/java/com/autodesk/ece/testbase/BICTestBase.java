@@ -1141,8 +1141,8 @@ public class BICTestBase {
       Util.printInfo("The total amount in Confirmation page :" + Double.valueOf(orderTotal) / 100);
 
       data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
-      // AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
-      //   "The checkout page total and confirmation page total do not match.");
+      AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
+          "The checkout page total and confirmation page total do not match.");
     }
 
     return orderNumber;
