@@ -241,6 +241,10 @@
   },
   {
     "Code": "DK",
+    "Name": "Danmark"
+  },
+  {
+    "Code": "DK",
     "Name": "Denmark"
   },
   {
@@ -664,6 +668,10 @@
     "Name": "Norway"
   },
   {
+    "Code": "NO",
+    "Name": "Norge"
+  },
+  {
     "Code": "OM",
     "Name": "Oman"
   },
@@ -780,6 +788,10 @@
     "Name": "Saudi Arabia"
   },
   {
+    "Code": "CH",
+    "Name": "Schweiz"
+  },
+  {
     "Code": "SN",
     "Name": "Senegal"
   },
@@ -844,12 +856,20 @@
     "Name": "Sudan"
   },
   {
+    "Code": "FI",
+    "Name": "Suomi"
+  },
+  {
     "Code": "SR",
     "Name": "Suriname"
   },
   {
     "Code": "SJ",
     "Name": "Svalbard and Jan Mayen"
+  },
+  {
+    "Code": "SE",
+    "Name": "Sverige"
   },
   {
     "Code": "SZ",

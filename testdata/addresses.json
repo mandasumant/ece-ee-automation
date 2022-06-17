@@ -674,7 +674,7 @@
   },
   {
     "isTaxed": "Y",
-    "locale": "en_AT",
+    "locale": "de_AT",
     "store": "STORE-EU",
     "payment": "CREDITCARD"
   },
