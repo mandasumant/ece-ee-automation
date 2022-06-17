@@ -629,6 +629,24 @@ public class BICOrderCreation extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  @Test(groups = {"bic-flexorder-new"}, description = "Validation of Create BIC Flex Order New Cart")
+  public void validateFlexOrderNewCart() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    startTime = System.nanoTime();
+    getBicTestBase()
+        .navigateToFlexCartFromDotCom(testDataForEachMethod);
+
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    // Validations will be added later once ECEECOM-3005 is fixed
+
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    updateTestingHub(testResults);
+  }
+
   @Test(groups = {"flex-token-estimator"}, description = "Validation of Flex token estimator tool")
   public void validateFlexTokenEstimatorTool() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();

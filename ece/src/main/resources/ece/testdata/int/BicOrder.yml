@@ -180,9 +180,6 @@ validateMultiLineItemBicNativeOrder:
   quantity: "3"
 
 validateFlexTokenEstimatorTool:
-  productID: *NativeOrderPriceID
-  bicNativePriceID: *bicNativePriceID
-  quantity: "1"
   isNonQuoteFlexOrder: "true"
 
 validateBicQuoteOrder:
@@ -201,3 +198,6 @@ validateMultiLineItemQuoteOrder:
 validateAccountPortalQuoteOrder:
   term: "Annual"
   productType: "flex"
+
+validateFlexOrderNewCart:
+  isNonQuoteFlexOrder: "true"
