@@ -397,7 +397,7 @@ public class BICTestBase {
       }
 
       // Temporary solution because currently it does not allow to submit an order with the address from Customer details section
-      if (data.get("isQuoteOrder").equals("false")) {
+      if (data.get("isNonQuoteFlexOrder") != null) {
         Util.sleep(20000);
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
@@ -1287,7 +1287,7 @@ public class BICTestBase {
 
     Map<String, String> address = getBillingAddress(data);
 
-    if (data.get("isQuoteOrder").equals("false")) {
+    if (data.get("isNonQuoteFlexOrder") != null) {
       enterCustomerDetails(address);
     }
 
