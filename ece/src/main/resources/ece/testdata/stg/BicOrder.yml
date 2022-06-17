@@ -190,3 +190,4 @@ validateMultiLineItemQuoteOrder:
 
 validateFlexOrderNewCart:
   isNonQuoteFlexOrder: "true"
+  productType: "flex"

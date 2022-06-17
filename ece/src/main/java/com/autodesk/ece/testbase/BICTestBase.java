@@ -1164,7 +1164,7 @@ public class BICTestBase {
     String constructGuacURL;
     String priceId = null;
 
-    // Starting from dot com page for STG environment
+    // Starting from dot com page for STG or INT environment
     if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG) ||
         System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_INT)) {
       navigateToDotComPage(data);
@@ -1209,9 +1209,6 @@ public class BICTestBase {
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
 
-    String emailID = generateUniqueEmailID();
-    data.put(BICECEConstants.emailid, emailID);
-
     String orderNumber = createBICOrderDotCom(data, false);
 
     if (data.get(BICECEConstants.PAYMENT_TYPE)
@@ -1220,7 +1217,7 @@ public class BICTestBase {
       financingTestBase.completeFinancingApplication();
     }
 
-    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.emailid, data.get(BICECEConstants.emailid));
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
@@ -1383,21 +1380,14 @@ public class BICTestBase {
   @SuppressWarnings({"static-access", "unused"})
   @Step("Dot Com: Estimate price via Flex Token Estimator tool " + GlobalConstants.TAG_TESTINGHUB)
   public void navigateToFlexCartFromDotCom(LinkedHashMap<String, String> data) throws MetadataException {
-    HashMap<String, String> results = new HashMap<>();
-    Util.printInfo("Navigating to Dot Com page for Autocad product");
-    navigateToDotComPage(data);
-
-    Util.printInfo("Switching to Flex tab");
-    bicPage.waitForFieldPresent("flexTab", 5000);
-    bicPage.clickUsingLowLevelActions("flexTab");
-    closeGetHelpPopup();
-
-    Util.printInfo("Click on 'Buy Tokens button");
-    bicPage.waitForFieldPresent("buyTokensButton", 5000);
-    bicPage.clickUsingLowLevelActions("buyTokensButton");
+    String priceId = navigateToCart(data);
 
     // Sign in
     signInIframe(data);
+
+    if ((!data.get("productType").equals("flex")) && data.containsKey(BICECEConstants.QUANTITY)) {
+      updateQuantity(priceId, data.get(BICECEConstants.QUANTITY));
+    }
   }
 
   private void signInIframe(LinkedHashMap<String, String> data) {
@@ -1476,10 +1466,7 @@ public class BICTestBase {
     address = getBillingAddress(data);
 
     if (!(isLoggedIn)) {
-      names = generateFirstAndLastNames();
-      createBICAccount(names, data.get(BICECEConstants.emailid),
-          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
-      data.putAll(names.getMap());
+      signInIframe(data);
     }
 
     if ((!data.get("productType").equals("flex")) && data.containsKey(BICECEConstants.QUANTITY)) {

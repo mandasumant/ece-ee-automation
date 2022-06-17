@@ -572,7 +572,7 @@ public class BICOrderCreation extends ECETestBase {
 
   @Test(groups = {"bic-flexorder"}, description = "Validation of Create BIC Flex Order")
   public void validateBicFlexOrder() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);

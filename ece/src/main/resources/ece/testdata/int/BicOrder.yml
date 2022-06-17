@@ -201,3 +201,4 @@ validateAccountPortalQuoteOrder:
 
 validateFlexOrderNewCart:
   isNonQuoteFlexOrder: "true"
+  productType: "flex"
