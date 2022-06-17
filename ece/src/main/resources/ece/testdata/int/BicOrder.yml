@@ -45,6 +45,8 @@ default:
   accountsPortalAddSeatsUrl: "https://int-manage.autodesk.com/billing/add-seats"
   accountsPortalQuoteUrl: "https://int-manage.autodesk.com/billing/quotes"
 
+  flexTokensEstimatorUrl: "https://www-int.autodesk.com/benefits/flex.com"
+
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
   bicNativePriceID: &bicNativePriceID "27239"
@@ -181,16 +183,15 @@ validateFlexTokenEstimatorTool:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   quantity: "1"
+  isNonQuoteFlexOrder: "true"
 
 validateBicQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
-  productType: "flex"
 
 validateQuoteRefundOrder:
   term: "Annual"
   accessModel: "Flex"
-  productType: "flex"
 
 validateMultiLineItemQuoteOrder:
   term: "Annual"

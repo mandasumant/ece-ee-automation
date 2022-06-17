@@ -113,7 +113,7 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
-  public void validateBicQuoteOrder() {
+  public void validateBicQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     Address address = getBillingAddress();
@@ -131,7 +131,7 @@ public class BICQuoteOrder extends ECETestBase {
     testResults.putAll(testDataForEachMethod);
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.putAll(results);
@@ -196,7 +196,7 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
-  public void validateMultiLineItemQuoteOrder() {
+  public void validateMultiLineItemQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
 
     Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
@@ -212,7 +212,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.putAll(results);
@@ -276,7 +276,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.putAll(results);
@@ -335,7 +335,7 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"quote-accountportal"}, description = "Validation of Quote purchase from account portal")
-  public void validateAccountPortalQuoteOrder() {
+  public void validateAccountPortalQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     Address address = getBillingAddress();
@@ -354,7 +354,7 @@ public class BICQuoteOrder extends ECETestBase {
     portaltb.purchaseQuoteInAccount(testDataForEachMethod.get(BICConstants.cepURL),
         testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
 
-    HashMap<String, String> results = getBicTestBase().placeQuoteOrder(testDataForEachMethod);
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     // Getting a PurchaseOrder details from pelican

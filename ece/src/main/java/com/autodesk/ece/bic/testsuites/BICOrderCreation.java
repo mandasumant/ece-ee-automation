@@ -242,8 +242,8 @@ public class BICOrderCreation extends ECETestBase {
       }
 
       if (getBicTestBase().shouldValidateSAP()) {
-          portaltb.validateBICOrderTaxInvoice(results);
-          testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+        portaltb.validateBICOrderTaxInvoice(results);
+        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
 
       // Put the SAP Order number into results map
@@ -403,7 +403,7 @@ public class BICOrderCreation extends ECETestBase {
     // Place add Seat order in Portal
     results.putAll(
         portaltb.createAndValidateAddSeatOrderInPortal(testDataForEachMethod.get(
-            BICECEConstants.ADD_SEAT_QTY),
+                BICECEConstants.ADD_SEAT_QTY),
             testDataForEachMethod));
     testResults.put("addSeatOrderNumber", results.get("addSeatOrderNumber"));
     // testResults.put("addSeatPerSeatGrossAmount",
@@ -634,6 +634,11 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<>();
     startTime = System.nanoTime();
     getBicTestBase().estimateFlexTokenPrice(testDataForEachMethod);
+
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    // Validations will be added later once all issues are fixed
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);
@@ -947,7 +952,7 @@ public class BICOrderCreation extends ECETestBase {
     results.put(BICECEConstants.STATUS, results.get(BICECEConstants.RESPONSE_STATUS));
     AssertUtils
         .assertEquals("End date should equal Next Billing Date.", results.get(
-            BICECEConstants.RESPONSE_END_DATE),
+                BICECEConstants.RESPONSE_END_DATE),
             results.get(BICECEConstants.NEXT_BILLING_DATE));
     Assert.assertEquals(results.get(BICECEConstants.RESPONSE_AUTORENEW_ENABLED), "false",
         "Auto renew is off.");

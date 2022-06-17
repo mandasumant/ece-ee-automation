@@ -102,7 +102,7 @@ public class BICTestBase {
   }
 
   @Step("get billing address")
-  public Map<String, String> getBillingAddress(String region, String address) {
+  public Map<String, String> getBillingAddress(String address) {
     Map<String, String> ba = null;
 
     Address newAddress = new Address(address);
@@ -372,7 +372,6 @@ public class BICTestBase {
 
   @Step("Populate billing address")
   public boolean populateBillingAddress(Map<String, String> address, Map<String, String> data) {
-
     boolean status = false;
     try {
       String paymentType = System.getProperty(BICECEConstants.PAYMENT);
@@ -395,6 +394,13 @@ public class BICTestBase {
         default:
           paymentProfile = BICECEConstants.CREDIT_CARD;
           break;
+      }
+
+      // Temporary solution because currently it does not allow to submit an order with the address from Customer details section
+      if (data.get("isNonQuoteFlexOrder") != null) {
+        Util.sleep(20000);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
       }
 
       String firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
@@ -1274,23 +1280,19 @@ public class BICTestBase {
     getUrl(url);
   }
 
-  @Step("Quote2Order: Place Quote Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) {
+  @Step("Quote2Order: Place Flex Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> placeFlexOrder(LinkedHashMap<String, String> data) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
 
-    clickToStayOnSameSite();
+    Map<String, String> address = getBillingAddress(data);
 
-    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
-      try {
-        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      } catch (MetadataException e) {
-        e.printStackTrace();
-      }
+    if (data.get("isNonQuoteFlexOrder") != null) {
+      enterCustomerDetails(address);
     }
 
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-    Map<String, String> address = getBillingAddress(data);
+
     enterBillingDetails(data, address, paymentMethod);
 
     if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
@@ -1308,35 +1310,33 @@ public class BICTestBase {
     return results;
   }
 
-
   @SuppressWarnings({"static-access", "unused"})
   @Step("Dot Com: Estimate price via Flex Token Estimator tool " + GlobalConstants.TAG_TESTINGHUB)
   public void estimateFlexTokenPrice(LinkedHashMap<String, String> data) throws MetadataException {
     Util.printInfo("Navigating to Dot Com page for Autocad product");
-    navigateToDotComPage(data);
-
-    Util.printInfo("Switching to Flex tab");
-    bicPage.waitForFieldPresent("flexTab", 5000);
-    bicPage.clickUsingLowLevelActions("flexTab");
-    closeGetHelpPopup();
+    getUrl(data.get("flexTokensEstimatorUrl"));
 
     Util.printInfo("Click on 'Estimate tokens needed' button");
     bicPage.waitForFieldPresent("estimateTokensButton", 5000);
     bicPage.clickUsingLowLevelActions("estimateTokensButton");
+    bicPage.clickUsingLowLevelActions("estimatorProductsDropdown");
+    bicPage.clickUsingLowLevelActions("estimator3dsmaxProduct");
+    bicPage.clickUsingLowLevelActions("estimatorAutocadProduct");
 
-    Util.printInfo("Making sure that correct product is selected on the new page");
-    bicPage.waitForFieldPresent("tableRowProductACD", 5000);
-    String autocadProduct = driver.findElement(By.xpath("//div[@class=\"fe-tablerow-product-name\"]")).getText();
-    AssertUtils.assertEquals("Product on the page should match expected product.", autocadProduct, "AutoCAD");
+    Util.printInfo("Making sure that we can see selected products on the page");
+    List<WebElement> autocadProduct = driver.findElements(By.xpath("//div[@class=\"fe-tablerow-product-name\"]"));
+    AssertUtils.assertEquals("3ds Max is present on the page", autocadProduct.get(0).getText(), "3ds Max");
+    AssertUtils.assertEquals("AutoCAD is present on the page", autocadProduct.get(1).getText(), "AutoCAD");
 
     Util.printInfo("Updating users and days");
-    bicPage.waitForFieldPresent("usersAmountInput", 5000);
-    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]")).click();
-    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]/input")).sendKeys(Keys.BACK_SPACE);
-    driver.findElement(By.xpath("//div[@data-testid=\"fe-users-input\"]/input")).sendKeys("4");
-    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]")).click();
-    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]/input")).sendKeys(Keys.BACK_SPACE);
-    driver.findElement(By.xpath("//div[@data-testid=\"fe-days-input\"]/input")).sendKeys("2");
+    List<WebElement> usersInputPaths = driver.findElements(By.xpath("//div[@data-testid=\"fe-users-input\"]/input"));
+    List<WebElement> daysInputPaths = driver.findElements(By.xpath("//div[@data-testid=\"fe-days-input\"]/input"));
+    updateEstimatorToolInput(usersInputPaths.get(0), 4);
+    updateEstimatorToolInput(daysInputPaths.get(0), 7);
+    updateEstimatorToolInput(usersInputPaths.get(1), 2);
+    updateEstimatorToolInput(daysInputPaths.get(1), 7);
+
+    bicPage.waitForPageToLoad();
 
     String recommendedTokens = driver
         .findElement(By.xpath("//*[@data-testid=\"fe-summary-tokens\"]/div[@class=\"fe-rec-totals-fadeIn\"]"))
@@ -1351,46 +1351,73 @@ public class BICTestBase {
 
     clickToStayOnSameSite();
 
-    // Login to an existing account
-    loginAccount(data);
+    signInIframe(data);
 
-    Util.printInfo("Asserting that estimated amount match actual amounts on Checkout page.");
-    int tokensForFirstLineItem = Integer.parseInt(driver
-        .findElements(By.xpath(
-            "//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
-        .get(0).getText()
-        .substring(0, 3));
-    int tokensForSecondLineItem = Integer.parseInt(driver
-        .findElements(By.xpath(
-            "//*[@class=\"checkout--product-bar--info-column--name-sub-column--term-description\"]/span/span"))
-        .get(2).getText()
-        .substring(0, 3));
-
-    int quantity1 = Integer.parseInt(driver
-        .findElements(
-            By.xpath(" //input[contains(@id,'checkout--product-bar--info-column--quantities-sub-column--quantity--')]"))
-        .get(0).getAttribute("value"));
-    int quantity2 = Integer.parseInt(driver
-        .findElements(
-            By.xpath(" //input[contains(@id,'checkout--product-bar--info-column--quantities-sub-column--quantity--')]"))
-        .get(1).getAttribute("value"));
-
-    int totalTokensCheckoutPage = (tokensForFirstLineItem * quantity1) + (tokensForSecondLineItem * quantity2);
+    Util.printInfo("Asserting that estimated amounts match amounts on Checkout page");
+    int tokensQuantity = Integer.parseInt(driver
+        .findElement(
+            By.xpath("//input[@id=\"quantity\"]")).getAttribute("value"));
 
     AssertUtils
-        .assertEquals("Estimated tokens amount should match total amount of tokens on Checkout page.",
-            totalTokensCheckoutPage, Integer.parseInt(recommendedTokens.substring(0, 3))
+        .assertEquals("Estimated tokens amount should match total amount of tokens on Checkout page",
+            tokensQuantity, Integer.parseInt(recommendedTokens.substring(0, 4))
         );
 
-    String totalPriceCheckoutPage = driver
-        .findElement(By.xpath("//*[@data-testid=\"checkout--cart-section--total\"]")).getText();
-
-    int totalPriceCheckoutPageInt = (Integer.parseInt(totalPriceCheckoutPage.replaceAll("[^0-9]", ""))) / 100;
-    int estimatedPriceInt = Integer.parseInt(estimatedPrice.replaceAll("[^0-9]", ""));
+    String tokensCostCart = driver
+        .findElement(By.xpath(
+            "//p[@data-testid=\"formatted-calculated-price\"]"))
+        .getText().substring(0, 6);
 
     AssertUtils
-        .assertEquals("Estimated total price should match total price on Checkout page.", totalPriceCheckoutPageInt,
-            estimatedPriceInt);
+        .assertEquals("Estimated total amount should match total amount of tokens in Cart",
+            tokensCostCart, estimatedPrice);
+
+    String totalCostOrderSummary = driver
+        .findElement(By.xpath("//h3[@data-testid=\"checkout--order-summary-section--total\"]")).getText()
+        .substring(0, 6);
+
+    AssertUtils
+        .assertEquals("Estimated total price should match total price on Checkout page", totalCostOrderSummary,
+            estimatedPrice);
+  }
+
+  private void signInIframe(LinkedHashMap<String, String> data) {
+    Util.printInfo("Signing to iframe");
+    Names names = generateFirstAndLastNames();
+    String emailID = generateUniqueEmailID();
+    data.put(BICECEConstants.emailid, emailID);
+    createBICAccount(names, data.get(BICECEConstants.emailid),
+        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
+    data.putAll(names.getMap());
+  }
+
+  private void constructQuoteOrderUrl(LinkedHashMap<String, String> data) {
+    String language = "?lang=" + data.get(BICECEConstants.LOCALE).substring(0, 2);
+    String country = "&country=" + data.get(BICECEConstants.LOCALE).substring(3);
+    String currency = "&currency=" + data.get(BICECEConstants.currencyStore);
+    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID) + language + country
+        + currency;
+
+    Util.printInfo("Quote URL: " + url);
+    getUrl(url);
+
+    clickToStayOnSameSite();
+
+    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
+      try {
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      } catch (MetadataException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private void updateEstimatorToolInput(WebElement webElement, int input) {
+    webElement.click();
+    Util.sleep(2500);
+    webElement.sendKeys(Keys.BACK_SPACE);
+    Util.sleep(2500);
+    webElement.sendKeys(String.valueOf(input));
   }
 
   private void updateQuantity(String priceId, String quantity) {
@@ -1481,9 +1508,7 @@ public class BICTestBase {
     return orderNumber;
   }
 
-  private Map<String, String> getBillingAddress(LinkedHashMap<String, String> data) {
-    String region = data.get(BICECEConstants.REGION);
-
+  public Map<String, String> getBillingAddress(LinkedHashMap<String, String> data) {
     String billingAddress;
     String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
     if (addressViaParam != null && !addressViaParam.isEmpty()) {
@@ -1492,7 +1517,7 @@ public class BICTestBase {
     } else {
       billingAddress = data.get(BICECEConstants.ADDRESS);
     }
-    return getBillingAddress(region, billingAddress);
+    return getBillingAddress(billingAddress);
   }
 
   public void enterBillingDetails(LinkedHashMap<String, String> data,
@@ -1520,6 +1545,31 @@ public class BICTestBase {
       populateBillingAddress(address, data);
       debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
+  }
+
+  private void enterCustomerDetails(Map<String, String> address)
+      throws MetadataException {
+
+    bicPage.waitForFieldPresent("companyNameField", 5000);
+    bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
+
+    bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
+
+    bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
+
+    bicPage.clickUsingLowLevelActions("selectStateField");
+    String selectStateOption = bicPage.getFirstFieldLocator("selectStateOption")
+        .replace("<STATE_PROVINCE>", address.get(BICECEConstants.STATE_PROVINCE));
+    driver.findElement(By.xpath(selectStateOption)).click();
+
+    bicPage.waitForFieldPresent("postalCodeField", 5000);
+    bicPage.populateField("postalCodeField", address.get(BICECEConstants.ZIPCODE));
+
+    bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
+
+    bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+    bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
   }
 
   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
@@ -1621,7 +1671,6 @@ public class BICTestBase {
   public HashMap<String, String> createBICReturningUser(LinkedHashMap<String, String> data) throws MetadataException {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
-    String region = data.get(BICECEConstants.REGION);
     String paymentMethod = data.get("paymentMethod");
 
     navigateToCart(data);
@@ -1635,7 +1684,7 @@ public class BICTestBase {
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
         "[data-testid=\"order-summary-section\"] .checkout--order-summary-section--submit-order  .checkout--order-summary-section--submit-order--button-container button"));
     if (submitButton.size() > 0 && !submitButton.get(0).isEnabled()) {
-      Map<String, String> address = getBillingAddress(region, data.get(BICECEConstants.ADDRESS));
+      Map<String, String> address = getBillingAddress(data.get(BICECEConstants.ADDRESS));
       enterBillingDetails(data, address, paymentMethod);
     }
 
@@ -1990,7 +2039,7 @@ public class BICTestBase {
       report.put("somOrderNumber", somOrder.get("somOrderNumber"));
       report.put("somCreatedDate", somOrderDetails.get("createdTime"));
 
-      HashMap<String,String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTable(results.get(
+      HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTable(results.get(
           BICConstants.orderNumber));
       report.put("invoiceNumber", invoiceDetails.get("invoiceNumber"));
       report.put("invoiceCreatedDate", invoiceDetails.get("createdTime"));
@@ -2003,14 +2052,14 @@ public class BICTestBase {
     report.put(BICECEConstants.PO_TO_SUBSCRIPTION, periodFormatter.print(po2Sub));
     Util.printInfo("Pelican Order to Subscription time: " + periodFormatter.print(po2Sub));
 
-    if(results.get("somCreatedDate") != null) {
+    if (results.get("somCreatedDate") != null) {
       DateTime somCreatedDate = somOrderFormatter.parseDateTime(report.get("somCreatedDate"));
       Period po2Som = new Period(poCreatedDate, somCreatedDate);
       report.put(BICECEConstants.PO_TO_SOM_ORDER, periodFormatter.print(po2Som));
       Util.printInfo("Pelican Order to SOM Order create time: " + periodFormatter.print(po2Som));
     }
 
-    if(results.get("invoiceCreatedDate") != null) {
+    if (results.get("invoiceCreatedDate") != null) {
       DateTime invoiceCreatedDate = invoiceFormatter.parseDateTime(report.get("invoiceCreatedDate"));
       Period po2inv = new Period(poCreatedDate, invoiceCreatedDate);
       report.put(BICECEConstants.PO_TO_INVOICE, periodFormatter.print(po2inv));
