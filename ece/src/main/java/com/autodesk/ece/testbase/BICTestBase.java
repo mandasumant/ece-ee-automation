@@ -1762,6 +1762,7 @@ public class BICTestBase {
     try {
       driver.manage().deleteAllCookies();
       driver.get(URL);
+      bicPage.waitForPageToLoad();
     } catch (Exception e) {
       try {
         retryLoadingURL(URL);
@@ -1891,7 +1892,6 @@ public class BICTestBase {
   public void loginToOxygen(String emailID, String password) {
     bicPage.waitForPageToLoad();
     Util.sleep(60000);
-    signOutFromCheckoutPage();
 
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, emailID);

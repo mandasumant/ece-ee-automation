@@ -2,6 +2,7 @@ package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.ece.utilities.Address;
 import com.autodesk.ece.utilities.PelicanRequestSigner;
 import com.autodesk.ece.utilities.PelicanRequestSigner.PelicanSignature;
 import com.autodesk.platformautomation.ApiClient;
@@ -27,7 +28,6 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
-import com.autodesk.ece.utilities.Address;
 
 public class PelicanTestBase {
 
@@ -251,7 +251,7 @@ public class PelicanTestBase {
 
     //Generate the input JSON
     JSONArray orderArray = new JSONArray();
-    orderArray.put(data.get(BICConstants.orderNumber));
+    orderArray.put(data.get(BICECEConstants.ORDER_ID));
 
     JSONArray buyerArray = new JSONArray();
     buyerArray.put(data.get(BICECEConstants.BUYER_EXTERNAL_KEY));

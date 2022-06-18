@@ -303,7 +303,7 @@ public class MOETestBase {
 
         Util.sleep(15000);
         String optyid = driver.findElement(By.xpath(
-                "//lightning-formatted-rich-text[@class='slds-rich-text-editor__output' and contains(., 'A-')]"))
+                "//span[@class='test-id__field-value slds-form-element__static slds-grow  is-read-only' and contains(., 'A-')]"))
             .getText();
         Util.printInfo(optyid);
         results.put("opportunityid", optyid);
@@ -372,7 +372,19 @@ public class MOETestBase {
     data.put(BICECEConstants.emailid, emailID);
 
     bicTestBase.getUrl(constructGuacMoeURL);
-    loginToMoe();
+
+    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      loginToMoe();
+    } else {
+      if (moePage.isFieldVisible("moeReLoginLink")) {
+        try {
+          moePage.clickUsingLowLevelActions("moeReLoginLink");
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      bicTestBase.loginToOxygen("carl.dumas@autodesk.com", password);
+    }
     emulateUser(emailID, names);
 
     String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
@@ -418,7 +430,18 @@ public class MOETestBase {
 
     bicTestBase.getUrl(constructGuacMoeURL);
 
-    loginToMoe();
+    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      loginToMoe();
+    } else {
+      if (moePage.isFieldVisible("moeReLoginLink")) {
+        try {
+          moePage.clickUsingLowLevelActions("moeReLoginLink");
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      bicTestBase.loginToOxygen("carl.dumas@autodesk.com", password);
+    }
 
     emulateUser(emailID, names);
 
@@ -485,7 +508,7 @@ public class MOETestBase {
 
     bicTestBase.getUrl(constructMoeURLWithOpptyId);
 
-    // Click on Relogin button to continue
+    // Click on Re-login button to continue
     moePage.clickUsingLowLevelActions("moeReLoginLink");
     moePage.waitForPageToLoad();
 
@@ -562,7 +585,7 @@ public class MOETestBase {
   }
 
   private void validateProductNameDefault() {
-    validateProductName("AutoCAD LT");
+    validateProductName("AutoCAD - including specialized toolsets");
   }
 
   private void validateProductNameNew() {
@@ -817,6 +840,10 @@ public class MOETestBase {
     // Navigate to Portal, logout from service account session and log back in with user account
     String constructPortalUrl = data.get("cepURL");
     bicTestBase.getUrl(constructPortalUrl);
+
+    // Sign out from sales agent account
+    bicTestBase.signOutFromCheckoutPage();
+
     bicTestBase.loginToOxygen(emailID, password);
   }
 

@@ -313,7 +313,7 @@ public class MOEOrderFlows extends ECETestBase {
   private void validateTestResultsQuoteId(HashMap<String, String> testResults,
       HashMap<String, String> results) {
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    testResults.put(BICECEConstants.ORDER_ID, results.get(BICECEConstants.ORDER_ID));
     testResults.put(BICECEConstants.BUYER_EXTERNAL_KEY,
         results.get(BICECEConstants.BUYER_EXTERNAL_KEY));
 
@@ -334,7 +334,7 @@ public class MOEOrderFlows extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+      testResults.put(BICECEConstants.ORDER_ID, results.get(BICECEConstants.ORDER_ID));
       testResults.put("orderNumber_SAP", results.get(BICConstants.orderNumberSAP));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
