@@ -434,14 +434,14 @@
     "payment": "CREDITCARD"
   },
   {
-    "address": "AutodeskAU@114 Darlinghurst Rd@Darlinghurst@2010@397202088@Australia@QLD",
+    "address": "AutodeskAU@575 Ann St@Fortitude Valley@4006@397202088@Australia@QLD",
     "isTaxed": "Y",
     "locale": "en_AU",
     "store": "STORE-AUS",
     "payment": "CREDITCARD"
   },
   {
-    "address": "AutodeskAU@114 Darlinghurst Rd@Darlinghurst@2010@397202088@Australia@SA",
+    "address": "AutodeskAU@53 Wakefield St@Adelaide@5000@397202088@Australia@SA",
     "isTaxed": "Y",
     "locale": "en_AU",
     "store": "STORE-AUS",
@@ -455,7 +455,7 @@
     "payment": "CREDITCARD"
   },
   {
-    "address": "AutodeskAU@259-261 Colchester Rd@Kilsyth@3137@397202088@Australia@VIC",
+    "address": "AutodeskAU@259-261 Colchester Rd@Kilsyth South@3137@397202088@Australia@VIC",
     "isTaxed": "Y",
     "locale": "en_AU",
     "store": "STORE-AUS",

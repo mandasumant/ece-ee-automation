@@ -1278,6 +1278,8 @@ public class BICTestBase {
 
     Util.printInfo("Quote URL: " + url);
     getUrl(url);
+
+    clickToStayOnSameSite();
   }
 
   @Step("Quote2Order: Place Flex Order " + GlobalConstants.TAG_TESTINGHUB)
@@ -1289,6 +1291,14 @@ public class BICTestBase {
 
     if (data.get("isNonQuoteFlexOrder") != null) {
       enterCustomerDetails(address);
+    }
+
+    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
+      try {
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      } catch (MetadataException e) {
+        e.printStackTrace();
+      }
     }
 
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
