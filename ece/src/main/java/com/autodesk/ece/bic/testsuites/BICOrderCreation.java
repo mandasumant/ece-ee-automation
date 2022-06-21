@@ -572,7 +572,7 @@ public class BICOrderCreation extends ECETestBase {
 
   @Test(groups = {"bic-flexorder"}, description = "Validation of Create BIC Flex Order")
   public void validateBicFlexOrder() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     startTime = System.nanoTime();
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
@@ -622,6 +622,24 @@ public class BICOrderCreation extends ECETestBase {
     testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
 
     updateTestingHub(testResults);
+
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    updateTestingHub(testResults);
+  }
+
+  @Test(groups = {"bic-flexorder-new"}, description = "Validation of Create BIC Flex Order New Cart")
+  public void validateFlexOrderNewCart() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    startTime = System.nanoTime();
+    getBicTestBase()
+        .navigateToFlexCartFromDotCom(testDataForEachMethod);
+
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    // Validations will be added later once ECEECOM-3005 is fixed
 
     stopTime = System.nanoTime();
     executionTime = ((stopTime - startTime) / 60000000000L);

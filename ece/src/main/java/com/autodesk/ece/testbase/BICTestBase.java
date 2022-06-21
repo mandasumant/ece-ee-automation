@@ -1164,7 +1164,7 @@ public class BICTestBase {
     String constructGuacURL;
     String priceId = null;
 
-    // Starting from dot com page for STG environment
+    // Starting from dot com page for STG or INT environment
     if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG) ||
         System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_INT)) {
       navigateToDotComPage(data);
@@ -1209,9 +1209,6 @@ public class BICTestBase {
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
 
-    String emailID = generateUniqueEmailID();
-    data.put(BICECEConstants.emailid, emailID);
-
     String orderNumber = createBICOrderDotCom(data, false);
 
     if (data.get(BICECEConstants.PAYMENT_TYPE)
@@ -1220,7 +1217,7 @@ public class BICTestBase {
       financingTestBase.completeFinancingApplication();
     }
 
-    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.emailid, data.get(BICECEConstants.emailid));
     results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
@@ -1367,7 +1364,6 @@ public class BICTestBase {
     int tokensQuantity = Integer.parseInt(driver
         .findElement(
             By.xpath("//input[@id=\"quantity\"]")).getAttribute("value"));
-
     AssertUtils
         .assertEquals("Estimated tokens amount should match total amount of tokens on Checkout page",
             tokensQuantity, Integer.parseInt(recommendedTokens.substring(0, 4))
@@ -1391,6 +1387,19 @@ public class BICTestBase {
             estimatedPrice);
   }
 
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Dot Com: Estimate price via Flex Token Estimator tool " + GlobalConstants.TAG_TESTINGHUB)
+  public void navigateToFlexCartFromDotCom(LinkedHashMap<String, String> data) throws MetadataException {
+    String priceId = navigateToCart(data);
+
+    // Sign in
+    signInIframe(data);
+
+    if ((!data.get("productType").equals("flex")) && data.containsKey(BICECEConstants.QUANTITY)) {
+      updateQuantity(priceId, data.get(BICECEConstants.QUANTITY));
+    }
+  }
+
   private void signInIframe(LinkedHashMap<String, String> data) {
     Util.printInfo("Signing to iframe");
     Names names = generateFirstAndLastNames();
@@ -1399,27 +1408,6 @@ public class BICTestBase {
     createBICAccount(names, data.get(BICECEConstants.emailid),
         ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
     data.putAll(names.getMap());
-  }
-
-  private void constructQuoteOrderUrl(LinkedHashMap<String, String> data) {
-    String language = "?lang=" + data.get(BICECEConstants.LOCALE).substring(0, 2);
-    String country = "&country=" + data.get(BICECEConstants.LOCALE).substring(3);
-    String currency = "&currency=" + data.get(BICECEConstants.currencyStore);
-    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID) + language + country
-        + currency;
-
-    Util.printInfo("Quote URL: " + url);
-    getUrl(url);
-
-    clickToStayOnSameSite();
-
-    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
-      try {
-        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      } catch (MetadataException e) {
-        e.printStackTrace();
-      }
-    }
   }
 
   private void updateEstimatorToolInput(WebElement webElement, int input) {
@@ -1488,10 +1476,7 @@ public class BICTestBase {
     address = getBillingAddress(data);
 
     if (!(isLoggedIn)) {
-      names = generateFirstAndLastNames();
-      createBICAccount(names, data.get(BICECEConstants.emailid),
-          ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
-      data.putAll(names.getMap());
+      signInIframe(data);
     }
 
     if ((!data.get("productType").equals("flex")) && data.containsKey(BICECEConstants.QUANTITY)) {
