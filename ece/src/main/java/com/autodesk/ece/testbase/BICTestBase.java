@@ -2049,7 +2049,7 @@ public class BICTestBase {
       report.put("somOrderNumber", somOrder.get("somOrderNumber"));
       report.put("somCreatedDate", somOrderDetails.get("createdTime"));
 
-      HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTable(results.get(
+      HashMap<String,String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTable(results.get(
           BICConstants.orderNumber));
       report.put("invoiceNumber", invoiceDetails.get("invoiceNumber"));
       report.put("invoiceCreatedDate", invoiceDetails.get("createdTime"));

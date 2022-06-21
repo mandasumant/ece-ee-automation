@@ -28,6 +28,7 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
+import java.text.SimpleDateFormat;
 
 public class PelicanTestBase {
 
@@ -651,14 +652,24 @@ public class PelicanTestBase {
     AssertUtils.assertEquals("EndCustomer Street Name should match.",
         pelicanResponseMap.get("getPOResponse_endCustomer_addressLine1").toUpperCase(),address.addressLine1.toUpperCase());
     AssertUtils.assertEquals("EndCustomer City should match.",
-       pelicanResponseMap.get("getPOResponse_endCustomer_city").toUpperCase(),address.city.toUpperCase());
+        pelicanResponseMap.get("getPOResponse_endCustomer_city").toUpperCase(),address.city.toUpperCase());
     AssertUtils.assertEquals("EndCustomer State should match.",
-       pelicanResponseMap.get("getPOResponse_endCustomer_state").toUpperCase(), address.province.toUpperCase());
+        pelicanResponseMap.get("getPOResponse_endCustomer_state").toUpperCase(), address.province.toUpperCase());
     AssertUtils.assertEquals("EndCustomer Country should match.",
-       pelicanResponseMap.get("getPOResponse_endCustomer_country").toUpperCase(), address.countryCode.toUpperCase());
+        pelicanResponseMap.get("getPOResponse_endCustomer_country").toUpperCase(), address.countryCode.toUpperCase());
     AssertUtils.assertEquals("EndCustomer Postal Code should match.",
-       pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 4), address.postalCode.substring(0, 4));
+        pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 4), address.postalCode.substring(0, 4));
     AssertUtils.assertEquals("Product Type should match.", quoteInputMap.get("productType").toUpperCase(),
         pelicanResponseMap.get("getPOResponse_productType").toUpperCase());
+    try {
+      SimpleDateFormat sdfQuote = new SimpleDateFormat(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
+      SimpleDateFormat sdfPelican = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+      String quoteSubDate = quoteInputMap.get(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
+      String pelicanSubDate = sdfQuote.format(
+          sdfPelican.parse(pelicanResponseMap.get("getPOResponse_subscriptionPeriodStartDate")));
+      AssertUtils.assertEquals("Subscription Start Date should should match.", quoteSubDate, pelicanSubDate);
+    }catch(Exception e){
+      Util.printInfo("Exception in validating subscription start date . "+ e.getMessage());  }
   }
 }

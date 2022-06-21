@@ -7,6 +7,8 @@ LocaleConfig:
     paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH,FINANCING"
     address: "FNOIIRDQ LNOIIRDQ@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5109330358"
+    agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
 
   en_CA:
     region: "ENCA"
@@ -47,8 +49,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
     address: "AutodeskAU@259-261 Colchester Road@Kilsyth@3137@397202088@Australia@Victoria"
     isTaxed: "Y"
-    quoteAgentCsnAccount: "5070132992"
-    agentContactEmail: "australiauser1@letscheck.email"
+    quoteAgentCsnAccount: "5070132993"
+    agentContactEmail: "partneruser_da_int_5070132993@letscheck.email"
 
   nl_NL:
     region: "NLNL"

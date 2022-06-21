@@ -5,7 +5,7 @@ import lombok.Data;
 
 public @Data
 class EndCustomerDTO {
-
+  private String accountCsn;
   private String name;
   private String addressLine1;
   private String addressLine2;
@@ -25,5 +25,9 @@ class EndCustomerDTO {
     this.stateProvinceCode = address.province;
     this.postalCode = address.postalCode;
     this.countryCode = address.countryCode;
+  }
+
+  public EndCustomerDTO(String endCustomerCsn) {
+    this.accountCsn = endCustomerCsn;
   }
 }

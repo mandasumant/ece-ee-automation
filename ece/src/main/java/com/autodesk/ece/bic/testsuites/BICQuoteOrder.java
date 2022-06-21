@@ -105,10 +105,20 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.LASTNAME, names.lastName);
     testDataForEachMethod.put(BICECEConstants.emailid, BICTestBase.generateUniqueEmailID());
 
-    testDataForEachMethod.put(BICECEConstants.FLEX_TOKENS,
-        String.valueOf((int) ((Math.random() * (15000 - 100)) + 1000)));
+    if (System.getProperty("quantity1") != null) {
+      testDataForEachMethod.put(BICECEConstants.FLEX_TOKENS, System.getProperty("quantity1"));
+    } else {
+      testDataForEachMethod.put(BICECEConstants.FLEX_TOKENS,
+          String.valueOf((int) ((Math.random() * (15000 - 100)) + 1000)));
+    }
 
-    testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
+    if(System.getProperty("agentCSN") != null){
+      testDataForEachMethod.put("quoteAgentCsnAccount",System.getProperty("agentCSN"));
+    }
+    if(System.getProperty("agentEmail") != null) {
+      testDataForEachMethod.put("agentContactEmail", System.getProperty("agentEmail"));
+    }
+      testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
         PWSTestBase.getQuoteStartDateAsString());
   }
 

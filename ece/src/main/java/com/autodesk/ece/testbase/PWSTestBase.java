@@ -56,7 +56,6 @@ public class PWSTestBase {
 
   private String createQuoteBody(LinkedHashMap<String, String> data, Address address, String csn,
       String agentContactEmail, Boolean isMultiLineItem) {
-    EndCustomerDTO endCustomer = new EndCustomerDTO(address);
     PurchaserDTO purchaser = new PurchaserDTO(data);
     AgentContactDTO agentContact = new AgentContactDTO(agentContactEmail);
     AgentAccountDTO agentAccount = new AgentAccountDTO(csn);
@@ -66,9 +65,19 @@ public class PWSTestBase {
     lineItem.setOffer(offer);
     lineItems.add(lineItem);
     if (isMultiLineItem) {
+      if (System.getProperty("quantity2") != null) {
+        data.put(BICECEConstants.FLEX_TOKENS, System.getProperty("quantity2"));
+      }
       LineItemDTO lineItemTwo = new LineItemDTO(data);
       lineItemTwo.setOffer(offer);
       lineItems.add(lineItemTwo);
+    }
+
+    EndCustomerDTO endCustomer = null;
+    if (System.getProperty("existingCSN") != null) {
+      endCustomer = new EndCustomerDTO(System.getProperty("existingCSN"));
+    } else {
+      endCustomer = new EndCustomerDTO(address);
     }
 
     QuoteDTO quote =
@@ -148,8 +157,8 @@ public class PWSTestBase {
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
       response = getQuoteStatus(pwsRequestHeaders, transactionId);
 
-      String status = response.jsonPath().getString("status") == null ? "error" : 
-        response.jsonPath().getString("status");
+      String status = response.jsonPath().getString("status") == null ? "error" :
+          response.jsonPath().getString("status");
 
       if (status.equals("DRAFT-CREATED")) {
         quoteNumber = response.jsonPath().getString("quoteNumber");
