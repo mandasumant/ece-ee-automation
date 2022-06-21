@@ -28,7 +28,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Thub@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO",
+    "address": "Thub@1617 Pearl St Ste 200@Boulder@80302@9916800100@United States@CO",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -49,7 +49,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@1225 First St NE@Washington@20002@9916800100@United States@DC",
+    "address": "Autodesk@1225 1st St NE@Washington@20002@9916800100@United States@DC",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -63,7 +63,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@360 Frontage Rd@FORSYTH@31029@9916800100@United States@GA",
+    "address": "Autodesk@360 N Frontage Rd@FORSYTH@31029@9916800100@United States@GA",
     "isTaxed": "N",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -77,14 +77,14 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@2560 Hampton Dr@BURLEY@83318@9916800100@United States@ID",
+    "address": "Autodesk@560 Hampton Dr@BURLEY@83318@9916800100@United States@ID",
     "isTaxed": "N",
     "locale": "en_US",
     "store": "STORE-NAMER",
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@2560 Hampton Dr@FORSYTH@62535@9916800100@United States@IL",
+    "address": "Autodesk@1429 Hickory Point Dr@FORSYTH@62535@9916800100@United States@IL",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -119,7 +119,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@462 Lafayette S@Baton Rouge@70801@9916800100@United States@LA",
+    "address": "Autodesk@462 Lafayette St@Baton Rouge@70801@9916800100@United States@LA",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -133,7 +133,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@501 Blackwell Rd@Warrenton@20186@9916800100@United States@MD",
+    "address": "Autodesk@801 E Fayette St@Baltimore@21201@9916800100@United States@MD",
     "isTaxed": "N",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -210,21 +210,21 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@777 Main St@SANTA FE@87501@9916800100@United States@NM",
+    "address": "Autodesk@145 Washington Ave@SANTA FE@87501@9916800100@United States@NM",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
     "payment": "VISA"
   },
   {
-    "address": "Autodesk NY@One Un Plaza@New York@10017@9916800100@United States@NY",
+    "address": "Autodesk NY@310 E 44th St@New York@10017@9916800100@United States@NY",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@255 Gateway Blvd@Rocky Mount@27804@9916800100@United States@ND",
+    "address": "Autodesk@612 E Boulevard Ave@Bismarck@58505@9916800100@United States@ND",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -238,7 +238,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@2300 S 9th St@Purcell@73080@9916800100@United States@OK",
+    "address": "Autodesk@2300 S 9th Ave@Purcell@73080@9916800100@United States@OK",
     "isTaxed": "N",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -266,7 +266,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@7401 Northwoods Blvd@North Charleston@29406@9916800100@United States@SD",
+    "address": "Autodesk@1415 E Wells Ave@Pierre@57501@9916800100@United States@SD",
     "isTaxed": "N",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -280,14 +280,14 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@2080 Interstate 10 West@Orange@77632@9916800100@United States@TX",
+    "address": "Autodesk@2080 Interstate 10 W@Orange@77632@9916800100@United States@TX",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@3150 Hotel Lp@Lehi@84043@9916800100@United States@UT",
+    "address": "Autodesk@3150 N Hotel Loop@Lehi@84043@9916800100@United States@UT",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -308,7 +308,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@1793 Richmond Rd@Charlottesville@22911@9916800100@United States@WA",
+    "address": "Autodesk@19610 SE 1st St@Camas@98607@9916800100@United States@WA",
     "isTaxed": "N",
     "locale": "en_US",
     "store": "STORE-NAMER",
@@ -329,7 +329,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@8 Southfork Rd@Cody@82414@9916800100@United States@WY",
+    "address": "Autodesk@8 S Fork Rd@Cody@82414@9916800100@United States@WY",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
