@@ -1511,6 +1511,8 @@ public class PortalTestBase {
       checkPortalCheckbox("//input[@id='customCheckboxTerms']");
       portalPage.clickUsingLowLevelActions("alignBillingSubmit");
       portalPage.waitForPageToLoad();
+      portalPage.waitForFieldEnabled("alignBillingClose");
+      Util.sleep(15000L);
       portalPage.clickUsingLowLevelActions("alignBillingClose");
     } catch (MetadataException e) {
       e.printStackTrace();
