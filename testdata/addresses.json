@@ -357,7 +357,7 @@
     "payment": "CREDITCARD"
   },
   {
-    "address": "Autodesk@184 Adolphus St@St. Andrews@E5B 1T7@9916800100@Canada@NB",
+    "address": "Autodesk@184 Adolphus St@Saint Andrews@E5B 1T7@9916800100@Canada@NB",
     "isTaxed": "Y",
     "locale": "en_CA",
     "store": "STORE-CA",
@@ -420,7 +420,7 @@
     "payment": "CREDITCARD"
   },
   {
-    "address": "Autodesk@1026 Second Ave@Dawson City@Y0B 1G0@9916800100@Canada@YT",
+    "address": "Autodesk@1026 Second Ave@Dawson@Y0B 1G0@9916800100@Canada@YT",
     "isTaxed": "Y",
     "locale": "en_CA",
     "store": "STORE-CA",

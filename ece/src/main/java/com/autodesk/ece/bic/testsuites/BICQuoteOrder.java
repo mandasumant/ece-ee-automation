@@ -364,6 +364,7 @@ public class BICQuoteOrder extends ECETestBase {
     portaltb.purchaseQuoteInAccount(testDataForEachMethod.get(BICConstants.cepURL),
         testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
 
+    getBicTestBase().clickToStayOnSameSite();
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -396,13 +397,13 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-    updateTestingHub(testResults);
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
-    }
+//    updateTestingHub(testResults);
+//    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+//        results.get(BICConstants.emailid),
+//        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+//    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+//      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+//    }
 
     updateTestingHub(testResults);
   }

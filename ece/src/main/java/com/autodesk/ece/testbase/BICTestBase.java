@@ -1936,7 +1936,7 @@ public class BICTestBase {
     return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
   }
 
-  private void clickToStayOnSameSite() {
+  public void clickToStayOnSameSite() {
     Boolean isLocaleSiteModalVisible = true;
     Integer attempt = 0;
 
