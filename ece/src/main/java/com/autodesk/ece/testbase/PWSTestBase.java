@@ -49,7 +49,7 @@ public class PWSTestBase {
     final SimpleDateFormat sdf = new SimpleDateFormat(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
     Calendar c = Calendar.getInstance();
     c.setTime(new Date());
-    c.add(Calendar.DATE, 5);
+    c.add(Calendar.DATE, 1);
     sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
     return sdf.format(c.getTime());
   }
