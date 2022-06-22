@@ -546,6 +546,18 @@ public class PortalTestBase {
     }
   }
 
+  @Step("CEP : Validate Quote Closed in Portal  " + GlobalConstants.TAG_TESTINGHUB)
+  public void validateQuoteClosed() {
+    openPortalURL(accountsPortalQuoteUrl);
+
+    try {
+      boolean quoteClosed = portalPage.checkIfElementExistsInPage("portalQuoteBuyButton", 5000);
+      AssertUtils.assertFalse(quoteClosed, "Quote buy button should not be present");
+    } catch (MetadataException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
   public void switchTermInUserPortal(String cepURL, String portalUserName,
       String portalPassword) {

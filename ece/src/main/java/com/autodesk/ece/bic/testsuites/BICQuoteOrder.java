@@ -165,6 +165,9 @@ public class BICQuoteOrder extends ECETestBase {
       // Get find Subscription ById
       results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
+      // Validate that the quote is closed in Portal
+      // portaltb.validateQuoteClosed();
+
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
         testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
@@ -237,6 +240,9 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    // Validate that the quote is closed in Portal
+    // portaltb.validateQuoteClosed();
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -377,6 +383,9 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    // Validate that the quote is closed in Portal
+    // portaltb.validateQuoteClosed();
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

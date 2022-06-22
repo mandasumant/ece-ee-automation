@@ -5,7 +5,7 @@ LocaleConfig:
     currencyStore: "USD"
     countryDomain: ".com"
     paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH,FINANCING"
-    address: "FNOIIRDQ LNOIIRDQ@1617 Pearl Street, Suite 200@Boulder@80302@9916800100@United States@CO"
+    address: "FNOIIRDQ LNOIIRDQ@1617 Pearl St Ste 200@Boulder@80302@9916800100@United States@CO"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5109330358"
     agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
