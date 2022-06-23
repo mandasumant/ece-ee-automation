@@ -1140,7 +1140,7 @@ public class BICTestBase {
       Util.printInfo("The total amount in Checkout page :" + Double.valueOf(orderTotalCheckout) / 100);
       Util.printInfo("The total amount in Confirmation page :" + Double.valueOf(orderTotal) / 100);
 
-      //data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
+      data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
       if (data.get("isNonQuoteFlexOrder") == null) {
         AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
             "The checkout page total and confirmation page total do not match.");
@@ -1292,11 +1292,13 @@ public class BICTestBase {
       enterCustomerDetails(address);
     }
 
-    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
-      try {
-        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      } catch (MetadataException e) {
-        e.printStackTrace();
+    if (data.get("isNonQuoteFlexOrder") == null) {
+      if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
+        try {
+          bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+        } catch (MetadataException e) {
+          e.printStackTrace();
+        }
       }
     }
 
