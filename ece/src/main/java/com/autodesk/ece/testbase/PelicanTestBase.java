@@ -22,13 +22,13 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
-import java.text.SimpleDateFormat;
 
 public class PelicanTestBase {
 
@@ -482,7 +482,7 @@ public class PelicanTestBase {
     try {
       results.put("getPOResponse_origin", jp.get("origin").toString());
       results.put(BICECEConstants.ORDER_ID, jp.get("id").toString());
-      results.put("getPOResponse_quoteId", jp.get("quoteId").toString());
+      results.put("getPOResponse_quoteId", jp.get("quoteId") == null ? "" : jp.get("quoteId").toString());
       results.put("getPOResponse_salesChannelType", jp.get("salesChannelType").toString());
       results.put("getPOResponse_orderState", jp.get("orderState").toString());
 
@@ -632,7 +632,7 @@ public class PelicanTestBase {
 
 
   /**
-   * @param quoteInputMap     - input Quote map
+   * @param quoteInputMap      - input Quote map
    * @param pelicanResponseMap - Pelican response V4
    */
   public void validateQuoteDetailsWithPelican(Map<String, String> quoteInputMap,
@@ -648,17 +648,19 @@ public class PelicanTestBase {
     AssertUtils.assertEquals("EndCustomer Last Name should match.", quoteInputMap.get("lastname"),
         pelicanResponseMap.get("getPOResponse_endCustomer_lastName"));
     AssertUtils.assertEquals("EndCustomer Company should match",
-        pelicanResponseMap.get("getPOResponse_endCustomer_company").toUpperCase(),address.company.toUpperCase());
+        pelicanResponseMap.get("getPOResponse_endCustomer_company").toUpperCase(), address.company.toUpperCase());
     AssertUtils.assertEquals("EndCustomer Street Name should match.",
-        pelicanResponseMap.get("getPOResponse_endCustomer_addressLine1").toUpperCase(),address.addressLine1.toUpperCase());
+        pelicanResponseMap.get("getPOResponse_endCustomer_addressLine1").toUpperCase(),
+        address.addressLine1.toUpperCase());
     AssertUtils.assertEquals("EndCustomer City should match.",
-        pelicanResponseMap.get("getPOResponse_endCustomer_city").toUpperCase(),address.city.toUpperCase());
+        pelicanResponseMap.get("getPOResponse_endCustomer_city").toUpperCase(), address.city.toUpperCase());
     AssertUtils.assertEquals("EndCustomer State should match.",
         pelicanResponseMap.get("getPOResponse_endCustomer_state").toUpperCase(), address.province.toUpperCase());
     AssertUtils.assertEquals("EndCustomer Country should match.",
         pelicanResponseMap.get("getPOResponse_endCustomer_country").toUpperCase(), address.countryCode.toUpperCase());
     AssertUtils.assertEquals("EndCustomer Postal Code should match.",
-        pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 4), address.postalCode.substring(0, 4));
+        pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 4),
+        address.postalCode.substring(0, 4));
     AssertUtils.assertEquals("Product Type should match.", quoteInputMap.get("productType").toUpperCase(),
         pelicanResponseMap.get("getPOResponse_productType").toUpperCase());
     try {
@@ -669,7 +671,8 @@ public class PelicanTestBase {
       String pelicanSubDate = sdfQuote.format(
           sdfPelican.parse(pelicanResponseMap.get("getPOResponse_subscriptionPeriodStartDate")));
       AssertUtils.assertEquals("Subscription Start Date should should match.", quoteSubDate, pelicanSubDate);
-    }catch(Exception e){
-      Util.printInfo("Exception in validating subscription start date . "+ e.getMessage());  }
+    } catch (Exception e) {
+      Util.printInfo("Exception in validating subscription start date . " + e.getMessage());
+    }
   }
 }

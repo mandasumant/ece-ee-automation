@@ -639,12 +639,63 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Validations will be added later once ECEECOM-3005 is fixed
-
-    stopTime = System.nanoTime();
-    executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    testResults.putAll(results);
     updateTestingHub(testResults);
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
+
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      // Getting a PurchaseOrder details from pelican
+      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+      // Breaks because one of the values is 0
+      //Compare tax in Checkout and Pelican
+      // getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+      //    results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+      // Get find Subscription ById
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+      try {
+        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+        testResults
+            .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+        testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+        testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        testResults.put(BICConstants.subscriptionPeriodStartDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+        testResults.put(BICConstants.subscriptionPeriodEndDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+        testResults
+            .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
+
+      updateTestingHub(testResults);
+
+      //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
+     /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+          results.get(BICConstants.emailid),
+          PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      }
+
+      portaltb.validateBICOrderTaxInvoice(results);
+
+
+      if (getBicTestBase().shouldValidateSAP()) {
+        portaltb.validateBICOrderTaxInvoice(results);
+        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+      }
+      updateTestingHub(testResults);*/
+    }
   }
 
   @Test(groups = {"flex-token-estimator"}, description = "Validation of Flex token estimator tool")
@@ -656,12 +707,62 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Validations will be added later once all issues are fixed
-
-    stopTime = System.nanoTime();
-    executionTime = ((stopTime - startTime) / 60000000000L);
-    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    testResults.putAll(results);
     updateTestingHub(testResults);
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
+
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      // Getting a PurchaseOrder details from pelican
+      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+      // Compare tax in Checkout and Pelican
+      // getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+      // results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+      // Get find Subscription ById
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+      try {
+        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+        testResults
+            .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+        testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+        testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        testResults.put(BICConstants.subscriptionPeriodStartDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+        testResults.put(BICConstants.subscriptionPeriodEndDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+        testResults
+            .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
+
+      updateTestingHub(testResults);
+
+      //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
+     /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+          results.get(BICConstants.emailid),
+          PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      }
+
+      portaltb.validateBICOrderTaxInvoice(results);
+
+
+      if (getBicTestBase().shouldValidateSAP()) {
+        portaltb.validateBICOrderTaxInvoice(results);
+        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+      }
+      updateTestingHub(testResults);*/
+    }
   }
 
   @Test(groups = {"trialDownload-UI"}, description = "Testing Download Trial version")
