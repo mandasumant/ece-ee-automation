@@ -968,7 +968,7 @@ pipeline {
                 }
             }
         }
-        stage('Apollo Quote 2 Order - All Orders Suite') {
+        stage('Apollo Flex Order New Suite') {
             when {
                 branch 'master'
                 expression {
