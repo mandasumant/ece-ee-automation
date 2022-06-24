@@ -69,6 +69,7 @@ pipeline {
         booleanParam(name: 'APOLLO_ALL', defaultValue: false, description: 'Run Apollo Regression?')
         booleanParam(name: 'REN', defaultValue: false, description: 'Run Apollo Renewal Tests?')
         booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order?')
+        booleanParam(name: 'APOLLO_FLEX', defaultValue: false, description: 'Run FLEX Order?')
     }
 
     stages {
@@ -972,7 +973,7 @@ pipeline {
             when {
                 branch 'master'
                 expression {
-                    params.APOLLO_Q2O == true
+                    params.APOLLO_FLEX == true
                 }
             }
             steps {

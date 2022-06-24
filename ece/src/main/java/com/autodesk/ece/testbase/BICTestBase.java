@@ -1292,13 +1292,9 @@ public class BICTestBase {
       enterCustomerDetails(address);
     }
 
-    if (data.get("isNonQuoteFlexOrder") == null) {
-      if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
-        try {
-          bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-        } catch (MetadataException e) {
-          e.printStackTrace();
-        }
+    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
+      if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
       }
     }
 
