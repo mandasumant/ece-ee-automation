@@ -69,6 +69,7 @@ pipeline {
         booleanParam(name: 'APOLLO_ALL', defaultValue: false, description: 'Run Apollo Regression?')
         booleanParam(name: 'REN', defaultValue: false, description: 'Run Apollo Renewal Tests?')
         booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order?')
+        booleanParam(name: 'APOLLO_FLEX', defaultValue: false, description: 'Run FLEX Order?')
     }
 
     stages {
@@ -957,6 +958,39 @@ pipeline {
                                 generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses[89], true),
                                 generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses[100], true)
                             ].join(',') +
+                            '],"workstreamname":"dclecjt"}'
+                    println("Starting Testing Hub API Call - estore - All")
+                    if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+                        println('Testing Hub API called successfully - estore - All')
+                    } else {
+                        currentBuild.result = 'FAILURE'
+                        println('Testing Hub API call failed - estore - All')
+                    }
+                }
+            }
+        }
+        stage('Apollo Flex Order New Suite') {
+            when {
+                branch 'master'
+                expression {
+                    params.APOLLO_FLEX == true
+                }
+            }
+            steps {
+                echo 'Initiating Apollo Flex Order - All'
+                script {
+                    println("Building Testing Hub API Input Map - All")
+
+                    def addresses = readJSON file: "./testdata/addresses.json"
+
+                    def testingHubInputMap = [:]
+                    testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
+                    testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+                    testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+                    testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: E-Commerce Flex Orders on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                            '{"displayname":"Flex Order USA (en_US)","testcasename":"d127e60a","description":"Flex Order US(en_US)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"True","address":"Thub@1617 Pearl St Ste 200@Boulder@80302@9916800100@United States@CO"},"notsupportedenv":[],"wiki":""},' +
+                            '{"displayname":"Flex Order CA (en_CA)","testcasename":"d127e60a","description":"Flex Order CA(en_CA)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","locale":"en_CA","sapValidation":"True","address":"Autodesk@750 Rue Ann@MONTREAL@H3Z 2Y7@9916800100@Canada@QC"},"notsupportedenv":[],"wiki":""},' +
+                            '{"displayname":"Flex Order AUS (en_AU)","testcasename":"d127e60a","description":"Flex Order AUS(en_AU)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"True","address":"AutodeskAU@240 City Walk@Canberra@2601@397202088@Australia@ACT"},"notsupportedenv":[],"wiki":""},' +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {

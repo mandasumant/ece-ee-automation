@@ -181,6 +181,7 @@ validateMultiLineItemBicNativeOrder:
 
 validateFlexTokenEstimatorTool:
   isNonQuoteFlexOrder: "true"
+  productType: "flex"
 
 validateBicQuoteOrder:
   term: "Annual"

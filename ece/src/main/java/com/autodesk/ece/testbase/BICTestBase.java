@@ -1141,8 +1141,10 @@ public class BICTestBase {
       Util.printInfo("The total amount in Confirmation page :" + Double.valueOf(orderTotal) / 100);
 
       data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
-      AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
-          "The checkout page total and confirmation page total do not match.");
+      if (data.get("isNonQuoteFlexOrder") == null) {
+        AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
+            "The checkout page total and confirmation page total do not match.");
+      }
     }
 
     return orderNumber;
@@ -1291,10 +1293,8 @@ public class BICTestBase {
     }
 
     if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")) {
-      try {
+      if (bicPage.checkFieldExistence("customerDetailsContinue")) {
         bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      } catch (MetadataException e) {
-        e.printStackTrace();
       }
     }
 
@@ -2034,7 +2034,7 @@ public class BICTestBase {
       report.put("somOrderNumber", somOrder.get("somOrderNumber"));
       report.put("somCreatedDate", somOrderDetails.get("createdTime"));
 
-      HashMap<String,String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTable(results.get(
+      HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTable(results.get(
           BICConstants.orderNumber));
       report.put("invoiceNumber", invoiceDetails.get("invoiceNumber"));
       report.put("invoiceCreatedDate", invoiceDetails.get("createdTime"));
