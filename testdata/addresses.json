@@ -182,7 +182,7 @@
     "payment": "VISA"
   },
   {
-    "address": "Autodesk@215 31st St@Hastings@68901@9916800100@United States@NE",
+    "address": "Autodesk@215 E 31st St@Hastings@68901@9916800100@United States@NE",
     "isTaxed": "Y",
     "locale": "en_US",
     "store": "STORE-NAMER",
