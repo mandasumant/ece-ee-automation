@@ -1363,10 +1363,6 @@ public class BICTestBase {
       // Catching exception to continue the test
     }
 
-    Util.printInfo("Clicked on Buy tokens button");
-
-    Util.sleep(2000);
-
     clickToStayOnSameSite();
 
     signInIframe(data);
