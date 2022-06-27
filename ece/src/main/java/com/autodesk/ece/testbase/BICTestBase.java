@@ -1389,7 +1389,7 @@ public class BICTestBase {
   }
 
   @SuppressWarnings({"static-access", "unused"})
-  @Step("Dot Com: Estimate price via Flex Token Estimator tool " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Dot Com: Navigate to  Flex Cart from DotCom " + GlobalConstants.TAG_TESTINGHUB)
   public void navigateToFlexCartFromDotCom(LinkedHashMap<String, String> data) throws MetadataException {
     String priceId = navigateToCart(data);
 
@@ -1564,6 +1564,7 @@ public class BICTestBase {
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
 
     bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
     bicPage.clickUsingLowLevelActions("customerDetailsAddress");
     bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
   }
