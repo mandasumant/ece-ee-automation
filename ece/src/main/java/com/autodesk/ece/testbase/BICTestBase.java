@@ -2070,7 +2070,7 @@ public class BICTestBase {
     String constructDotComURL = data.get("guacDotComBaseURL") + ".com";
 
     bicPage.navigateToURL(constructDotComURL);
-    bicPage.waitForFieldPresent("signInButton", 2000);
+    bicPage.waitForFieldPresent("signInButton", 10000);
     bicPage.click("signInButton");
   }
 

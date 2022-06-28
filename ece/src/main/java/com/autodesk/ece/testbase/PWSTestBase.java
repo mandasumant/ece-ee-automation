@@ -5,6 +5,7 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.dto.AgentAccountDTO;
 import com.autodesk.ece.dto.AgentContactDTO;
 import com.autodesk.ece.dto.EndCustomerDTO;
+import com.autodesk.ece.dto.FinalizeQuoteDTO;
 import com.autodesk.ece.dto.LineItemDTO;
 import com.autodesk.ece.dto.OfferDTO;
 import com.autodesk.ece.dto.PurchaserDTO;
@@ -88,6 +89,17 @@ public class PWSTestBase {
     return new Gson().toJson(quote);
   }
 
+  private String createQuoteFinalizeBody(String quoteNo, String agentCsn,
+      String agentContactEmail) {
+    AgentContactDTO agentContact = new AgentContactDTO(agentContactEmail);
+    AgentAccountDTO agentAccount = new AgentAccountDTO(agentCsn);
+
+    FinalizeQuoteDTO finalizeQuote =
+        FinalizeQuoteDTO.builder().quoteNumber(quoteNo).agentContact(agentContact).agentAccount(agentAccount)
+           .build();
+
+    return new Gson().toJson(finalizeQuote);
+  }
   public PWSAccessInfo getAccessToken() {
     String base64_header = new String(Base64.getEncoder().encode((clientId + ":" + clientSecret).getBytes()));
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -173,7 +185,7 @@ public class PWSTestBase {
 
     Util.sleep(30000);
 
-    return finalizeQuote(quoteNumber, transactionId, csn);
+    return finalizeQuote(quoteNumber, transactionId, csn, agentContactEmail);
   }
 
   public String createAndFinalizeQuote(Address address, String csn, String agentContactEmail,
@@ -182,23 +194,23 @@ public class PWSTestBase {
   }
 
   @Step("Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
-  private String finalizeQuote(String quoteId, String transactionId, String csn) {
+  private String finalizeQuote(String quoteId, String transactionId, String agentCsn, String agentContactEmail) {
     PWSAccessInfo access_token = getAccessToken();
     String signature = signString(access_token.token, clientSecret, access_token.timestamp);
 
     Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
       put("Authorization", "Bearer " + access_token.token);
-      put("CSN", csn);
+      put("CSN", agentCsn);
       put("signature", signature);
       put("timestamp", access_token.timestamp);
     }};
+    String finalizeBody = createQuoteFinalizeBody(quoteId, agentCsn, agentContactEmail);
 
-    Util.printInfo("Finalizing quote");
     Response response = given()
+        .body(finalizeBody)
         .headers(pwsRequestHeaders)
-        .patch("https://" + hostname + "/v1/quotes/finalize/" + quoteId)
+        .patch("https://" + hostname + "/v1/quotes/finalize")
         .then().extract().response();
-
     if (response.getStatusCode() != 202) {
       AssertUtils.fail("Finalize Quote API returned a non 202 response. Response code: " + response.getStatusCode());
     }
@@ -213,14 +225,14 @@ public class PWSTestBase {
 
       String status = response.jsonPath().getString("status");
 
-      if (status.equals("QUOTED")) {
-        Util.printInfo("Got quote in QUOTED state: " + quoteId);
+      if (status.equals("FINALIZING")) {
+        Util.printInfo("Got quote in FINALIZING state: " + quoteId);
         return quoteId;
       } else {
         Util.printInfo("Quote not finalized yet, status: " + status);
       }
     }
-    AssertUtils.fail("Failed to change quote status to QUOTED");
+    AssertUtils.fail("Failed to change quote status to FINALIZING");
     return "";
   }
 
