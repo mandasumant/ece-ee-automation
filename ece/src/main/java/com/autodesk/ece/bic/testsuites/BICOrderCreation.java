@@ -650,10 +650,9 @@ public class BICOrderCreation extends ECETestBase {
       // Getting a PurchaseOrder details from pelican
       results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-      // Breaks because one of the values is 0
-      //Compare tax in Checkout and Pelican
-      // getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
-      //    results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+      // Compare tax in Checkout and Pelican
+      getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+          results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
       // Get find Subscription ById
       results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
