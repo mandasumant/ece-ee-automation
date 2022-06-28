@@ -12,6 +12,7 @@ default:
   guacResourceURL: "checkout?priceIds="
   guacPriceId: "?priceIds="
   productsPath: "/products/"
+  flexBenefitsPath: "/benefits/flex.com"
   guacMoeResourceURL: "manual-order-entry?optyId="
   guacMoeDTCURL: "manual-order-entry-dtc"
   productName: "autocad"
@@ -44,8 +45,6 @@ default:
   accountsPortalProductsServicesUrl: "https://int-manage.autodesk.com/cep/#products-services/all"
   accountsPortalAddSeatsUrl: "https://int-manage.autodesk.com/billing/add-seats"
   accountsPortalQuoteUrl: "https://int-manage.autodesk.com/billing/quotes"
-
-  flexTokensEstimatorUrl: "https://www-int.autodesk.com/benefits/flex.com"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
