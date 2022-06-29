@@ -16,7 +16,7 @@ LocaleConfig:
     currencyStore: "CAD"
     countryDomain: ".ca/en"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@750 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec"
+    address: "Autodesk@168 Rue Ann@Montréal@H3C 5N5@9916800100@Canada@Quebec"
     isTaxed: "Y"
     quoteAgentCsnAccount: "0070176518"
     agentContactEmail: "canadapartner@letscheck.email"
@@ -27,7 +27,7 @@ LocaleConfig:
     currencyStore: "CAD"
     countryDomain: ".ca/fr"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@75 Rue Ann@Montreal@H3C 5N5@9916800100@Canada@Quebec"
+    address: "Autodesk@168 Rue Ann@Montréal@H3C 5N5@9916800100@Canada@Quebec"
     isTaxed: "Y"
 
   en_GB:
@@ -60,6 +60,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
     address: "Autodesk@Recollectenstraat 112@Weert@6001 AJ@06-65533273@Nederland"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5106131200"
+    agentContactEmail: "partneruser_da_int_5106131200@letscheck.email"
 
   nl_BE:
     region: "NLBE"
@@ -69,6 +71,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
     address: "Autodesk@Rue Leon Delacroix 5@Anderlecht@1070@06-65533273@België"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070066000"
+    agentContactEmail: "partneruser_da_int_5070066000@letscheck.email"
 
   fr_BE:
     region: "FRBE"
@@ -78,6 +82,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,IDEAL"
     address: "Autodesk@Rue Leon Delacroix 5@Anderlecht@1070@06-65533273@Belgium"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070066000"
+    agentContactEmail: "partneruser_da_int_5070066000@letscheck.email"
 
   pl_PL:
     region: "PLPL"
@@ -85,8 +91,10 @@ LocaleConfig:
     currencyStore: "PLN"
     countryDomain: ".pl"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@ul. Dworcowej 49@Jaworzno@43-600@48696207772@Polska"
+    address: "Autodesk@Solec 38@Warszawa@00-394@48696207772@Polska"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070259084"
+    agentContactEmail: "partneruser_da_int_5070259084@letscheck.email"
 
   fr_FR:
     region: "FRFR"
@@ -95,6 +103,8 @@ LocaleConfig:
     countryDomain: ".fr"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
     address: "Autodesk@27 rue La Boétie@Paris@75013@9916800100@France"
+    quoteAgentCsnAccount: "5070001658"
+    agentContactEmail: "partneruser_da_int_5070001658@letscheck.email"
 
   ja_JP:
     region: "JAJP"
@@ -113,6 +123,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY,SOFORT"
     address: "Autodesk@Schöneggweg 21@Babenhausen@87727@65043235263@Deutschland"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5103293723"
+    agentContactEmail: "partneruser_da_int_5103293723@letscheck.email"
 
   it_IT:
     region: "ITIT"
@@ -120,7 +132,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".it"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
-    address: "Autodesk@Via Medina 108@Napoli@80133@0323 0700940@Italia"
+    address: "Autodesk@Via Medina 19@Napoli@80133@0323 0700940@Italia"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070375036"
     agentContactEmail: "partneruser_da_int_5070375036@letscheck.email"
@@ -133,6 +145,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,Direct Debit"
     address: "Autodesk@8 Puerta 231@Palencia@13158@03230700940@España"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070000159"
+    agentContactEmail: "partneruser_da_int_5070000159@letscheck.email"
 
   es_MX:
     region: "ESMX"
@@ -162,6 +176,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Kis Diófa u. 63@Csákánydoroszló@9919@03230700940@Magyarország"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070268110"
+    agentContactEmail: "partneruser_da_int_5070268110@letscheck.email"
 
   pt_PT:
     region: "PTPT"
@@ -171,6 +187,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Rua Rei Lavrador 10@Grândola@7570-192@03230700940@Portugal"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5130334588"
+    agentContactEmail: "partneruser_da_int_5130334588@letscheck.email"
 
   en_AT:
     region: "ENAT"
@@ -234,6 +252,8 @@ LocaleConfig:
     countryDomain: ".cz"
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Milady Horákové 139@Nová Vcelnice@378 42@03230700940@Česká republika"
+    quoteAgentCsnAccount: "5070267984"
+    agentContactEmail: "partneruser_da_int_5070267984@letscheck.email"
 
   de_CH:
     region: "DECH"
@@ -272,6 +292,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
     address: "Autodesk@622 Kory Unions@Smolyan@17941-5172@392 83 44 92@Bulgaria"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070267982"
+    agentContactEmail: "partneruser_da_int_5070267982@letscheck.email"
 
   en_CY:
     region: "ENCY"
@@ -281,6 +303,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
     address: "Autodesk@21 Vyzantiou@Nicosia@2064@143233421@Cyprus"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5100827226"
+    agentContactEmail: "partneruser_da_int_5100827226@letscheck.email"
 
   en_HR:
     region: "ENHR"
@@ -290,6 +314,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
     address: "Autodesk@Poljanice Pete 14@Zagreb@10000@231412341@Croatia"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070268169"
+    agentContactEmail: "partneruser_da_int_5070268169@letscheck.email"
 
   en_LI:
     region: "ENLI"
@@ -299,6 +325,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@232 Main St@Schaanwald@9486@1234@Liechtenstein"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070084998"
+    agentContactEmail: "partneruser_da_int_5070084998@letscheck.email"
 
   en_LV:
     region: "ENLV"
@@ -308,6 +336,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Caka Bld 136@Riga@1009@371(67)29-67-94@Latvia"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070000080"
+    agentContactEmail: "partneruser_da_int_5070000080@letscheck.email"
 
   en_IS:
     region: "ENIS"
@@ -317,6 +347,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Holmatun 62@Bessastaðahreppur@225@231412@Iceland"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070181974"
+    agentContactEmail: "partneruser_da_int_5070181974@letscheck.email"
 
   en_GR:
     region: "ENGR"
@@ -326,6 +358,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Athinas 63@Athina@10552@2333422112@Greece"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5108385410"
+    agentContactEmail: "partneruser_da_int_5108385410@letscheck.email"
 
   en_EE:
     region: "ENEE"
@@ -335,6 +369,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Raua põik 7@Raasiku@75203@1234@Estonia"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070000081"
+    agentContactEmail: "partneruser_da_int_5070000081@letscheck.email"
 
   en_MT:
     region: "ENMT"
@@ -344,6 +380,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Anchor Bay@Mellieha@59538@12341234@Malta"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5105743587"
+    agentContactEmail: "partneruser_da_int_5105743587@letscheck.email"
 
   en_SE:
     region: "ENSE"
@@ -362,6 +400,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Parmova 7@Maribor@2501@4325345@Slovenia"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070268019"
+    agentContactEmail: "partneruser_da_int_5070268019@letscheck.email"
 
   en_SK:
     region: "ENSK"
@@ -371,6 +411,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Prokopova 345/42@Bratislava@85101@223435@Slovakia"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070268137"
+    agentContactEmail: "partneruser_da_int_5070268137@letscheck.email"
 
   en_IE:
     region: "ENIE"
@@ -380,6 +422,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Irish St@Ardee@47545@041-6857993@Ireland"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070181967"
+    agentContactEmail: "partneruser_da_int_5070181967@letscheck.email"
 
   en_RO:
     region: "ENRO"
@@ -389,6 +433,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@New Street@Constant@245254@0241-547 987@Romania"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5108346601"
+    agentContactEmail: "partneruser_da_int_5108346601@letscheck.email"
 
   en_LU:
     region: "ENLU"
@@ -398,6 +444,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@202 B Rue de Hamm@Luxembourg@1111@1234@Luxembourg"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5070188107"
+    agentContactEmail: "partneruser_da_int_5070188107@letscheck.email"
 
   en_LT:
     region: "ENLT"
@@ -407,6 +455,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@Vilniaus g. 105@Širvintos@01100@134213@Lithuania"
     isTaxed: "Y"
+    quoteAgentCsnAccount: "5119623224"
+    agentContactEmail: "partneruser_da_int_5119623224@letscheck.email"
 
   ############################################################
   #Additional locales for testing Appolo

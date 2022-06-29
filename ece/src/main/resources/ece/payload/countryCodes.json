@@ -85,6 +85,10 @@
   },
   {
     "Code": "BE",
+    "Name": "België"
+  },
+  {
+    "Code": "BE",
     "Name": "Belgium"
   },
   {
@@ -246,6 +250,10 @@
   {
     "Code": "DK",
     "Name": "Denmark"
+  },
+  {
+    "Code": "DE",
+    "Name": "Deutschland"
   },
   {
     "Code": "DJ",
@@ -628,6 +636,10 @@
     "Name": "Nauru"
   },
   {
+    "Code": "NL",
+    "Name": "Nederland"
+  },
+  {
     "Code": "NP",
     "Name": "Nepal"
   },
@@ -718,6 +730,10 @@
   {
     "Code": "PL",
     "Name": "Poland"
+  },
+  {
+    "Code": "PL",
+    "Name": "Polska"
   },
   {
     "Code": "PT",

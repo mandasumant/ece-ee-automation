@@ -406,7 +406,7 @@
     "payment": "CREDITCARD"
   },
   {
-    "address": "Autodesk@750 Rue Ann@MONTREAL@H3Z 2Y7@9916800100@Canada@QC",
+    "address": "Autodesk@168 Rue Ann@Montréal@H3Z 2Y7@9916800100@Canada@QC",
     "isTaxed": "Y",
     "locale": "en_CA",
     "store": "STORE-CA",
@@ -611,6 +611,7 @@
     "payment": "CREDITCARD"
   },
   {
+    "address": "Autodesk@Via Medina 19@NA@80133@0323 0700940@Italia",
     "isTaxed": "Y",
     "locale": "it_IT",
     "store": "STORE-IT",
