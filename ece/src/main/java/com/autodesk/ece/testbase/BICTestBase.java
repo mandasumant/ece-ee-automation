@@ -1568,11 +1568,11 @@ public class BICTestBase {
 
     try {
       bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
     } catch (NoSuchElementException e) {
       // Catching no such element exception
+      Util.printInfo("Address confirmation not requested: " + e.getMessage());
     }
-
-    bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
   }
 
   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
