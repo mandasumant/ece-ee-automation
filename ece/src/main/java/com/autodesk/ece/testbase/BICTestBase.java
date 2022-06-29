@@ -41,6 +41,7 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -1292,7 +1293,8 @@ public class BICTestBase {
       enterCustomerDetails(address);
     }
 
-    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS") || ("fi_FI").equals(System.getProperty(BICECEConstants.LOCALE))) {
+    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS") || ("fi_FI").equals(
+        System.getProperty(BICECEConstants.LOCALE))) {
       if (bicPage.checkFieldExistence("customerDetailsContinue")) {
         bicPage.clickUsingLowLevelActions("customerDetailsContinue");
       }
@@ -1560,10 +1562,15 @@ public class BICTestBase {
     bicPage.populateField("postalCodeField", address.get(BICECEConstants.ZIPCODE));
 
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
-
     bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
-    bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+
+    try {
+      bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+    } catch (NoSuchElementException e) {
+      // Catching no such element exception
+    }
+
     bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
   }
 
