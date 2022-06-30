@@ -45,6 +45,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WindowType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -1183,7 +1184,11 @@ public class BICTestBase {
 
         closeGetHelpPopup();
 
-        bicPage.clickUsingLowLevelActions("buyTokensButton");
+        try {
+          bicPage.clickUsingLowLevelActions("buyTokensButton");
+        } catch (WebDriverException e) {
+          Util.printInfo(e.getMessage());
+        }
       } else {
         if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
           selectYearlySubscription(driver);
@@ -1555,10 +1560,12 @@ public class BICTestBase {
 
     bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
 
-    bicPage.clickUsingLowLevelActions("selectStateField");
-    String selectStateOption = bicPage.getFirstFieldLocator("selectStateOption")
-        .replace("<STATE_PROVINCE>", address.get(BICECEConstants.STATE_PROVINCE));
-    driver.findElement(By.xpath(selectStateOption)).click();
+    if (bicPage.checkIfElementExistsInPage("selectStateField", 10)) {
+      bicPage.clickUsingLowLevelActions("selectStateField");
+      String selectStateOption = bicPage.getFirstFieldLocator("selectStateOption")
+          .replace("<STATE_PROVINCE>", address.get(BICECEConstants.STATE_PROVINCE));
+      driver.findElement(By.xpath(selectStateOption)).click();
+    }
 
     bicPage.waitForFieldPresent("postalCodeField", 5000);
     bicPage.populateField("postalCodeField", address.get(BICECEConstants.ZIPCODE));
@@ -1628,17 +1635,31 @@ public class BICTestBase {
       return;
     }
 
-    String taxValue;
+    String taxValue = null;
     if (data.get("productType").equals("flex")) {
-      taxValue = driver
-          .findElement(
-              By.xpath("//p[@data-testid='checkout--order-summary-section--tax'][@data-pricing-source=\"PQ\"]"))
-          .getText();
+      try {
+        if (bicPage.checkIfElementExistsInPage("orderSummaryTax", 10)) {
+          taxValue = driver
+              .findElement(
+                  By.xpath("//p[@data-testid='checkout--order-summary-section--tax'][@data-pricing-source=\"PQ\"]"))
+              .getText();
+        } else {
+          taxValue = driver
+              .findElement(
+                  By.xpath(
+                      "//div[@class='checkout--order-summary-section--products-total']/div[3]/p[@data-pricing-source=\"PQ\"]"))
+              .getText();
+        }
+      } catch (MetadataException e) {
+        e.printStackTrace();
+        Assert.fail("Can not find tax in Order Summary section");
+      }
     } else {
       taxValue = driver
           .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax'][@data-pricing-source=\"PQ\"]"))
           .getText();
     }
+
     taxValue = taxValue.replaceAll("[^0-9]", "");
     double taxValueAmount = Double.parseDouble(taxValue);
     data.put(BICECEConstants.FINAL_TAX_AMOUNT, String.valueOf(taxValueAmount));
