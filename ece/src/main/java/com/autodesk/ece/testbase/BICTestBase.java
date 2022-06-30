@@ -20,6 +20,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -1293,9 +1294,8 @@ public class BICTestBase {
       enterCustomerDetails(address);
     }
 
-    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")
-        || System.getProperty(BICECEConstants.LOCALE).equals("fi_FI")
-        || System.getProperty(BICECEConstants.LOCALE).equals("it_IT")) {
+    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS") || Arrays.asList("fi_FI", "en_GB", "it_IT")
+        .contains(System.getProperty(BICECEConstants.LOCALE))) {
       if (bicPage.checkFieldExistence("customerDetailsContinue")) {
         bicPage.clickUsingLowLevelActions("customerDetailsContinue");
       }
