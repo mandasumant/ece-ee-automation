@@ -13,6 +13,7 @@ default:
   productsPath: "/products/"
   flexBenefitsPath: "/benefits/flex.com"
   guacMoeResourceURL: "manual-order-entry?optyId="
+  guacMoeOdmResourceURL: "manual-order-entry-odm?optyId="
   guacMoeDTCURL: "manual-order-entry-dtc"
   productName: "autocad"
   postalCode: "80202"
@@ -50,6 +51,7 @@ default:
   bicMetaPriceID: &bicMetaPriceID "27209"
   trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview"
   account: "yfds91WdxydZM"
+  accountEnAu: "to be added soon"
   emailid: "acdisttest1801@letscheck.pw"
   guacMoeSku: "C1RK1-WW6737-L785"
 
@@ -123,6 +125,10 @@ validateBicNativeOrderMoe:
   bicNativePriceID: *bicNativePriceID
 
 validateMoeOpportunityFlow:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+
+validateMoeOdmOpportunityFlow:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 

@@ -70,6 +70,7 @@ pipeline {
         booleanParam(name: 'REN', defaultValue: false, description: 'Run Apollo Renewal Tests?')
         booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order?')
         booleanParam(name: 'APOLLO_FLEX', defaultValue: false, description: 'Run FLEX Order?')
+        booleanParam(name: 'APOLLO_FLEX_MOE', defaultValue: false, description: 'Run FLEX MOE Order?')
     }
 
     stages {
@@ -88,7 +89,8 @@ pipeline {
                                     params.APOLLO_ALL == true ||
                                     params.REN == true ||
                                     params.APOLLO_Q20 == true ||
-                                    params.APOLLO_FLEX == true
+                                    params.APOLLO_FLEX == true ||
+                                    params.APOLLO_FLEX_MOE == true
                         }
                     }
                 }
@@ -118,7 +120,8 @@ pipeline {
                                     params.APOLLO_ALL == true ||
                                     params.REN == true ||
                                     params.APOLLO_Q20 == true ||
-                                    params.APOLLO_FLEX == true
+                                    params.APOLLO_FLEX == true ||
+                                    params.APOLLO_FLEX_MOE == true
                         }
                     }
                 }
@@ -152,7 +155,8 @@ pipeline {
                                     params.APOLLO_ALL == true ||
                                     params.REN == true ||
                                     params.APOLLO_Q20 == true ||
-                                    params.APOLLO_FLEX == true
+                                    params.APOLLO_FLEX == true ||
+                                    params.APOLLO_FLEX_MOE == true
                         }
                     }
                 }
@@ -972,6 +976,7 @@ pipeline {
                 }
             }
         }
+
         stage('Apollo Flex Order New Suite') {
             when {
                 branch 'master'
@@ -1116,6 +1121,41 @@ pipeline {
                             '{"displayname":"Flex Estimator USA (en_US)","testcasename":"fbf7fe55","description":"Flex Estimator US(en_US)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"True","address":"Thub@1617 Pearl St Ste 200@Boulder@80302@9916800100@United States@CO"},"notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Flex Estimator CA (en_CA)","testcasename":"fbf7fe55","description":"Flex Estimator CA(en_CA)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","locale":"en_CA","sapValidation":"True","address":"Autodesk@750 Rue Ann@MONTREAL@H3Z 2Y7@9916800100@Canada@QC"},"notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Flex Estimator AUS (en_AU)","testcasename":"fbf7fe55","description":"Flex Estimator AUS(en_AU)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"True","address":"AutodeskAU@240 City Walk@Canberra@2601@397202088@Australia@ACT"},"notsupportedenv":[],"wiki":""}' +
+                            '],"workstreamname":"dclecjt"}'
+                    println("Starting Testing Hub API Call - estore - All")
+                    if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+                        println('Testing Hub API called successfully - estore - All')
+                    } else {
+                        currentBuild.result = 'FAILURE'
+                        println('Testing Hub API call failed - estore - All')
+                    }
+                }
+            }
+        }
+
+        stage('Apollo Flex MOE Order New Suite') {
+            when {
+                branch 'master'
+                expression {
+                    params.APOLLO_FLEX_MOE == true
+                }
+            }
+            steps {
+                echo 'Initiating Apollo Flex MOE Order - All'
+                script {
+                    println("Building Testing Hub API Input Map - All")
+
+                    def testingHubInputMap = [:]
+                    testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
+                    testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+                    testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
+                    testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: E-Commerce Flex MOE Orders on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                            '{"displayname":"MOE O2P Order with OptyId USA","testcasename":"3d2e5cff","description":"MOE O2P Order with OptyId USA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdm-moe","testMethod":"validateMoeOdmOpportunityFlow","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"True","locale":"en_US"},"notsupportedenv":[],"wiki":""},' +
+                            '{"displayname":"MOE O2P Order with OptyId USA","testcasename":"3d2e5cff","description":"MOE O2P Order with OptyId USA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdm-moe","testMethod":"validateMoeOdmOpportunityFlow","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"True","locale":"en_US"},"notsupportedenv":[],"wiki":""},' +
+                            '{"displayname":"MOE O2P Order with OptyId AUS","testcasename":"3d2e5cff","description":"MOE O2P Order with OptyId AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdm-moe","testMethod":"validateMoeOdmOpportunityFlow","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"True","locale":"en_AU"},"notsupportedenv":[],"wiki":""},' +
+                            '{"displayname":"MOE O2P Order with OptyId AUS","testcasename":"3d2e5cff","description":"MOE O2P Order with OptyId AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdm-moe","testMethod":"validateMoeOdmOpportunityFlow","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"True","locale":"en_AU"},"notsupportedenv":[],"wiki":""},' +
+                            '{"displayname":"MOE O2P Order with OptyId CA","testcasename":"3d2e5cff","description":"MOE O2P Order with OptyId CA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdm-moe","testMethod":"validateMoeOdmOpportunityFlow","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"True","locale":"en_CA"},"notsupportedenv":[],"wiki":""},' +
+                            '{"displayname":"MOE O2P Order with OptyId CA","testcasename":"3d2e5cff","description":"MOE O2P Order with OptyId CA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdm-moe","testMethod":"validateMoeOdmOpportunityFlow","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"True","locale":"en_CA"},"notsupportedenv":[],"wiki":""}' +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {

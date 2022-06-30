@@ -1886,10 +1886,10 @@ public class BICTestBase {
       bicPage.selectMainWindow();
       JavascriptExecutor js = (JavascriptExecutor) driver;
       js.executeScript("document.getElementById('order-agreement').click()");
+      Util.sleep(1000);
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to click on 'order-agreement' checkbox");
     }
-    Util.sleep(1000);
   }
 
   public void loginToOxygen(String emailID, String password) {
@@ -1912,7 +1912,7 @@ public class BICTestBase {
     Util.printInfo("Successfully logged in");
   }
 
-  public void signOutFromCheckoutPage() {
+  public void signOutUsingMeMenu() {
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
       js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");

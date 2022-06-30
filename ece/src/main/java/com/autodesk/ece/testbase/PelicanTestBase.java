@@ -535,35 +535,43 @@ public class PelicanTestBase {
       results.put("getPOResponse_billingAddress_city",
           jp.get("billingAddress.city"));
       results.put("getPOResponse_billingAddress_accountCsn",
-          jp.get("billingAddress.accountCsn"));
+          jp.get("billingAddress.accountCsn") != null ? jp.get("billingAddress.accountCsn").toString() : null);
       results.put("getPOResponse_billingAddress_contactCsn",
-          jp.get("billingAddress.contactCsn"));
+          jp.get("billingAddress.contactCsn") != null ? jp.get("billingAddress.contactCsn").toString() : null);
 
-      results.put("getPOResponse_agentAccount_firstName",
-          jp.get("agentAccount.firstName"));
-      results.put("getPOResponse_agentAccount_lastName",
-          jp.get("agentAccount.lastName"));
-      results.put("getPOResponse_agentAccount_addressLine1",
-          jp.get("agentAccount.addressLine1"));
-      results.put("getPOResponse_agentAccount_city",
-          jp.get("agentAccount.city"));
-      results.put("getPOResponse_agentAccount_accountCsn",
-          jp.get("agentAccount.accountCsn"));
-      results.put("getPOResponse_agentAccount_contactCsn",
-          jp.get("agentAccount.contactCsn"));
+      if (jp.get("agentAccount") != null) {
+        results.put("getPOResponse_agentAccount_firstName",
+            jp.get("agentAccount.firstName"));
+        results.put("getPOResponse_agentAccount_lastName",
+            jp.get("agentAccount.lastName"));
+        results.put("getPOResponse_agentAccount_addressLine1",
+            jp.get("agentAccount.addressLine1"));
+        results.put("getPOResponse_agentAccount_city",
+            jp.get("agentAccount.city"));
+        results.put("getPOResponse_agentAccount_accountCsn",
+            jp.get("agentAccount.accountCsn"));
+        results.put("getPOResponse_agentAccount_contactCsn",
+            jp.get("agentAccount.contactCsn"));
+      } else {
+        results.put("getPOResponse_agentAccount", null);
+      }
 
-      results.put("getPOResponse_agentContact_firstName",
-          jp.get("agentContact.firstName"));
-      results.put("getPOResponse_agentContact_lastName",
-          jp.get("agentContact.lastName"));
-      results.put("getPOResponse_agentContact_addressLine1",
-          jp.get("agentContact.addressLine1"));
-      results.put("getPOResponse_agentContact_city",
-          jp.get("agentContact.city"));
-      results.put("getPOResponse_agentContact_accountCsn",
-          jp.get("agentContact.accountCsn"));
-      results.put("getPOResponse_agentContact_contactCsn",
-          jp.get("agentContact.contactCsn"));
+      if (jp.get("agentContact") != null) {
+        results.put("getPOResponse_agentContact_firstName",
+            jp.get("agentContact.firstName"));
+        results.put("getPOResponse_agentContact_lastName",
+            jp.get("agentContact.lastName"));
+        results.put("getPOResponse_agentContact_addressLine1",
+            jp.get("agentContact.addressLine1"));
+        results.put("getPOResponse_agentContact_city",
+            jp.get("agentContact.city"));
+        results.put("getPOResponse_agentContact_accountCsn",
+            jp.get("agentContact.accountCsn"));
+        results.put("getPOResponse_agentContact_contactCsn",
+            jp.get("agentContact.contactCsn"));
+      } else {
+        results.put("getPOResponse_agentContact", null);
+      }
 
       results.put("getPOResponse_oxygenID", jp.get("purchaser.oxygenId").toString());
       results.put(BICECEConstants.SUBTOTAL_WITH_TAX, jp.get("price.totalPrice").toString());
