@@ -1294,7 +1294,8 @@ public class BICTestBase {
       enterCustomerDetails(address);
     }
 
-    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS") || Arrays.asList("fi_FI", "en_GB", "it_IT")
+    if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")
+        || Arrays.asList("fi_FI", "en_GB", "it_IT", "en_BG", "en_EE", "en_IE", "nl_NL", "es_ES", "de_CH")
         .contains(System.getProperty(BICECEConstants.LOCALE))) {
       if (bicPage.checkFieldExistence("customerDetailsContinue")) {
         bicPage.clickUsingLowLevelActions("customerDetailsContinue");

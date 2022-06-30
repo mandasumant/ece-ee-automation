@@ -233,7 +233,7 @@ public class PWSTestBase {
         return quoteId;
       } else if (status.equals("FAILED")) {
         Util.printError(response.jsonPath().getJsonObject("error").toString());
-        AssertUtils.fail("Quote creation failed, error: " + response.jsonPath().getString("error.message"));
+        AssertUtils.fail("Quote finalization failed");
       } else {
         Util.printInfo("Quote not finalized yet, status: " + status);
       }

@@ -176,6 +176,10 @@
     "Name": "Central African Republic"
   },
   {
+    "Code": "CZ",
+    "Name": "Česká republika"
+  },
+  {
     "Code": "TD",
     "Name": "Chad"
   },
@@ -286,6 +290,10 @@
   {
     "Code": "ER",
     "Name": "Eritrea"
+  },
+  {
+    "Code": "ES",
+    "Name": "España"
   },
   {
     "Code": "EE",
@@ -546,6 +554,10 @@
   {
     "Code": "MG",
     "Name": "Madagascar"
+  },
+  {
+    "Code": "HU",
+    "Name": "Magyarország"
   },
   {
     "Code": "MW",
