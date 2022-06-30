@@ -176,6 +176,9 @@ public class PWSTestBase {
         quoteNumber = response.jsonPath().getString("quoteNumber");
         Util.printInfo("Got quote in DRAFT-CREATED status, quote number: " + quoteNumber);
         break;
+      } else if (status.equals("FAILED")) {
+        Util.printError(response.jsonPath().getJsonObject("error").toString());
+        AssertUtils.fail("Quote creation failed, error: " + response.jsonPath().getString("error.message"));
       } else if (attempts >= 19) {
         AssertUtils.fail("Retry exhausted: Failed to get quote in Created");
       } else {
@@ -228,6 +231,9 @@ public class PWSTestBase {
       if (status.equals("FINALIZING")) {
         Util.printInfo("Got quote in FINALIZING state: " + quoteId);
         return quoteId;
+      } else if (status.equals("FAILED")) {
+        Util.printError(response.jsonPath().getJsonObject("error").toString());
+        AssertUtils.fail("Quote creation failed, error: " + response.jsonPath().getString("error.message"));
       } else {
         Util.printInfo("Quote not finalized yet, status: " + status);
       }
