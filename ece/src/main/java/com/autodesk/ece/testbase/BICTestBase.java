@@ -1556,6 +1556,13 @@ public class BICTestBase {
     bicPage.waitForFieldPresent("companyNameField", 5000);
     bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
 
+    if (System.getProperty(BICECEConstants.STORE).equals("STORE-AUS")) {
+      bicPage.clickUsingLowLevelActions("selectCountryField");
+      String selectCountryOption = bicPage.getFirstFieldLocator("selectCountryOption")
+          .replace("<COUNTRY>", System.getProperty(BICECEConstants.LOCALE).substring(3));
+      driver.findElement(By.xpath(selectCountryOption)).click();
+    }
+
     bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
 
     bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
@@ -1567,8 +1574,10 @@ public class BICTestBase {
       driver.findElement(By.xpath(selectStateOption)).click();
     }
 
-    bicPage.waitForFieldPresent("postalCodeField", 5000);
-    bicPage.populateField("postalCodeField", address.get(BICECEConstants.ZIPCODE));
+    if (bicPage.checkIfElementExistsInPage("postalCodeField", 10)) {
+      bicPage.waitForFieldPresent("postalCodeField", 5000);
+      bicPage.populateField("postalCodeField", address.get(BICECEConstants.ZIPCODE));
+    }
 
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
     bicPage.clickUsingLowLevelActions("customerDetailsContinue");
