@@ -1339,6 +1339,7 @@ public class BICTestBase {
     bicPage.clickUsingLowLevelActions("estimatorProductsDropdown");
     bicPage.clickUsingLowLevelActions("estimator3dsmaxProduct");
     bicPage.clickUsingLowLevelActions("estimatorAutocadProduct");
+    bicPage.clickUsingLowLevelActions("productsDropDownClose");
 
     Util.printInfo("Making sure that we can see selected products on the page");
     List<WebElement> autocadProduct = driver.findElements(By.xpath("//div[@class=\"fe-tablerow-product-name\"]"));
