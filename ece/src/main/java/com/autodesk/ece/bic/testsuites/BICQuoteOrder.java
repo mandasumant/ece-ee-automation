@@ -118,7 +118,7 @@ public class BICQuoteOrder extends ECETestBase {
     if(System.getProperty("agentEmail") != null) {
       testDataForEachMethod.put("agentContactEmail", System.getProperty("agentEmail"));
     }
-      testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
+    testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
         PWSTestBase.getQuoteStartDateAsString());
   }
 
@@ -190,12 +190,14 @@ public class BICQuoteOrder extends ECETestBase {
       updateTestingHub(testResults);
 
       //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
-     /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+      portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
         portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
+
+      portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
       portaltb.validateBICOrderTaxInvoice(results);
 
@@ -204,7 +206,7 @@ public class BICQuoteOrder extends ECETestBase {
         portaltb.validateBICOrderTaxInvoice(results);
         testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
-      updateTestingHub(testResults);*/
+      updateTestingHub(testResults);
     }
   }
 

@@ -90,6 +90,19 @@ public class PortalTestBase {
     executor.executeScript(BICECEConstants.ARGUMENTS_CLICK, element);
   }
 
+  public void checkIfQuoteIsStillPresent(String quoteId){
+    openPortalURL(accountsPortalQuoteUrl);
+    WebElement quoteIdElement = null;
+    try {
+      String productXpath = portalPage
+          .getFirstFieldLocator("quoteIdText").replace("TOKEN1", quoteId);
+      quoteIdElement = driver.findElement(By.xpath(productXpath));
+    } catch (Exception e) {
+      //Do nothing here.
+    }
+    AssertUtils.assertEquals(quoteIdElement,null,"QuoteId should not be present after the quote is ordered");
+  }
+
   public void openPortalURL(String data) {
     try {
       driver.manage().window().maximize();
@@ -204,11 +217,11 @@ public class PortalTestBase {
     boolean status = false;
     int attempts = 0;
     WebElement element = null;
-
+    openPortalURL(accountsPortalSubscriptionsUrl);
     while (attempts < 15) {
       try {
         String productXpath = portalPage
-            .getFirstFieldLocator("subscriptionIDInPS").replace("TOKEN1", subscriptionId);
+            .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
         element = driver.findElement(By.xpath(productXpath));
       } catch (Exception e) {
         //Do nothing here.
@@ -1067,7 +1080,7 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-          BICECEConstants.PORTAL_PAYMENT_METHOD)
+              BICECEConstants.PORTAL_PAYMENT_METHOD)
           .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data);
