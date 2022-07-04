@@ -323,6 +323,8 @@ public class PortalTestBase {
     }
   }
 
+
+  @Step("CEP : Purchasing Quote in  Account Portal  " + GlobalConstants.TAG_TESTINGHUB)
   public void purchaseQuoteInAccount(String cepURL, String portalUserName,
       String portalPassword) {
     openPortalBICLaunch(cepURL);
