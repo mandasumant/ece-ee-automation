@@ -89,8 +89,6 @@ public class MOEOrderFlows extends ECETestBase {
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
 
-    Util.printInfo("TEST store value:: " + System.getProperty(BICECEConstants.STORE));
-
     if (System.getProperty(BICECEConstants.STORE).equals("STORE-AUS")) {
       account = testDataForEachMethod.get("accountEnAu");
       contact = testDataForEachMethod.get("contactEnAu");

@@ -141,6 +141,7 @@ validateMoeOpportunityFlow:
 validateMoeOdmOpportunityFlow:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
+  productType: "flex"
 
 validateMoeQuoteOrderFlow:
   productID: *NativeOrderPriceID

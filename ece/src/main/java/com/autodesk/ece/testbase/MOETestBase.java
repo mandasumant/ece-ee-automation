@@ -822,7 +822,7 @@ public class MOETestBase {
         projectCloseDate, fulfillment, currency);
 
     String strUrl = driver.getCurrentUrl();
-    Util.printInfo("TEST URL :: " + strUrl);
+    Util.printInfo("Opty current URL :: " + strUrl);
 
     try {
       if (StringUtils.isNotEmpty(plc)) {
@@ -851,12 +851,15 @@ public class MOETestBase {
 
         moePage.populateField("productSearch", plc);
         Util.sleep(5000);
+
         moePage.clickUsingLowLevelActions("productSearchButton");
         moePage.waitForPageToLoad();
 
+        moePage.checkIfElementExistsInPage("openProductFound", 30);
         moePage.clickUsingLowLevelActions("openProductFound");
         moePage.waitForPageToLoad();
 
+        moePage.checkIfElementExistsInPage("checkbox", 30);
         moePage.click("checkbox");
         Util.sleep(5000);
 
@@ -887,7 +890,7 @@ public class MOETestBase {
         Util.printInfo("Clicked on cta: Close");
 
         if (moePage.checkIfElementExistsInPage("subFrameError", 15)) {
-          Util.printInfo("Failed to go back to opty view page");
+          Util.printInfo("Failed to go back to opty view page. Manually navigating to it.");
           bicTestBase.getUrl(strUrl);
           Util.sleep(5000);
         }
@@ -1085,7 +1088,9 @@ public class MOETestBase {
     if (System.getProperty("usertype").equals("new")) {
       moePage.click("moeModalCloseBtn");
       bicTestBase.waitForLoadingSpinnerToComplete();
-      
+
+      BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+
       // Populate Billing info and save payment profile
       address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
       String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
@@ -1096,6 +1101,8 @@ public class MOETestBase {
 
       results.put(BICConstants.orderNumber, orderNumber);
     } else {
+      BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+
       Util.printInfo("Clicking on Agreement checkbox");
       bicTestBase.agreeToTerm();
 
