@@ -1296,7 +1296,12 @@ public class BICTestBase {
     Map<String, String> address = getBillingAddress(data);
 
     if (data.get("isNonQuoteFlexOrder") != null) {
-      enterCustomerDetails(address);
+      if (Arrays.asList("STORE-NAMER", "STORE-AUS", "STORE-CA").contains(data.get(BICECEConstants.STORE_NAME))) {
+        enterCustomerDetails(address);
+      } else {
+        String paymentType = System.getProperty(BICECEConstants.PAYMENT);
+        populateBillingDetails(address, paymentType);
+      }
     }
 
     if (data.get(BICECEConstants.STORE_NAME).equals("STORE-AUS")
