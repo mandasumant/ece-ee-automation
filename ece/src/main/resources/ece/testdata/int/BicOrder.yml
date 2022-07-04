@@ -215,3 +215,7 @@ validateAccountPortalQuoteOrder:
 validateFlexOrderNewCart:
   isNonQuoteFlexOrder: "true"
   productType: "flex"
+
+validateFlexOrderNewCartRefund:
+  isNonQuoteFlexOrder: "true"
+  productType: "flex"
