@@ -662,8 +662,10 @@ public class PelicanTestBase {
         address.addressLine1.toUpperCase());
     AssertUtils.assertEquals("EndCustomer City should match.",
         pelicanResponseMap.get("getPOResponse_endCustomer_city").toUpperCase(), address.city.toUpperCase());
-    AssertUtils.assertEquals("EndCustomer State should match.",
+    if( address.province != null && !address.province.isEmpty()) {
+     AssertUtils.assertEquals("EndCustomer State should match.",
         pelicanResponseMap.get("getPOResponse_endCustomer_state").toUpperCase(), address.province.toUpperCase());
+    }
     AssertUtils.assertEquals("EndCustomer Country should match.",
         pelicanResponseMap.get("getPOResponse_endCustomer_country").toUpperCase(), address.countryCode.toUpperCase());
     AssertUtils.assertEquals("EndCustomer Postal Code should match.",

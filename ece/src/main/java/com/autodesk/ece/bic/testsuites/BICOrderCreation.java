@@ -679,7 +679,7 @@ public class BICOrderCreation extends ECETestBase {
       updateTestingHub(testResults);
 
       //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
-     /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+      portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
@@ -693,7 +693,7 @@ public class BICOrderCreation extends ECETestBase {
         portaltb.validateBICOrderTaxInvoice(results);
         testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
-      updateTestingHub(testResults);*/
+      updateTestingHub(testResults);
     }
   }
 
@@ -718,8 +718,8 @@ public class BICOrderCreation extends ECETestBase {
       results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
       // Compare tax in Checkout and Pelican
-      // getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
-      // results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+      getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+          results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
       // Get find Subscription ById
       results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
@@ -746,7 +746,7 @@ public class BICOrderCreation extends ECETestBase {
       updateTestingHub(testResults);
 
       //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
-     /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+      portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
@@ -760,7 +760,7 @@ public class BICOrderCreation extends ECETestBase {
         portaltb.validateBICOrderTaxInvoice(results);
         testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
-      updateTestingHub(testResults);*/
+      updateTestingHub(testResults);
     }
   }
 
