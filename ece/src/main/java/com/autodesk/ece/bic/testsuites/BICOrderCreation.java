@@ -687,13 +687,95 @@ public class BICOrderCreation extends ECETestBase {
         portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
 
-      portaltb.validateBICOrderTaxInvoice(results);
-
-
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
         testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
+      updateTestingHub(testResults);
+    }
+  }
+
+  @Test(groups = {"bic-flexdirect-new-refund"}, description = "Validation of Refund of BIC Flex Order New Cart")
+  public void validateFlexOrderNewCartRefund() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    startTime = System.nanoTime();
+    getBicTestBase()
+        .navigateToFlexCartFromDotCom(testDataForEachMethod);
+
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.putAll(results);
+    updateTestingHub(testResults);
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
+
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      // Getting a PurchaseOrder details from pelican
+      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+      // Compare tax in Checkout and Pelican
+      getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+          results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+      // Get find Subscription ById
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+      try {
+        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+        testResults
+            .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+        testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+        testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        testResults.put(BICConstants.subscriptionPeriodStartDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+        testResults.put(BICConstants.subscriptionPeriodEndDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+        testResults
+            .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
+
+      updateTestingHub(testResults);
+
+      // Validate Portal
+      portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+          results.get(BICConstants.emailid),
+          PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      }
+
+      portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
+
+      // Refund PurchaseOrder details from pelican
+      pelicantb.createRefundOrderV4(results);
+
+      //Adyen delays in IPN response is causing test failures. Until the issue is resolved lets
+      // add additional 6min sleep for the IPN message to come back.
+      Util.sleep(360000);
+
+      // Getting a PurchaseOrder details from pelican
+      JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
+      results.put("refund_orderState", jp.get("orderState").toString());
+      results.put("refund_fulfillmentStatus", jp.get("fulfillmentStatus"));
+
+      // Verify that Order status is Refunded
+      AssertUtils.assertEquals("Order status is NOT REFUNDED",
+          results.get("refund_orderState"), "REFUNDED");
+
+      if (getBicTestBase().shouldValidateSAP()) {
+        // Validate Credit Note for the order
+        portaltb.validateBICOrderPDF(results,BICECEConstants.CREDIT_NOTE);
+        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+      }
+
       updateTestingHub(testResults);
     }
   }
@@ -838,9 +920,6 @@ public class BICOrderCreation extends ECETestBase {
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
         portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
-
-      portaltb.validateBICOrderTaxInvoice(results);
-
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
