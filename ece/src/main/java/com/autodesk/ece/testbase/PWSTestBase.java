@@ -228,8 +228,8 @@ public class PWSTestBase {
 
       String status = response.jsonPath().getString("status");
 
-      if (status.equals("FINALIZING")) {
-        Util.printInfo("Got quote in FINALIZING state: " + quoteId);
+      if (status.equals("QUOTED")) {
+        Util.printInfo("Got quote in QUOTED state: " + quoteId);
         return quoteId;
       } else if (status.equals("FAILED")) {
         Util.printError(response.jsonPath().getJsonObject("error").toString());
@@ -238,7 +238,7 @@ public class PWSTestBase {
         Util.printInfo("Quote not finalized yet, status: " + status);
       }
     }
-    AssertUtils.fail("Failed to change quote status to FINALIZING");
+    AssertUtils.fail("Failed to change quote status to QUOTED");
     return "";
   }
 
