@@ -340,7 +340,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Krasta iela 46@Rīga@1003@371(67)29-67-94@Latvia"
+    address: "Autodesk@Krasta iela 46@Riga@1003@371(67)29-67-94@Latvia"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070000080"
     agentContactEmail: "partneruser_da_int_5070000080@letscheck.email"
