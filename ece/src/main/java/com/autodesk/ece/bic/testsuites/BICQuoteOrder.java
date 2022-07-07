@@ -112,6 +112,10 @@ public class BICQuoteOrder extends ECETestBase {
           String.valueOf((int) ((Math.random() * (15000 - 100)) + 1000)));
     }
 
+    if(System.getProperty("currency") != null){
+      testDataForEachMethod.put("currencyStore", System.getProperty("currency"));
+    }
+
     if(System.getProperty("agentCSN") != null){
       testDataForEachMethod.put("quoteAgentCsnAccount",System.getProperty("agentCSN"));
     }
