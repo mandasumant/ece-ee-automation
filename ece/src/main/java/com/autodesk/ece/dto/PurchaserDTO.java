@@ -16,6 +16,6 @@ class PurchaserDTO {
     this.email = data.get(BICECEConstants.emailid);
     this.firstName = data.get(BICECEConstants.FIRSTNAME);
     this.lastName = data.get(BICECEConstants.LASTNAME);
-    this.preferredLanguage = data.get(BICECEConstants.LOCALE).toLowerCase().replace("_", "-");
+    this.preferredLanguage = data.get(BICECEConstants.LOCALE).split("_")[0];
   }
 }
