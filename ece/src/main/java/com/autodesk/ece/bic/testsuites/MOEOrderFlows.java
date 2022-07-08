@@ -99,6 +99,7 @@ public class MOEOrderFlows extends ECETestBase {
       account = testDataForEachMethod.get("account");
       contact = testDataForEachMethod.get("contact");
     }
+    testDataForEachMethod.put("contactEmail", contact);
 
     if (Strings.isNullOrEmpty(System.getProperty("projectCloseDate"))) {
       projectCloseDate = Util.getDateFirstDayNextMonth("MM/dd/yyyy");
@@ -183,13 +184,13 @@ public class MOEOrderFlows extends ECETestBase {
   @Test(groups = {
       "bic-basicflow-moe"}, description = "Basic flow for MOE with Opportunity ID")
   public void validateMoeOpportunityFlow() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
 
     sfdctb.loginSfdcLightningView();
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
-        = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku, currency);
+        = moetb.createMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku, currency);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
@@ -232,7 +233,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.loginSfdcLightningView();
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
-        = moetb.createGUACOpty(optyName, account, stage, projectCloseDate, fulfillment, sku, currency);
+        = moetb.createMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku, currency);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
     HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);
@@ -375,15 +376,15 @@ public class MOEOrderFlows extends ECETestBase {
   }
 
   @Test(groups = {
-      "bic-basicFlowOdm-moe"}, description = "Basic flow for MOE ODM with Opportunity ID")
-  public void validateMoeOdmOpportunityFlow() throws MetadataException {
+      "bic-basicFlowOdmAgent-moe"}, description = "Basic flow for MOE ODM with Opportunity ID")
+  public void validateMoeOdmOpportunityFlowAgent() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
 
     sfdctb.loginSfdcLightningView();
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
-        = moetb.createGUACMoeOdmOpty(optyName, account, stage, projectCloseDate, fulfillment, plc, currency,
+        = moetb.createMoeOdmOpty(optyName, account, stage, projectCloseDate, fulfillment, plc, currency,
         contact);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
 
@@ -441,4 +442,72 @@ public class MOEOrderFlows extends ECETestBase {
       }
       updateTestingHub(testResults);*/
   }
+
+  @Test(groups = {
+      "bic-basicFlowOdmCustomer-moe"}, description = "Validation of Create BIC Order with opty from MOE ODM DTC")
+  public void validateMoeOdmOpportunityFlowCustomer() throws MetadataException, IOException, UnsupportedFlavorException {
+    HashMap<String, String> testResults = new HashMap<>();
+    MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+
+    sfdctb.loginSfdcLightningView();
+    sfdctb.clickOnCreateMOEOpty();
+    HashMap<String, String> sfdcResults
+        = moetb.createMoeOdmOpty(optyName, account, stage, projectCloseDate, fulfillment, plc, currency, contact);
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+    testDataForEachMethod.put("sfdcContactEmail", sfdcResults.get("contactEmail"));
+
+    HashMap<String, String> results = moetb.createBicOrderMoeOdmWithOptyDtc(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
+        BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
+
+    // Verify that Order status is Charged
+    AssertUtils.assertEquals("Order status is not CHARGED",
+        results.get("getPOResponse_orderState"), "CHARGED");
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+//    updateTestingHub(testResults);
+//
+//    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+//        results.get(BICConstants.emailid),
+//        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+//    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+//      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+//    }
+//
+//    portaltb.validateBICOrderTaxInvoice(results);
+//
+//    if (getBicTestBase().shouldValidateSAP()) {
+//      portaltb.validateBICOrderTaxInvoice(results);
+//      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+//    }
+
+    updateTestingHub(testResults);
+  }
+
 }

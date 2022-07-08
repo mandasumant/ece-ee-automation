@@ -128,7 +128,12 @@ validateMoeOpportunityFlow:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 
-validateMoeOdmOpportunityFlow:
+validateMoeOdmOpportunityFlowAgent:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  productType: "flex"
+
+validateMoeOdmOpportunityFlowCustomer:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   productType: "flex"

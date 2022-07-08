@@ -174,7 +174,7 @@ public class MOETestBase {
   }
 
   @Step("Create GUAC MOE opportunity from SFDC " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACOpty(String optyName, String account, String stage,
+  public HashMap<String, String> createMoeOpty(String optyName, String account, String stage,
       String projectCloseDate, String fulfillment, String sku, String currency) {
     HashMap<String, String> results = new HashMap<String, String>();
 
@@ -258,7 +258,7 @@ public class MOETestBase {
   @Step("Place order via Copy cart link generated on DTC page" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBicOrderMoeDTC(LinkedHashMap<String, String> data)
       throws MetadataException, IOException, UnsupportedFlavorException {
-    //TODO: Start from the Salesforce's LC Home page where there's a link for 'Direct to cart'.
+    // TODO: Start from the Salesforce's LC Home page where there's a link for 'Direct to cart'.
 
     HashMap<String, String> results = new HashMap<>();
     Map<String, String> address = null;
@@ -407,7 +407,7 @@ public class MOETestBase {
     // CTA should change from 'Send quote' to 'Resend quote'
     validateQuoteReadOnlyView();
 
-    //Agent clicks on 'Resend quote' CTA
+    // Agent clicks on 'Resend quote' CTA
     Util.printInfo("Click on 'Resend quote' button.");
     moePage.click("moeResendQuote");
     bicTestBase.waitForLoadingSpinnerToComplete();
@@ -811,9 +811,9 @@ public class MOETestBase {
   }
 
   @Step("Create GUAC MOE ODM opportunity from SFDC " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createGUACMoeOdmOpty(String optyName, String account, String stage,
+  public HashMap<String, String> createMoeOdmOpty(String optyName, String account, String stage,
       String projectCloseDate, String fulfillment, String plc, String currency, String contact) {
-    HashMap<String, String> results = new HashMap<String, String>();
+    HashMap<String, String> results = new HashMap<>();
 
     Names names = bicTestBase.generateFirstAndLastNames();
     String emailID = bicTestBase.generateUniqueEmailID();
@@ -908,7 +908,6 @@ public class MOETestBase {
 
     try {
       if (StringUtils.isNotEmpty(contact)) {
-
         moePage.click("titleProducts");
         Util.printInfo("Clicked on titleProducts");
         Util.sleep(2000);
@@ -935,7 +934,7 @@ public class MOETestBase {
           moePage.populateField("contactLastNameInput", names.lastName);
           moePage.clickUsingLowLevelActions("contactEmailInput");
           moePage.populateField("contactEmailInput", emailID);
-          //INFO: Phone number isn't required from SFDC but if not added, the purchase/offer api call
+          // INFO: Phone number isn't required from SFDC but if not added, the purchase/offer api call
           // will fail with the error 'Invalid request payload'.
           moePage.clickUsingLowLevelActions("contactPhoneInput");
           moePage.populateField("contactPhoneInput", "1234567890");
@@ -944,6 +943,10 @@ public class MOETestBase {
           moePage.clickUsingLowLevelActions("contactLanguage");
           Util.sleep(2000);
           moePage.click("saveContactButton");
+
+          String contactEmail = emailID;
+          Util.printInfo(contactEmail);
+          results.put("contactEmail", emailID);
         } else {
           Util.printInfo("Associating existing contact roles to Opty: " + contact);
 
@@ -1119,9 +1122,8 @@ public class MOETestBase {
   @Step("Save payment details and submit order")
   private String savePaymentDetailsAndSubmitOrder(LinkedHashMap<String, String> data,
       Map<String, String> address, String[] paymentCardDetails) {
-    String paymentType = System.getProperty(BICECEConstants.PAYMENT);
 
-    //INFO: R2.0.2 - We only support credit card right now.
+    // INFO: R2.0.2 - We only support credit card right now.
     // For STORE-CA, the UI is set with only cc payment method which default to no tab being visible
     if (moePage.isFieldVisible("creditCardTab")) {
       try {
@@ -1141,6 +1143,125 @@ public class MOETestBase {
     bicTestBase.submitOrder(data);
 
     return bicTestBase.getOrderNumber(data);
+  }
+
+  public HashMap<String, String> createBicOrderMoeOdmWithOptyDtc(LinkedHashMap<String, String> data)
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    HashMap<String, String> results = new HashMap<>();
+    String guacBaseURL = data.get("guacBaseURL");
+    String guacMoeOdmResourceURL = data.get("guacMoeOdmResourceURL") + data.get("guacMoeOptyId");
+    String emailID = data.get("sfdcContactEmail");
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+    Util.printInfo("THE REGION " + data.get(BICECEConstants.LOCALE));
+    bicTestBase.navigateToCart(data);
+
+    results.putAll(getBicOrderMoeOdmWithOptyDtc(data, emailID, guacBaseURL, guacMoeOdmResourceURL,
+        data.get(BICECEConstants.LOCALE), password));
+
+    results.put(BICECEConstants.emailid, emailID);
+
+    return results;
+  }
+
+  private HashMap<String, String> getBicOrderMoeOdmWithOptyDtc(LinkedHashMap<String, String> data, String emailID,
+      String guacBaseURL, String guacMoeOdmResourceURL, String locale, String password)
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    HashMap<String, String> results = new HashMap<>();
+    locale = locale.replace("_", "-");
+    String constructGuacMoeOdmURL = guacBaseURL + locale + "/" + guacMoeOdmResourceURL;
+    System.out.println("constructGuacMoeOdmURL " + constructGuacMoeOdmURL);
+    Map<String, String> address = bicTestBase.getBillingAddress(data);
+    String orderNumber = "";
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+
+    Names names = BICTestBase.generateFirstAndLastNames();
+
+    if (System.getProperty("usertype").equals("new")) {
+      bicTestBase.createBICAccount(names, emailID, password, false);
+      data.putAll(names.getMap());
+      data.put(BICECEConstants.emailid, emailID);
+    }
+
+    bicTestBase.getUrl(constructGuacMoeOdmURL);
+
+    loginToMoe();
+    bicTestBase.waitForLoadingSpinnerToComplete();
+
+    Util.printInfo("Clicking on cta: Continue");
+    moePage.checkIfElementExistsInPage("moeOdmContinueButton", 30);
+    moePage.clickUsingLowLevelActions("moeOdmContinueButton");
+    bicTestBase.waitForLoadingSpinnerToComplete();
+
+    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+
+    // INFO: R2.0.2 - We only support credit card right now.
+    // For STORE-CA, the UI is set with only cc payment method which default to no tab being visible
+    if (moePage.isFieldVisible("creditCardTab")) {
+      try {
+        moePage.click("creditCardTab");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+    if (System.getProperty("usertype").equals("new")) {
+      // Populate Billing info and save payment profile
+      String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
+          .split("@");
+
+      bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
+      bicTestBase.waitForLoadingSpinnerToComplete();
+
+      moePage.click("savePaymentProfile");
+      bicTestBase.waitForLoadingSpinnerToComplete();
+
+    } else {
+      emailID = data.get("contactEmail");
+      data.put(BICECEConstants.emailid, data.get("contactEmail"));
+    }
+
+    String copyCartLink = copyCartLinkFromClipboard();
+    bicTestBase.getUrl(copyCartLink);
+
+    // Sign out from sales agent account
+    bicTestBase.signOutUsingMeMenu();
+
+    driver.switchTo().frame(0);
+
+    bicTestBase.loginToOxygen(emailID, password);
+
+    // INFO: EDM sync is not working in INT as of now the reason why we don't see the data. Issue logged on EDM.
+    // TODO: remove below code once issue is fix.
+    bicTestBase.enterCustomerDetails(address);
+    Util.sleep(3000);
+
+    Util.printInfo("Clicking on cta: Continue");
+
+
+    // In case of address suggestion returned, continue button will be display, else nope.
+    if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
+      try {
+        moePage.click("moeOdmContinueButton");
+        bicTestBase.waitForLoadingSpinnerToComplete();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+    bicTestBase.submitOrder(data);
+
+    orderNumber = bicTestBase.getOrderNumber(data);
+    bicTestBase.printConsole(orderNumber, data, address);
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    Util.sleep(20000);
+
+    String constructPortalUrl = data.get("cepURL");
+    bicTestBase.getUrl(constructPortalUrl);
+
+    return results;
   }
 
 }
