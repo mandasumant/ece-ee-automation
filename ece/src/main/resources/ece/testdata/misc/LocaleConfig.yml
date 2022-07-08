@@ -296,7 +296,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
-    address: "Autodesk@ul. \"Tsar Simeon\" 167@Sofia@1303@392 83 44 92@Bulgaria"
+    address: "Autodesk@622 Kory Unions@Smolyan@17941-5172@392 83 44 92@Bulgaria"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070267982"
     agentContactEmail: "partneruser_da_int_5070267982@letscheck.email"

@@ -570,9 +570,17 @@ public class BICTestBase {
             numberKey = BICECEConstants.VAT_NUMBER;
             break;
         }
-        driver.findElement(By.xpath(orgNameXpath))
-            .sendKeys(address.get(
-                BICECEConstants.ORGANIZATION_NAME) + " " + RandomStringUtils.random(6, true, false));
+
+        try {
+          driver.findElement(By.xpath(orgNameXpath))
+              .sendKeys(address.get(
+                  BICECEConstants.ORGANIZATION_NAME) + " " + RandomStringUtils.random(6, true, false));
+        } catch (NoSuchElementException e) {
+          // Catching no such element exception
+          String element = bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
+              .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+          Util.printInfo("Unable to locate: " + element + e.getMessage());
+        }
 
         if (bicPage.checkIfElementExistsInPage(numberKey, 5)) {
           Util.printInfo("Populating" + numberKey + ": " + taxId);
@@ -1300,6 +1308,10 @@ public class BICTestBase {
 
     if (bicPage.checkFieldExistence("customerDetailsContinue")) {
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    }
+
+    if (bicPage.checkFieldExistence("customerDetailsContinue2")) {
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
     }
 
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
