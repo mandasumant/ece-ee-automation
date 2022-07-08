@@ -1564,7 +1564,7 @@ public class BICTestBase {
     bicPage.waitForFieldPresent("companyNameField", 5000);
     bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
 
-    if (System.getProperty(BICECEConstants.STORE).equals("STORE-AUS")) {
+    if (bicPage.checkIfElementExistsInPage("selectCountryField", 10)) {
       bicPage.clickUsingLowLevelActions("selectCountryField");
       String selectCountryOption = bicPage.getFirstFieldLocator("selectCountryOption")
           .replace("<COUNTRY>", System.getProperty(BICECEConstants.LOCALE).substring(3));
