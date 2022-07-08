@@ -1,8 +1,12 @@
 package com.autodesk.ece.utilities;
 
 
+import com.autodesk.testinghub.core.utils.Util;
 import io.restassured.path.json.JsonPath;
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Random;
 import org.apache.commons.lang.RandomStringUtils;
@@ -36,11 +40,18 @@ public class Address {
     }
 
     ClassLoader classLoader = this.getClass().getClassLoader();
+
     String jsonFilePath = Objects.requireNonNull(
         classLoader.getResource("ece/payload/countryCodes.json")).getPath();
-    File jsonFile = new File(jsonFilePath);
-    JsonPath jp = new JsonPath(jsonFile);
-    countryCode = jp.getString("find { it.Name == '" + this.country + "' }.Code");
+
+    try {
+      FileInputStream fileStream = new FileInputStream(jsonFilePath);
+      InputStreamReader inputStream = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
+      JsonPath jp = new JsonPath(inputStream);
+      countryCode = jp.getString("find { it.Name == '" + this.country + "' }.Code");
+    } catch (FileNotFoundException e) {
+      Util.printError("Failed to load country codes file: " + e.getMessage());
+    }
   }
 
   private String getRandomMobileNumber() {
