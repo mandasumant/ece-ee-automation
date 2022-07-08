@@ -1603,6 +1603,13 @@ public class BICTestBase {
       Util.printInfo("Address confirmation not requested: " + e.getMessage());
     }
     Util.sleep(2000);
+
+    if (bicPage.isFieldEnabled("customerDetailsContinue")) {
+      if (bicPage.checkFieldExistence("customerDetailsContinue2")) {
+        AssertUtils.fail(
+            "Can not continue with order due to invalid address details. Please provide accurate address.");
+      }
+    }
   }
 
   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
