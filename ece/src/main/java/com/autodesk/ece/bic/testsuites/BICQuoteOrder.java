@@ -112,6 +112,10 @@ public class BICQuoteOrder extends ECETestBase {
           String.valueOf((int) ((Math.random() * (15000 - 100)) + 1000)));
     }
 
+    if(System.getProperty("currency") != null){
+      testDataForEachMethod.put("currencyStore", System.getProperty("currency"));
+    }
+
     if(System.getProperty("agentCSN") != null){
       testDataForEachMethod.put("quoteAgentCsnAccount",System.getProperty("agentCSN"));
     }
@@ -189,7 +193,6 @@ public class BICQuoteOrder extends ECETestBase {
 
       updateTestingHub(testResults);
 
-      //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
       portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));

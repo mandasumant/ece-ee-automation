@@ -177,6 +177,10 @@
   },
   {
     "Code": "CZ",
+    "Name": "Czech Republic"
+  },
+  {
+    "Code": "CZ",
     "Name": "Česká republika"
   },
   {
@@ -242,10 +246,6 @@
   {
     "Code": "CY",
     "Name": "Cyprus"
-  },
-  {
-    "Code": "CZ",
-    "Name": "Czech Republic"
   },
   {
     "Code": "DK",
@@ -737,7 +737,7 @@
   },
   {
     "Code": "PN",
-    "Name": "Pitcairn"
+    "Name": "Pitcairn Islands"
   },
   {
     "Code": "PL",

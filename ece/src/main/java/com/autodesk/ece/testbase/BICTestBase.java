@@ -1558,7 +1558,7 @@ public class BICTestBase {
     }
   }
 
-  private void enterCustomerDetails(Map<String, String> address)
+  public void enterCustomerDetails(Map<String, String> address)
       throws MetadataException {
 
     bicPage.waitForFieldPresent("companyNameField", 5000);
@@ -1572,8 +1572,10 @@ public class BICTestBase {
     }
 
     bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
+    Util.sleep(2000);
 
     bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
+    Util.sleep(2000);
 
     if (bicPage.checkIfElementExistsInPage("selectStateField", 10)) {
       bicPage.clickUsingLowLevelActions("selectStateField");
@@ -1581,11 +1583,13 @@ public class BICTestBase {
           .replace("<STATE_PROVINCE>", address.get(BICECEConstants.STATE_PROVINCE));
       driver.findElement(By.xpath(selectStateOption)).click();
     }
+    Util.sleep(2000);
 
     if (bicPage.checkIfElementExistsInPage("postalCodeField", 10)) {
       bicPage.waitForFieldPresent("postalCodeField", 5000);
       bicPage.populateField("postalCodeField", address.get(BICECEConstants.ZIPCODE));
     }
+    Util.sleep(2000);
 
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
     bicPage.clickUsingLowLevelActions("customerDetailsContinue");
@@ -1598,6 +1602,7 @@ public class BICTestBase {
       // Catching no such element exception
       Util.printInfo("Address confirmation not requested: " + e.getMessage());
     }
+    Util.sleep(2000);
   }
 
   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {

@@ -679,7 +679,6 @@ public class BICOrderCreation extends ECETestBase {
 
       updateTestingHub(testResults);
 
-      //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
       portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -828,7 +827,6 @@ public class BICOrderCreation extends ECETestBase {
 
       updateTestingHub(testResults);
 
-      //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
       portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
