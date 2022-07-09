@@ -1448,6 +1448,8 @@ public class BICTestBase {
       js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");");
       Util.printInfo("Local Storage: set 'usi_launched' to true.");
       js.executeScript("window.localStorage.setItem(\"usi_launched\",\"true\");");
+      Util.printInfo("Session Storage: set 'nonsensitiveHasNonLocalModalLaunched' to true.");
+      js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       e2.printStackTrace();
@@ -1937,10 +1939,9 @@ public class BICTestBase {
   }
 
   public void loginToOxygen(String emailID, String password) {
-    bicPage.waitForPageToLoad();
-    Util.sleep(60000);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(bicPage.getFirstFieldLocator("autodeskId"))));
 
-    bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
     bicPage.populateField(BICECEConstants.AUTODESK_ID, emailID);
     bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 5000);

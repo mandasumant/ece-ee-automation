@@ -95,8 +95,8 @@ public class MOETestBase {
     loginToMoe();
 
     // Perform account lookup for the customer's email address that will show as 'account not found'.
-    Names names = bicTestBase.generateFirstAndLastNames();
-    String emailID = bicTestBase.generateUniqueEmailID();
+    Names names = BICTestBase.generateFirstAndLastNames();
+    String emailID = BICTestBase.generateUniqueEmailID();
     emulateUser(emailID, names);
 
     // TODO: Validate that the product that's added by default to GUAC MOE cart matches with the line items that are part of the Opportunity (passed to GUAC as part of get Opty call).
@@ -305,7 +305,7 @@ public class MOETestBase {
 
     address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
 
-    Names names = bicTestBase.generateFirstAndLastNames();
+    Names names = BICTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password, false);
     data.putAll(names.getMap());
     data.put(BICECEConstants.emailid, emailID);
@@ -781,6 +781,14 @@ public class MOETestBase {
     bicTestBase.getUrl(constructMoeDtcUrl);
   }
 
+  private void navigateToMoeOdmDtcUrl(LinkedHashMap<String, String> data, String guacBaseURL,
+      String locale) {
+    String guacMoeOdmDtcUrl = data.get("guacMoeOdmDtcResourceURL");
+    String constructMoeOdmDtcUrl = guacBaseURL + locale + "/" + guacMoeOdmDtcUrl;
+    System.out.println("constructMoeOdmDtcUrl " + constructMoeOdmDtcUrl);
+    bicTestBase.getUrl(constructMoeOdmDtcUrl);
+  }
+
   private void proceedToDtcCartSection() throws MetadataException {
     loginToMoe();
     moePage.clickUsingLowLevelActions("moeDtcContinueBtn");
@@ -815,8 +823,8 @@ public class MOETestBase {
       String projectCloseDate, String fulfillment, String plc, String currency, String contact) {
     HashMap<String, String> results = new HashMap<>();
 
-    Names names = bicTestBase.generateFirstAndLastNames();
-    String emailID = bicTestBase.generateUniqueEmailID();
+    Names names = BICTestBase.generateFirstAndLastNames();
+    String emailID = BICTestBase.generateUniqueEmailID();
 
     addOptyDetailsAndSave(optyName, account, stage,
         projectCloseDate, fulfillment, currency);
@@ -1081,7 +1089,6 @@ public class MOETestBase {
     bicTestBase.setStorageData();
 
     loginToMoe();
-    bicTestBase.waitForLoadingSpinnerToComplete();
 
     Util.printInfo("Clicking on cta: Continue");
     moePage.checkIfElementExistsInPage("moeOdmContinueButton", 30);
@@ -1145,6 +1152,7 @@ public class MOETestBase {
     return bicTestBase.getOrderNumber(data);
   }
 
+  @Step("Place order on MOE ODM page" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBicOrderMoeOdmWithOptyDtc(LinkedHashMap<String, String> data)
       throws MetadataException, IOException, UnsupportedFlavorException {
     HashMap<String, String> results = new HashMap<>();
@@ -1163,6 +1171,7 @@ public class MOETestBase {
     return results;
   }
 
+  @Step("Place order via Copy cart link generated on MOE ODM page" + GlobalConstants.TAG_TESTINGHUB)
   private HashMap<String, String> getBicOrderMoeOdmWithOptyDtc(LinkedHashMap<String, String> data, String emailID,
       String guacBaseURL, String guacMoeOdmResourceURL, String locale, String password)
       throws MetadataException, IOException, UnsupportedFlavorException {
@@ -1183,9 +1192,9 @@ public class MOETestBase {
     }
 
     bicTestBase.getUrl(constructGuacMoeOdmURL);
+    bicTestBase.setStorageData();
 
     loginToMoe();
-    bicTestBase.waitForLoadingSpinnerToComplete();
 
     Util.printInfo("Clicking on cta: Continue");
     moePage.checkIfElementExistsInPage("moeOdmContinueButton", 30);
@@ -1237,15 +1246,10 @@ public class MOETestBase {
 
     Util.printInfo("Clicking on cta: Continue");
 
-
     // In case of address suggestion returned, continue button will be display, else nope.
     if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
-      try {
-        moePage.click("moeOdmContinueButton");
-        bicTestBase.waitForLoadingSpinnerToComplete();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      moePage.click("moeOdmContinueButton");
+      bicTestBase.waitForLoadingSpinnerToComplete();
     }
 
     bicTestBase.submitOrder(data);
@@ -1260,6 +1264,69 @@ public class MOETestBase {
 
     String constructPortalUrl = data.get("cepURL");
     bicTestBase.getUrl(constructPortalUrl);
+
+    return results;
+  }
+
+  @Step("Place order via Copy cart link generated on MOE ODM DTC page" + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createBicOrderMoeOdmDtc(LinkedHashMap<String, String> data)
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    HashMap<String, String> results = new HashMap<>();
+    Map<String, String> address = bicTestBase.getBillingAddress(data);
+    String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    String guacBaseURL = data.get("guacBaseURL");
+    navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
+    bicTestBase.setStorageData();
+
+    loginToMoe();
+
+    AssertUtils.assertTrue(driver
+        .findElement(By.xpath("//div[@data-wat-link-section=\"checkout-empty-cart\"]"))
+        .isDisplayed());
+
+    Util.printInfo("Add Flex product");
+    moePage.click("moeAddFlexProductButton");
+    Util.sleep(3000);
+
+    WebElement productLineItem = driver.findElement(
+        By.xpath(moePage.getFirstFieldLocator("moeProductLineItem")));
+    AssertUtils.assertTrue(
+        productLineItem.getText().contains("Flex"));
+
+    String copyCartLink = copyCartLinkFromClipboard();
+
+    Names names = BICTestBase.generateFirstAndLastNames();
+    data.putAll(names.getMap());
+    String emailID = BICTestBase.generateUniqueEmailID();
+    data.put(BICECEConstants.emailid, emailID);
+
+    loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
+
+    bicTestBase.enterCustomerDetails(address);
+
+    // In case of address suggestion returned, continue button will be display, else nope.
+    if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
+      moePage.click("moeOdmContinueButton");
+      bicTestBase.waitForLoadingSpinnerToComplete();
+    }
+
+    String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
+        .split("@");
+
+    bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
+    bicTestBase.waitForLoadingSpinnerToComplete();
+
+    moePage.click("savePaymentProfile");
+    bicTestBase.waitForLoadingSpinnerToComplete();
+
+    bicTestBase.submitOrder(data);
+    String orderNumber = bicTestBase.getOrderNumber(data);
+    bicTestBase.printConsole(orderNumber, data, address);
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
   }
