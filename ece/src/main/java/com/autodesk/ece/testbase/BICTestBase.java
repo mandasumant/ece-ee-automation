@@ -1566,7 +1566,7 @@ public class BICTestBase {
     bicPage.waitForFieldPresent("companyNameField", 5000);
     bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
 
-    if (System.getProperty(BICECEConstants.STORE).equals("STORE-AUS")) {
+    if (bicPage.checkIfElementExistsInPage("selectCountryField", 10)) {
       bicPage.clickUsingLowLevelActions("selectCountryField");
       String selectCountryOption = bicPage.getFirstFieldLocator("selectCountryOption")
           .replace("<COUNTRY>", System.getProperty(BICECEConstants.LOCALE).substring(3));
@@ -1605,6 +1605,13 @@ public class BICTestBase {
       Util.printInfo("Address confirmation not requested: " + e.getMessage());
     }
     Util.sleep(2000);
+
+    if (bicPage.isFieldEnabled("customerDetailsContinue")) {
+      if (bicPage.isFieldEnabled("customerDetailsContinue2")) {
+        AssertUtils.fail(
+            "Can not continue with order due to invalid address details. Please provide accurate address.");
+      }
+    }
   }
 
   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
