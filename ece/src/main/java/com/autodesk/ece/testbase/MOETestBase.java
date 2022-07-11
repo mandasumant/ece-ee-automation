@@ -1246,7 +1246,7 @@ public class MOETestBase {
 
     Util.printInfo("Clicking on cta: Continue");
 
-    // In case of address suggestion returned, continue button will be display, else nope.
+    // In case address suggestion is returned, continue button will be displayed.
     if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
       moePage.click("moeOdmContinueButton");
       bicTestBase.waitForLoadingSpinnerToComplete();
@@ -1278,7 +1278,6 @@ public class MOETestBase {
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String guacBaseURL = data.get("guacBaseURL");
     navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
-    bicTestBase.setStorageData();
 
     loginToMoe();
 
@@ -1301,6 +1300,8 @@ public class MOETestBase {
     data.putAll(names.getMap());
     String emailID = BICTestBase.generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
+
+    updateStorageData();
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
 
@@ -1328,7 +1329,74 @@ public class MOETestBase {
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
 
+    updateStorageData();
+
     return results;
+  }
+
+  @Step("Create BIC Existing User Order Creation via O2P Cart " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createBicOrderForReturningUserMoeOdmDtc(LinkedHashMap<String, String> data)
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    HashMap<String, String> results = new HashMap<>();
+    Map<String, String> address = bicTestBase.getBillingAddress(data);
+    String emailID = data.get(BICConstants.emailid);
+    String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
+    String guacBaseURL = data.get("guacBaseURL");
+    navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
+
+    loginToMoe();
+
+    AssertUtils.assertTrue(driver
+        .findElement(By.xpath("//div[@data-wat-link-section=\"checkout-empty-cart\"]"))
+        .isDisplayed());
+
+    Util.printInfo("Add Flex product");
+    moePage.click("moeAddFlexProductButton");
+    Util.sleep(3000);
+
+    WebElement productLineItem = driver.findElement(
+        By.xpath(moePage.getFirstFieldLocator("moeProductLineItem")));
+    AssertUtils.assertTrue(
+        productLineItem.getText().contains("Flex"));
+
+    String copyCartLink = copyCartLinkFromClipboard();
+
+    updateStorageData();
+
+    bicTestBase.getUrl(copyCartLink);
+    moePage.waitForPageToLoad();
+
+    // Sign out from sales agent account
+    bicTestBase.signOutUsingMeMenu();
+
+    bicTestBase.loginAccount(data);
+
+    bicTestBase.enterCustomerDetails(address);
+
+    // In case of address suggestion returned, continue button will be display, else nope.
+    if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
+      moePage.click("moeOdmContinueButton");
+      bicTestBase.waitForLoadingSpinnerToComplete();
+    }
+
+    bicTestBase.submitOrder(data);
+    String orderNumber = bicTestBase.getOrderNumber(data);
+    bicTestBase.printConsole(orderNumber, data, address);
+
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
+  private void updateStorageData() {
+    Util.printInfo("Delete cookies and clear session and local storages.");
+    driver.manage().deleteAllCookies();
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("window.sessionStorage.clear();");
+    js.executeScript("window.localStorage.clear();");
+    driver.navigate().refresh();
+    bicTestBase.setStorageData();
   }
 
 }

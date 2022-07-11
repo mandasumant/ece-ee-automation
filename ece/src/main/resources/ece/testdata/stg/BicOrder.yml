@@ -130,18 +130,23 @@ validateMoeOpportunityFlow:
   bicNativePriceID: *bicNativePriceID
 
 validateMoeOdmOpportunityFlowAgent:
-  productID: *NativeOrderPriceID
-  bicNativePriceID: *bicNativePriceID
+  productID: *FlexOrderPriceID
+  bicFlexPriceID: *FlexOrderPriceID
   productType: "flex"
 
 validateMoeOdmOpportunityFlowCustomer:
-  productID: *NativeOrderPriceID
-  bicNativePriceID: *bicNativePriceID
+  productID: *FlexOrderPriceID
+  bicFlexPriceID: *FlexOrderPriceID
   productType: "flex"
 
 validateMoeOdmDtcFlowCustomer:
-  productID: *NativeOrderPriceID
-  bicNativePriceID: *bicNativePriceID
+  productID: *FlexOrderPriceID
+  bicFlexPriceID: *FlexOrderPriceID
+  productType: "flex"
+
+validateMoeOdmDtcFlowReturningCustomer:
+  productID: *FlexOrderPriceID
+  bicFlexPriceID: *FlexOrderPriceID
   productType: "flex"
 
 validateMoeQuoteOrderFlow:

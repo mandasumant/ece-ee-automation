@@ -501,8 +501,6 @@ public class MOEOrderFlows extends ECETestBase {
 //      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
 //    }
 //
-//    portaltb.validateBICOrderTaxInvoice(results);
-//
 //    if (getBicTestBase().shouldValidateSAP()) {
 //      portaltb.validateBICOrderTaxInvoice(results);
 //      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
@@ -562,7 +560,93 @@ public class MOEOrderFlows extends ECETestBase {
       portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
-    portaltb.validateBICOrderTaxInvoice(results);
+    if (getBicTestBase().shouldValidateSAP()) {
+      portaltb.validateBICOrderTaxInvoice(results);
+      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+    }
+
+    updateTestingHub(testResults);
+  }
+
+  @Test(groups = {
+      "bic-returningUserOdmDtc-moe"}, description = "Validation of returning user purchase flow for MOE ODM DTC")
+  public void validateMoeOdmDtcFlowReturningCustomer()
+      throws MetadataException, IOException, UnsupportedFlavorException {
+    HashMap<String, String> testResults = new HashMap<>();
+    MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+
+    testDataForEachMethod.put(
+        BICECEConstants.PRODUCT_ID, testDataForEachMethod.get(BICECEConstants.PRODUCT_ID));
+    Util.printInfo("Placing initial order.");
+
+    HashMap<String, String> results = moetb.createBicOrderMoeOdmDtc(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    updateTestingHub(testResults);
+
+    results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
+    results.remove(BICConstants.orderNumber);
+    updateTestingHub(results);
+    testDataForEachMethod.putAll(results);
+
+    testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get(
+        BICECEConstants.PRODUCT_ID));
+    Util.printInfo("Placing second order for the returning user.");
+
+    results = moetb.createBicOrderForReturningUserMoeOdmDtc(testDataForEachMethod);
+    results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    updateTestingHub(results);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
+        BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
+
+    // Verify that Order status is Charged
+    AssertUtils.assertEquals("Order status is not CHARGED",
+        results.get("getPOResponse_orderState"), "CHARGED");
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+    // Initial order validation in Portal
+    updateTestingHub(testResults);
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
 
     if (getBicTestBase().shouldValidateSAP()) {
       portaltb.validateBICOrderTaxInvoice(results);

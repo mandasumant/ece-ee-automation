@@ -154,6 +154,11 @@ validateMoeOdmDtcFlowCustomer:
   bicNativePriceID: *bicNativePriceID
   productType: "flex"
 
+validateMoeOdmDtcFlowReturningCustomer:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  productType: "flex"
+
 validateMoeQuoteOrderFlow:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
