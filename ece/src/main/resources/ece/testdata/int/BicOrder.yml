@@ -15,6 +15,7 @@ default:
   flexBenefitsPath: "/benefits/flex.com"
   guacMoeResourceURL: "manual-order-entry?optyId="
   guacMoeOdmResourceURL: "manual-order-entry-odm?optyId="
+  guacMoeOdmDtcResourceURL: "manual-order-entry-odm-dtc"
   guacMoeDTCURL: "manual-order-entry-dtc"
   productName: "autocad"
   postalCode: "80202"
@@ -144,6 +145,11 @@ validateMoeOdmOpportunityFlowAgent:
   productType: "flex"
 
 validateMoeOdmOpportunityFlowCustomer:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  productType: "flex"
+
+validateMoeOdmDtcFlowCustomer:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
   productType: "flex"
