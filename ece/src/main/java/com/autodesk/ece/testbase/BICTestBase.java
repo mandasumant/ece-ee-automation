@@ -1594,16 +1594,22 @@ public class BICTestBase {
     Util.sleep(2000);
 
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
-    bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    }
     bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
 
     try {
       bicPage.clickUsingLowLevelActions("customerDetailsAddress");
-      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
     } catch (NoSuchElementException e) {
       // Catching no such element exception
       Util.printInfo("Address confirmation not requested: " + e.getMessage());
     }
+
+    if (bicPage.checkFieldExistence("customerDetailsContinue2")) {
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+    }
+
     Util.sleep(2000);
 
     if (bicPage.isFieldEnabled("customerDetailsContinue")) {

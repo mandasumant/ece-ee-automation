@@ -362,7 +362,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Αθηνάς 63@Αθήνα@105 52@2333422112@Greece"
+    address: "Autodesk@Athinas 63@Athina@105 52@2333422112@Greece"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5108385410"
     agentContactEmail: "partneruser_da_int_5108385410@letscheck.email"
