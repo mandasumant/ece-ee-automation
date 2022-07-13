@@ -658,8 +658,8 @@ public class PelicanTestBase {
     AssertUtils.assertEquals("EndCustomer Company should match",
         pelicanResponseMap.get("getPOResponse_endCustomer_company").toUpperCase(), address.company.toUpperCase());
     AssertUtils.assertEquals("EndCustomer Street Name should match.",
-        pelicanResponseMap.get("getPOResponse_endCustomer_addressLine1").toUpperCase(),
-        address.addressLine1.toUpperCase());
+        pelicanResponseMap.get("getPOResponse_endCustomer_addressLine1").substring(0,4).toUpperCase(),
+        address.addressLine1.substring(0,4).toUpperCase());
     AssertUtils.assertEquals("EndCustomer City should match.",
         pelicanResponseMap.get("getPOResponse_endCustomer_city").toUpperCase(), address.city.toUpperCase());
     if( address.province != null && !address.province.isEmpty()) {

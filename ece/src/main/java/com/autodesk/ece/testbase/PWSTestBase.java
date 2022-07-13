@@ -1,6 +1,8 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.head;
+import static io.restassured.RestAssured.post;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.dto.AgentAccountDTO;
 import com.autodesk.ece.dto.AgentContactDTO;
@@ -12,6 +14,7 @@ import com.autodesk.ece.dto.PurchaserDTO;
 import com.autodesk.ece.dto.QuoteDTO;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.testinghub.core.sfdc.SFDCAPI;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.google.gson.Gson;
@@ -100,6 +103,7 @@ public class PWSTestBase {
 
     return new Gson().toJson(finalizeQuote);
   }
+
   public PWSAccessInfo getAccessToken() {
     String base64_header = new String(Base64.getEncoder().encode((clientId + ":" + clientSecret).getBytes()));
     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -111,6 +115,7 @@ public class PWSTestBase {
         .header("signature", signature)
         .header("timestamp", timestamp)
         .header("Authorization", "Basic " + base64_header)
+        .header("timezone_city", System.getProperty("user.timezone"))
         .post("https://" + hostname + "/v2/oauth/generateaccesstoken?grant_type=client_credentials")
         .then().extract().response()
         .jsonPath().getString("access_token");
@@ -145,6 +150,7 @@ public class PWSTestBase {
       put("CSN", csn);
       put("signature", signature);
       put("timestamp", access_token.timestamp);
+      put("timezone_city", System.getProperty("user.timezone"));
     }};
 
     String payloadBody = createQuoteBody(data, address, csn, agentContactEmail, isMultiLineItem);
@@ -186,8 +192,9 @@ public class PWSTestBase {
       }
     }
 
+    Util.printInfo("Getting Quote Details");
+    Response res = getQuoteDetails(csn, quoteNumber);
     Util.sleep(30000);
-
     return finalizeQuote(quoteNumber, transactionId, csn, agentContactEmail);
   }
 
@@ -206,6 +213,7 @@ public class PWSTestBase {
       put("CSN", agentCsn);
       put("signature", signature);
       put("timestamp", access_token.timestamp);
+      put("timezone_city", System.getProperty("user.timezone"));
     }};
     String finalizeBody = createQuoteFinalizeBody(quoteId, agentCsn, agentContactEmail);
 
@@ -234,6 +242,23 @@ public class PWSTestBase {
       } else if (status.equals("FAILED")) {
         Util.printError(response.jsonPath().getJsonObject("error").toString());
         AssertUtils.fail("Quote finalization failed");
+      } else if (status.equals("UNDER-REVIEW")) {
+        SFDCAPI sfdcApi = new SFDCAPI();
+        Response quoteDetails = getQuoteDetails(agentCsn, quoteId);
+        String accountName = quoteDetails.jsonPath().getString("endCustomer.name");
+        String accountCSN =  quoteDetails.jsonPath().getString("endCustomer.accountCsn");
+        String streetAddress =  quoteDetails.jsonPath().getString("endCustomer.addressLine1");
+        String city =  quoteDetails.jsonPath().getString("endCustomer.city");
+        String countryCode =  quoteDetails.jsonPath().getString("endCustomer.countryCode");
+        String postalCode =  quoteDetails.jsonPath().getString("endCustomer.postalCode");
+        Util.printInfo("SFDC Input  : " + countryCode + " " + postalCode + " " + accountName + " " + streetAddress + " "+ accountCSN);
+        boolean publishAccountEC = sfdcApi.publishAccountEC(accountName, accountCSN, streetAddress, city, countryCode,
+            postalCode);
+        if (!publishAccountEC) {
+          AssertUtils.fail("Failed to publish account to EC system.");
+        }
+        Response statusRes = getQuoteStatus(pwsRequestHeaders, transactionId);
+        statusRes.prettyPrint();
       } else {
         Util.printInfo("Quote not finalized yet, status: " + status);
       }
@@ -246,6 +271,26 @@ public class PWSTestBase {
     return given()
         .headers(headers)
         .get("https://" + hostname + "/v1/quotes/status?transactionId=" + transactionId)
+        .then().extract().response();
+  }
+
+  private Response getQuoteDetails(String agentCSN, String quoteNo) {
+   Util.printInfo("Calling Get Quote Details API");
+    PWSAccessInfo access_token = getAccessToken();
+    String signature = signString(access_token.token, clientSecret, access_token.timestamp);
+    String quoteNumber = null;
+
+    Map<String, String> newHeaders = new HashMap<String, String>() {{
+      put("Authorization", "Bearer " + access_token.token);
+      put("CSN", agentCSN);
+      put("signature", signature);
+      put("timestamp", access_token.timestamp);
+      put("timezone_city", System.getProperty("user.timezone"));
+    }};
+
+    return  given()
+        .headers(newHeaders)
+        .get("https://" + hostname + "/v1/quotes?quoteNumber=" + quoteNo)
         .then().extract().response();
   }
 
