@@ -242,7 +242,7 @@ public class PWSTestBase {
       } else if (status.equals("FAILED")) {
         Util.printError(response.jsonPath().getJsonObject("error").toString());
         AssertUtils.fail("Quote finalization failed");
-      } else if (status.equals("UNDER-REVIEW") || (status.equals("FINALIZED") && attempts == 3)) {
+      } else if (status.equals("UNDER-REVIEW") || (status.equals("FINALIZING") && attempts == 3)) {
         SFDCAPI sfdcApi = new SFDCAPI();
         Response quoteDetails = getQuoteDetails(agentCsn, quoteId);
         String accountName = quoteDetails.jsonPath().getString("endCustomer.name");
