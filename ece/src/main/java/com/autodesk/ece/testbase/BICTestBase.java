@@ -1960,6 +1960,9 @@ public class BICTestBase {
   }
 
   public void signOutUsingMeMenu() {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("meMenu-avatar-flyout")));
+
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
       js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");

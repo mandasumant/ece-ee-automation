@@ -1201,7 +1201,7 @@ public class MOETestBase {
     moePage.clickUsingLowLevelActions("moeOdmContinueButton");
     bicTestBase.waitForLoadingSpinnerToComplete();
 
-    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,800);");
 
     // INFO: R2.0.2 - We only support credit card right now.
     // For STORE-CA, the UI is set with only cc payment method which default to no tab being visible
@@ -1238,17 +1238,28 @@ public class MOETestBase {
     driver.switchTo().frame(0);
 
     bicTestBase.loginToOxygen(emailID, password);
+    bicTestBase.waitForLoadingSpinnerToComplete();
 
-    // INFO: EDM sync is not working in INT as of now the reason why we don't see the data. Issue logged on EDM.
-    // TODO: remove below code once issue is fix.
-    bicTestBase.enterCustomerDetails(address);
-    Util.sleep(3000);
+    driver.switchTo().defaultContent();
 
-    Util.printInfo("Clicking on cta: Continue");
+    if (System.getProperty("usertype").equals("new")) {
+      bicTestBase.enterCustomerDetails(address);
+      Util.sleep(3000);
+    }
+
+    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1200);");
 
     // In case address suggestion is returned, continue button will be displayed.
     if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
+      Util.printInfo("Clicking on cta: Continue");
       moePage.click("moeOdmContinueButton");
+      bicTestBase.waitForLoadingSpinnerToComplete();
+    }
+
+    // TODO: remove once APLR2PMO-10181 is resolved.
+    if (moePage.checkIfElementExistsInPage("moeOdmCancelButton", 10)) {
+      Util.printInfo("Clicking on cta: Cancel");
+      moePage.clickUsingLowLevelActions("moeOdmCancelButton");
       bicTestBase.waitForLoadingSpinnerToComplete();
     }
 
@@ -1296,12 +1307,12 @@ public class MOETestBase {
 
     String copyCartLink = copyCartLinkFromClipboard();
 
+    deleteCartItemFromStorage();
+
     Names names = BICTestBase.generateFirstAndLastNames();
     data.putAll(names.getMap());
     String emailID = BICTestBase.generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
-
-    updateStorageData();
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
 
@@ -1329,7 +1340,10 @@ public class MOETestBase {
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
 
-    updateStorageData();
+    // Sign out from sales agent account
+    bicTestBase.signOutUsingMeMenu();
+
+    deleteCartItemFromStorage();
 
     return results;
   }
@@ -1364,7 +1378,6 @@ public class MOETestBase {
     updateStorageData();
 
     bicTestBase.getUrl(copyCartLink);
-    moePage.waitForPageToLoad();
 
     // Sign out from sales agent account
     bicTestBase.signOutUsingMeMenu();
@@ -1386,6 +1399,8 @@ public class MOETestBase {
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
 
+    bicTestBase.signOutUsingMeMenu();
+
     return results;
   }
 
@@ -1396,7 +1411,16 @@ public class MOETestBase {
     js.executeScript("window.sessionStorage.clear();");
     js.executeScript("window.localStorage.clear();");
     driver.navigate().refresh();
+    Util.sleep(5000);
     bicTestBase.setStorageData();
+  }
+
+  // TODO: remove once ECEECOM-2946 is implemented.
+  private void deleteCartItemFromStorage() {
+    Util.printInfo("Delete cookies and clear session and local storages.");
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("window.localStorage.removeItem('cart');");
+    Util.sleep(2000);
   }
 
 }
