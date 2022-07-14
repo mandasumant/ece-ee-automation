@@ -1596,7 +1596,14 @@ public class BICTestBase {
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
-      bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      bicPage.click("customerDetailsContinue");
+    }
+
+    Util.sleep(2000);
+
+    if (bicPage.isFieldEnabled("customerDetailsContinue")) {
+      AssertUtils.fail(
+          "Click on 'customerDetailsContinue' did not work.");
     }
 
     // Logic to select one of the suggested addresses if there are any
@@ -1604,6 +1611,10 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
       bicPage.clickUsingLowLevelActions("customerDetailsAddress");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+      if (bicPage.isFieldEnabled("customerDetailsContinue2")) {
+        AssertUtils.fail(
+            "Click on 'customerDetailsContinue2' did not work.");
+      }
     } catch (NoSuchElementException e) {
       // Catching no such element exception
       Util.printInfo("Address confirmation not requested: " + e.getMessage());
