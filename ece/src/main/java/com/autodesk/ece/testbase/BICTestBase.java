@@ -1594,7 +1594,8 @@ public class BICTestBase {
     Util.sleep(2000);
 
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
-    if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+      Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
