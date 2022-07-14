@@ -1597,26 +1597,15 @@ public class BICTestBase {
     if (bicPage.checkFieldExistence("customerDetailsContinue")) {
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
-    bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
 
+    // Logic to select one of the suggested addresses if there are any
     try {
+      bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
       bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
     } catch (NoSuchElementException e) {
       // Catching no such element exception
       Util.printInfo("Address confirmation not requested: " + e.getMessage());
-    }
-
-    if (bicPage.checkFieldExistence("customerDetailsContinue2")) {
-      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
-    }
-
-    Util.sleep(2000);
-
-    if (bicPage.isFieldEnabled("customerDetailsContinue")) {
-      if (bicPage.isFieldEnabled("customerDetailsContinue2")) {
-        AssertUtils.fail(
-            "Can not continue with order due to invalid address details. Please provide accurate address.");
-      }
     }
   }
 
