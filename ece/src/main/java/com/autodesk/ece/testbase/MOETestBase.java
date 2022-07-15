@@ -835,8 +835,9 @@ public class MOETestBase {
 
         Util.printInfo("Associating Products to Opty: " + plc);
 
+        moePage.checkIfElementExistsInPage("manageProducts", 30);
         moePage.click("manageProducts");
-        moePage.waitForPageToLoad();
+        Util.sleep(10000);
 
         for (int i = 0; i < 10; i++) {
           try {
