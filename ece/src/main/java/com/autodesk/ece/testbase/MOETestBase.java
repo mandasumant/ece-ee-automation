@@ -766,7 +766,6 @@ public class MOETestBase {
     bicTestBase.getUrl(constructPortalUrl);
 
     if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      // Sign out from sales agent account
       bicTestBase.signOutUsingMeMenu();
     }
 
@@ -811,7 +810,6 @@ public class MOETestBase {
     bicTestBase.getUrl(copyCartLink);
     moePage.waitForPageToLoad();
 
-    // Sign out from sales agent account
     bicTestBase.signOutUsingMeMenu();
 
     // Create new user and sign in
@@ -837,7 +835,6 @@ public class MOETestBase {
 
         Util.printInfo("Associating Products to Opty: " + plc);
 
-        moePage.click("titleProducts");
         moePage.click("manageProducts");
         moePage.waitForPageToLoad();
 
@@ -854,6 +851,8 @@ public class MOETestBase {
             Util.printInfo("It's not: " + i);
           }
         }
+
+        Util.sleep(5000);
 
         Util.printInfo("Switched iFrame to click on Add Products Tab");
 
@@ -907,8 +906,11 @@ public class MOETestBase {
         String optyid = driver.findElement(By.xpath(
                 "//span[@class='test-id__field-value slds-form-element__static slds-grow  is-read-only' and contains(., 'A-')]"))
             .getText();
-        Util.printInfo(optyid);
+
+        Util.printInfo("Product " + plc + " associated to the Opty: " + optyid);
+
         results.put("opportunityid", optyid);
+
       }
     } catch (Exception e) {
       AssertUtils.fail("Failed to assign Product to MOE Opty." + e.getMessage());
@@ -916,12 +918,9 @@ public class MOETestBase {
 
     try {
       if (StringUtils.isNotEmpty(contact)) {
-        moePage.click("titleProducts");
-        Util.printInfo("Clicked on titleProducts");
-        Util.sleep(2000);
 
+        Util.printInfo("Clicking on cta: Manage Contact Roles");
         moePage.click("manageContactRoles");
-        Util.printInfo("Clicked on cta: Manage Contact Roles");
         moePage.waitForPageToLoad();
 
         moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
@@ -1232,34 +1231,21 @@ public class MOETestBase {
     String copyCartLink = copyCartLinkFromClipboard();
     bicTestBase.getUrl(copyCartLink);
 
-    // Sign out from sales agent account
     bicTestBase.signOutUsingMeMenu();
 
     driver.switchTo().frame(0);
 
     bicTestBase.loginToOxygen(emailID, password);
-    bicTestBase.waitForLoadingSpinnerToComplete();
-
-    driver.switchTo().defaultContent();
 
     if (System.getProperty("usertype").equals("new")) {
       bicTestBase.enterCustomerDetails(address);
-      Util.sleep(3000);
+      Util.sleep(5000);
     }
-
-    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1200);");
 
     // In case address suggestion is returned, continue button will be displayed.
-    if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
+    if (BICTestBase.bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       Util.printInfo("Clicking on cta: Continue");
-      moePage.click("moeOdmContinueButton");
-      bicTestBase.waitForLoadingSpinnerToComplete();
-    }
-
-    // TODO: remove once APLR2PMO-10181 is resolved.
-    if (moePage.checkIfElementExistsInPage("moeOdmCancelButton", 10)) {
-      Util.printInfo("Clicking on cta: Cancel");
-      moePage.clickUsingLowLevelActions("moeOdmCancelButton");
+      BICTestBase.bicPage.clickUsingLowLevelActions("customerDetailsContinue");
       bicTestBase.waitForLoadingSpinnerToComplete();
     }
 
@@ -1290,6 +1276,8 @@ public class MOETestBase {
     String guacBaseURL = data.get("guacBaseURL");
     navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
 
+    bicTestBase.setStorageData();
+
     loginToMoe();
 
     AssertUtils.assertTrue(driver
@@ -1317,10 +1305,12 @@ public class MOETestBase {
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
 
     bicTestBase.enterCustomerDetails(address);
+    Util.sleep(5000);
 
-    // In case of address suggestion returned, continue button will be display, else nope.
-    if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
-      moePage.click("moeOdmContinueButton");
+    // In case address suggestion is returned, continue button will be displayed.
+    if (BICTestBase.bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+      Util.printInfo("Clicking on cta: Continue");
+      BICTestBase.bicPage.clickUsingLowLevelActions("customerDetailsContinue");
       bicTestBase.waitForLoadingSpinnerToComplete();
     }
 
@@ -1340,7 +1330,6 @@ public class MOETestBase {
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
 
-    // Sign out from sales agent account
     bicTestBase.signOutUsingMeMenu();
 
     deleteCartItemFromStorage();
@@ -1379,16 +1368,17 @@ public class MOETestBase {
 
     bicTestBase.getUrl(copyCartLink);
 
-    // Sign out from sales agent account
     bicTestBase.signOutUsingMeMenu();
 
     bicTestBase.loginAccount(data);
 
     bicTestBase.enterCustomerDetails(address);
+    Util.sleep(5000);
 
-    // In case of address suggestion returned, continue button will be display, else nope.
-    if (moePage.checkIfElementExistsInPage("moeOdmContinueButton", 10)) {
-      moePage.click("moeOdmContinueButton");
+    // In case address suggestion is returned, continue button will be displayed.
+    if (BICTestBase.bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+      Util.printInfo("Clicking on cta: Continue");
+      BICTestBase.bicPage.click("customerDetailsContinue");
       bicTestBase.waitForLoadingSpinnerToComplete();
     }
 

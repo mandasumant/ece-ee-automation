@@ -1950,17 +1950,19 @@ public class BICTestBase {
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 5000);
     bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.populateField(BICECEConstants.LOGIN_PASSWORD, password);
-    bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
-    bicPage.waitForPageToLoad();
+    bicPage.click(BICECEConstants.LOGIN_BUTTON);
+    waitForLoadingSpinnerToComplete();
 
     if (bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK)) {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
+      waitForLoadingSpinnerToComplete();
     }
 
     Util.printInfo("Successfully logged in");
   }
 
   public void signOutUsingMeMenu() {
+    Util.printInfo("Signing out using meMenu");
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("meMenu-avatar-flyout")));
 

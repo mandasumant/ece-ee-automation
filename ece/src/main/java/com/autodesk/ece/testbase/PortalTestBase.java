@@ -229,12 +229,12 @@ public class PortalTestBase {
 
       if (isNull(element)) {
         if (attempts >= 14) {
-          AssertUtils.fail("All retries exhausted: Could find subscription/agreement productXpath element");
+          AssertUtils.fail("All retries exhausted: Couldn't find subscription/agreement productXpath element");
         }
 
         Util.printInfo("Retry: Failed to find the Subscription productXpath in Portal, attempt #" + (attempts + 1));
         Util.sleep(300000);
-        Util.printInfo("Part of Retry: Invalidate Portal User Cache, by Signout and Signin back");
+        Util.printInfo("Part of Retry: Invalidate Portal user cache, by signing out and then back in");
         portalLogoutLogin(userName, password);
         attempts++;
       } else {
