@@ -112,18 +112,43 @@ public class BICQuoteOrder extends ECETestBase {
           String.valueOf((int) ((Math.random() * (15000 - 100)) + 1000)));
     }
 
-    if(System.getProperty("currency") != null){
+    if (System.getProperty("currency") != null) {
       testDataForEachMethod.put("currencyStore", System.getProperty("currency"));
     }
 
-    if(System.getProperty("agentCSN") != null){
-      testDataForEachMethod.put("quoteAgentCsnAccount",System.getProperty("agentCSN"));
+    if (System.getProperty("agentCSN") != null) {
+      testDataForEachMethod.put("quoteAgentCsnAccount", System.getProperty("agentCSN"));
     }
-    if(System.getProperty("agentEmail") != null) {
+    if (System.getProperty("agentEmail") != null) {
       testDataForEachMethod.put("agentContactEmail", System.getProperty("agentEmail"));
     }
     testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
         PWSTestBase.getQuoteStartDateAsString());
+  }
+
+  @Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
+  public void validateBicQuote() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    String locale = "en_US";
+    if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
+      locale = System.getProperty("locale");
+    }
+    Address address = getBillingAddress();
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
+    HashMap<String, String> justQuoteDeails = new HashMap<String, String>();
+    System.out.println("THE QUOTE ID " + quoteId);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    justQuoteDeails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
+    updateTestingHub(justQuoteDeails);
+    Util.printInfo("Final List " + justQuoteDeails.toString());
   }
 
   @Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
@@ -159,7 +184,7 @@ public class BICQuoteOrder extends ECETestBase {
       // Getting a PurchaseOrder details from pelican
       results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-      //Compare tax in Checkout and Pelican
+      // Compare tax in Checkout and Pelican
       getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
           results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
@@ -168,9 +193,6 @@ public class BICQuoteOrder extends ECETestBase {
 
       // Get find Subscription ById
       results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-
-      // Validate that the quote is closed in Portal
-      // portaltb.validateQuoteClosed();
 
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -240,11 +262,15 @@ public class BICQuoteOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
+    //Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-
-    // Validate that the quote is closed in Portal
-    // portaltb.validateQuoteClosed();
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -307,11 +333,19 @@ public class BICQuoteOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
     results.put(BICECEConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+
+    //Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // Validate Portal
-     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
@@ -345,9 +379,9 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-   if (getBicTestBase().shouldValidateSAP()) {
+    if (getBicTestBase().shouldValidateSAP()) {
       // Validate Credit Note for the order
-      portaltb.validateBICOrderPDF(results,BICECEConstants.CREDIT_NOTE);
+      portaltb.validateBICOrderPDF(results, BICECEConstants.CREDIT_NOTE);
       testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
     }
 
@@ -384,6 +418,9 @@ public class BICQuoteOrder extends ECETestBase {
     //Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));

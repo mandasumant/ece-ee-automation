@@ -1290,8 +1290,10 @@ public class BICTestBase {
         + currency;
 
     Util.printInfo("Quote URL: " + url);
-    getUrl(url);
 
+    data.put("checkoutUrl", url);
+
+    getUrl(url);
     clickToStayOnSameSite();
   }
 
