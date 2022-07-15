@@ -1599,14 +1599,15 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
-    // Logic to select one of the suggested addresses if there are any
-    try {
+    if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
+      Util.printInfo("Two or more suggested addresses. Clicking on radio button to choose one.");
       bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
       bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+    }
+
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
+      Util.printInfo("Address confirmation requested, Clicking on Continue2 button.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
-    } catch (NoSuchElementException e) {
-      // Catching no such element exception
-      Util.printInfo("Address confirmation not requested: " + e.getMessage());
     }
   }
 
