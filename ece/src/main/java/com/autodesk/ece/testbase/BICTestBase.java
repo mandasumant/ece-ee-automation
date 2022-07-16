@@ -1306,6 +1306,7 @@ public class BICTestBase {
 
     if (data.get("isNonQuoteFlexOrder") != null) {
       enterCustomerDetails(address);
+      data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
     }
 
     if (bicPage.checkFieldExistence("customerDetailsContinue")) {
@@ -1550,9 +1551,13 @@ public class BICTestBase {
     } catch (Exception e) {
       Util.printInfo("No Chat Popup found. Continuing...");
     }
-
     Util.printInfo("Checking if Chat Popup Present. Done");
+
     if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)) {
+      clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
+    } else if(data.get("isNonQuoteFlexOrder") != null &&
+        data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
+        data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser")) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
