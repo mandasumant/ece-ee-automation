@@ -1603,6 +1603,7 @@ public class BICTestBase {
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
+      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
@@ -1614,6 +1615,7 @@ public class BICTestBase {
 
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
       Util.printInfo("Address confirmation requested, Clicking on Continue2 button.");
+      bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
     }
   }
