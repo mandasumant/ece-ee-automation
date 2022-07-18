@@ -1310,10 +1310,14 @@ public class BICTestBase {
     }
 
     if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+      Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
     if (bicPage.checkFieldExistence("customerDetailsContinue2")) {
+      bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
+      Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
     }
 
