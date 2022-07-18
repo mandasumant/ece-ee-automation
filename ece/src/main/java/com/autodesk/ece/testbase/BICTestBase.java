@@ -1610,12 +1610,14 @@ public class BICTestBase {
     if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
       Util.printInfo("Two or more suggested addresses. Clicking on radio button to choose one.");
       bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
+      Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsAddress");
     }
 
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
       Util.printInfo("Address confirmation requested, Clicking on Continue2 button.");
       bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
+      Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
     }
   }
