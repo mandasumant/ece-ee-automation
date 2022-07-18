@@ -143,10 +143,11 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.get("agentContactEmail"),
         testDataForEachMethod);
     HashMap<String, String> justQuoteDeails = new HashMap<String, String>();
-    System.out.println("THE QUOTE ID " + quoteId);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     justQuoteDeails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
+    justQuoteDeails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
+
     updateTestingHub(justQuoteDeails);
     Util.printInfo("Final List " + justQuoteDeails.toString());
   }

@@ -13,6 +13,7 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.core.utils.ScreenCapture;
 import io.qameta.allure.Step;
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -1605,10 +1606,12 @@ public class BICTestBase {
     Util.sleep(2000);
 
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
+
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      ScreenCapture.getInstance().captureScreenshot();
     }
 
     if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
@@ -1616,6 +1619,7 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
       Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+      ScreenCapture.getInstance().captureScreenshot();
     }
 
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
@@ -1623,6 +1627,7 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
       Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+      ScreenCapture.getInstance().captureScreenshot();
     }
   }
 
