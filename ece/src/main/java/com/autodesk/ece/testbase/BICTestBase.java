@@ -136,7 +136,6 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("createNewUserGUAC", 30000);
       bicPage.clickUsingLowLevelActions("createNewUserGUAC");
       bicPage.waitForFieldPresent(BICECEConstants.BIC_FN, 30000);
-      bicPage.clickUsingLowLevelActions(BICECEConstants.BIC_FN);
       bicPage.populateField(BICECEConstants.BIC_FN, names.firstName);
       bicPage.waitForFieldPresent("bic_LN", 30000);
       bicPage.populateField("bic_LN", names.lastName);
@@ -1607,6 +1606,7 @@ public class BICTestBase {
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
 
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+      bicPage.waitForFieldPresent("customerDetailsContinue",10000);
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
