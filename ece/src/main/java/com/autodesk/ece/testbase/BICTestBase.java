@@ -1559,7 +1559,7 @@ public class BICTestBase {
 
     if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
-    } else if(data.get("isNonQuoteFlexOrder") != null &&
+    } else if (data.get("isNonQuoteFlexOrder") != null &&
         data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
         data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser")) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
@@ -1608,25 +1608,31 @@ public class BICTestBase {
 
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
-      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
-    if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
-      Util.printInfo("Two or more suggested addresses. Clicking on radio button to choose one.");
-      bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
-      Util.sleep(5000);
-      bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+    Util.sleep(5000);
+
+    if (bicPage.checkIfElementExistsInPage("confirmCustomerAddressAlert", 10)) {
+      if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
+        Util.printInfo("Two or more suggested addresses. Clicking on radio button to choose one.");
+        bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+      }
+
+      if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
+        Util.printInfo("Address confirmation requested, Clicking on Continue2 button.");
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+      }
     }
 
-    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
-      Util.printInfo("Address confirmation requested, Clicking on Continue2 button.");
-      bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
-      Util.sleep(5000);
-      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
-    }
+    Util.sleep(5000);
 
-    bicPage.waitForFieldPresent("customerDetailsComplete", 10000);
+    boolean isCustomerDetailsComplete = bicPage.waitForFieldPresent("customerDetailsComplete", 1000);
+    if (isCustomerDetailsComplete) {
+      Util.printInfo("Customer details address saved successfully!");
+    } else {
+      Assert.fail("Customer details section is still open. Could not save the address.");
+    }
   }
 
   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
