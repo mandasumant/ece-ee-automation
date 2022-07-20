@@ -670,7 +670,7 @@ public class PelicanTestBase {
         pelicanResponseMap.get("getPOResponse_endCustomer_country").toUpperCase(), address.countryCode.toUpperCase());
    if(!address.postalCode.equals("N/A")) {
      AssertUtils.assertEquals("EndCustomer Postal Code should match.",
-         pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 4),
+         pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 3),
          address.postalCode.substring(0, 3));
    }
     AssertUtils.assertEquals("Product Type should match.", quoteInputMap.get("productType").toUpperCase(),

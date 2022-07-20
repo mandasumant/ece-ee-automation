@@ -121,6 +121,7 @@ public class BICTestBase {
     if (newAddress.province != null) {
       ba.put(BICECEConstants.STATE_PROVINCE, newAddress.province);
     }
+    Util.printInfo("The address being used :" + address);
 
     return ba;
   }
@@ -484,6 +485,23 @@ public class BICTestBase {
       }
     }
 
+  }
+
+  private void populateTaxIdForFlex() {
+    String taxId = System.getProperty(BICECEConstants.TAX_ID);
+
+    try {
+      if (taxId != null && !taxId.isEmpty()) {
+        if (bicPage.checkIfElementExistsInPage("taxIdForFlex", 5)) {
+          Util.printInfo("Populating tax id: " + taxId);
+          bicPage.populateField("taxIdForFlex", taxId);
+          waitForLoadingSpinnerToComplete();
+        }
+      }
+    } catch (Exception e) {
+      Util.printTestFailedMessage("populateTaxIdForFlex");
+      AssertUtils.fail("Unable to Populate Tax Id ");
+    }
   }
 
   @Step("Populate Billing Details")
@@ -1306,6 +1324,8 @@ public class BICTestBase {
     if (data.get("isNonQuoteFlexOrder") != null) {
       enterCustomerDetails(address);
       data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+    }else{
+      populateTaxIdForFlex();
     }
 
     if (bicPage.checkFieldExistence("customerDetailsContinue")) {
@@ -1605,8 +1625,11 @@ public class BICTestBase {
 
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
 
+    populateTaxIdForFlex();
+
+
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
-      bicPage.waitForFieldPresent("customerDetailsContinue",10000);
+      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
