@@ -16,7 +16,7 @@ LocaleConfig:
     currencyStore: "CAD"
     countryDomain: ".ca/en"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk CA@10 Rue Saint-Jacques@Montréal@H2Y 1L2@9916800100@Canada@Quebec"
+    address: "Autodesk CA@10 Rue Saint@Montréal@H2Y 1L2@9916800100@Canada@Quebec"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070259011"
     agentContactEmail: "partneruser_da_int_5070259011@letscheck.email"
