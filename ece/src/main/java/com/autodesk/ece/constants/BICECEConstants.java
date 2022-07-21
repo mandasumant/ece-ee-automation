@@ -84,7 +84,7 @@ public class BICECEConstants extends BICConstants {
   public static final String MANDATE_CHECKBOX_HEADER = "mandateAgreementCheckboxHeader";
   public static final String CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX = "Checked box status for Mandate Agreement checkbox - ";
   public static final String MANDATE_AGREEMENT_CHECKBOX = "mandateAgreementCheckbox";
-  public static final String ID_MANDATE_AGREEMENT = "//*[@id=\"mandate-agreement\"]";
+  public static final String ID_MANDATE_AGREEMENT = "//div[@data-testid='tabs-panel-sepa']//input[@id=\"mandate-agreement\"]";
   public static final String DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK = "document.getElementById('mandate-agreement')?.click()";
   public static final String JP_ORDER_NUMBER = "//h5[.='注文番号：']/..//p";
   public static final String GUAC_RESOURCE_URL = "guacResourceURL";

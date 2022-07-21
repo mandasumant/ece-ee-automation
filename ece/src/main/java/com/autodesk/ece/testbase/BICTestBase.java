@@ -732,17 +732,20 @@ public class BICTestBase {
 
   @Step("Populate Sepa payment details")
   public void populateSepaPaymentDetails(String[] paymentCardDetails) {
-    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
+    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
 
     try {
       Util.printInfo("Clicking on Sepa tab.");
-      bicPage.clickUsingLowLevelActions("sepaPaymentTab");
+      JavascriptExecutor js=(JavascriptExecutor) driver;
+      String sepa_Tab = bicPage.getFirstFieldLocator("sepaPaymentTab");
+      js.executeScript("arguments[0].click();",driver.findElement(By.xpath(sepa_Tab)));
 
       Util.printInfo("Waiting for Sepa header.");
       bicPage.waitForElementVisible(
           bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
 
       Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
+      bicPage.clickUsingLowLevelActions("sepaIbanNumber");
       bicPage.populateField("sepaIbanNumber", paymentCardDetails[0]);
 
       Util.printInfo("Entering SEPA profile name : " + paymentCardDetails[0]);
@@ -1468,10 +1471,9 @@ public class BICTestBase {
         Util.printInfo(BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + bicPage.isChecked(
             BICECEConstants.MANDATE_AGREEMENT_CHECKBOX));
 
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
         WebElement mandateAgreementElement = driver.findElement(By.xpath(
             BICECEConstants.ID_MANDATE_AGREEMENT));
+        mandateAgreementElement.click();
 
         Util.printInfo(
             BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
