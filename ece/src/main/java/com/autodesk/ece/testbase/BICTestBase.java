@@ -1324,7 +1324,7 @@ public class BICTestBase {
     if (data.get("isNonQuoteFlexOrder") != null) {
       enterCustomerDetails(address);
       data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
-    }else{
+    } else {
       populateTaxIdForFlex();
     }
 
@@ -1603,7 +1603,11 @@ public class BICTestBase {
       driver.findElement(By.xpath(selectCountryOption)).click();
     }
 
-    bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
+    if (bicPage.checkIfElementExistsInPage("address1Field", 10)) {
+      bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
+    } else {
+      bicPage.populateField("addressAutocomplete", address.get(BICECEConstants.FULL_ADDRESS));
+    }
     Util.sleep(2000);
 
     bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
@@ -1626,7 +1630,6 @@ public class BICTestBase {
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
 
     populateTaxIdForFlex();
-
 
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
