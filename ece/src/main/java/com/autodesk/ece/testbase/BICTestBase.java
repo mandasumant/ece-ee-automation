@@ -1632,6 +1632,7 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      Util.sleep(2000);
     }
 
     Util.sleep(5000);
@@ -1999,7 +2000,7 @@ public class BICTestBase {
     bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.populateField(BICECEConstants.LOGIN_PASSWORD, password);
     bicPage.click(BICECEConstants.LOGIN_BUTTON);
-    waitForLoadingSpinnerToComplete();
+    Util.sleep(15000);
 
     if (bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK)) {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
@@ -2011,14 +2012,15 @@ public class BICTestBase {
 
   public void signOutUsingMeMenu() {
     Util.printInfo("Signing out using meMenu");
+
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("meMenu-avatar-flyout")));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uh-me-menu-button-user")));
 
     try {
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");
-      bicPage.waitForPageToLoad();
-      js.executeScript("document.getElementById('meMenu-signOut').click()");
+      bicPage.checkIfElementExistsInPage("meMenuSignedIn", 20);
+      bicPage.click("meMenuSignedIn");
+      bicPage.checkIfElementExistsInPage("meMenuSignOut", 20);
+      bicPage.click("meMenuSignOut");
       bicPage.waitForPageToLoad();
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to logout");

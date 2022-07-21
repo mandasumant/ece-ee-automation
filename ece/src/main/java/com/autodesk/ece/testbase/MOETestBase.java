@@ -829,6 +829,7 @@ public class MOETestBase {
 
     String strUrl = driver.getCurrentUrl();
     Util.printInfo("Opty current URL :: " + strUrl);
+    results.put("currentOptyUrl", strUrl);
 
     try {
       if (StringUtils.isNotEmpty(plc)) {
@@ -871,31 +872,53 @@ public class MOETestBase {
         moePage.click("checkbox");
         Util.sleep(5000);
 
-        moePage.populateField("estimatedUnit", "100");
-        Util.sleep(2000);
+        try {
+          Boolean isAlertModalVisible = true;
+          int count = 0;
+          while (isAlertModalVisible) {
+            count++;
 
-        WebElement webElement = driver.findElement(
-            By.xpath("//input[@class='slds-input input']"));
-        webElement.sendKeys(Keys.TAB);
-        Util.sleep(10000);
+            Util.printInfo("Adding Flex product. Attempt no. " + count);
 
-        Util.printInfo("Entered FLEX PLC and quantity in the Add Product");
+            if (count > 3) {
+              AssertUtils.fail("Failed to add Flex product with qty.");
+              break;
+            }
 
-        moePage.checkIfElementExistsInPage("addProductsButton", 30);
+            moePage.clickUsingLowLevelActions("estimatedUnit");
+            Util.sleep(2000);
 
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript(
-            "document.querySelectorAll(\"button[name=AddProductsToCart]\")[0].click()");
-        Util.printInfo("Clicked on cta: Add Products");
-        Util.sleep(30000);
+            driver.findElement(By.xpath("//input[@class='slds-input input']"))
+                .sendKeys(Keys.chord(Keys.COMMAND, "a"), Keys.BACK_SPACE);
+            Util.sleep(2000);
 
-        moePage.checkIfElementExistsInPage("okButton", 40);
+            if (moePage.checkIfElementExistsInPage("alertModal", 100)) {
+              Util.printInfo("Alert modal is visible. Closing it.");
+              moePage.clickUsingLowLevelActions("okButton");
+              Util.sleep(2000);
+            }
+
+            Util.printInfo("Type '100' into quantity input field.");
+            moePage.sendKeysInTextFieldSlowly("estimatedUnit", "100");
+            Util.sleep(3000);
+
+            moePage.checkIfElementExistsInPage("addProductsButton", 20);
+            moePage.clickUsingLowLevelActions("addProductsButton");
+
+            if (moePage.checkIfElementExistsInPage("successModal", 20)) {
+              Util.printInfo("Success modal is visible.");
+              isAlertModalVisible = false;
+            }
+
+          }
+        } catch (Exception e) {
+          Util.printInfo("Flex product added successfully.");
+        }
+
         moePage.clickUsingLowLevelActions("okButton");
-        Util.printInfo("Clicked on cta: OK");
-        Util.sleep(5000);
 
         moePage.clickUsingLowLevelActions("close");
-        Util.printInfo("Clicked on cta: Close");
+        Util.printInfo("Clicked on Close");
 
         if (moePage.checkIfElementExistsInPage("subFrameError", 15)) {
           Util.printInfo("Failed to go back to opty view page. Manually navigating to it.");
@@ -1058,7 +1081,7 @@ public class MOETestBase {
 
       moePage.click("save");
       Util.printInfo("Clicked on Save button after entering details.");
-      moePage.waitForPageToLoad();
+      Util.sleep(30000);
       driver.switchTo().defaultContent();
 
       Util.printInfo("Opportunity '" + optyName + "' created");
@@ -1090,9 +1113,11 @@ public class MOETestBase {
 
     loginToMoe();
 
+    Util.sleep(5000);
+
     Util.printInfo("Clicking on cta: Continue");
-    moePage.checkIfElementExistsInPage("moeOdmContinueButton", 30);
-    moePage.clickUsingLowLevelActions("moeOdmContinueButton");
+    moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 30);
+    moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
     bicTestBase.waitForLoadingSpinnerToComplete();
 
     if (System.getProperty("usertype").equals("new")) {
@@ -1196,9 +1221,11 @@ public class MOETestBase {
 
     loginToMoe();
 
+    Util.sleep(5000);
+
     Util.printInfo("Clicking on cta: Continue");
-    moePage.checkIfElementExistsInPage("moeOdmContinueButton", 30);
-    moePage.clickUsingLowLevelActions("moeOdmContinueButton");
+    moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 30);
+    moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
     bicTestBase.waitForLoadingSpinnerToComplete();
 
     BICTestBase.bicPage.executeJavascript("window.scrollBy(0,800);");
@@ -1244,9 +1271,9 @@ public class MOETestBase {
     }
 
     // In case address suggestion is returned, continue button will be displayed.
-    if (BICTestBase.bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
-      Util.printInfo("Clicking on cta: Continue");
-      BICTestBase.bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
+      Util.printInfo("Clicking on Continue button after adding the customer details");
+      moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
       bicTestBase.waitForLoadingSpinnerToComplete();
     }
 
@@ -1287,7 +1314,7 @@ public class MOETestBase {
 
     Util.printInfo("Add Flex product");
     moePage.click("moeAddFlexProductButton");
-    Util.sleep(3000);
+    Util.sleep(5000);
 
     WebElement productLineItem = driver.findElement(
         By.xpath(moePage.getFirstFieldLocator("moeProductLineItem")));
@@ -1305,13 +1332,20 @@ public class MOETestBase {
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
 
-    bicTestBase.enterCustomerDetails(address);
     Util.sleep(5000);
 
+    productLineItem = driver.findElement(
+        By.xpath(moePage.getFirstFieldLocator("moeProductLineItem")));
+    AssertUtils.assertTrue(
+        productLineItem.getText().contains("Flex"));
+
+    bicTestBase.enterCustomerDetails(address);
+    Util.sleep(10000);
+
     // In case address suggestion is returned, continue button will be displayed.
-    if (BICTestBase.bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
-      Util.printInfo("Clicking on cta: Continue");
-      BICTestBase.bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
+      Util.printInfo("Clicking on Continue button after adding the customer details");
+      moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
       bicTestBase.waitForLoadingSpinnerToComplete();
     }
 
@@ -1321,8 +1355,16 @@ public class MOETestBase {
     bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
     bicTestBase.waitForLoadingSpinnerToComplete();
 
+    Util.printInfo("Clicking on cta: Save");
     moePage.click("savePaymentProfile");
     bicTestBase.waitForLoadingSpinnerToComplete();
+
+    // In case address suggestion is returned, continue button will be displayed.
+    if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
+      Util.printInfo("Clicking on Continue button after saving payment profile");
+      moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
+      bicTestBase.waitForLoadingSpinnerToComplete();
+    }
 
     bicTestBase.submitOrder(data);
     String orderNumber = bicTestBase.getOrderNumber(data);
@@ -1377,9 +1419,9 @@ public class MOETestBase {
     Util.sleep(5000);
 
     // In case address suggestion is returned, continue button will be displayed.
-    if (BICTestBase.bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
-      Util.printInfo("Clicking on cta: Continue");
-      BICTestBase.bicPage.click("customerDetailsContinue");
+    if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
+      Util.printInfo("Clicking on Continue button after adding the customer details");
+      moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
       bicTestBase.waitForLoadingSpinnerToComplete();
     }
 
@@ -1414,4 +1456,24 @@ public class MOETestBase {
     Util.sleep(2000);
   }
 
+  @Step("SFDC : Validating Opportunity state " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> validateOpportunityStatusInSfdc(LinkedHashMap<String, String> data)
+      throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+
+    // Construct SFDC optyId URL
+    String sfdcCurrentOptyUrl = data.get("currentOptyUrl");
+    Util.printInfo("SFDC current opportunity URL: " + sfdcCurrentOptyUrl);
+
+    // Navigate to Url
+    bicTestBase.getUrl(sfdcCurrentOptyUrl);
+
+    moePage.checkIfElementExistsInPage("optyIdStageWon", 60);
+
+    AssertUtils.assertTrue(driver
+        .findElement(By.xpath("//a[@data-tab-name='Won']"))
+        .isDisplayed());
+
+    return results;
+  }
 }
