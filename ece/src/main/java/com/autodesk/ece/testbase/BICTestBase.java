@@ -1654,7 +1654,7 @@ public class BICTestBase {
     if (isCustomerDetailsComplete) {
       Util.printInfo("Customer details address saved successfully!");
     } else {
-      Assert.fail("Customer details section is still open. Could not save the address.");
+      AssertUtils.fail("Customer details section is still open. Could not save the address.");
     }
   }
 

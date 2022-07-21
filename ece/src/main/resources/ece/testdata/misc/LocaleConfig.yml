@@ -586,7 +586,7 @@ LocaleConfig:
     currencyStore: "AUD"
     countryDomain: ".com.au"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
-    address: "AutodeskAU@915 Cecile Ramp@American Samoa@967990@397202088@Samoa"
+    address: "AutodeskAU@P.O Box 704@Fagasa@WS2481@397202088@Samoa"
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
