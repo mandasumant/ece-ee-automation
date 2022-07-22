@@ -280,6 +280,7 @@ public class MOETestBase {
     data.put(BICECEConstants.emailid, emailID);
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
+    Util.sleep(10000);
 
     address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
 
@@ -1264,8 +1265,10 @@ public class MOETestBase {
     driver.switchTo().frame(0);
 
     bicTestBase.loginToOxygen(emailID, password);
+    Util.sleep(10000);
 
-    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,800);");
+    Util.printInfo("Scrolling down the page");
+    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
 
     if (System.getProperty("usertype").equals("new")) {
       bicTestBase.enterCustomerDetails(address);
@@ -1325,16 +1328,13 @@ public class MOETestBase {
 
     String copyCartLink = copyCartLinkFromClipboard();
 
-    deleteCartItemFromStorage();
-
     Names names = BICTestBase.generateFirstAndLastNames();
     data.putAll(names.getMap());
     String emailID = BICTestBase.generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
-
-    Util.sleep(5000);
+    Util.sleep(10000);
 
     productLineItem = driver.findElement(
         By.xpath(moePage.getFirstFieldLocator("moeProductLineItem")));
@@ -1376,8 +1376,6 @@ public class MOETestBase {
     results.put(BICConstants.orderNumber, orderNumber);
 
     bicTestBase.signOutUsingMeMenu();
-
-    deleteCartItemFromStorage();
 
     return results;
   }
@@ -1448,14 +1446,6 @@ public class MOETestBase {
     driver.navigate().refresh();
     Util.sleep(5000);
     bicTestBase.setStorageData();
-  }
-
-  // TODO: remove once ECEECOM-2946 is implemented.
-  private void deleteCartItemFromStorage() {
-    Util.printInfo("Delete cookies and clear session and local storages.");
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    js.executeScript("window.localStorage.removeItem('cart');");
-    Util.sleep(2000);
   }
 
   @Step("SFDC : Validating Opportunity state " + GlobalConstants.TAG_TESTINGHUB)

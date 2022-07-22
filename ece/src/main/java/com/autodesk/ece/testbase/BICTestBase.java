@@ -1727,16 +1727,20 @@ public class BICTestBase {
     String taxValue = null;
     if (data.get("productType").equals("flex")) {
       try {
-        if (bicPage.checkIfElementExistsInPage("orderSummaryTax", 10)) {
-          taxValue = driver
-              .findElement(
-                  By.xpath("//p[@data-testid='checkout--order-summary-section--tax'][@data-pricing-source=\"PQ\"]"))
-              .getText();
+        if (bicPage.checkIfElementExistsInPage("orderSummaryTax", 15)) {
+          Util.printInfo("Flex tax condition for Tax/GST");
+          taxValue = driver.findElement(
+              By.xpath(bicPage.getFirstFieldLocator("orderSummaryTax"))).getText();
+        } else if (bicPage.checkIfElementExistsInPage("orderSummaryVat", 15)) {
+          Util.printInfo("Flex tax condition for Vat");
+          taxValue = driver.findElement(
+              By.xpath(bicPage.getFirstFieldLocator("orderSummaryVat"))).getText();
         } else {
+          Util.printInfo("Flex tax condition - default");
           taxValue = driver
               .findElement(
                   By.xpath(
-                      "//div[@class='checkout--order-summary-section--products-total']/div[3]/p[@data-pricing-source=\"PQ\"]"))
+                      "//div[@class='checkout--order-summary-section--products-total']/div[2]/p[2][@data-pricing-source=\"PQ\"]"))
               .getText();
         }
       } catch (MetadataException e) {
@@ -1744,6 +1748,7 @@ public class BICTestBase {
         Assert.fail("Can not find tax in Order Summary section");
       }
     } else {
+      Util.printInfo("Tax condition for non Flex product");
       taxValue = driver
           .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax'][@data-pricing-source=\"PQ\"]"))
           .getText();
