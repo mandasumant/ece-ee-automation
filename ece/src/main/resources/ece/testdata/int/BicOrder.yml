@@ -209,6 +209,11 @@ validateFlexTokenEstimatorTool:
   isNonQuoteFlexOrder: "true"
   productType: "flex"
 
+validateBicQuote:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"
+
 validateBicQuoteOrder:
   term: "Annual"
   accessModel: "Flex"

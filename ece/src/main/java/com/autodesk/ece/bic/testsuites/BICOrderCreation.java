@@ -751,8 +751,6 @@ public class BICOrderCreation extends ECETestBase {
         portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
 
-      portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
-
       // Refund PurchaseOrder details from pelican
       pelicantb.createRefundOrderV4(results);
 

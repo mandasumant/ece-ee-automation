@@ -86,8 +86,7 @@ public class PWSTestBase {
 
     QuoteDTO quote =
         QuoteDTO.builder().lineItems(lineItems).purchaser(purchaser).endCustomer(endCustomer)
-            .agentContact(agentContact).agentAccount(agentAccount).currency(data.get(BICECEConstants.currencyStore))
-            .currency(data.get(BICECEConstants.currencyStore)).quoteNote(BICECEConstants.QUOTE_NOTES).build();
+            .agentContact(agentContact).agentAccount(agentAccount).currency(data.get(BICECEConstants.currencyStore)).quoteNote(BICECEConstants.QUOTE_NOTES).build();
 
     return new Gson().toJson(quote);
   }

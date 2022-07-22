@@ -121,6 +121,7 @@ public class BICTestBase {
     if (newAddress.province != null) {
       ba.put(BICECEConstants.STATE_PROVINCE, newAddress.province);
     }
+    Util.printInfo("The address being used :" + address);
 
     return ba;
   }
@@ -136,7 +137,6 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("createNewUserGUAC", 30000);
       bicPage.clickUsingLowLevelActions("createNewUserGUAC");
       bicPage.waitForFieldPresent(BICECEConstants.BIC_FN, 30000);
-      bicPage.clickUsingLowLevelActions(BICECEConstants.BIC_FN);
       bicPage.populateField(BICECEConstants.BIC_FN, names.firstName);
       bicPage.waitForFieldPresent("bic_LN", 30000);
       bicPage.populateField("bic_LN", names.lastName);
@@ -485,6 +485,23 @@ public class BICTestBase {
       }
     }
 
+  }
+
+  private void populateTaxIdForFlex() {
+    String taxId = System.getProperty(BICECEConstants.TAX_ID);
+
+    try {
+      if (taxId != null && !taxId.isEmpty()) {
+        if (bicPage.checkIfElementExistsInPage("taxIdForFlex", 5)) {
+          Util.printInfo("Populating tax id: " + taxId);
+          bicPage.populateField("taxIdForFlex", taxId);
+          waitForLoadingSpinnerToComplete();
+        }
+      }
+    } catch (Exception e) {
+      Util.printTestFailedMessage("populateTaxIdForFlex");
+      AssertUtils.fail("Unable to Populate Tax Id ");
+    }
   }
 
   @Step("Populate Billing Details")
@@ -1154,10 +1171,9 @@ public class BICTestBase {
       Util.printInfo("The total amount in Confirmation page :" + Double.valueOf(orderTotal) / 100);
 
       data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
-      if (data.get("isNonQuoteFlexOrder") == null) {
-        AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
-            "The checkout page total and confirmation page total do not match.");
-      }
+      AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
+          "The checkout page total and confirmation page total do not match.");
+
     }
 
     return orderNumber;
@@ -1293,12 +1309,14 @@ public class BICTestBase {
         + currency;
 
     Util.printInfo("Quote URL: " + url);
-    getUrl(url);
 
+    data.put("checkoutUrl", url);
+
+    getUrl(url);
     clickToStayOnSameSite();
   }
 
-  @Step("Quote2Order: Place Flex Order " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Placing the Flex Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> placeFlexOrder(LinkedHashMap<String, String> data) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
@@ -1307,13 +1325,20 @@ public class BICTestBase {
 
     if (data.get("isNonQuoteFlexOrder") != null) {
       enterCustomerDetails(address);
+      data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+    } else {
+      populateTaxIdForFlex();
     }
 
     if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+      Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
     if (bicPage.checkFieldExistence("customerDetailsContinue2")) {
+      bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
+      Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
     }
 
@@ -1559,9 +1584,13 @@ public class BICTestBase {
     } catch (Exception e) {
       Util.printInfo("No Chat Popup found. Continuing...");
     }
-
     Util.printInfo("Checking if Chat Popup Present. Done");
+
     if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)) {
+      clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
+    } else if (data.get("isNonQuoteFlexOrder") != null &&
+        data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
+        data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser")) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
@@ -1584,7 +1613,11 @@ public class BICTestBase {
       driver.findElement(By.xpath(selectCountryOption)).click();
     }
 
-    bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
+    if (bicPage.checkIfElementExistsInPage("address1Field", 10)) {
+      bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
+    } else {
+      bicPage.populateField("addressAutocomplete", address.get(BICECEConstants.FULL_ADDRESS));
+    }
     Util.sleep(2000);
 
     bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
@@ -1605,18 +1638,37 @@ public class BICTestBase {
     Util.sleep(2000);
 
     bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
-    if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+
+    populateTaxIdForFlex();
+
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+      Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      Util.sleep(2000);
     }
 
-    // Logic to select one of the suggested addresses if there are any
-    try {
-      bicPage.waitForFieldPresent("customerDetailsAddress", 10000);
-      bicPage.clickUsingLowLevelActions("customerDetailsAddress");
-      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
-    } catch (NoSuchElementException e) {
-      // Catching no such element exception
-      Util.printInfo("Address confirmation not requested: " + e.getMessage());
+    Util.sleep(5000);
+
+    if (bicPage.checkIfElementExistsInPage("confirmCustomerAddressAlert", 10)) {
+      if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
+        Util.printInfo("Two or more suggested addresses. Clicking on radio button to choose one.");
+        bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+      }
+
+      if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
+        Util.printInfo("Address confirmation requested, Clicking on Continue2 button.");
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+      }
+    }
+
+    Util.sleep(5000);
+
+    boolean isCustomerDetailsComplete = bicPage.waitForFieldPresent("customerDetailsComplete", 1000);
+    if (isCustomerDetailsComplete) {
+      Util.printInfo("Customer details address saved successfully!");
+    } else {
+      AssertUtils.fail("Customer details section is still open. Could not save the address.");
     }
   }
 
@@ -1666,7 +1718,7 @@ public class BICTestBase {
 
   @Step("Assert that tax value matches the tax parameter.")
   private void checkIfTaxValueIsCorrect(HashMap<String, String> data) {
-    Util.sleep(5000);
+    Util.sleep(10000);
     String nonZeroTaxState = data.get("taxOptionEnabled");
     if (nonZeroTaxState.equals("undefined")) {
       return;
@@ -1960,25 +2012,28 @@ public class BICTestBase {
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 5000);
     bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.populateField(BICECEConstants.LOGIN_PASSWORD, password);
-    bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
-    bicPage.waitForPageToLoad();
+    bicPage.click(BICECEConstants.LOGIN_BUTTON);
+    Util.sleep(15000);
 
     if (bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK)) {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
+      waitForLoadingSpinnerToComplete();
     }
 
     Util.printInfo("Successfully logged in");
   }
 
   public void signOutUsingMeMenu() {
+    Util.printInfo("Signing out using meMenu");
+
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("meMenu-avatar-flyout")));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uh-me-menu-button-user")));
 
     try {
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");
-      bicPage.waitForPageToLoad();
-      js.executeScript("document.getElementById('meMenu-signOut').click()");
+      bicPage.checkIfElementExistsInPage("meMenuSignedIn", 20);
+      bicPage.click("meMenuSignedIn");
+      bicPage.checkIfElementExistsInPage("meMenuSignOut", 20);
+      bicPage.click("meMenuSignOut");
       bicPage.waitForPageToLoad();
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to logout");
