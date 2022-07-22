@@ -1168,10 +1168,9 @@ public class BICTestBase {
       Util.printInfo("The total amount in Confirmation page :" + Double.valueOf(orderTotal) / 100);
 
       data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
-      if (data.get("isNonQuoteFlexOrder") == null) {
-        AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
-            "The checkout page total and confirmation page total do not match.");
-      }
+      AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
+          "The checkout page total and confirmation page total do not match.");
+
     }
 
     return orderNumber;
@@ -1324,7 +1323,7 @@ public class BICTestBase {
     if (data.get("isNonQuoteFlexOrder") != null) {
       enterCustomerDetails(address);
       data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
-    }else{
+    } else {
       populateTaxIdForFlex();
     }
 
@@ -1603,7 +1602,11 @@ public class BICTestBase {
       driver.findElement(By.xpath(selectCountryOption)).click();
     }
 
-    bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
+    if (bicPage.checkIfElementExistsInPage("address1Field", 10)) {
+      bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
+    } else {
+      bicPage.populateField("addressAutocomplete", address.get(BICECEConstants.FULL_ADDRESS));
+    }
     Util.sleep(2000);
 
     bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
@@ -1627,11 +1630,11 @@ public class BICTestBase {
 
     populateTaxIdForFlex();
 
-
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      Util.sleep(2000);
     }
 
     Util.sleep(5000);
@@ -1704,7 +1707,7 @@ public class BICTestBase {
 
   @Step("Assert that tax value matches the tax parameter.")
   private void checkIfTaxValueIsCorrect(HashMap<String, String> data) {
-    Util.sleep(5000);
+    Util.sleep(10000);
     String nonZeroTaxState = data.get("taxOptionEnabled");
     if (nonZeroTaxState.equals("undefined")) {
       return;
@@ -1999,7 +2002,7 @@ public class BICTestBase {
     bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.populateField(BICECEConstants.LOGIN_PASSWORD, password);
     bicPage.click(BICECEConstants.LOGIN_BUTTON);
-    waitForLoadingSpinnerToComplete();
+    Util.sleep(15000);
 
     if (bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK)) {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
@@ -2011,14 +2014,15 @@ public class BICTestBase {
 
   public void signOutUsingMeMenu() {
     Util.printInfo("Signing out using meMenu");
+
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("meMenu-avatar-flyout")));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uh-me-menu-button-user")));
 
     try {
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      js.executeScript("document.getElementById('meMenu-avatar-flyout').click()");
-      bicPage.waitForPageToLoad();
-      js.executeScript("document.getElementById('meMenu-signOut').click()");
+      bicPage.checkIfElementExistsInPage("meMenuSignedIn", 20);
+      bicPage.click("meMenuSignedIn");
+      bicPage.checkIfElementExistsInPage("meMenuSignOut", 20);
+      bicPage.click("meMenuSignOut");
       bicPage.waitForPageToLoad();
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to logout");

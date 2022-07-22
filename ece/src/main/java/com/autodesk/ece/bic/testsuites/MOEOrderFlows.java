@@ -387,6 +387,7 @@ public class MOEOrderFlows extends ECETestBase {
         = moetb.createMoeOdmOpty(optyName, account, stage, projectCloseDate, fulfillment, plc, currency,
         contact);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+    testDataForEachMethod.put("currentOptyUrl", sfdcResults.get("currentOptyUrl"));
 
     HashMap<String, String> results = moetb.createBasicMoeOdmOptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -423,6 +424,8 @@ public class MOEOrderFlows extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
+    moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
+
     updateTestingHub(testResults);
 
     //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
@@ -432,9 +435,6 @@ public class MOEOrderFlows extends ECETestBase {
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
         portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
-
-      portaltb.validateBICOrderTaxInvoice(results);
-
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
@@ -456,6 +456,7 @@ public class MOEOrderFlows extends ECETestBase {
         = moetb.createMoeOdmOpty(optyName, account, stage, projectCloseDate, fulfillment, plc, currency, contact);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
     testDataForEachMethod.put("sfdcContactEmail", sfdcResults.get("contactEmail"));
+    testDataForEachMethod.put("currentOptyUrl", sfdcResults.get("currentOptyUrl"));
 
     HashMap<String, String> results = moetb.createBicOrderMoeOdmWithOptyDtc(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -492,21 +493,25 @@ public class MOEOrderFlows extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-//    updateTestingHub(testResults);
-//
-//    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-//        results.get(BICConstants.emailid),
-//        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-//    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-//      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
-//    }
-//
-//    if (getBicTestBase().shouldValidateSAP()) {
-//      portaltb.validateBICOrderTaxInvoice(results);
-//      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
-//    }
+    // TODO: Uncomment once jira APLR2PMO-10545 is fixed.
+    // moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
 
     updateTestingHub(testResults);
+
+    //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
+     /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+          results.get(BICConstants.emailid),
+          PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      }
+
+      if (getBicTestBase().shouldValidateSAP()) {
+        portaltb.validateBICOrderTaxInvoice(results);
+        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
+      }
+      updateTestingHub(testResults);*/
+
   }
 
   @Test(groups = {

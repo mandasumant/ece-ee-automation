@@ -666,7 +666,7 @@ public class PelicanTestBase {
     }
     if (Arrays.asList("STORE-NAMER", "STORE-CA", "STORE-AUS").contains(quoteInputMap.get(BICECEConstants.STORE_NAME))) {
       AssertUtils.assertEquals("EndCustomer City should match.",
-          pelicanResponseMap.get("getPOResponse_endCustomer_city").toUpperCase(), address.city.toUpperCase());
+          pelicanResponseMap.get("getPOResponse_endCustomer_city").substring(0,3).toUpperCase(), address.city.substring(0,3).toUpperCase());
     }
     if (address.province != null && !address.province.isEmpty()) {
       AssertUtils.assertEquals("EndCustomer State should match.",
