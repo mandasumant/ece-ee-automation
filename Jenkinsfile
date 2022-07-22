@@ -19,12 +19,13 @@ def testcases = [
     ]
 ]
 
-def generateTest(name, testcase, address, sapValidation, timezone) {
+def generateTest(name, testcase, address, sapValidation, timezone, currency) {
     def testData = [
         usertype: "new",
         password: "",
         sapValidation: String.valueOf(sapValidation),
         timezone: timezone,
+        currency: currency,
     ]
     testData.putAll(address)
     return new JsonBuilder([
@@ -955,15 +956,15 @@ pipeline {
                             '{"displayname":"Refund Q2O USA","testcasename":"a2d62443","description":"Refund Q2O USA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","locale":"en_US","sapValidation":"False"},"address":"Autodesk NY@310 E 44th St@New York@10017@9916800100@United States@NY","notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Refund Q2O Canada","testcasename":"a2d62443","description":"Refund Q2O Canada","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","locale":"en_CA","sapValidation":"False","address":"Autodesk@246 Lynden Road@Vineland@L0R 2E0@9055624155@Canada@ON"},"notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Refund Q2O EMEA(UK)","testcasename":"a2d62443","description":"Refund Q2O EMEA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","isTaxed":"Y","locale":"en_GB","sapValidation":"False"},"notsupportedenv":[],"wiki":""},' +
-                            '{"displayname":"Refund Q2O AUS","testcasename":"a2d62443","description":"Refund Q2O AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"False","address":"AutodeskAU@45 Garden Place@Wooroonook@3525@397202088@Australia@Vic"},"notsupportedenv":[],"wiki":""},' +
+                            '{"displayname":"Refund Q2O AUS","testcasename":"a2d62443","description":"Refund Q2O AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"False","address":"AutodeskAU@53 Wakefield St@Adelaide@5000@397202088@Australia@SA"},"notsupportedenv":[],"wiki":""},' +
                             [
-                                    generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[4], false, "America/Denver"),
-                                    generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[15], false, "America/Los_Angeles"),
-                                    generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses[56], false, "Canada/Pacific"),
-                                    generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses[61], false, "Australia/Sydney"),
-                                    generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses[86], false, "Europe/London"),
-                                    generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses[89], false, "Poland"),
-                                    generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses[100], false, "Europe/Vienna")
+                                    generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[4], false, "America/Denver", "USD"),
+                                    generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[15], false, "America/Los_Angeles", "USD"),
+                                    generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses[56], false, "Canada/Pacific" ,"CAD"),
+                                    generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses[61], false, "Australia/Sydney" ,"AUD"),
+                                    generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses[86], false, "Europe/London", "GBP"),
+                                    generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses[89], false, "Poland", "EUR"),
+                                    generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses[100], false, "Europe/Vienna", "EUR")
                             ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
