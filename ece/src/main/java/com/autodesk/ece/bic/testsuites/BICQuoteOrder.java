@@ -237,8 +237,7 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateMultiLineItemQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
 
-    Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
-
+    Address address = getBillingAddress();
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
 
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
@@ -308,7 +307,7 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateQuoteRefundOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
-    Address address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+    Address address = getBillingAddress();
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
             testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
