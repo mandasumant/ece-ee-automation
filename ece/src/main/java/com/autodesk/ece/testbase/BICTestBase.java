@@ -1707,7 +1707,7 @@ public class BICTestBase {
 
   @Step("Assert that tax value matches the tax parameter.")
   private void checkIfTaxValueIsCorrect(HashMap<String, String> data) {
-    Util.sleep(5000);
+    Util.sleep(10000);
     String nonZeroTaxState = data.get("taxOptionEnabled");
     if (nonZeroTaxState.equals("undefined")) {
       return;

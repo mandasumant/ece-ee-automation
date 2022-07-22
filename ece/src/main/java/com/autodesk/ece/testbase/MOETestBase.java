@@ -1265,6 +1265,8 @@ public class MOETestBase {
 
     bicTestBase.loginToOxygen(emailID, password);
 
+    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,800);");
+
     if (System.getProperty("usertype").equals("new")) {
       bicTestBase.enterCustomerDetails(address);
       Util.sleep(5000);
