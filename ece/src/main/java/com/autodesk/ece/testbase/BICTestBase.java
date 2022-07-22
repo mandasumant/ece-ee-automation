@@ -754,8 +754,8 @@ public class BICTestBase {
     try {
       Util.printInfo("Clicking on Sepa tab.");
       JavascriptExecutor js = (JavascriptExecutor) driver;
-      String sepa_Tab = bicPage.getFirstFieldLocator("sepaPaymentTab");
-      js.executeScript("arguments[0].click();", driver.findElement(By.xpath(sepa_Tab)));
+      String sepaTab = bicPage.getFirstFieldLocator("sepaPaymentTab");
+      js.executeScript("arguments[0].click();", driver.findElement(By.xpath(sepaTab)));
 
       Util.printInfo("Waiting for Sepa header.");
       bicPage.waitForElementVisible(
