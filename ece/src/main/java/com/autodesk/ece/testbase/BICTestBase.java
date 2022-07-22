@@ -749,17 +749,20 @@ public class BICTestBase {
 
   @Step("Populate Sepa payment details")
   public void populateSepaPaymentDetails(String[] paymentCardDetails) {
-    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
+    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
 
     try {
       Util.printInfo("Clicking on Sepa tab.");
-      bicPage.clickUsingLowLevelActions("sepaPaymentTab");
+      JavascriptExecutor js = (JavascriptExecutor) driver;
+      String sepaTab = bicPage.getFirstFieldLocator("sepaPaymentTab");
+      js.executeScript("arguments[0].click();", driver.findElement(By.xpath(sepaTab)));
 
       Util.printInfo("Waiting for Sepa header.");
       bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
+              bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
 
       Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
+      bicPage.clickUsingLowLevelActions("sepaIbanNumber");
       bicPage.populateField("sepaIbanNumber", paymentCardDetails[0]);
 
       Util.printInfo("Entering SEPA profile name : " + paymentCardDetails[0]);
@@ -1484,26 +1487,34 @@ public class BICTestBase {
   private void clickMandateAgreementCheckbox() {
     try {
       if (System.getProperty(BICECEConstants.PAYMENT)
-          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard) || System
-          .getProperty(BICECEConstants.PAYMENT)
-          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
+              .equalsIgnoreCase(BICConstants.paymentTypeDebitCard) || System
+              .getProperty(BICECEConstants.PAYMENT)
+              .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
         Util.printInfo(
-            BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
+                BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
+                        .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
         Util.printInfo(BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + bicPage.isChecked(
-            BICECEConstants.MANDATE_AGREEMENT_CHECKBOX));
+                BICECEConstants.MANDATE_AGREEMENT_CHECKBOX));
 
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
-        WebElement mandateAgreementElement = driver.findElement(By.xpath(
-            BICECEConstants.ID_MANDATE_AGREEMENT));
+        List<WebElement> mandateAgreementElement = driver.findElements(By.xpath(
+                BICECEConstants.ID_MANDATE_AGREEMENT));
 
         Util.printInfo(
-            BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
-        Util.printInfo(
-            BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + mandateAgreementElement
-                .isEnabled());
+                BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
+                        .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
+
+        if (mandateAgreementElement.size() > 1) {
+          mandateAgreementElement.get(1).click();
+          Util.printInfo(
+                  BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + mandateAgreementElement.get(1)
+                          .isEnabled());
+
+        } else {
+          mandateAgreementElement.get(0).click();
+          Util.printInfo(
+                  BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + mandateAgreementElement.get(0)
+                          .isEnabled());
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();
