@@ -2031,8 +2031,8 @@ public class BICTestBase {
   public void signOutUsingMeMenu() {
     Util.printInfo("Signing out using meMenu");
 
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uh-me-menu-button-user")));
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(90));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(bicPage.getFirstFieldLocator("meMenuSignedIn"))));
 
     try {
       bicPage.checkIfElementExistsInPage("meMenuSignedIn", 20);
