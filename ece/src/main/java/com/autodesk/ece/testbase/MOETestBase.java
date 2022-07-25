@@ -456,13 +456,11 @@ public class MOETestBase {
       moePage.waitForField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, true, 30000);
       moePage.click(BICECEConstants.MOE_LOGIN_USERNAME_FIELD);
       moePage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD,
-          "svc_s_platform_autob@autodesk.com");
+          CommonConstants.serviceUser);
       moePage.click("moeLoginButton");
       moePage.waitForField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, true, 30000);
       moePage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
-      moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD,
-          ProtectedConfigFile.decrypt(
-              "/pLbucWe9KSs27xgcdkXKA==:uGNj1FHc/Ncc4bjnjXzpjWGVr8aj9s93aNpn1EXd4I3O0f9R0KRAQhRUEox5JdqC"));
+      moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, CommonConstants.serviceUserPw);
       moePage.click("moeLoginButton");
       moePage.waitForPageToLoad();
     } else {
@@ -1375,8 +1373,6 @@ public class MOETestBase {
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
 
-    bicTestBase.signOutUsingMeMenu();
-
     return results;
   }
 
@@ -1431,8 +1427,6 @@ public class MOETestBase {
 
     results.put(BICConstants.emailid, emailID);
     results.put(BICConstants.orderNumber, orderNumber);
-
-    bicTestBase.signOutUsingMeMenu();
 
     return results;
   }
