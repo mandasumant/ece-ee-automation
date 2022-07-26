@@ -296,7 +296,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP"
-    address: "Autodesk@ulitsa 2@Sofia@1839@392 83 44 92@Bulgaria"
+    address: "Autodesk@ulitsa Sabev dab@Saedinenie@4190@392 83 44 92@Bulgaria"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070267982"
     agentContactEmail: "partneruser_da_int_5070267982@letscheck.email"
