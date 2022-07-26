@@ -16,18 +16,25 @@ def testcases = [
             testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
             testGroup        : "quote-accountportal",
             testMethod       : "validateAccountPortalQuoteOrder"
+    ],
+    "validateFlexDirectReturningUser": [
+            displaynamePrefix: "Flex Direct Returning User",
+            testcasename     : "bea28298",
+            descriptionPrefix: "Flex Direct Returning User",
+            testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+            testGroup        : "bic-flexdirect-returning",
+            testMethod       : "validateFlexOrderNewCartReturningUser"
     ]
 ]
 
-def generateTest(name, testcase, address, sapValidation, timezone, currency) {
+def generateTest(name, testcase, address, options = []) {
     def testData = [
         usertype: "new",
         password: "",
-        sapValidation: String.valueOf(sapValidation),
-        timezone: timezone,
-        currency: currency,
     ]
     testData.putAll(address)
+    testData.putAll(options)
+
     return new JsonBuilder([
         displayname: testcase.displaynamePrefix + " " + name,
         testcasename: testcase.testcasename,
@@ -958,13 +965,13 @@ pipeline {
                             '{"displayname":"Refund Q2O EMEA(UK)","testcasename":"a2d62443","description":"Refund Q2O EMEA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","isTaxed":"Y","locale":"en_GB","sapValidation":"False"},"user.timezone":"Europe/London","notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Refund Q2O AUS","testcasename":"a2d62443","description":"Refund Q2O AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"False","address":"AutodeskAU@53 Wakefield St@Adelaide@5000@397202088@Australia@SA"},"user.timezone":"Australia/Sydney","notsupportedenv":[],"wiki":""},' +
                             [
-                                    generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[4], false, "America/Denver", "USD"),
-                                    generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[15], false, "America/Los_Angeles", "USD"),
-                                    generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses[56], false, "Canada/Pacific" ,"CAD"),
-                                    generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses[61], false, "Australia/Sydney" ,"AUD"),
-                                    generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses[86], false, "Europe/London", "GBP"),
-                                    generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses[89], false, "Poland", "EUR"),
-                                    generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses[100], false, "Europe/Vienna", "EUR")
+                                    generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[4], [timezone: "America/Denver"]),
+                                    generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[15], [timezone: "America/Los_Angeles"]),
+                                    generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses[56], [timezone: "Canada/Pacific"]),
+                                    generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses[61], [timezone: "Australia/Sydney"]),
+                                    generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses[86], [timezone: "Europe/London"]),
+                                    generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses[89], [timezone: "Poland", currency: "EUR"]),
+                                    generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses[100], [timezone: "Europe/Vienna", currency: "EUR"])
                             ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
@@ -989,6 +996,8 @@ pipeline {
                 echo 'Initiating Apollo Flex Order - All'
                 script {
                     println("Building Testing Hub API Input Map - All")
+
+                    def addresses = readJSON file: "./testdata/addresses.json"
 
                     def testingHubInputMap = [:]
                     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
@@ -1119,7 +1128,16 @@ pipeline {
                             '{"displayname":"Flex Direct Order Refund  AUS","testcasename":"a1c54974","description":"Refund Flex Direct Order AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexdirect-new-refund","testMethod":"validateFlexOrderNewCartRefund","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"False","address":"AutodeskAU@259-261 Colchester Rd@Kilsyth South@3137@397202088@Australia@VIC"},"notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Flex Estimator USA (en_US)","testcasename":"fbf7fe55","description":"Flex Estimator US(en_US)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"False","address":"Autodesk US Refund@1245 Alpine Avenue@Boulder@80304@9916800100@United States@CO"},"notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Flex Estimator CA (en_CA)","testcasename":"fbf7fe55","description":"Flex Estimator CA(en_CA)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","locale":"en_CA","sapValidation":"False","address":"Autodesk CA@10 Rue Saint-Jacques@Montreal@H2Y 1L3@9916800100@Canada@QC"},"notsupportedenv":[],"wiki":""},' +
-                            '{"displayname":"Flex Estimator AUS (en_AU)","testcasename":"fbf7fe55","description":"Flex Estimator AUS(en_AU)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"False","address":"AutodeskAU@240 City Walker@Canberra@2601@397202088@Australia@ACT"},"notsupportedenv":[],"wiki":""}' +
+                            '{"displayname":"Flex Estimator AUS (en_AU)","testcasename":"fbf7fe55","description":"Flex Estimator AUS(en_AU)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"False","address":"AutodeskAU@240 City Walker@Canberra@2601@397202088@Australia@ACT"},"notsupportedenv":[],"wiki":""},' +
+                            [
+                                generateTest("USA Colorado (en_US)", testcases.validateFlexDirectReturningUser, addresses[4]),
+                                generateTest("USA Montana (en_US)", testcases.validateFlexDirectReturningUser, addresses[15]),
+                                generateTest("CA Quebec (en_CA)", testcases.validateFlexDirectReturningUser, addresses[56]),
+                                generateTest("AUS NSW (en_AU)", testcases.validateFlexDirectReturningUser, addresses[61]),
+                                generateTest("UK (en_GB)", testcases.validateFlexDirectReturningUser, addresses[86]),
+                                generateTest("Poland (pl_PL)", testcases.validateFlexDirectReturningUser, addresses[89]),
+                                generateTest("Austria (en_AT)", testcases.validateFlexDirectReturningUser, addresses[100])
+                            ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
                     if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {

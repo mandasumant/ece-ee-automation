@@ -1344,7 +1344,9 @@ public class BICTestBase {
 
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
-    enterBillingDetails(data, address, paymentMethod);
+    if (data.get("isReturningUser") == null) {
+      enterBillingDetails(data, address, paymentMethod);
+    }
 
     if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
