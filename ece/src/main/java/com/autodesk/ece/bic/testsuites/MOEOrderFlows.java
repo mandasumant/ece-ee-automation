@@ -493,8 +493,7 @@ public class MOEOrderFlows extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-    // TODO: Uncomment once jira APLR2PMO-10545 is fixed.
-    // moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
+     moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
 
     updateTestingHub(testResults);
 
