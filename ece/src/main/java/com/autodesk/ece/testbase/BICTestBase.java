@@ -1729,11 +1729,11 @@ public class BICTestBase {
     String taxValue = null;
     if (data.get("productType").equals("flex")) {
       try {
-        if (bicPage.checkIfElementExistsInPage("orderSummaryTax", 15)) {
+        if (bicPage.checkIfElementExistsInPage("orderSummaryTax", 45)) {
           Util.printInfo("Flex tax condition for Tax/GST");
           taxValue = driver.findElement(
               By.xpath(bicPage.getFirstFieldLocator("orderSummaryTax"))).getText();
-        } else if (bicPage.checkIfElementExistsInPage("orderSummaryVat", 15)) {
+        } else if (bicPage.checkIfElementExistsInPage("orderSummaryVat", 45)) {
           Util.printInfo("Flex tax condition for Vat");
           taxValue = driver.findElement(
               By.xpath(bicPage.getFirstFieldLocator("orderSummaryVat"))).getText();

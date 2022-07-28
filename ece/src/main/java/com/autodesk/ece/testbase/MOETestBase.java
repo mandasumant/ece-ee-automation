@@ -942,71 +942,88 @@ public class MOETestBase {
     try {
       if (StringUtils.isNotEmpty(contact)) {
 
-        Util.printInfo("Clicking on cta: Manage Contact Roles");
-        moePage.click("manageContactRoles");
-        moePage.waitForPageToLoad();
+        Boolean isContactMissing = true;
+        int attempt = 0;
 
-        moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
-        moePage.clickUsingLowLevelActions("contactRolesHeading");
+        while (isContactMissing) {
 
-        moePage.clickUsingLowLevelActions("addContactRoles");
-        Util.printInfo("Clicked on cta: '+ Add 1 more Contact Role'");
-        moePage.waitForPageToLoad();
+          attempt++;
 
-        if (System.getProperty("usertype").equals("new")) {
-          Util.printInfo("Associating new contact roles to Opty: " + emailID);
-          moePage.checkIfElementExistsInPage("createNewContactLink", 15);
-          moePage.clickUsingLowLevelActions("createNewContactLink");
-          moePage.checkIfElementExistsInPage("contactFirstNameInput", 15);
-          moePage.clickUsingLowLevelActions("contactFirstNameInput");
-          moePage.populateField("contactFirstNameInput", names.firstName);
-          moePage.clickUsingLowLevelActions("contactLastNameInput");
-          moePage.populateField("contactLastNameInput", names.lastName);
-          moePage.clickUsingLowLevelActions("contactEmailInput");
-          moePage.populateField("contactEmailInput", emailID);
-          // INFO: Phone number isn't required from SFDC but if not added, the purchase/offer api call
-          // will fail with the error 'Invalid request payload'.
-          moePage.clickUsingLowLevelActions("contactPhoneInput");
-          moePage.populateField("contactPhoneInput", "1234567890");
-          moePage.clickUsingLowLevelActions("contactPreferredLanguageSelect");
-          Util.sleep(1000);
-          moePage.clickUsingLowLevelActions("contactLanguage");
+          if (attempt > 3) {
+            AssertUtils.fail("Unable to add a contact to the Opportunity.");
+            break;
+          }
+
+          Util.printInfo("Clicking on cta: Manage Contact Roles. Attempt no. " + attempt + " to add a contact.");
+          moePage.click("manageContactRoles");
+          moePage.waitForPageToLoad();
+
+          moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
+          moePage.clickUsingLowLevelActions("contactRolesHeading");
+
+          moePage.clickUsingLowLevelActions("addContactRoles");
+          Util.printInfo("Clicked on cta: '+ Add 1 more Contact Role'");
+          moePage.waitForPageToLoad();
+
+          if (System.getProperty("usertype").equals("new")) {
+            Util.printInfo("Associating new contact roles to Opty: " + emailID);
+            moePage.checkIfElementExistsInPage("createNewContactLink", 15);
+            moePage.clickUsingLowLevelActions("createNewContactLink");
+            moePage.checkIfElementExistsInPage("contactFirstNameInput", 15);
+            moePage.clickUsingLowLevelActions("contactFirstNameInput");
+            moePage.populateField("contactFirstNameInput", names.firstName);
+            moePage.clickUsingLowLevelActions("contactLastNameInput");
+            moePage.populateField("contactLastNameInput", names.lastName);
+            moePage.clickUsingLowLevelActions("contactEmailInput");
+            moePage.populateField("contactEmailInput", emailID);
+            // INFO: Phone number isn't required from SFDC but if not added, the purchase/offer api call
+            // will fail with the error 'Invalid request payload'.
+            moePage.clickUsingLowLevelActions("contactPhoneInput");
+            moePage.populateField("contactPhoneInput", "1234567890");
+            moePage.clickUsingLowLevelActions("contactPreferredLanguageSelect");
+            Util.sleep(1000);
+            moePage.clickUsingLowLevelActions("contactLanguage");
+            Util.sleep(2000);
+            moePage.click("saveContactButton");
+
+            String contactEmail = emailID;
+            Util.printInfo(contactEmail);
+            results.put("contactEmail", emailID);
+          } else {
+            Util.printInfo("Associating existing contact roles to Opty: " + contact);
+
+            moePage.checkIfElementExistsInPage("contactRolesInput", 10);
+            moePage.clickUsingLowLevelActions("contactRolesInput");
+            moePage.populateField("contactRolesInput", contact);
+            Util.sleep(20000);
+            Util.printInfo("Populated input field with contact email");
+
+            WebElement webElement = driver.findElement(
+                By.xpath("//input[@class='slds-input input uiInput uiInputText uiInput--default uiInput--input']"));
+            webElement.sendKeys(Keys.TAB, Keys.ENTER);
+            Util.printInfo("Contact selected from search result");
+          }
+          moePage.waitForPageToLoad();
+
+          moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
+          moePage.clickUsingLowLevelActions("contactRolesHeading");
+
+          JavascriptExecutor js = (JavascriptExecutor) driver;
+          js.executeScript(
+              "document.getElementsByClassName(\"uiImage uiOutputCheckbox\")[0].click();document.getElementsByClassName(\"uiInput uiInputCheckbox uiInput--default uiInput--checkbox\")[0].click();");
+          Util.printInfo("Primary contact checkbox checked");
           Util.sleep(2000);
-          moePage.click("saveContactButton");
 
-          String contactEmail = emailID;
-          Util.printInfo(contactEmail);
-          results.put("contactEmail", emailID);
-        } else {
-          Util.printInfo("Associating existing contact roles to Opty: " + contact);
+          js.executeScript(
+              "document.getElementsByClassName(\"slds-button slds-button--brand\")[1].click();");
+          Util.printInfo("Clicked on cta: Save");
+          Util.sleep(10000);
 
-          moePage.checkIfElementExistsInPage("contactRolesInput", 10);
-          moePage.clickUsingLowLevelActions("contactRolesInput");
-          moePage.populateField("contactRolesInput", contact);
-          Util.sleep(20000);
-          Util.printInfo("Populated input field with contact email");
-
-          WebElement webElement = driver.findElement(
-              By.xpath("//input[@class='slds-input input uiInput uiInputText uiInput--default uiInput--input']"));
-          webElement.sendKeys(Keys.TAB, Keys.ENTER);
-          Util.printInfo("Contact selected from search result");
+          if (moePage.checkIfElementExistsInPage("contactSectionTitle", 30)) {
+            Util.printInfo("Contact successfully added to the opportunity.");
+            isContactMissing = false;
+          }
         }
-        moePage.waitForPageToLoad();
-
-        moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
-        moePage.clickUsingLowLevelActions("contactRolesHeading");
-
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript(
-            "document.getElementsByClassName(\"uiImage uiOutputCheckbox\")[0].click();document.getElementsByClassName(\"uiInput uiInputCheckbox uiInput--default uiInput--checkbox\")[0].click();");
-        Util.printInfo("Primary contact checkbox checked");
-        Util.sleep(2000);
-
-        js.executeScript(
-            "document.getElementsByClassName(\"slds-button slds-button--brand\")[1].click();");
-        Util.printInfo("Clicked on cta: Save");
-        Util.sleep(10000);
-
       }
     } catch (Exception e) {
       AssertUtils.fail("Failed to assign Contact Roles to MOE ODM Opty." + e.getMessage());
