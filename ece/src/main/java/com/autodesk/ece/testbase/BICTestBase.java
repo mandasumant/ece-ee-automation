@@ -1442,7 +1442,7 @@ public class BICTestBase {
     if (data.get("isReturningUser") == null) {
       signInIframe(data);
     } else {
-      boolean isLoggedIn = bicPage.checkIfElementExistsInPage("signInSectionUserProfile", 60);
+      boolean isLoggedIn = bicPage.checkIfElementExistsInPage("signInSectionUserProfile", 20);
       if (!isLoggedIn) {
         loginAccount(data);
       }
