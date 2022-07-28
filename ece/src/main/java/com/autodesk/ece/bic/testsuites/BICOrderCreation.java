@@ -811,10 +811,9 @@ public class BICOrderCreation extends ECETestBase {
       portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
-    getBicTestBase()
-        .navigateToCart(testDataForEachMethod);
-
+    Util.printInfo("Placing Flex order for returning user");
     testDataForEachMethod.put("isReturningUser", "true");
+    getBicTestBase().navigateToFlexCartFromDotCom(testDataForEachMethod);
     results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
 
     updateTestingHub(testResults);

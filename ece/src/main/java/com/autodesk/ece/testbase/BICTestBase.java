@@ -759,7 +759,7 @@ public class BICTestBase {
 
       Util.printInfo("Waiting for Sepa header.");
       bicPage.waitForElementVisible(
-              bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
+          bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
 
       Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
       bicPage.clickUsingLowLevelActions("sepaIbanNumber");
@@ -1439,7 +1439,14 @@ public class BICTestBase {
     String priceId = navigateToCart(data);
 
     // Sign in
-    signInIframe(data);
+    if (data.get("isReturningUser") == null) {
+      signInIframe(data);
+    } else {
+      boolean isLoggedIn = bicPage.checkIfElementExistsInPage("signInSectionUserProfile", 60);
+      if (!isLoggedIn) {
+        loginAccount(data);
+      }
+    }
 
     if ((!data.get("productType").equals("flex")) && data.containsKey(BICECEConstants.QUANTITY)) {
       updateQuantity(priceId, data.get(BICECEConstants.QUANTITY));
@@ -1489,33 +1496,33 @@ public class BICTestBase {
   private void clickMandateAgreementCheckbox() {
     try {
       if (System.getProperty(BICECEConstants.PAYMENT)
-              .equalsIgnoreCase(BICConstants.paymentTypeDebitCard) || System
-              .getProperty(BICECEConstants.PAYMENT)
-              .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
+          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard) || System
+          .getProperty(BICECEConstants.PAYMENT)
+          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_SEPA)) {
         Util.printInfo(
-                BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                        .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
+            BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
+                .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
         Util.printInfo(BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + bicPage.isChecked(
-                BICECEConstants.MANDATE_AGREEMENT_CHECKBOX));
+            BICECEConstants.MANDATE_AGREEMENT_CHECKBOX));
 
         List<WebElement> mandateAgreementElement = driver.findElements(By.xpath(
-                BICECEConstants.ID_MANDATE_AGREEMENT));
+            BICECEConstants.ID_MANDATE_AGREEMENT));
 
         Util.printInfo(
-                BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
-                        .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
+            BICECEConstants.CHECKED_MANDATE_AUTHORIZATION_AGREEMENT_IS_VISIBLE + bicPage
+                .isFieldVisible(BICECEConstants.MANDATE_CHECKBOX_HEADER));
 
         if (mandateAgreementElement.size() > 1) {
           mandateAgreementElement.get(1).click();
           Util.printInfo(
-                  BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + mandateAgreementElement.get(1)
-                          .isEnabled());
+              BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + mandateAgreementElement.get(1)
+                  .isEnabled());
 
         } else {
           mandateAgreementElement.get(0).click();
           Util.printInfo(
-                  BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + mandateAgreementElement.get(0)
-                          .isEnabled());
+              BICECEConstants.CHECKED_BOX_STATUS_FOR_MANDATE_CHECKBOX + mandateAgreementElement.get(0)
+                  .isEnabled());
         }
       }
     } catch (Exception e) {
@@ -1526,7 +1533,6 @@ public class BICTestBase {
   private String createBICOrderDotCom(LinkedHashMap<String, String> data, Boolean isLoggedIn) throws MetadataException {
     String orderNumber = null;
     Map<String, String> address = null;
-    Names names = null;
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String priceId = navigateToCart(data);
     address = getBillingAddress(data);
