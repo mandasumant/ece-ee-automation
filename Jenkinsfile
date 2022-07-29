@@ -4,26 +4,108 @@ import groovy.json.JsonBuilder
 
 @Library(['PSL@master', 'jenkins-shared-lib', 'jenkins-modules', 'wpe-shared-library@psl_2.0']) _
 
+SAP_INVOICE_VALIDATION = false;
+
 def common_sonar
 def buildInfo = new BuildInfo(currentBuild: currentBuild, moduleName: "testinghub-autobot", stack: "test")
 def serviceBuildHelper = new ServicesBuildHelper(this, 'svc_d_artifactory', buildInfo)
 
 def testcases = [
+    "quoteToOrder": [
+        displaynamePrefix: "Quote 2 Order",
+        testcasename     : "9d3de1c2",
+        descriptionPrefix: "Quote 2 Order",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "bic-quoteorder",
+        testMethod       : "validateBicQuoteOrder"
+    ],
+    "quoteMultiLineOrder": [
+        displaynamePrefix: "Quote 2 Order Multi line item Order",
+        testcasename     : "e803e4a4",
+        descriptionPrefix: "Quote 2 Order Multi line item Order",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "multiline-quoteorder",
+        testMethod       : "validateMultiLineItemQuoteOrder"
+    ],
+    "quoteRefund": [
+        displaynamePrefix: "Quote 2 Order Refund",
+        testcasename     : "a2d62443",
+        descriptionPrefix: "Quote 2 Order Refund",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "quote-RefundOrder",
+        testMethod       : "validateQuoteRefundOrder"
+    ],
     "validateAccountPortalQuoteOrder": [
-            displaynamePrefix: "Account Portal Q2O",
-            testcasename     : "604584f1",
-            descriptionPrefix: "Account Portal Q2O",
-            testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
-            testGroup        : "quote-accountportal",
-            testMethod       : "validateAccountPortalQuoteOrder"
+        displaynamePrefix: "Account Portal Q2O",
+        testcasename     : "604584f1",
+        descriptionPrefix: "Account Portal Q2O",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "quote-accountportal",
+        testMethod       : "validateAccountPortalQuoteOrder"
+    ],
+    "flexDirect": [
+        displaynamePrefix: "Flex Direct",
+        testcasename     : "d27c5060",
+        descriptionPrefix: "Flex Direct",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+        testGroup        : "bic-flexorder-new",
+        testMethod       : "validateFlexOrderNewCart"
+    ],
+    "flexDirectRefund": [
+        displaynamePrefix: "Flex Direct Refund",
+        testcasename     : "a1c54974",
+        descriptionPrefix: "Flex Direct Refund",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+        testGroup        : "bic-flexdirect-new-refund",
+        testMethod       : "validateFlexOrderNewCartRefund"
+    ],
+    "flexDirectEstimator": [
+        displaynamePrefix: "Flex Direct Estimator Tool",
+        testcasename     : "fbf7fe55",
+        descriptionPrefix: "Flex Direct Estimator Tool",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+        testGroup        : "flex-token-estimator",
+        testMethod       : "validateFlexTokenEstimatorTool"
     ],
     "validateFlexDirectReturningUser": [
-            displaynamePrefix: "Flex Direct Returning User",
-            testcasename     : "bea28298",
-            descriptionPrefix: "Flex Direct Returning User",
-            testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
-            testGroup        : "bic-flexdirect-returning",
-            testMethod       : "validateFlexOrderNewCartReturningUser"
+        displaynamePrefix: "Flex Direct Returning User",
+        testcasename     : "bea28298",
+        descriptionPrefix: "Flex Direct Returning User",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+        testGroup        : "bic-flexdirect-returning",
+        testMethod       : "validateFlexOrderNewCartReturningUser"
+    ],
+    "moeO2PAgent": [
+        displaynamePrefix: "MOE O2P Order Agent",
+        testcasename     : "e2ea9875",
+        descriptionPrefix: "MOE O2P Order Agent",
+        testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
+        testGroup        : "bic-basicFlowOdmAgent-moe",
+        testMethod       : "validateMoeOdmOpportunityFlowAgent"
+    ],
+    "moeO2PCustomer": [
+        displaynamePrefix: "MOE O2P Order Customer",
+        testcasename     : "97993340",
+        descriptionPrefix: "MOE O2P Order Customer",
+        testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
+        testGroup        : "bic-basicFlowOdmCustomer-moe",
+        testMethod       : "validateMoeOdmOpportunityFlowCustomer"
+    ],
+    "moeDTCO2PCustomerNew": [
+        displaynamePrefix: "MOE DTC O2P Order Customer New",
+        testcasename     : "28d21011",
+        descriptionPrefix: "MOE DTC O2P Order Customer New",
+        testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
+        testGroup        : "bic-basicFlowOdmDtcCustomer-moe",
+        testMethod       : "validateMoeOdmDtcFlowCustomer"
+    ],
+    "moeDTCO2PCustomerExisting": [
+        displaynamePrefix: "MOE DTC O2P Order Customer Existing",
+        testcasename     : "2363224d",
+        descriptionPrefix: "MOE DTC O2P Order Customer Existing",
+        testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
+        testGroup        : "bic-returningUserOdmDtc-moe",
+        testMethod       : "validateMoeOdmDtcFlowReturningCustomer"
     ]
 ]
 
@@ -31,6 +113,7 @@ def generateTest(name, testcase, address, options = []) {
     def testData = [
         usertype: "new",
         password: "",
+        sapValidation: String.valueOf(SAP_INVOICE_VALIDATION)
     ]
     testData.putAll(address)
     testData.putAll(options)
@@ -71,6 +154,7 @@ pipeline {
         choice(name: 'ENVIRONMENT', choices: ['INT', 'STG'], description: 'Choose Environment')
         booleanParam(name: 'CJT_STG', defaultValue: false, description: 'Run CJT Regression on STG?')
         booleanParam(name: 'CJT_INT', defaultValue: false, description: 'Run CJT Regression on INT?')
+        booleanParam(name: 'CJT_INT_APOLLO_R2_0_2', defaultValue: false, description: 'Run CJT Regression on INT R2.0.2?')
         booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order?')
         booleanParam(name: 'APOLLO_FLEX', defaultValue: false, description: 'Run FLEX Order?')
         booleanParam(name: 'APOLLO_FLEX_MOE', defaultValue: false, description: 'Run FLEX MOE Order?')
@@ -78,6 +162,14 @@ pipeline {
     }
 
     stages {
+        stage('Store Globals') {
+            steps {
+                script {
+                    SAP_INVOICE_VALIDATION = params.INVOICE_VALIDATION == "true";
+                }
+            }
+        }
+
         stage('Prepare environment') {
             when {
                 not {
@@ -86,10 +178,11 @@ pipeline {
                         expression {
                             params.CJT_STG == true ||
                             params.CJT_INT == true ||
+                            params.CJT_INT_APOLLO_R2_0_2 == true ||
                             params.APOLLO_Q20 == true ||
                             params.APOLLO_FLEX == true ||
                             params.APOLLO_FLEX_MOE == true
-                      }
+                        }
                     }
                 }
             }
@@ -111,6 +204,7 @@ pipeline {
                         expression {
                             params.CJT_STG == true ||
                             params.CJT_INT == true ||
+                            params.CJT_INT_APOLLO_R2_0_2 == true ||
                             params.APOLLO_Q20 == true ||
                             params.APOLLO_FLEX == true ||
                             params.APOLLO_FLEX_MOE == true
@@ -140,6 +234,7 @@ pipeline {
                         expression {
                             params.CJT_STG == true ||
                             params.CJT_INT == true ||
+                            params.CJT_INT_APOLLO_R2_0_2 == true ||
                             params.APOLLO_Q20 == true ||
                             params.APOLLO_FLEX == true ||
                             params.APOLLO_FLEX_MOE == true
@@ -319,6 +414,99 @@ pipeline {
             }
         }
 
+        stage('CJT Regression Apollo 2.0.2 INT') {
+            when {
+                branch 'master'
+                anyOf {
+                    triggeredBy 'TimerTrigger'
+                    expression {
+                        params.CJT_INT_APOLLO_R2_0_2 == true
+                    }
+                }
+            }
+            steps {
+                echo 'Initiating Apollo UAT - 2.0.2 Regression (INT)'
+                script {
+                    println("Building Testing Hub API Input Map - estore")
+
+                    def addresses = readJSON file: "./testdata/addresses.json"
+                    def casesToTest = [
+                        testcases.quoteToOrder,
+                        testcases.quoteMultiLineOrder,
+                        testcases.quoteRefund,
+                        testcases.validateAccountPortalQuoteOrder,
+                        testcases.flexDirect,
+                        testcases.flexDirectRefund,
+                        testcases.flexDirectEstimator,
+                        testcases.validateFlexDirectReturningUser
+                    ]
+                    def localesToTest = [
+                        [
+                            name: "USA California (en_US)",
+                            address: addresses["United States"]["CA"],
+                            options: [timezone: "America/Los_Angeles"]
+                        ],
+                        [
+                            name: "CA Ontario (en_CA)",
+                            address: addresses["Canada"]["ON"],
+                            options: [timezone: "America/New_York"]
+                        ],
+                        [
+                            name: "AUS NSW (en_AU)",
+                            address: addresses["Australia"]["NSW"],
+                            options: [timezone: "Australia/Sydney"]
+                        ],
+                        [
+                            name: "UK (en_GB)",
+                            address: addresses["en_GB"],
+                            options: [timezone: "Europe/London"]
+                        ]
+                    ]
+
+                    // Generate Q2O and Flex direct in the testing locales
+                    def tests = casesToTest.inject([]) { testList, test ->
+                        testList.addAll(localesToTest.collect { generateTest(it.name, test, it.address, it.options )})
+                        testList
+                    }
+
+                    def moeTestCases = [
+                        testcases.moeO2PAgent,
+                        testcases.moeO2PCustomer,
+                    ]
+
+                    def moeLocales = new ArrayList<String>(localesToTest.subList(0, 3))
+
+                    // Generate MOE (non DTC) for new and existing customer scenarios in only the 3 supported locales
+                    tests.addAll(
+                        moeTestCases.inject([]) { testList, test ->
+                            testList.addAll(moeLocales.collect { generateTest(it.name + '- new', test, it.address )})
+                            testList.addAll(moeLocales.collect { generateTest(it.name + '- existing', test, it.address, ["usertype": "existing"] )})
+                            testList
+                        }
+                    )
+
+                    // Adds MOE DTC new and exsting test scenarioes in the testing locales
+                    tests.addAll( localesToTest.collect { generateTest(it.name, testcases.moeDTCO2PCustomerNew, it.address ) } )
+                    tests.addAll( localesToTest.collect { generateTest(it.name, testcases.moeDTCO2PCustomerExisting, it.address, ["usertype": "existing"] ) } )
+
+                    def testingHubInputMap = [:]
+                    testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
+                    testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+                    testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
+                    testingHubInputMap.testingHubApiPayload = '{"env":"INT","executionname":"CLT Regression - Apollo 2.0.2 on INT", "notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                        tests.join(',') +
+                        '],"workstreamname":"dclecjt"}'
+                    println("Starting Testing Hub API Call - estore")
+                    if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+                        println('Testing Hub API called successfully - estore')
+                    } else {
+                        currentBuild.result = 'FAILURE'
+                        println('Testing Hub API call failed - estore')
+                    }
+                }
+            }
+        }
+
         stage('Apollo Quote 2 Order - All Orders Suite') {
             when {
                 branch 'master'
@@ -449,13 +637,13 @@ pipeline {
                             '{"displayname":"Refund Q2O EMEA(UK)","testcasename":"a2d62443","description":"Refund Q2O EMEA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","isTaxed":"Y","locale":"en_GB","sapValidation":"' + params.INVOICE_VALIDATION + '"},"user.timezone":"Europe/London","notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Refund Q2O AUS","testcasename":"a2d62443","description":"Refund Q2O AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"AutodeskAU@53 Wakefield St@Adelaide@5000@397202088@Australia@SA"},"user.timezone":"Australia/Sydney","notsupportedenv":[],"wiki":""},' +
                             [
-                                    generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[4], [timezone: "America/Denver", sapValidation: params.INVOICE_VALIDATION]),
-                                    generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses[15], [timezone: "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION]),
-                                    generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses[56], [timezone: "Canada/Pacific" , currency: "CAD"]),
-                                    generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses[61], [timezone: "Australia/Sydney",  sapValidation:params.INVOICE_VALIDATION]),
-                                    generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses[86], [timezone: "Europe/London", sapValidation: params.INVOICE_VALIDATION]),
-                                    generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses[89], [timezone: "Poland", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"]),
-                                    generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses[100], [timezone: "Europe/Vienna", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"])
+                                    generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses["United States"]["CO"], [timezone: "America/Denver", sapValidation: params.INVOICE_VALIDATION]),
+                                    generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses["United States"]["MT"], [timezone: "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION]),
+                                    generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses["Canada"]["QC"], [timezone: "Canada/Pacific" , currency: "CAD"]),
+                                    generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses["Australia"]["NSW"], [timezone: "Australia/Sydney",  sapValidation:params.INVOICE_VALIDATION]),
+                                    generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses["en_GB"], [timezone: "Europe/London", sapValidation: params.INVOICE_VALIDATION]),
+                                    generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses["pl_PL"], [timezone: "Poland", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"]),
+                                    generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses["en_AT"], [timezone: "Europe/Vienna", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"])
                             ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
@@ -614,13 +802,13 @@ pipeline {
                             '{"displayname":"Flex Estimator CA (en_CA)","testcasename":"fbf7fe55","description":"Flex Estimator CA(en_CA)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","locale":"en_CA","sapValidation":"False","address":"Autodesk CA@10 Rue Saint-Jacques@Montreal@H2Y 1L3@9916800100@Canada@QC"},"notsupportedenv":[],"wiki":""},' +
                             '{"displayname":"Flex Estimator AUS (en_AU)","testcasename":"fbf7fe55","description":"Flex Estimator AUS(en_AU)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"False","address":"AutodeskAU@240 City Walker@Canberra@2601@397202088@Australia@ACT"},"notsupportedenv":[],"wiki":""},' +
                             [
-                                generateTest("USA Colorado (en_US)", testcases.validateFlexDirectReturningUser, addresses[4]),
-                                generateTest("USA Montana (en_US)", testcases.validateFlexDirectReturningUser, addresses[15]),
-                                generateTest("CA Quebec (en_CA)", testcases.validateFlexDirectReturningUser, addresses[56]),
-                                generateTest("AUS NSW (en_AU)", testcases.validateFlexDirectReturningUser, addresses[61]),
-                                generateTest("UK (en_GB)", testcases.validateFlexDirectReturningUser, addresses[86]),
-                                generateTest("Poland (pl_PL)", testcases.validateFlexDirectReturningUser, addresses[89]),
-                                generateTest("Austria (en_AT)", testcases.validateFlexDirectReturningUser, addresses[100])
+                                generateTest("USA Colorado (en_US)", testcases.validateFlexDirectReturningUser, addresses["United States"]["CO"]),
+                                generateTest("USA Montana (en_US)", testcases.validateFlexDirectReturningUser, addresses["United States"]["MT"]),
+                                generateTest("CA Quebec (en_CA)", testcases.validateFlexDirectReturningUser, addresses["Canada"]["QC"]),
+                                generateTest("AUS NSW (en_AU)", testcases.validateFlexDirectReturningUser, addresses["Australia"]["NSW"]),
+                                generateTest("UK (en_GB)", testcases.validateFlexDirectReturningUser, addresses["en_GB"]),
+                                generateTest("Poland (pl_PL)", testcases.validateFlexDirectReturningUser, addresses["pl_PL"]),
+                                generateTest("Austria (en_AT)", testcases.validateFlexDirectReturningUser, addresses["en_AT"])
                             ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")

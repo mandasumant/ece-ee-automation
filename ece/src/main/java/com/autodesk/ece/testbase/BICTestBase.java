@@ -1370,6 +1370,10 @@ public class BICTestBase {
         data.get("guacDotComBaseURL") + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get("flexBenefitsPath");
     getUrl(flexTokensEstimatorUrl);
 
+    if (bicPage.checkIfElementExistsInPage("estimatorAcceptCookies", 5)) {
+      bicPage.click("estimatorAcceptCookies");
+    }
+
     Util.printInfo("Click on 'Estimate tokens needed' button");
     bicPage.waitForFieldPresent("estimateTokensButton", 5000);
     bicPage.clickUsingLowLevelActions("estimateTokensButton");
@@ -1426,7 +1430,7 @@ public class BICTestBase {
     String totalCostOrderSummary = driver
         .findElement(By.xpath("//h3[@data-testid=\"checkout--order-summary-section--total\"]")).getText();
     totalCostOrderSummary = totalCostOrderSummary.replaceAll("[^0-9 .]", "");
-    double totalCostOrderSummaryDouble = Math.ceil(Double.parseDouble(totalCostOrderSummary));
+    double totalCostOrderSummaryDouble = Math.round(Double.parseDouble(totalCostOrderSummary));
 
     AssertUtils.assertEquals("Estimated total price should match total price on Checkout page",
         (int) totalCostOrderSummaryDouble,
