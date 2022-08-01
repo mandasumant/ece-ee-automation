@@ -643,7 +643,7 @@ pipeline {
                                     generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses["Australia"]["NSW"], [timezone: "Australia/Sydney",  sapValidation:params.INVOICE_VALIDATION]),
                                     generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses["en_GB"], [timezone: "Europe/London", sapValidation: params.INVOICE_VALIDATION]),
                                     generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses["pl_PL"], [timezone: "Poland", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"]),
-                                    generateTest("Austria (en_AT)", testcases.validateAccountPortalQuoteOrder, addresses["en_AT"], [timezone: "Europe/Vienna", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"])
+                                    generateTest("Austria (de_AT)", testcases.validateAccountPortalQuoteOrder, addresses["de_AT"], [timezone: "Europe/Vienna", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"])
                             ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
@@ -808,7 +808,7 @@ pipeline {
                                 generateTest("AUS NSW (en_AU)", testcases.validateFlexDirectReturningUser, addresses["Australia"]["NSW"]),
                                 generateTest("UK (en_GB)", testcases.validateFlexDirectReturningUser, addresses["en_GB"]),
                                 generateTest("Poland (pl_PL)", testcases.validateFlexDirectReturningUser, addresses["pl_PL"]),
-                                generateTest("Austria (en_AT)", testcases.validateFlexDirectReturningUser, addresses["en_AT"])
+                                generateTest("Austria (de_AT)", testcases.validateFlexDirectReturningUser, addresses["de_AT"])
                             ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
