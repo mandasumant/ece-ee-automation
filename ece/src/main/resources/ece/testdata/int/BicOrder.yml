@@ -53,6 +53,7 @@ default:
   bicNativePriceID: &bicNativePriceID "27239"
   bicMetaPriceID: &bicMetaPriceID "27209"
   trialDownloadUrl: ""
+
   account: "Fnrlrfqu Lnrlrfqu"
   accountEnAu: "Fnruvbdo Lnruvbdo"
   accountEnCa: "Fnlsspaf Lnlsspaf"

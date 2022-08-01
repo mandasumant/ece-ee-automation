@@ -10,6 +10,7 @@ default:
   Quote2OrderBaseURL: "https://checkout-qa.autodesk.com/{locale}/cart?quoteNumber="
   guacDotComBaseURL: "https://www-pt.autodesk"
   guacResourceURL: "checkout?priceIds="
+  guacPriceId: "?priceIds="
   productsPath: "/products/"
   flexBenefitsPath: "/benefits/flex.com"
   guacMoeResourceURL: "manual-order-entry?optyId="
@@ -45,21 +46,29 @@ default:
   accountsPortalOrderHistoryUrl: "https://stg-manage.autodesk.com/cep/#orders/order-history"
   accountsPortalProductsServicesUrl: "https://stg-manage.autodesk.com/cep/#products-services/all"
   accountsPortalAddSeatsUrl: "https://stg-manage.autodesk.com/billing/add-seats"
+  accountsPortalQuoteUrl: "https://stg-manage.autodesk.com/billing/quotes"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
   bicNativePriceID: &bicNativePriceID "27239"
   bicMetaPriceID: &bicMetaPriceID "27209"
   trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview"
-  account: "yfds91WdxydZM"
-  accountEnAu: "to be added soon"
+
+  account: "Fnrlrfqu Lnrlrfqu"
+  accountEnAu: "Fnruvbdo Lnruvbdo"
+  accountEnCa: "Fnlsspaf Lnlsspaf"
+  contact: "thubnamermpzxatmfhpfq@letscheck.pw"
+  contactEnAu: "thubstoreausfludlnlnrssg@letscheck.pw"
+  contactEnCa: "thubstorecapbirctfkbzyj@letscheck.pw"
   emailid: "acdisttest1801@letscheck.pw"
   guacMoeSku: "C1RK1-WW6737-L785"
+  priceId: "24038"
 
-  pwsClientId: "to be added soon"
-  pwsClientSecret: "to be added soon"
-  pwsHostname: "to be added soon"
-  quoteAgentCsnAccount: "to be added soon"
+  pwsClientId: "sR8Ye2YBRq5QAnUIiOxKWw0J3a92tDVJ"
+  pwsClientSecret: "+iFsysMrCCnJ84IqILULBg==:XEzSSr6nNaqPuBwIxnd/xIQP1LQVOgUETN/CGCZRohk="
+  pwsHostname: "enterprise-api-int.autodesk.com"
+  quoteAgentCsnAccount: "0070176510"
+  agentContactEmail: "jfmpefebcojbkcpdignkoepabklgedjn@null.autodesk.com"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
@@ -75,12 +84,14 @@ validateBicFlexOrder:
   productID: *FlexOrderPriceID
   bicFlexPriceID: *FlexOrderPriceID
   productType: "flex"
+  priceId: "26865"
 
 validateBicMetaOrder:
   productID: *bicMetaPriceID
   bicNativePriceID: *bicMetaPriceID
   productName: "INFRAWORKS"
   offeringType: "META"
+  priceId: "24423"
 
 validateTrialDownloadUI:
   nullTest: "1"
@@ -197,6 +208,7 @@ validateMultiLineItemBicNativeOrder:
 
 validateFlexTokenEstimatorTool:
   isNonQuoteFlexOrder: "true"
+  productType: "flex"
 
 validateBicQuote:
   term: "Annual"
@@ -206,14 +218,21 @@ validateBicQuote:
 validateBicQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+  productType: "flex"
 
 validateQuoteRefundOrder:
   term: "Annual"
   accessModel: "Flex"
+  productType: "flex"
 
 validateMultiLineItemQuoteOrder:
   term: "Annual"
   accessModel: "Flex"
+  productType: "flex"
+
+validateAccountPortalQuoteOrder:
+  term: "Annual"
+  productType: "flex"
 
 validateFlexOrderNewCart:
   isNonQuoteFlexOrder: "true"
