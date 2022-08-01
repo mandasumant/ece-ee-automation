@@ -7,9 +7,9 @@ import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
-import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -129,7 +129,9 @@ public class BICRefundOrder extends ECETestBase {
     results.put("refund_fulfillmentStatus", jp.get("content[0].fulfillmentStatus"));
     results.put("refund_paymentMethodType", jp.get("content[0].billingInfo.paymentMethodType"));
     results.put("refund_finalExportControlStatus", jp.get("content[0].finalExportControlStatus"));
-    results.put("refund_uiInitiatedGetOrders", Boolean.toString(jp.get("content[0].uiInitiatedGetOrders")));
+    results.put("refund_uiInitiatedGetOrders",
+        jp.get("content[0].uiInitiatedGetOrders") != null ? Boolean.toString(jp.get("content[0].uiInitiatedGetOrders"))
+            : null);
     results.put("refund_lineItemState", jp.get("content[0].lineItems[0].lineItemState"));
 
     // Verify that Order status is Refunded
