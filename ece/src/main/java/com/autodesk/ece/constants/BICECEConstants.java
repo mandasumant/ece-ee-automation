@@ -171,6 +171,7 @@ public class BICECEConstants extends BICConstants {
   public static final String INVOICE = "Invoice";
   public static final String CREDIT_NOTE = "CreditNote";
   public static final String QUOTE_ID = "quote_id";
+  public static final String OFFERING_ID = "offeringId";
   public static final String FLEX_TOKENS = "tokens";
   public static final String TERM = "term";
   public static final String ACCESS_MODEL = "accessModel";

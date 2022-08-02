@@ -13,6 +13,7 @@ default:
   guacPriceId: "?priceIds="
   productsPath: "/products/"
   flexBenefitsPath: "/benefits/flex.com"
+  offeringId: "OD-000450"
   guacMoeResourceURL: "manual-order-entry?optyId="
   guacMoeOdmResourceURL: "manual-order-entry-odm?optyId="
   guacMoeOdmDtcResourceURL: "manual-order-entry-odm-dtc"
