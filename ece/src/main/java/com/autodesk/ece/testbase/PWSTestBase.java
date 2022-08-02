@@ -54,7 +54,13 @@ public class PWSTestBase {
     Calendar c = Calendar.getInstance();
     c.setTime(new Date());
     c.add(Calendar.DATE, 1);
-    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    String timezone = "UTC";
+
+    if(System.getProperty("user.timezone") != null && !System.getProperty("user.timezone").isEmpty()){
+      timezone = System.getProperty("user.timezone");
+    }
+
+    sdf.setTimeZone(TimeZone.getTimeZone(timezone));
     return sdf.format(c.getTime());
   }
 
