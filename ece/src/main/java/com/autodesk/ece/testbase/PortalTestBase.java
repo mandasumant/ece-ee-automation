@@ -416,11 +416,11 @@ public class PortalTestBase {
     try {
       pdfContent = new PDFReader().readPDF(file.getPath());
     } catch (Exception e) {
-      Assert.fail("Failed to reach/read the Invoice PDF: " + e.getCause());
+      AssertUtils.fail("Failed to reach/read the Invoice PDF: " + e.getCause());
     }
     results.put(BICECEConstants.PDF_TYPE, BICECEConstants.INVOICE);
     if (!assertPDFContent(pdfContent, results)) {
-      Assert.fail("Invoice is missing Crucial data");
+      AssertUtils.fail("Invoice is missing Crucial data");
     }
   }
 
