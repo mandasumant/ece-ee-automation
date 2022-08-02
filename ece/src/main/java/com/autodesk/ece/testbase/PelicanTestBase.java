@@ -453,7 +453,9 @@ public class PelicanTestBase {
       results.put("getPOResponse_promotionDiscount",
           jp.get("content[0].lineItems[0].lineItemTotals.promotionDiscount").toString());
       results.put("getPOResponse_subtotalAfterPromotionsWithTax",
-          jp.get("content[0].lineItems[0].lineItemTotals.subtotalAfterPromotionsWithTax").toString());
+          jp.get("content[0].discountedSubtotalWithTax").toString());
+      results.put("getPOResponse_subtotalAfterPromotions",
+          jp.get("content[0].discountedSubtotal").toString());
       results.put("getPOReponse_paymentProcessor",
           jp.get("content[0].payments[0].paymentProcessor").toString());
       results.put("getPOReponse_firstName",
