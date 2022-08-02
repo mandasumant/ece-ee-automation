@@ -173,13 +173,15 @@ public class MOETestBase {
     return results;
   }
 
-  @Step("Create GUAC MOE opportunity from SFDC " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("SFDC : Create GUAC MOE opportunity " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createMoeOpty(String optyName, String account, String stage,
       String projectCloseDate, String fulfillment, String sku, String currency) {
     HashMap<String, String> results = new HashMap<String, String>();
 
-    addOptyDetailsAndSave(optyName, account, stage,
+    String opportunityId = addOptyDetailsAndSave(optyName, account, stage,
         projectCloseDate, fulfillment, currency);
+
+    results.put("opportunityId", opportunityId);
 
     try {
       if (StringUtils.isNotEmpty(sku)) {
@@ -191,19 +193,7 @@ public class MOETestBase {
         moePage.click("manageProducts");
         moePage.waitForPageToLoad();
 
-        for (int i = 0; i < 10; i++) {
-          try {
-            driver.switchTo().defaultContent();
-            driver.switchTo().frame(i);
-            Util.printInfo("Switched to iframe " + i);
-            driver.findElement(By.xpath("//li[@title='Add Products']/a"))
-                .click();
-            break;
-          } catch (Exception e) {
-            e.printStackTrace();
-            Util.printInfo("It's not: " + i);
-          }
-        }
+        switchToFrame("//li[@title='Add Products']/a");
 
         Util.printInfo("Switched iFrame to click on Add Products Tab");
 
@@ -239,13 +229,6 @@ public class MOETestBase {
 
         moePage.clickUsingLowLevelActions("close");
         Util.printInfo("Clicked on cta: Close");
-
-        Util.sleep(15000);
-        String optyid = driver.findElement(By.xpath(
-                "//span[@class='test-id__field-value slds-form-element__static slds-grow  is-read-only' and contains(., 'A-')]"))
-            .getText();
-        Util.printInfo(optyid);
-        results.put("opportunityid", optyid);
       }
     } catch (Exception e) {
       AssertUtils.fail("Failed to assign Product to MOE Opty." + e.getMessage());
@@ -815,243 +798,32 @@ public class MOETestBase {
     bicTestBase.createBICAccount(names, emailID, password, false);
   }
 
-  @Step("Create GUAC MOE ODM opportunity from SFDC " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createMoeOdmOpty(String optyName, String account, String stage,
-      String projectCloseDate, String fulfillment, String plc, String currency, String contact) {
+  @Step("SFDC : Create GUAC MOE ODM opportunity " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createMoeOdmOpty(String optyName, String account,
+      String stage, String projectCloseDate, String fulfillment, String plc, String currency, String contact) {
     HashMap<String, String> results = new HashMap<>();
 
-    Names names = BICTestBase.generateFirstAndLastNames();
-    String emailID = BICTestBase.generateUniqueEmailID();
-
-    addOptyDetailsAndSave(optyName, account, stage,
+    String opportunityId = addOptyDetailsAndSave(optyName, account, stage,
         projectCloseDate, fulfillment, currency);
+    results.put("opportunityId", opportunityId);
 
-    String strUrl = driver.getCurrentUrl();
-    Util.printInfo("Opty current URL :: " + strUrl);
-    results.put("currentOptyUrl", strUrl);
+    String currentUrl = addPLCToOpportunity(plc);
+    results.put("currentOptyUrl", currentUrl);
 
-    try {
-      if (StringUtils.isNotEmpty(plc)) {
-
-        Util.printInfo("Associating Products to Opty: " + plc);
-
-        moePage.checkIfElementExistsInPage("manageProducts", 30);
-        moePage.click("manageProducts");
-        Util.sleep(10000);
-
-        for (int i = 0; i < 10; i++) {
-          try {
-            driver.switchTo().defaultContent();
-            driver.switchTo().frame(i);
-            Util.printInfo("Switched to iframe " + i);
-            driver.findElement(By.xpath("//li[@title='Add Products']/a"))
-                .click();
-            break;
-          } catch (Exception e) {
-            e.printStackTrace();
-            Util.printInfo("It's not: " + i);
-          }
-        }
-
-        Util.sleep(5000);
-
-        Util.printInfo("Switched iFrame to click on Add Products Tab");
-
-        moePage.populateField("productSearch", plc);
-        Util.sleep(5000);
-
-        moePage.clickUsingLowLevelActions("productSearchButton");
-        moePage.waitForPageToLoad();
-
-        moePage.checkIfElementExistsInPage("openProductFound", 30);
-        moePage.clickUsingLowLevelActions("openProductFound");
-        moePage.waitForPageToLoad();
-
-        moePage.checkIfElementExistsInPage("checkbox", 30);
-        moePage.click("checkbox");
-        Util.sleep(5000);
-
-        try {
-          Boolean isAlertModalVisible = true;
-          int count = 0;
-          while (isAlertModalVisible) {
-            count++;
-
-            Util.printInfo("Adding Flex product. Attempt no. " + count);
-
-            if (count > 3) {
-              AssertUtils.fail("Failed to add Flex product with qty.");
-              break;
-            }
-
-            moePage.clickUsingLowLevelActions("estimatedUnit");
-            Util.sleep(2000);
-
-            driver.findElement(By.xpath("//input[@class='slds-input input']"))
-                .sendKeys(Keys.chord(Keys.COMMAND, "a"), Keys.BACK_SPACE);
-            Util.sleep(2000);
-
-            if (moePage.checkIfElementExistsInPage("alertModal", 100)) {
-              Util.printInfo("Alert modal is visible. Closing it.");
-              moePage.clickUsingLowLevelActions("okButton");
-              Util.sleep(2000);
-            }
-
-            Util.printInfo("Type '100' into quantity input field.");
-            moePage.sendKeysInTextFieldSlowly("estimatedUnit", "100");
-            Util.sleep(3000);
-
-            moePage.checkIfElementExistsInPage("addProductsButton", 20);
-            moePage.clickUsingLowLevelActions("addProductsButton");
-
-            if (moePage.checkIfElementExistsInPage("successModal", 20)) {
-              Util.printInfo("Success modal is visible.");
-              isAlertModalVisible = false;
-            }
-
-          }
-        } catch (Exception e) {
-          Util.printInfo("Flex product added successfully.");
-        }
-
-        moePage.clickUsingLowLevelActions("okButton");
-
-        moePage.clickUsingLowLevelActions("close");
-        Util.printInfo("Clicked on Close");
-
-        if (moePage.checkIfElementExistsInPage("subFrameError", 15)) {
-          Util.printInfo("Failed to go back to opty view page. Manually navigating to it.");
-          bicTestBase.getUrl(strUrl);
-          Util.sleep(5000);
-        }
-
-        Util.sleep(30000);
-        String optyid = driver.findElement(By.xpath(
-                "//span[@class='test-id__field-value slds-form-element__static slds-grow  is-read-only' and contains(., 'A-')]"))
-            .getText();
-
-        Util.printInfo("Product " + plc + " associated to the Opty: " + optyid);
-
-        results.put("opportunityid", optyid);
-
-      }
-    } catch (Exception e) {
-      AssertUtils.fail("Failed to assign Product to MOE Opty." + e.getMessage());
-    }
-
-    try {
-      if (StringUtils.isNotEmpty(contact)) {
-
-        Boolean isContactMissing = true;
-        int attempt = 0;
-
-        while (isContactMissing) {
-
-          attempt++;
-
-          if (attempt > 3) {
-            AssertUtils.fail("Unable to add a contact to the Opportunity.");
-            break;
-          }
-
-          Util.printInfo("Clicking on cta: Manage Contact Roles. Attempt no. " + attempt + " to add a contact.");
-          moePage.click("manageContactRoles");
-          moePage.waitForPageToLoad();
-
-          moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
-          moePage.clickUsingLowLevelActions("contactRolesHeading");
-
-          moePage.clickUsingLowLevelActions("addContactRoles");
-          Util.printInfo("Clicked on cta: '+ Add 1 more Contact Role'");
-          moePage.waitForPageToLoad();
-
-          if (System.getProperty("usertype").equals("new")) {
-            Util.printInfo("Associating new contact roles to Opty: " + emailID);
-            moePage.checkIfElementExistsInPage("createNewContactLink", 15);
-            moePage.clickUsingLowLevelActions("createNewContactLink");
-            moePage.checkIfElementExistsInPage("contactFirstNameInput", 15);
-            moePage.clickUsingLowLevelActions("contactFirstNameInput");
-            moePage.populateField("contactFirstNameInput", names.firstName);
-            moePage.clickUsingLowLevelActions("contactLastNameInput");
-            moePage.populateField("contactLastNameInput", names.lastName);
-            moePage.clickUsingLowLevelActions("contactEmailInput");
-            moePage.populateField("contactEmailInput", emailID);
-            // INFO: Phone number isn't required from SFDC but if not added, the purchase/offer api call
-            // will fail with the error 'Invalid request payload'.
-            moePage.clickUsingLowLevelActions("contactPhoneInput");
-            moePage.populateField("contactPhoneInput", "1234567890");
-            moePage.clickUsingLowLevelActions("contactPreferredLanguageSelect");
-            Util.sleep(1000);
-            moePage.clickUsingLowLevelActions("contactLanguage");
-            Util.sleep(2000);
-            moePage.click("saveContactButton");
-
-            String contactEmail = emailID;
-            Util.printInfo(contactEmail);
-            results.put("contactEmail", emailID);
-          } else {
-            Util.printInfo("Associating existing contact roles to Opty: " + contact);
-
-            moePage.checkIfElementExistsInPage("contactRolesInput", 10);
-            moePage.clickUsingLowLevelActions("contactRolesInput");
-            moePage.populateField("contactRolesInput", contact);
-            Util.sleep(20000);
-            Util.printInfo("Populated input field with contact email");
-
-            WebElement webElement = driver.findElement(
-                By.xpath("//input[@class='slds-input input uiInput uiInputText uiInput--default uiInput--input']"));
-            webElement.sendKeys(Keys.TAB, Keys.ENTER);
-            Util.printInfo("Contact selected from search result");
-          }
-          moePage.waitForPageToLoad();
-
-          moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
-          moePage.clickUsingLowLevelActions("contactRolesHeading");
-
-          JavascriptExecutor js = (JavascriptExecutor) driver;
-          js.executeScript(
-              "document.getElementsByClassName(\"uiImage uiOutputCheckbox\")[0].click();document.getElementsByClassName(\"uiInput uiInputCheckbox uiInput--default uiInput--checkbox\")[0].click();");
-          Util.printInfo("Primary contact checkbox checked");
-          Util.sleep(2000);
-
-          js.executeScript(
-              "document.getElementsByClassName(\"slds-button slds-button--brand\")[1].click();");
-          Util.printInfo("Clicked on cta: Save");
-          Util.sleep(10000);
-
-          if (moePage.checkIfElementExistsInPage("contactSectionTitle", 30)) {
-            Util.printInfo("Contact successfully added to the opportunity.");
-            isContactMissing = false;
-          }
-        }
-      }
-    } catch (Exception e) {
-      AssertUtils.fail("Failed to assign Contact Roles to MOE ODM Opty." + e.getMessage());
-    }
+    String emailID = addContactToOpportunity(contact);
+    results.put("contactEmail", emailID);
 
     return results;
   }
 
-  @Step("Create an opportunity in SFDC.")
-  public HashMap<String, String> addOptyDetailsAndSave(String optyName, String account, String stage,
+  @Step("SFDC : Create an opportunity")
+  private String addOptyDetailsAndSave(String optyName,
+      String account, String stage,
       String projectCloseDate, String fulfillment, String currency) {
-    HashMap<String, String> results = new HashMap<String, String>();
 
     try {
       // Finding the iframe for New Opportunity form
-      for (int i = 0; i < 10; i++) {
-        try {
-          driver.switchTo().defaultContent();
-          driver.switchTo().frame(i);
-          Util.printInfo("Switched to iframe " + i);
-          driver.findElement(By.xpath("//input[@class='customInput slds-input CloseDateInput']"))
-              .click();
-          break;
-        } catch (Exception e) {
-          e.printStackTrace();
-          Util.printInfo("It's not: " + i);
-        }
-      }
+      switchToFrame("//input[@class='customInput slds-input CloseDateInput']");
 
       moePage.populateField("projectCloseDate", projectCloseDate);
       Util.printInfo("entered project close date");
@@ -1060,14 +832,12 @@ public class MOETestBase {
       moePage.click("name");
       moePage.populateField("name", optyName);
       Util.printInfo("entered name : " + optyName);
-      results.put("optyName", optyName);
 
       Select sel;
       sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:4:j_id47")));
       sel.selectByValue(fulfillment);
       Util.printInfo("Selected Fulfillment : " + fulfillment);
       Util.sleep(1000);
-      results.put("fulfillment", fulfillment);
 
       moePage.clickUsingLowLevelActions("accountLookup");
       Util.printInfo("clicked on account lookup");
@@ -1081,32 +851,33 @@ public class MOETestBase {
       moePage.clickUsingLowLevelActions("selectAccount");
       Util.printInfo("selected account name : " + account);
       Util.sleep(3000);
-      results.put("accountName", account);
 
       sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:2:j_id47")));
       sel.selectByValue("Stage 1");
       Util.printInfo("Selected stage : " + stage);
       Util.sleep(1000);
-      results.put("stage", stage);
 
       sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:5:j_id47")));
       sel.selectByValue(currency);
       Util.printInfo("Selected currency : " + currency);
       Util.sleep(1000);
-      results.put("currency", currency);
 
       moePage.click("save");
       Util.printInfo("Clicked on Save button after entering details.");
       Util.sleep(30000);
       driver.switchTo().defaultContent();
 
-      Util.printInfo("Opportunity '" + optyName + "' created");
     } catch (Exception e) {
-      e.getMessage();
       AssertUtils.fail(e.getMessage() + "Failed to enter opty details.");
     }
 
-    return results;
+    String optyId = driver.findElement(By.xpath(
+            "//span[@class='test-id__field-value slds-form-element__static slds-grow  is-read-only' and contains(., 'A-')]"))
+        .getText();
+
+    Util.printInfo("New opportunity created " + optyName + " with the id " + optyId);
+
+    return optyId;
   }
 
   @Step("Navigate to MOE ODM page with OpptyID" + GlobalConstants.TAG_TESTINGHUB)
@@ -1479,4 +1250,210 @@ public class MOETestBase {
 
     return results;
   }
+
+  @Step("SFDC : Add a contact to an opportunity")
+  private String addContactToOpportunity(String contact) {
+
+    Names names = BICTestBase.generateFirstAndLastNames();
+    String emailID = BICTestBase.generateUniqueEmailID();
+
+    try {
+      if (StringUtils.isNotEmpty(contact)) {
+
+        Boolean isContactMissing = true;
+        int attempt = 0;
+
+        while (isContactMissing) {
+
+          attempt++;
+
+          if (attempt > 3) {
+            AssertUtils.fail("Unable to add a contact to the Opportunity.");
+          }
+
+          Util.printInfo("Clicking on cta: Manage Contact Roles. Attempt no. " + attempt + " to add a contact.");
+          moePage.click("manageContactRoles");
+          moePage.waitForPageToLoad();
+
+          moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
+          moePage.clickUsingLowLevelActions("contactRolesHeading");
+
+          moePage.clickUsingLowLevelActions("addContactRoles");
+          Util.printInfo("Clicked on cta: '+ Add 1 more Contact Role'");
+          moePage.waitForPageToLoad();
+
+          if (System.getProperty("usertype").equals("new")) {
+            Util.printInfo("Associating new contact roles to Opty: " + emailID);
+            moePage.checkIfElementExistsInPage("createNewContactLink", 15);
+            moePage.clickUsingLowLevelActions("createNewContactLink");
+            moePage.checkIfElementExistsInPage("contactFirstNameInput", 15);
+            moePage.clickUsingLowLevelActions("contactFirstNameInput");
+            moePage.populateField("contactFirstNameInput", names.firstName);
+            moePage.clickUsingLowLevelActions("contactLastNameInput");
+            moePage.populateField("contactLastNameInput", names.lastName);
+            moePage.clickUsingLowLevelActions("contactEmailInput");
+            moePage.populateField("contactEmailInput", emailID);
+            moePage.clickUsingLowLevelActions("contactPhoneInput");
+            moePage.populateField("contactPhoneInput", "1234567890");
+            moePage.clickUsingLowLevelActions("contactPreferredLanguageSelect");
+            Util.sleep(1000);
+            moePage.clickUsingLowLevelActions("contactLanguage");
+            Util.sleep(2000);
+            moePage.click("saveContactButton");
+
+          } else {
+            Util.printInfo("Associating existing contact roles to Opty: " + contact);
+
+            moePage.checkIfElementExistsInPage("contactRolesInput", 10);
+            moePage.clickUsingLowLevelActions("contactRolesInput");
+            moePage.populateField("contactRolesInput", contact);
+            Util.sleep(20000);
+            Util.printInfo("Populated input field with contact email");
+
+            WebElement webElement = driver.findElement(
+                By.xpath("//input[@class='slds-input input uiInput uiInputText uiInput--default uiInput--input']"));
+            webElement.sendKeys(Keys.TAB, Keys.ENTER);
+            Util.printInfo("Contact selected from search result");
+          }
+          moePage.waitForPageToLoad();
+
+          moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
+          moePage.clickUsingLowLevelActions("contactRolesHeading");
+
+          JavascriptExecutor js = (JavascriptExecutor) driver;
+          js.executeScript(
+              "document.getElementsByClassName(\"uiImage uiOutputCheckbox\")[0].click();document.getElementsByClassName(\"uiInput uiInputCheckbox uiInput--default uiInput--checkbox\")[0].click();");
+          Util.printInfo("Primary contact checkbox checked");
+          Util.sleep(2000);
+
+          js.executeScript(
+              "document.getElementsByClassName(\"slds-button slds-button--brand\")[1].click();");
+          Util.printInfo("Clicked on cta: Save");
+          Util.sleep(10000);
+
+          if (moePage.checkIfElementExistsInPage("contactSectionTitle", 30)) {
+            Util.printInfo("Contact successfully added to the opportunity.");
+            isContactMissing = false;
+          }
+        }
+      }
+    } catch (Exception e) {
+      AssertUtils.fail("Failed to assign Contact Roles to MOE ODM Opty." + e.getMessage());
+    }
+
+    return emailID;
+  }
+
+  @Step("SFDC : Add a plc to an opportunity")
+  private String addPLCToOpportunity(String plc) {
+
+    String strUrl = driver.getCurrentUrl();
+    Util.printInfo("Opty current URL :: " + strUrl);
+
+    try {
+      if (StringUtils.isNotEmpty(plc)) {
+
+        Util.printInfo("Associating Products to Opty: " + plc);
+
+        moePage.checkIfElementExistsInPage("manageProducts", 30);
+        moePage.click("manageProducts");
+        Util.sleep(10000);
+
+        switchToFrame("//li[@title='Add Products']/a");
+
+        Util.sleep(5000);
+
+        Util.printInfo("Switched iFrame to click on Add Products Tab");
+
+        moePage.populateField("productSearch", plc);
+        Util.sleep(5000);
+
+        moePage.clickUsingLowLevelActions("productSearchButton");
+        moePage.waitForPageToLoad();
+
+        moePage.checkIfElementExistsInPage("openProductFound", 30);
+        moePage.clickUsingLowLevelActions("openProductFound");
+        moePage.waitForPageToLoad();
+
+        moePage.checkIfElementExistsInPage("checkbox", 30);
+        moePage.click("checkbox");
+        Util.sleep(5000);
+
+        try {
+          Boolean isAlertModalVisible = true;
+          int count = 0;
+          while (isAlertModalVisible) {
+            count++;
+
+            Util.printInfo("Adding Flex product. Attempt no. " + count);
+
+            if (count > 3) {
+              AssertUtils.fail("Failed to add Flex product with qty.");
+            }
+
+            moePage.clickUsingLowLevelActions("estimatedUnit");
+            Util.sleep(2000);
+
+            driver.findElement(By.xpath("//input[@class='slds-input input']"))
+                .sendKeys(Keys.chord(Keys.COMMAND, "a"), Keys.BACK_SPACE);
+            Util.sleep(2000);
+
+            if (moePage.checkIfElementExistsInPage("alertModal", 100)) {
+              Util.printInfo("Alert modal is visible. Closing it.");
+              moePage.clickUsingLowLevelActions("okButton");
+              Util.sleep(2000);
+            }
+
+            Util.printInfo("Type '100' into quantity input field.");
+            moePage.sendKeysInTextFieldSlowly("estimatedUnit", "100");
+            Util.sleep(3000);
+
+            moePage.checkIfElementExistsInPage("addProductsButton", 20);
+            moePage.clickUsingLowLevelActions("addProductsButton");
+
+            if (moePage.checkIfElementExistsInPage("successModal", 20)) {
+              Util.printInfo("Success modal is visible.");
+              isAlertModalVisible = false;
+            }
+
+          }
+        } catch (Exception e) {
+          Util.printInfo("Flex product added successfully.");
+        }
+
+        moePage.clickUsingLowLevelActions("okButton");
+
+        moePage.clickUsingLowLevelActions("close");
+        Util.printInfo("Clicked on Close");
+
+        if (moePage.checkIfElementExistsInPage("subFrameError", 15)) {
+          Util.printInfo("Failed to go back to opty view page. Manually navigating to it.");
+          bicTestBase.getUrl(strUrl);
+          Util.sleep(5000);
+        }
+      }
+    } catch (Exception e) {
+      AssertUtils.fail("Failed to assign Product to MOE Opty." + e.getMessage());
+    }
+
+    return strUrl;
+  }
+
+  @Step("Switch to Frame")
+  private void switchToFrame(String elementXPath) {
+    for (int i = 0; i < 10; i++) {
+      try {
+        driver.switchTo().defaultContent();
+        driver.switchTo().frame(i);
+        Util.printInfo("Switched to iframe " + i);
+        driver.findElement(By.xpath(elementXPath))
+            .click();
+        break;
+      } catch (Exception e) {
+        e.printStackTrace();
+        Util.printInfo("It's not: " + i);
+      }
+    }
+  }
+
 }

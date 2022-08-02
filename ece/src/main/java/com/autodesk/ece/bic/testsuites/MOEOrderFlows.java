@@ -191,7 +191,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
         = moetb.createMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku, currency);
-    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityId"));
 
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -386,7 +386,7 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> sfdcResults
         = moetb.createMoeOdmOpty(optyName, account, stage, projectCloseDate, fulfillment, plc, currency,
         contact);
-    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityId"));
     testDataForEachMethod.put("currentOptyUrl", sfdcResults.get("currentOptyUrl"));
 
     HashMap<String, String> results = moetb.createBasicMoeOdmOptyOrder(testDataForEachMethod);
@@ -454,7 +454,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
         = moetb.createMoeOdmOpty(optyName, account, stage, projectCloseDate, fulfillment, plc, currency, contact);
-    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityId"));
     testDataForEachMethod.put("sfdcContactEmail", sfdcResults.get("contactEmail"));
     testDataForEachMethod.put("currentOptyUrl", sfdcResults.get("currentOptyUrl"));
 
@@ -493,7 +493,7 @@ public class MOEOrderFlows extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-     moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
+    moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
 
     updateTestingHub(testResults);
 
