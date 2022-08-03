@@ -90,7 +90,7 @@ public class PortalTestBase {
     executor.executeScript(BICECEConstants.ARGUMENTS_CLICK, element);
   }
 
-  public void checkIfQuoteIsStillPresent(String quoteId){
+  public void checkIfQuoteIsStillPresent(String quoteId) {
     openPortalURL(accountsPortalQuoteUrl);
     WebElement quoteIdElement = null;
     try {
@@ -100,7 +100,7 @@ public class PortalTestBase {
     } catch (Exception e) {
       //Do nothing here.
     }
-    AssertUtils.assertEquals(quoteIdElement,null,"QuoteId should not be present after the quote is ordered");
+    AssertUtils.assertEquals(quoteIdElement, null, "QuoteId should not be present after the quote is ordered");
   }
 
   public void openPortalURL(String data) {
@@ -384,7 +384,7 @@ public class PortalTestBase {
             // As per Account Portal this can take upto 6 sec so considering 10 sec
             Util.sleep(10000);
           } else {
-            Util.PrintInfo("Found Invoice. Now need to validate the invoice pop up with ");
+            Util.PrintInfo("Found Invoice. Now need to validate the invoice pop up");
 
             url = accountsPortalInvoiceUrl
                 + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
@@ -426,23 +426,18 @@ public class PortalTestBase {
 
   private Boolean assertPDFContent(String pdfContent, Map<String, String> results) {
     Util.printInfo("PDF String Content: " + pdfContent);
-    Boolean orderFound = pdfContent.contains(results.get(BICECEConstants.ORDER_ID));
-    Boolean subscriptionFound = pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID));
-    Boolean firstNameFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_firstName").toUpperCase());
-    Boolean lastNameFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_lastName").toUpperCase());
-    Boolean streetFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_street").toUpperCase());
-    Boolean cityFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_city").toUpperCase());
-    Util.printInfo("Is Order ID found in Invoice: " + pdfContent.contains(results.get(BICECEConstants.ORDER_ID)));
-    Util.printInfo("Is Subscription ID found in Invoice: " +
-        pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID)));
-    Util.printInfo("Is firstName found in Invoice: " + pdfContent.toUpperCase()
-        .contains(results.get("getPOReponse_firstName").toUpperCase()));
-    Util.printInfo("Is lastName found in Invoice: " + pdfContent.toUpperCase()
-        .contains(results.get("getPOReponse_lastName").toUpperCase()));
-    Util.printInfo("Is street found in Invoice: " + pdfContent.toUpperCase()
-        .contains(results.get("getPOReponse_street").toUpperCase()));
-    Util.printInfo("Is city found in Invoice: " + pdfContent.toUpperCase()
-        .contains(results.get("getPOReponse_city").toUpperCase()));
+    boolean orderFound = pdfContent.contains(results.get(BICECEConstants.ORDER_ID));
+    boolean subscriptionFound = pdfContent.contains(results.get(BICECEConstants.SUBSCRIPTION_ID));
+    boolean firstNameFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_firstName").toUpperCase());
+    boolean lastNameFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_lastName").toUpperCase());
+    boolean streetFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_street").toUpperCase());
+    boolean cityFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_city").toUpperCase());
+    Util.printInfo("Is Order ID found in Invoice: " + orderFound);
+    Util.printInfo("Is Subscription ID found in Invoice: " + subscriptionFound);
+    Util.printInfo("Is firstName found in Invoice: " + firstNameFound);
+    Util.printInfo("Is lastName found in Invoice: " + lastNameFound);
+    Util.printInfo("Is street found in Invoice: " + streetFound);
+    Util.printInfo("Is city found in Invoice: " + cityFound);
 
     String locale = System.getProperty("locale");
     if (locale == null || locale.isEmpty()) {
@@ -451,35 +446,36 @@ public class PortalTestBase {
     String[] localeSplit = locale.split("_");
 
     NumberFormat localeFormat = NumberFormat.getNumberInstance(new Locale(localeSplit[0], localeSplit[1]));
-    String totalAmountFormatted =
+    String totalAmountFormattedWithTax =
         localeFormat.format(Double.valueOf(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)));
-    String totalAmountWithPromoCodeFormatted = localeFormat.format(Double.valueOf(results.get(
-        "getPOResponse_subtotalAfterPromotionsWithTax")));
+    String totalAmountFormatted = localeFormat.format(Double.valueOf(results.get(
+        "getPOResponse_subtotalAfterPromotions")));
 
-    String totalAmountTrimmed = totalAmountFormatted.replace(".", "").replace(",", "").replace("\u00a0", "")
+    String totalAmountTrimmedWithTax = totalAmountFormattedWithTax.replace(".", "").replace(",", "")
+        .replace("\u00a0", "")
         .replace("\u00A0", "").trim();
-    String totalAmountWithPromoCodeTrimmed = totalAmountWithPromoCodeFormatted.replace(".", "").replace(",", "")
+    String totalAmountTrimmed = totalAmountFormatted.replace(".", "").replace(",", "")
         .replace("\u00a0", "").replace("\u00A0", "").trim();
     String pdfContentTrimmed = pdfContent.replace(".", "").replace(",", "").replace("\u00a0", "").replaceAll("\n", " ")
         .trim();
 
     if (results.get(BICECEConstants.PDF_TYPE).equalsIgnoreCase(BICECEConstants.CREDIT_NOTE)) {
+      totalAmountTrimmedWithTax = "-" + totalAmountTrimmedWithTax;
       totalAmountTrimmed = "-" + totalAmountTrimmed;
-      totalAmountWithPromoCodeTrimmed = "-" + totalAmountWithPromoCodeTrimmed;
     }
 
     Util.printInfo("PDF String Content #:" + pdfContentTrimmed);
+    Util.printInfo("totalAmountFormattedWithTax #:" + totalAmountTrimmedWithTax);
     Util.printInfo("totalAmountFormatted #:" + totalAmountTrimmed);
-    Util.printInfo("totalAmountWithPromoCodeFormatted #:" + totalAmountWithPromoCodeTrimmed);
 
-    Util.printInfo("Is SUBTOTAL_WITH_TAX found in Invoice: " + pdfContentTrimmed.contains(totalAmountTrimmed));
-    Util.printInfo("Is subtotalAfterPromotionsWithTax found in Invoice: " + pdfContentTrimmed
-        .contains(totalAmountWithPromoCodeTrimmed));
+    Util.printInfo("Is subtotal with tax found in Invoice: " + pdfContentTrimmed.contains(totalAmountTrimmedWithTax));
+    Util.printInfo("Is subtotal without tax found in Invoice: " + pdfContentTrimmed
+        .contains(totalAmountTrimmed));
 
     return orderFound &&
         subscriptionFound &&
+        pdfContentTrimmed.contains(totalAmountTrimmedWithTax) &&
         pdfContentTrimmed.contains(totalAmountTrimmed) &&
-        pdfContentTrimmed.contains(totalAmountWithPromoCodeTrimmed) &&
         firstNameFound &&
         lastNameFound &&
         streetFound &&
