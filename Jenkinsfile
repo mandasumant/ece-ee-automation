@@ -444,28 +444,47 @@ pipeline {
                         [
                             name: "USA California (en_US)",
                             address: addresses["United States"]["CA"],
-                            options: [timezone: "America/Los_Angeles"]
+                            options: [timezone: "America/Los_Angeles"],
+                            paymentTypes: ["VISA","MASTERCARD","PAYPAL","ACH"]
                         ],
                         [
                             name: "CA Ontario (en_CA)",
                             address: addresses["Canada"]["ON"],
-                            options: [timezone: "America/New_York"]
+                            options: [timezone: "America/New_York"],
+                            paymentTypes: ["CREDITCARD","PAYPAL"]
                         ],
                         [
                             name: "AUS NSW (en_AU)",
                             address: addresses["Australia"]["NSW"],
-                            options: [timezone: "Australia/Sydney"]
+                            options: [timezone: "Australia/Sydney"],
+                            paymentTypes: ["CREDITCARD","PAYPAL","ZIP"]
                         ],
                         [
                             name: "UK (en_GB)",
                             address: addresses["en_GB"],
-                            options: [timezone: "Europe/London"]
+                            options: [timezone: "Europe/London"],
+                            paymentTypes: ["CREDITCARD","PAYPAL","BACS"]
+                        ],
+                        [
+                            name: "NL (nl_NL)",
+                            address: addresses["nl_NL"],
+                            options: [timezone: "Europe/Amsterdam"],
+                            paymentTypes: ["CREDITCARD","PAYPAL","SEPA"]
                         ]
                     ]
 
                     // Generate Q2O and Flex direct in the testing locales
                     def tests = casesToTest.inject([]) { testList, test ->
-                        testList.addAll(localesToTest.collect { generateTest(it.name, test, it.address, it.options )})
+                        testList.addAll(localesToTest.inject([]) { localeTests, locale ->
+                            localeTests.addAll(
+                                locale.paymentTypes.collect { paymentType ->
+                                    def options = locale.options
+                                    options.put("payment", paymentType)
+                                    return generateTest(locale.name + ' - ' + paymentType, test, locale.address, options )
+                                }
+                            )
+                            localeTests
+                        })
                         testList
                     }
 
