@@ -432,7 +432,7 @@ public class PortalTestBase {
     boolean lastNameFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_lastName").toUpperCase());
     boolean streetFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_street").toUpperCase());
     boolean cityFound = pdfContent.toUpperCase().contains(results.get("getPOReponse_city").toUpperCase());
-    Util.printInfo("Is Order ID found in Invoice: " + pdfContent.contains(results.get(BICECEConstants.ORDER_ID)));
+    Util.printInfo("Is Order ID found in Invoice: " + orderFound);
     Util.printInfo("Is Subscription ID found in Invoice: " + subscriptionFound);
     Util.printInfo("Is firstName found in Invoice: " + firstNameFound);
     Util.printInfo("Is lastName found in Invoice: " + lastNameFound);
