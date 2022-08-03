@@ -409,7 +409,7 @@
       "payment": "CREDITCARD"
     },
     "QC": {
-      "address": "Autodesk CA@10 Duke St@Montréal@H3C 2L2@9916800100@Canada@QC",
+      "address": "Autodesk CA@10 Rue Saint Jacques@Montreal@H2Y 1L3@9916800100@Canada@QC",
       "isTaxed": "Y",
       "locale": "en_CA",
       "store": "STORE-CA",
