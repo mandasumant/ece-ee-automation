@@ -13,7 +13,6 @@ default:
   guacPriceId: "?priceIds="
   productsPath: "/products/"
   flexBenefitsPath: "/benefits/flex.com"
-  offeringId: "OD-000450"
   guacMoeResourceURL: "manual-order-entry?optyId="
   guacMoeOdmResourceURL: "manual-order-entry-odm?optyId="
   guacMoeOdmDtcResourceURL: "manual-order-entry-odm-dtc"
@@ -67,9 +66,10 @@ default:
 
   pwsClientId: "sR8Ye2YBRq5QAnUIiOxKWw0J3a92tDVJ"
   pwsClientSecret: "+iFsysMrCCnJ84IqILULBg==:XEzSSr6nNaqPuBwIxnd/xIQP1LQVOgUETN/CGCZRohk="
-  pwsHostname: "enterprise-api-int.autodesk.com"
-  quoteAgentCsnAccount: "0070176510"
-  agentContactEmail: "jfmpefebcojbkcpdignkoepabklgedjn@null.autodesk.com"
+  pwsHostname: "enterprise-api-stg.autodesk.com"
+  quoteAgentCsnAccount: "5109330358"
+  agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
+  offeringId: "OD-000450"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
