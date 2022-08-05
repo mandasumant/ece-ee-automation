@@ -7,7 +7,7 @@ default:
   cepURL: "https://customer-stg.autodesk.com/"
   accountPortalURL: https://stg-manage.autodesk.com
   guacBaseURL: "https://checkout-pt.autodesk.com/"
-  Quote2OrderBaseURL: "https://checkout-qa.autodesk.com/{locale}/cart?quoteNumber="
+  Quote2OrderBaseURL: "https://checkoutservice-stg.autodesk.com/quoteRedirect/"
   guacDotComBaseURL: "https://www-pt.autodesk"
   guacResourceURL: "checkout?priceIds="
   guacPriceId: "?priceIds="
