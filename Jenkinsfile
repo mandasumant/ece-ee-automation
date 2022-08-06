@@ -530,10 +530,10 @@ pipeline {
                 branch 'master'
                 anyOf {
                     triggeredBy 'TimerTrigger'
-                        expression {
-                                params.APOLLO_Q2O == true
-                            }
-                        }
+                    expression {
+                        params.APOLLO_Q2O == true
+                    }
+                }
             }
             steps {
                 echo 'Initiating Apollo Quote 2 Order - All'
@@ -683,10 +683,10 @@ pipeline {
                 branch 'master'
                 anyOf {
                     triggeredBy 'TimerTrigger'
-                        expression {
-                                params.APOLLO_FLEX == true
-                            }
-                        }
+                    expression {
+                        params.APOLLO_FLEX == true
+                    }
+                }
             }
             steps {
                 echo 'Initiating Apollo Flex Order - All'
@@ -851,10 +851,10 @@ pipeline {
                 branch 'master'
                 anyOf {
                     triggeredBy 'TimerTrigger'
-                        expression {
-                                params.APOLLO_FLEX_MOE == true
-                            }
-                        }
+                    expression {
+                        params.APOLLO_FLEX_MOE == true
+                    }
+                }
             }
             steps {
                 echo 'Initiating Apollo Flex MOE Order - All'
