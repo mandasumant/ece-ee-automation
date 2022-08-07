@@ -56,7 +56,7 @@ public class PWSTestBase {
     c.add(Calendar.DATE, 1);
     String timezone = "UTC";
 
-    if(System.getProperty("user.timezone") != null && !System.getProperty("user.timezone").isEmpty()){
+    if (System.getProperty("user.timezone") != null && !System.getProperty("user.timezone").isEmpty()) {
       timezone = System.getProperty("user.timezone");
     }
 
@@ -67,6 +67,12 @@ public class PWSTestBase {
   private String createQuoteBody(LinkedHashMap<String, String> data, Address address, String csn,
       String agentContactEmail, Boolean isMultiLineItem) {
     PurchaserDTO purchaser = new PurchaserDTO(data);
+
+    if (System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_STG)) {
+      agentContactEmail = agentContactEmail.replace(BICECEConstants.ENV_INT.toLowerCase(),
+          BICECEConstants.ENV_STG.toLowerCase()).replace("@", "_2@").replace("_1", "");
+    }
+
     AgentContactDTO agentContact = new AgentContactDTO(agentContactEmail);
     AgentAccountDTO agentAccount = new AgentAccountDTO(csn);
     OfferDTO offer = new OfferDTO(data);
@@ -92,7 +98,8 @@ public class PWSTestBase {
 
     QuoteDTO quote =
         QuoteDTO.builder().lineItems(lineItems).purchaser(purchaser).endCustomer(endCustomer)
-            .agentContact(agentContact).agentAccount(agentAccount).currency(data.get(BICECEConstants.currencyStore)).quoteNote(BICECEConstants.QUOTE_NOTES).build();
+            .agentContact(agentContact).agentAccount(agentAccount).currency(data.get(BICECEConstants.currencyStore))
+            .quoteNote(BICECEConstants.QUOTE_NOTES).build();
 
     return new Gson().toJson(quote);
   }
@@ -104,7 +111,7 @@ public class PWSTestBase {
 
     FinalizeQuoteDTO finalizeQuote =
         FinalizeQuoteDTO.builder().quoteNumber(quoteNo).agentContact(agentContact).agentAccount(agentAccount)
-           .build();
+            .build();
 
     return new Gson().toJson(finalizeQuote);
   }
@@ -251,12 +258,13 @@ public class PWSTestBase {
         SFDCAPI sfdcApi = new SFDCAPI();
         Response quoteDetails = getQuoteDetails(agentCsn, quoteId);
         String accountName = quoteDetails.jsonPath().getString("endCustomer.name");
-        String accountCSN =  quoteDetails.jsonPath().getString("endCustomer.accountCsn");
-        String streetAddress =  quoteDetails.jsonPath().getString("endCustomer.addressLine1");
-        String city =  quoteDetails.jsonPath().getString("endCustomer.city");
-        String countryCode =  quoteDetails.jsonPath().getString("endCustomer.countryCode");
-        String postalCode =  quoteDetails.jsonPath().getString("endCustomer.postalCode");
-        Util.printInfo("SFDC Input  : " + countryCode + " " + postalCode + " " + accountName + " " + streetAddress + " "+ accountCSN);
+        String accountCSN = quoteDetails.jsonPath().getString("endCustomer.accountCsn");
+        String streetAddress = quoteDetails.jsonPath().getString("endCustomer.addressLine1");
+        String city = quoteDetails.jsonPath().getString("endCustomer.city");
+        String countryCode = quoteDetails.jsonPath().getString("endCustomer.countryCode");
+        String postalCode = quoteDetails.jsonPath().getString("endCustomer.postalCode");
+        Util.printInfo("SFDC Input  : " + countryCode + " " + postalCode + " " + accountName + " " + streetAddress + " "
+            + accountCSN);
         boolean publishAccountEC = sfdcApi.publishAccountEC(accountName, accountCSN, streetAddress, city, countryCode,
             postalCode);
         if (!publishAccountEC) {
@@ -283,7 +291,7 @@ public class PWSTestBase {
   }
 
   private Response getQuoteDetails(String agentCSN, String quoteNo) {
-   Util.printInfo("Calling Get Quote Details API");
+    Util.printInfo("Calling Get Quote Details API");
     PWSAccessInfo access_token = getAccessToken();
     String signature = signString(access_token.token, clientSecret, access_token.timestamp);
     String quoteNumber = null;
@@ -296,7 +304,7 @@ public class PWSTestBase {
       put("timezone_city", System.getProperty("user.timezone"));
     }};
 
-    return  given()
+    return given()
         .headers(newHeaders)
         .get("https://" + hostname + "/v1/quotes?quoteNumber=" + quoteNo)
         .then().extract().response();

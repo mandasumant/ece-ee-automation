@@ -1383,9 +1383,9 @@ public class BICTestBase {
     bicPage.clickUsingLowLevelActions("productsDropDownClose");
 
     Util.printInfo("Making sure that we can see selected products on the page");
-    List<WebElement> autocadProduct = driver.findElements(By.xpath("//div[@class=\"fe-tablerow-product-name\"]"));
-    AssertUtils.assertEquals("3ds Max is present on the page", autocadProduct.get(0).getText(), "3ds Max");
-    AssertUtils.assertEquals("AutoCAD is present on the page", autocadProduct.get(1).getText(), "AutoCAD");
+    List<WebElement> adskProducts = driver.findElements(By.xpath("//div[@class=\"fe-tablerow-product-name\"]"));
+    AssertUtils.assertEquals("3ds Max is present on the page", adskProducts.get(0).getText(), "3ds Max");
+    AssertUtils.assertTrue("AutoCAD is present on the page", adskProducts.get(1).getText().contains("AutoCAD"));
 
     Util.printInfo("Updating users and days");
     List<WebElement> usersInputPaths = driver.findElements(By.xpath("//div[@data-testid=\"fe-users-input\"]/input"));

@@ -242,3 +242,7 @@ validateFlexOrderNewCart:
 validateFlexOrderNewCartRefund:
   isNonQuoteFlexOrder: "true"
   productType: "flex"
+
+validateFlexOrderNewCartReturningUser:
+  isNonQuoteFlexOrder: "true"
+  productType: "flex"
