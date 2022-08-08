@@ -193,16 +193,17 @@ public class BICTestBase {
 
       js.executeScript("document.getElementById('btnSubmit').click()");
       bicPage.waitForField("verifyAccount", true, 5000);
+      if (bicPage.checkIfElementExistsInPage("verifyAccount", 5)) {
+        if (driver.findElement(By.xpath("//label[@id='optin_checkbox']")).getAttribute("class")
+            .contains("checked")) {
+          Util.printInfo("Option checkbox is already selected..");
+        } else {
+          js.executeScript("document.getElementById('optin_checkbox').click()");
+        }
 
-      if (driver.findElement(By.xpath("//label[@id='optin_checkbox']")).getAttribute("class")
-          .contains("checked")) {
-        Util.printInfo("Option checkbox is already selected..");
-      } else {
-        js.executeScript("document.getElementById('optin_checkbox').click()");
+        js.executeScript("document.getElementById('bttnAccountVerified').click()");
+        bicPage.waitForFieldAbsent("signInSection", 5000);
       }
-
-      js.executeScript("document.getElementById('bttnAccountVerified').click()");
-      bicPage.waitForFieldAbsent("signInSection", 5000);
     } catch (Exception e) {
       AssertUtils.fail("Application Loading issue : Unable to click on privacypolicy_checkbox");
     }
