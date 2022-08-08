@@ -672,7 +672,7 @@ public class PortalTestBase {
     HashMap<String, String> orderDetails = new HashMap<String, String>();
     Util.sleep(60000);
     try {
-      if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 10)) {
+      if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 60)) {
         Util.printInfo("Clicking on portal subscription and contracts link...");
         portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
         portalPage.waitForPageToLoad();
@@ -850,6 +850,7 @@ public class PortalTestBase {
 
       Util.printInfo("Adding quantity for seat as..." + addSeatQty);
       orderDetails.put("addSeatQty", addSeatQty);
+      portalPage.waitForFieldPresent("portalASQtyTextField", 30);
       portalPage.populateField("portalASQtyTextField", addSeatQty);
       Util.sleep(10000);
       portalPage.waitForFieldPresent("portalASFinalProratedPrice", 5000);
