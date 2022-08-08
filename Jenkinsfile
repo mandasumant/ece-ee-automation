@@ -151,10 +151,10 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['INT', 'STG'], description: 'Choose Environment')
+        choice(name: 'ENVIRONMENT', choices: ['STG', 'INT'], description: 'Choose Environment')
         booleanParam(name: 'CJT_STG', defaultValue: false, description: 'Run CJT Regression on STG?')
         booleanParam(name: 'CJT_INT', defaultValue: false, description: 'Run CJT Regression on INT?')
-        booleanParam(name: 'CJT_INT_APOLLO_R2_0_2', defaultValue: false, description: 'Run CJT Regression on INT R2.0.2?')
+        booleanParam(name: 'CJT_APOLLO_R2_0_2', defaultValue: false, description: 'Run CJT Regression for R2.0.2?')
         booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order?')
         booleanParam(name: 'APOLLO_FLEX', defaultValue: false, description: 'Run FLEX Order?')
         booleanParam(name: 'APOLLO_FLEX_MOE', defaultValue: false, description: 'Run FLEX MOE Order?')
@@ -414,18 +414,17 @@ pipeline {
             }
         }
 
-        stage('CJT Regression Apollo 2.0.2 INT') {
+        stage('CJT Regression for Apollo 2.0.2') {
             when {
                 branch 'master'
                 anyOf {
-                    triggeredBy 'TimerTrigger'
                     expression {
-                        params.CJT_INT_APOLLO_R2_0_2 == true
+                        params.CJT_APOLLO_R2_0_2 == true
                     }
                 }
             }
             steps {
-                echo 'Initiating Apollo UAT - 2.0.2 Regression (INT)'
+                echo 'Initiating Apollo UAT - 2.0.2 Regression ' + params.ENVIRONMENT
                 script {
                     println("Building Testing Hub API Input Map - estore")
 
@@ -529,8 +528,11 @@ pipeline {
         stage('Apollo Quote 2 Order - All Orders Suite') {
             when {
                 branch 'master'
-                expression {
-                    params.APOLLO_Q2O == true
+                anyOf {
+                    triggeredBy 'TimerTrigger'
+                    expression {
+                        params.APOLLO_Q2O == true
+                    }
                 }
             }
             steps {
@@ -679,8 +681,11 @@ pipeline {
         stage('Apollo Flex Order New Suite') {
             when {
                 branch 'master'
-                expression {
-                    params.APOLLO_FLEX == true
+                anyOf {
+                    triggeredBy 'TimerTrigger'
+                    expression {
+                        params.APOLLO_FLEX == true
+                    }
                 }
             }
             steps {
@@ -844,8 +849,11 @@ pipeline {
         stage('Apollo Flex MOE Order New Suite') {
             when {
                 branch 'master'
-                expression {
-                    params.APOLLO_FLEX_MOE == true
+                anyOf {
+                    triggeredBy 'TimerTrigger'
+                    expression {
+                        params.APOLLO_FLEX_MOE == true
+                    }
                 }
             }
             steps {
