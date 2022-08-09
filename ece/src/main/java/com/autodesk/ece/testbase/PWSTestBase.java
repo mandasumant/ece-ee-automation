@@ -187,8 +187,8 @@ public class PWSTestBase {
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
       response = getQuoteStatus(pwsRequestHeaders, transactionId);
 
-      String status = response.jsonPath().getString("status") == null ? "error" :
-          response.jsonPath().getString("status");
+      String status = response.jsonPath().getString("quoteStatus") == null ? "error" :
+          response.jsonPath().getString("quoteStatus");
 
       if (status.equals("DRAFT-CREATED")) {
         quoteNumber = response.jsonPath().getString("quoteNumber");
@@ -246,7 +246,7 @@ public class PWSTestBase {
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
       response = getQuoteStatus(pwsRequestHeaders, transactionId);
 
-      String status = response.jsonPath().getString("status");
+      String status = response.jsonPath().getString("quoteStatus");
 
       if (status.equals("QUOTED")) {
         Util.printInfo("Got quote in QUOTED state: " + quoteId);
