@@ -179,7 +179,7 @@ pipeline {
                             params.CJT_STG == true ||
                             params.CJT_INT == true ||
                             params.CJT_INT_APOLLO_R2_0_2 == true ||
-                            params.APOLLO_Q20 == true ||
+                            params.APOLLO_Q2O == true ||
                             params.APOLLO_FLEX == true ||
                             params.APOLLO_FLEX_MOE == true
                         }
@@ -205,7 +205,7 @@ pipeline {
                             params.CJT_STG == true ||
                             params.CJT_INT == true ||
                             params.CJT_INT_APOLLO_R2_0_2 == true ||
-                            params.APOLLO_Q20 == true ||
+                            params.APOLLO_Q2O == true ||
                             params.APOLLO_FLEX == true ||
                             params.APOLLO_FLEX_MOE == true
                         }
@@ -235,7 +235,7 @@ pipeline {
                             params.CJT_STG == true ||
                             params.CJT_INT == true ||
                             params.CJT_INT_APOLLO_R2_0_2 == true ||
-                            params.APOLLO_Q20 == true ||
+                            params.APOLLO_Q2O == true ||
                             params.APOLLO_FLEX == true ||
                             params.APOLLO_FLEX_MOE == true
                         }
