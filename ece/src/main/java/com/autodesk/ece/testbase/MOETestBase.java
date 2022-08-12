@@ -1320,11 +1320,15 @@ public class MOETestBase {
           moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
           moePage.clickUsingLowLevelActions("contactRolesHeading");
 
+          moePage.checkIfElementExistsInPage("checkPrimaryContactCheckbox", 10);
+          moePage.clickUsingLowLevelActions("checkPrimaryContactCheckbox");
+          Util.sleep(2000);
+
           JavascriptExecutor js = (JavascriptExecutor) driver;
           js.executeScript(
-              "document.getElementsByClassName(\"uiImage uiOutputCheckbox\")[0].click();document.getElementsByClassName(\"uiInput uiInputCheckbox uiInput--default uiInput--checkbox\")[0].click();");
+              "document.getElementsByClassName(\"uiInput uiInputCheckbox uiInput--default uiInput--checkbox\")[0].click();");
           Util.printInfo("Primary contact checkbox checked");
-          Util.sleep(2000);
+          Util.sleep(5000);
 
           js.executeScript(
               "document.getElementsByClassName(\"slds-button slds-button--brand\")[1].click();");
