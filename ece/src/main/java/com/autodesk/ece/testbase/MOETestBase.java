@@ -433,10 +433,9 @@ public class MOETestBase {
         e.printStackTrace();
       }
     }
-    Util.sleep(20000);
 
     if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      moePage.waitForField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, true, 30000);
+      moePage.waitForField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, true, 60000);
       moePage.click(BICECEConstants.MOE_LOGIN_USERNAME_FIELD);
       moePage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD,
           CommonConstants.serviceUser);
@@ -864,6 +863,12 @@ public class MOETestBase {
 
       moePage.click("save");
       Util.printInfo("Clicked on Save button after entering details.");
+
+      if (moePage.checkIfElementExistsInPage("opportunityError", 5)) {
+        Util.printInfo("Clicking on Save button a second time due to error.");
+        moePage.click("save");
+      }
+
       Util.sleep(30000);
       driver.switchTo().defaultContent();
 
