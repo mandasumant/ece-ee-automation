@@ -252,6 +252,7 @@ public class MOETestBase {
     String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String guacBaseURL = data.get("guacBaseURL");
+    String oxygenLogOutUrl = data.get("oxygenLogOut");
     navigateToMoeDtcUrl(data, guacBaseURL, locale);
 
     proceedToDtcCartSection();
@@ -264,6 +265,9 @@ public class MOETestBase {
     data.putAll(names.getMap());
     String emailID = bicTestBase.generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
+
+    Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
+    bicTestBase.getUrl(oxygenLogOutUrl);
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
     Util.sleep(10000);
@@ -795,11 +799,10 @@ public class MOETestBase {
   @Step("Login to Checkout page as a customer.")
   private void loginToCheckoutWithUserAccount(String emailID, Names names,
       String password, String copyCartLink) {
+
     // Navigate to Copy Cart URL
     bicTestBase.getUrl(copyCartLink);
     moePage.waitForPageToLoad();
-
-    bicTestBase.signOutUsingMeMenu();
 
     // Create new user and sign in
     bicTestBase.createBICAccount(names, emailID, password, false);
@@ -1007,6 +1010,7 @@ public class MOETestBase {
     Map<String, String> address = bicTestBase.getBillingAddress(data);
     String orderNumber = "";
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    String oxygenLogOutUrl = data.get("oxygenLogOut");
 
     Names names = BICTestBase.generateFirstAndLastNames();
 
@@ -1057,9 +1061,11 @@ public class MOETestBase {
     }
 
     String copyCartLink = copyCartLinkFromClipboard();
-    bicTestBase.getUrl(copyCartLink);
 
-    bicTestBase.signOutUsingMeMenu();
+    Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
+    bicTestBase.getUrl(oxygenLogOutUrl);
+
+    bicTestBase.getUrl(copyCartLink);
 
     driver.switchTo().frame(0);
 
@@ -1107,6 +1113,7 @@ public class MOETestBase {
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String guacBaseURL = data.get("guacBaseURL");
     navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
+    String oxygenLogOutUrl = data.get("oxygenLogOut");
 
     bicTestBase.setStorageData();
 
@@ -1131,6 +1138,9 @@ public class MOETestBase {
     data.putAll(names.getMap());
     String emailID = BICTestBase.generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
+
+    Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
+    bicTestBase.getUrl(oxygenLogOutUrl);
 
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
     Util.sleep(10000);
@@ -1186,6 +1196,7 @@ public class MOETestBase {
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
     String guacBaseURL = data.get("guacBaseURL");
     navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
+    String oxygenLogOutUrl = data.get("oxygenLogOut");
 
     if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
       loginToMoe();
@@ -1208,9 +1219,10 @@ public class MOETestBase {
 
     updateStorageData();
 
-    bicTestBase.getUrl(copyCartLink);
+    Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
+    bicTestBase.getUrl(oxygenLogOutUrl);
 
-    bicTestBase.signOutUsingMeMenu();
+    bicTestBase.getUrl(copyCartLink);
 
     bicTestBase.loginAccount(data);
 
@@ -1409,7 +1421,9 @@ public class MOETestBase {
         moePage.clickUsingLowLevelActions("productSearchButton");
         moePage.waitForPageToLoad();
 
-        moePage.checkIfElementExistsInPage("openProductFound", 30);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath(moePage.getFirstFieldLocator("openProductFound"))));
         moePage.clickUsingLowLevelActions("openProductFound");
         moePage.waitForPageToLoad();
 

@@ -17,6 +17,7 @@ default:
   guacMoeOdmResourceURL: "manual-order-entry-odm?optyId="
   guacMoeOdmDtcResourceURL: "manual-order-entry-odm-dtc"
   guacMoeDTCURL: "manual-order-entry-dtc"
+  oxygenLogOut: "https://accounts-int.autodesk.com/Authentication/LogOut"
   productName: "autocad"
   postalCode: "80202"
   pelicanRenewalURL: "https://api.pelicanint.autodesk.com/subscriptions/v4/passtoken/renew"
