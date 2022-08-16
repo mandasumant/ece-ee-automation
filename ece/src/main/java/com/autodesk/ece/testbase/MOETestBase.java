@@ -19,6 +19,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -29,7 +30,9 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class MOETestBase {
 
@@ -425,6 +428,9 @@ public class MOETestBase {
 
   @Step("Login to MOE")
   private void loginToMoe() {
+
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+
     Util.printInfo("Re-Login");
     if (moePage.isFieldVisible("moeReLoginLink")) {
       try {
@@ -435,12 +441,14 @@ public class MOETestBase {
     }
 
     if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      moePage.waitForField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD, true, 60000);
+      wait.until(ExpectedConditions.visibilityOfElementLocated(
+          By.xpath(moePage.getFirstFieldLocator(BICECEConstants.MOE_LOGIN_USERNAME_FIELD))));
       moePage.click(BICECEConstants.MOE_LOGIN_USERNAME_FIELD);
       moePage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD,
           CommonConstants.serviceUser);
       moePage.click("moeLoginButton");
-      moePage.waitForField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, true, 30000);
+      wait.until(ExpectedConditions.visibilityOfElementLocated(
+          By.xpath(moePage.getFirstFieldLocator(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD))));
       moePage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
       moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, CommonConstants.serviceUserPw);
       moePage.click("moeLoginButton");
@@ -1179,7 +1187,9 @@ public class MOETestBase {
     String guacBaseURL = data.get("guacBaseURL");
     navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
 
-    loginToMoe();
+    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      loginToMoe();
+    }
 
     AssertUtils.assertTrue(driver
         .findElement(By.xpath("//div[@data-wat-link-section=\"checkout-empty-cart\"]"))
@@ -1247,11 +1257,30 @@ public class MOETestBase {
     // Navigate to Url
     bicTestBase.getUrl(sfdcCurrentOptyUrl);
 
-    moePage.checkIfElementExistsInPage("optyIdStageWon", 60);
+    try {
+      Boolean isOpportunityOpened = true;
+      int attempt = 0;
 
-    AssertUtils.assertTrue(driver
-        .findElement(By.xpath("//a[@data-tab-name='Won']"))
-        .isDisplayed());
+      while (isOpportunityOpened) {
+
+        attempt++;
+        Util.printInfo("Trying to find an Opportunity with closed state. Attempt no " + attempt);
+
+        if (attempt > 5) {
+          AssertUtils.fail("Unable to find a closed Opportunity.");
+        }
+
+        if (moePage.checkIfElementExistsInPage("optyIdStageWon", 60)) {
+          Util.printInfo("Opportunity found with closed state.");
+          isOpportunityOpened = false;
+        } else {
+          Util.printInfo("Opportunity not closed. Refreshing the page.");
+          driver.navigate().refresh();
+        }
+      }
+    } catch (Exception e) {
+      AssertUtils.fail("Failed to find the Opportunity with closed state " + e.getMessage());
+    }
 
     return results;
   }
