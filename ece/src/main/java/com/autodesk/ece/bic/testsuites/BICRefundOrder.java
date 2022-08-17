@@ -147,8 +147,10 @@ public class BICRefundOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-    // Validate Credit Note for the order
-    portaltb.validateBICOrderPDF(results,BICECEConstants.CREDIT_NOTE);
-    updateTestingHub(testResults);
+    if (getBicTestBase().shouldValidateSAP()) {
+      // Validate Credit Note for the order
+      portaltb.validateBICOrderPDF(results, BICECEConstants.CREDIT_NOTE);
+      updateTestingHub(testResults);
+    }
   }
 }

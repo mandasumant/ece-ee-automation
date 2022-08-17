@@ -1333,8 +1333,10 @@ public class BICOrderCreation extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-    // Put the SAP Order number into results map
-    testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
+    if (getBicTestBase().shouldValidateSAP()) {
+      // Put the SAP Order number into results map
+      testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
+    }
 
     updateTestingHub(testResults);
   }
@@ -1392,8 +1394,10 @@ public class BICOrderCreation extends ECETestBase {
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid), PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
-    portaltb.validateBICOrderTaxInvoice(results);
-    updateTestingHub(testResults);
+    if (getBicTestBase().shouldValidateSAP()) {
+      portaltb.validateBICOrderTaxInvoice(results);
+      updateTestingHub(testResults);
+    }
   }
 
   private void triggerPelicanRenewalJob(HashMap<String, String> results) {
