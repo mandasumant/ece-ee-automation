@@ -1282,7 +1282,7 @@ public class MOETestBase {
           AssertUtils.fail("Unable to find a closed Opportunity.");
         }
 
-        if (moePage.checkIfElementExistsInPage("optyIdStageWon", 60)) {
+        if (moePage.checkIfElementExistsInPage("optyIdStageWon", 90)) {
           Util.printInfo("Opportunity found with closed state.");
           isOpportunityOpened = false;
         } else {
