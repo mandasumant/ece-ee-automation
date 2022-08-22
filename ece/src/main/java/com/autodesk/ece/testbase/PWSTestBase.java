@@ -56,8 +56,8 @@ public class PWSTestBase {
     c.add(Calendar.DATE, 1);
     String timezone = "UTC";
 
-    if (System.getProperty("user.timezone") != null && !System.getProperty("user.timezone").isEmpty()) {
-      timezone = System.getProperty("user.timezone");
+    if (System.getProperty("timezone") != null && !System.getProperty("timezone").isEmpty()) {
+      timezone = System.getProperty("timezone");
     }
 
     sdf.setTimeZone(TimeZone.getTimeZone(timezone));
@@ -127,7 +127,7 @@ public class PWSTestBase {
         .header("signature", signature)
         .header("timestamp", timestamp)
         .header("Authorization", "Basic " + base64_header)
-        .header("timezone_city", System.getProperty("user.timezone"))
+        .header("timezone_city", System.getProperty("timezone"))
         .post("https://" + hostname + "/v2/oauth/generateaccesstoken?grant_type=client_credentials")
         .then().extract().response()
         .jsonPath().getString("access_token");
@@ -162,7 +162,7 @@ public class PWSTestBase {
       put("CSN", csn);
       put("signature", signature);
       put("timestamp", access_token.timestamp);
-      put("timezone_city", System.getProperty("user.timezone"));
+      put("timezone_city", System.getProperty("timezone"));
     }};
 
     String payloadBody = createQuoteBody(data, address, csn, agentContactEmail, isMultiLineItem);
@@ -225,8 +225,9 @@ public class PWSTestBase {
       put("CSN", agentCsn);
       put("signature", signature);
       put("timestamp", access_token.timestamp);
-      put("timezone_city", System.getProperty("user.timezone"));
+      put("timezone_city", System.getProperty("timezone"));
     }};
+
     String finalizeBody = createQuoteFinalizeBody(quoteId, agentCsn, agentContactEmail);
 
     Response response = given()
@@ -234,6 +235,8 @@ public class PWSTestBase {
         .headers(pwsRequestHeaders)
         .patch("https://" + hostname + "/v1/quotes/finalize")
         .then().extract().response();
+    Util.printInfo("The finalize response headers: " + response.getHeaders());
+
     if (response.getStatusCode() != 202) {
       AssertUtils.fail("Finalize Quote API returned a non 202 response. Response code: " + response.getStatusCode());
     }
@@ -301,7 +304,7 @@ public class PWSTestBase {
       put("CSN", agentCSN);
       put("signature", signature);
       put("timestamp", access_token.timestamp);
-      put("timezone_city", System.getProperty("user.timezone"));
+      put("timezone_city", System.getProperty("timezone"));
     }};
 
     return given()

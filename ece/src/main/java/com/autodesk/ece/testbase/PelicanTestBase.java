@@ -24,8 +24,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
@@ -685,12 +687,16 @@ public class PelicanTestBase {
         pelicanResponseMap.get("getPOResponse_productType").toUpperCase());
     try {
       SimpleDateFormat sdfQuote = new SimpleDateFormat(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
-      SimpleDateFormat sdfPelican = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-
       String quoteSubDate = quoteInputMap.get(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
-      String pelicanSubDate = sdfQuote.format(
-          sdfPelican.parse(pelicanResponseMap.get("getPOResponse_subscriptionPeriodStartDate")));
+
+      SimpleDateFormat pelicanFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+      pelicanFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+      Date pelicanDate = pelicanFormat.parse(pelicanResponseMap.get("getPOResponse_subscriptionPeriodStartDate"));
+      sdfQuote.setTimeZone(TimeZone.getTimeZone(System.getProperty("timezone")));
+      String pelicanSubDate = sdfQuote.format(pelicanDate);
       AssertUtils.assertEquals("Subscription Start Date should should match.", quoteSubDate, pelicanSubDate);
+
     } catch (Exception e) {
       Util.printInfo("Exception in validating subscription start date . " + e.getMessage());
     }
