@@ -490,6 +490,8 @@ public class PelicanTestBase {
       results.put("getPOResponse_quoteId", jp.get("quoteId") == null ? "" : jp.get("quoteId").toString());
       results.put("getPOResponse_salesChannelType", jp.get("salesChannelType").toString());
       results.put("getPOResponse_orderState", jp.get("orderState").toString());
+      results.put("getPOResponse_taxId", jp.get("taxId").toString());
+      results.put("getPOResponse_countryCode", jp.get("price.country").toString());
 
       results.put("getPOResponse_storedPaymentProfileId",
           jp.get("payment.paymentProfileId").toString());
@@ -670,7 +672,8 @@ public class PelicanTestBase {
     }
     if (Arrays.asList("STORE-NAMER", "STORE-CA", "STORE-AUS").contains(quoteInputMap.get(BICECEConstants.STORE_NAME))) {
       AssertUtils.assertEquals("EndCustomer City should match.",
-          pelicanResponseMap.get("getPOResponse_endCustomer_city").substring(0,3).toUpperCase(), address.city.substring(0,3).toUpperCase());
+          pelicanResponseMap.get("getPOResponse_endCustomer_city").substring(0, 3).toUpperCase(),
+          address.city.substring(0, 3).toUpperCase());
     }
     if (address.province != null && !address.province.isEmpty()) {
       AssertUtils.assertEquals("EndCustomer State should match.",
@@ -678,11 +681,24 @@ public class PelicanTestBase {
     }
     AssertUtils.assertEquals("EndCustomer Country should match.",
         pelicanResponseMap.get("getPOResponse_endCustomer_country").toUpperCase(), address.countryCode.toUpperCase());
-   if(!address.postalCode.equals("N/A")) {
-     AssertUtils.assertEquals("EndCustomer Postal Code should match.",
-         pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 3),
-         address.postalCode.substring(0, 3));
-   }
+    if (!address.postalCode.equals("N/A")) {
+      AssertUtils.assertEquals("EndCustomer Postal Code should match.",
+          pelicanResponseMap.get("getPOResponse_endCustomer_postalCode").substring(0, 3),
+          address.postalCode.substring(0, 3));
+    }
+
+    if (System.getProperty("taxId") != null ) {
+      if (Arrays.asList("en_AU", "de_CH", "no_NO", "en_IS", "en_LI", "es_ES").contains(quoteInputMap.get(BICECEConstants.LOCALE))) {
+        AssertUtils.assertEquals("TaxId should match.",
+            System.getProperty("taxId").toUpperCase(),
+            pelicanResponseMap.get("getPOResponse_taxId").toUpperCase());
+      } else {
+        AssertUtils.assertEquals("TaxId should match.",
+            pelicanResponseMap.get("getPOResponse_countryCode").concat(System.getProperty("taxId").toUpperCase()),
+            pelicanResponseMap.get("getPOResponse_taxId").toUpperCase());
+      }
+    }
+
     AssertUtils.assertEquals("Product Type should match.", quoteInputMap.get("productType").toUpperCase(),
         pelicanResponseMap.get("getPOResponse_productType").toUpperCase());
     try {
