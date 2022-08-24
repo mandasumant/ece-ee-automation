@@ -395,7 +395,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Främsteby Karlsborg 59@SkÖldinge@712 63@12341234@Sweden"
+    address: "Autodesk@Hagagatan 1, vi@Stockholm@113 49@12341234@Sweden"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070188209"
     agentContactEmail: "partneruser_da_int_5070188209@letscheck.email"

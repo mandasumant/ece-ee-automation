@@ -490,7 +490,7 @@ public class PelicanTestBase {
       results.put("getPOResponse_quoteId", jp.get("quoteId") == null ? "" : jp.get("quoteId").toString());
       results.put("getPOResponse_salesChannelType", jp.get("salesChannelType").toString());
       results.put("getPOResponse_orderState", jp.get("orderState").toString());
-      results.put("getPOResponse_taxId", jp.get("taxId").toString());
+      results.put("getPOResponse_taxId", jp.get("taxId") != null ? jp.get("taxId").toString() : "");
       results.put("getPOResponse_countryCode", jp.get("price.country").toString());
 
       results.put("getPOResponse_storedPaymentProfileId",
@@ -498,7 +498,6 @@ public class PelicanTestBase {
       results.put("getPOResponse_productType", jp.get("lineItems[0].offering.name").toString());
       results.put("getPOResponse_quantity", jp.get("lineItems[0].quantity").toString());
       results.put("getPOResponse_offeringId", jp.get("lineItems[0].offering.id").toString());
-
       results.put("getPOResponse_fulfillmentStatus",
           jp.get("lineItems[0].fulfillmentStatus").toString());
       results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
@@ -511,7 +510,6 @@ public class PelicanTestBase {
           jp.get("lineItems[0].fulfillmentDate").toString());
       results.put("getPOResponse_paymentProcessor",
           jp.get("payment.paymentProcessor").toString());
-
       results.put("getPOResponse_endCustomer_company",
           jp.get("endCustomer.company"));
       results.put("getPOResponse_endCustomer_firstName",

@@ -128,11 +128,12 @@ public class BICQuoteOrder extends ECETestBase {
 
   @Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
   public void validateBicQuote() throws MetadataException {
-    HashMap<String, String> testResults = new HashMap<String, String>();
     String locale = "en_US";
     if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
       locale = System.getProperty("locale");
     }
+    testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
+
     Address address = getBillingAddress();
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
@@ -142,6 +143,7 @@ public class BICQuoteOrder extends ECETestBase {
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"),
         testDataForEachMethod);
+
     HashMap<String, String> justQuoteDeails = new HashMap<String, String>();
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
@@ -169,8 +171,13 @@ public class BICQuoteOrder extends ECETestBase {
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     updateTestingHub(testResults);
     testResults.putAll(testDataForEachMethod);
+    // Signing out after quote creation
+    getBicTestBase().signOutUsingMeMenu();
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -247,7 +254,13 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, true);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
+    // Signing out after quote creation
+    getBicTestBase().signOutUsingMeMenu();
+
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -261,7 +274,7 @@ public class BICQuoteOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-    //Compare tax in Checkout and Pelican
+    // Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
@@ -317,7 +330,13 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
+    // Signing out after quote creation
+    getBicTestBase().signOutUsingMeMenu();
+
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -412,7 +431,7 @@ public class BICQuoteOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-    //Compare tax in Checkout and Pelican
+    // Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
