@@ -566,7 +566,6 @@ public class MOEOrderFlows extends ECETestBase {
 
     if (getBicTestBase().shouldValidateSAP()) {
       portaltb.validateBICOrderTaxInvoice(results);
-      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
     }
 
     updateTestingHub(testResults);
@@ -654,7 +653,6 @@ public class MOEOrderFlows extends ECETestBase {
 
     if (getBicTestBase().shouldValidateSAP()) {
       portaltb.validateBICOrderTaxInvoice(results);
-      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
     }
 
     updateTestingHub(testResults);

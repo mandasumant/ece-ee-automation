@@ -227,7 +227,6 @@ public class BICQuoteOrder extends ECETestBase {
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
-        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
       updateTestingHub(testResults);
     }
@@ -298,7 +297,6 @@ public class BICQuoteOrder extends ECETestBase {
 
     if (getBicTestBase().shouldValidateSAP()) {
       portaltb.validateBICOrderTaxInvoice(results);
-      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
     }
     updateTestingHub(testResults);
   }
@@ -382,7 +380,6 @@ public class BICQuoteOrder extends ECETestBase {
     if (getBicTestBase().shouldValidateSAP()) {
       // Validate Credit Note for the order
       portaltb.validateBICOrderPDF(results, BICECEConstants.CREDIT_NOTE);
-      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
     }
 
     updateTestingHub(testResults);

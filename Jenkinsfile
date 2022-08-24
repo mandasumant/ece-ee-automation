@@ -342,7 +342,6 @@ pipeline {
                 }
             }
         }
-
         stage('CJT Regression INT') {
             when {
                 branch 'master'
@@ -407,6 +406,18 @@ pipeline {
                         currentBuild.result = 'FAILURE'
                         println('Testing Hub API call failed - accountportal')
                     }
+                }
+            }
+        }
+        stage('Nightly sleep') {
+            when {
+                branch 'master'
+                triggeredBy 'TimerTrigger'
+            }
+            steps {
+                echo 'Sleeping 10 min.'
+                script {
+                    sh 'sleep 600'
                 }
             }
         }

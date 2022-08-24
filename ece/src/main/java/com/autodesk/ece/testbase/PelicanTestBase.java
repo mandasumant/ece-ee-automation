@@ -524,6 +524,18 @@ public class PelicanTestBase {
           jp.get("endCustomer.city"));
       results.put("getPOResponse_endCustomer_state",
           jp.get("endCustomer.state"));
+
+      results.put("getPOReponse_firstName",
+          jp.get("endCustomer.firstName"));
+      results.put("getPOReponse_lastName",
+          jp.get("endCustomer.lastName"));
+      results.put("getPOReponse_street",
+          jp.get("endCustomer.addressLine1"));
+      results.put("getPOReponse_city",
+          jp.get("endCustomer.city"));
+      results.put("getPOResponse_subtotalAfterPromotions",
+          jp.get("price.totalPrice").toString());
+      
       results.put("getPOResponse_endCustomer_country",
           jp.get("endCustomer.country"));
       results.put("getPOResponse_endCustomer_postalCode",
@@ -582,6 +594,7 @@ public class PelicanTestBase {
 
       results.put("getPOResponse_oxygenID", jp.get("purchaser.oxygenId").toString());
       results.put(BICECEConstants.SUBTOTAL_WITH_TAX, jp.get("price.totalPrice").toString());
+      results.put(BICConstants.emailid, jp.get("purchaser.email").toString());
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service V4 API" + e.getMessage());
     }

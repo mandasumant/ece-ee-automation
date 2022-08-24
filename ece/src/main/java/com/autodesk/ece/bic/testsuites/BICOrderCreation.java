@@ -244,7 +244,6 @@ public class BICOrderCreation extends ECETestBase {
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
-        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
 
       // Put the SAP Order number into results map
@@ -441,7 +440,6 @@ public class BICOrderCreation extends ECETestBase {
 
     if (getBicTestBase().shouldValidateSAP()) {
       portaltb.validateBICOrderTaxInvoice(results);
-      testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
     }
 
     stopTime = System.nanoTime();
@@ -634,8 +632,7 @@ public class BICOrderCreation extends ECETestBase {
   public void validateFlexOrderNewCart() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
     startTime = System.nanoTime();
-    getBicTestBase()
-        .navigateToFlexCartFromDotCom(testDataForEachMethod);
+    getBicTestBase().navigateToFlexCartFromDotCom(testDataForEachMethod);
 
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -688,7 +685,6 @@ public class BICOrderCreation extends ECETestBase {
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
-        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
       updateTestingHub(testResults);
     }
@@ -770,7 +766,6 @@ public class BICOrderCreation extends ECETestBase {
       if (getBicTestBase().shouldValidateSAP()) {
         // Validate Credit Note for the order
         portaltb.validateBICOrderPDF(results, BICECEConstants.CREDIT_NOTE);
-        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
 
       updateTestingHub(testResults);
@@ -897,7 +892,6 @@ public class BICOrderCreation extends ECETestBase {
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
-        testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
       updateTestingHub(testResults);
     }
