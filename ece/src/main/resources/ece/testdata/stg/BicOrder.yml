@@ -45,7 +45,7 @@ default:
   accountsPortalSubscriptionsUrl: "https://stg-manage.autodesk.com/billing/subscriptions-contracts"
   accountsPortalInvoiceUrl: "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
   accountsPortalOrderHistoryUrl: "https://stg-manage.autodesk.com/cep/#orders/order-history"
-  accountsPortalProductsServicesUrl: "https://stg-manage.autodesk.com/cep/#products-services/all"
+  accountsPortalProductsServicesUrl: "https://stg-manage.autodesk.com/products"
   accountsPortalAddSeatsUrl: "https://stg-manage.autodesk.com/billing/add-seats"
   accountsPortalQuoteUrl: "https://stg-manage.autodesk.com/billing/quotes"
 

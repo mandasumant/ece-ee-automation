@@ -250,18 +250,17 @@ public class PortalTestBase {
   @Step("Click on All Products & Services Link")
   public void clickALLPSLink() {
     try {
-      // portalPage.click("portalAllPSLink");
-      // portalPage.clickUsingLowLevelActions("portalAllPSLink");
       openPortalURL(accountsPortalProductsServicesUrl);
-      // portalPage.waitForPageToLoad();
       Util.sleep(5000);
-      checkEmailVerificationPopupAndClick();
-      // driver.findElement(By.xpath("//a[contains(text(),'All Products & Services')]")).click();
+      if(portalPage.checkIfElementExistsInPage("gotItButton", 60)) {
+        Util.printInfo("Clicking on got it button..");
+        portalPage.clickUsingLowLevelActions("gotItButton");
+      }
+      AssertUtils.assertEquals(driver.findElement(By.xpath("//a[contains(text(),'All Products & Services')]")).isDisplayed(),true,"All products and services header is missing");
     } catch (Exception e) {
       e.printStackTrace();
       CustomSoftAssert.s_assert.fail("Unable to click on portalAllPSLink ");
     }
-
     Util.sleep(10000);
   }
 
@@ -578,15 +577,9 @@ public class PortalTestBase {
     }
 
     try {
-      clickALLPSLink();
+     clickALLPSLink();
       JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
-      portalPage.waitForPageToLoad();
-      WebElement primaryEntitlements = driver
-          .findElement(By.xpath("//*[@id='primary-entitlements']/div[2]/div"));
-      primaryEntitlements.click();
-
-      clickWithJavaScriptExecutor(javascriptExecutor, "//a[@data-action='ManageRenewal']");
-
+      navigateToSubscriptionRow();
       try {
         WebElement editSwitchTermButton = driver
             .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
@@ -668,6 +661,7 @@ public class PortalTestBase {
   }
 
   public HashMap<String, String> navigateToSubscriptionAndOrdersTab() {
+    driver.manage().window().maximize();
     Util.printInfo("Navigating to subscriptions and orders tab...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
     Util.sleep(60000);
@@ -1716,5 +1710,16 @@ public class PortalTestBase {
     if (isPortalLoginPageVisible()) {
       portalLogin(userEmail, password);
     }
+  }
+  public void navigateToSubscriptionRow() throws MetadataException,Exception{
+    if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 60)) {
+      Util.printInfo("Clicking on portal subscription and contracts link...");
+      portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
+    }
+    else{
+      openPortalURL(accountsPortalSubscriptionsUrl);
+    }
+    clickPortalClosePopup();
+    clickOnSubscriptionRow();
   }
 }
