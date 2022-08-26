@@ -1314,7 +1314,6 @@ public class BICOrderCreation extends ECETestBase {
     Util.printInfo("The Renewal Order No #" + results.get("response_renewalOrderNo"));
     results.put(BICConstants.orderNumber, results.get("response_renewalOrderNo"));
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
-    portaltb.validateBICOrderTaxInvoice(results);
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -1328,6 +1327,7 @@ public class BICOrderCreation extends ECETestBase {
     }
 
     if (getBicTestBase().shouldValidateSAP()) {
+      portaltb.validateBICOrderTaxInvoice(results);
       // Put the SAP Order number into results map
       testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
     }
