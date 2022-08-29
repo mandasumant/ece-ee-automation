@@ -252,6 +252,7 @@ public class PortalTestBase {
     try {
       openPortalURL(accountsPortalProductsServicesUrl);
       Util.sleep(5000);
+      checkEmailVerificationPopupAndClick();
       if(portalPage.checkIfElementExistsInPage("gotItButton", 60)) {
         Util.printInfo("Clicking on got it button..");
         portalPage.clickUsingLowLevelActions("gotItButton");
@@ -581,13 +582,10 @@ public class PortalTestBase {
       JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
       navigateToSubscriptionRow();
       try {
-        WebElement editSwitchTermButton = driver
-            .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
-        editSwitchTermButton.click();
+        portalPage.checkIfElementExistsInPage("editSwitchTermbutton ", 60);
+        portalPage.clickUsingLowLevelActions("editSwitchTermbutton");
       } catch (org.openqa.selenium.StaleElementReferenceException ex) {
-        WebElement editSwitchTermButton = driver
-            .findElement(By.xpath("//*[@id=\"renew-details-edit-switch-term\"]/button"));
-        editSwitchTermButton.click();
+        portalPage.clickUsingLowLevelActions("editSwitchTermbutton");
       }
 
       if (System.getProperty(BICECEConstants.PAYMENT)
@@ -1711,12 +1709,12 @@ public class PortalTestBase {
       portalLogin(userEmail, password);
     }
   }
-  public void navigateToSubscriptionRow() throws MetadataException,Exception{
+  
+  public void navigateToSubscriptionRow() throws Exception{
     if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 60)) {
       Util.printInfo("Clicking on portal subscription and contracts link...");
       portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
-    }
-    else{
+    }else{
       openPortalURL(accountsPortalSubscriptionsUrl);
     }
     clickPortalClosePopup();
