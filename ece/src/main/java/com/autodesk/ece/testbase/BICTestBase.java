@@ -183,7 +183,7 @@ public class BICTestBase {
 
     driver.switchTo().defaultContent();
 
-    waitForLoadingSpinnerToComplete();
+    waitForLoadingSpinnerToComplete("loadingSpinner");
   }
 
   private void checkboxTickJS() {
@@ -236,7 +236,7 @@ public class BICTestBase {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasAddSeatsBeenProcessed\",\"true\");");
         driver.navigate().refresh();
-        waitForLoadingSpinnerToComplete();
+        waitForLoadingSpinnerToComplete("loadingSpinner");
         break;
       }
 
@@ -263,11 +263,11 @@ public class BICTestBase {
   }
 
   @Step("Wait for loading spinner to complete")
-  public void waitForLoadingSpinnerToComplete() {
+  public void waitForLoadingSpinnerToComplete(String elementXPath) {
     Util.sleep(3000);
     try {
       int count = 0;
-      while (driver.findElement(By.xpath("//*[@data-testid=\"loading\"]"))
+      while (driver.findElement(By.xpath(elementXPath))
           .isDisplayed()) {
         count++;
         Util.sleep(1000);
@@ -312,7 +312,7 @@ public class BICTestBase {
     }
 
     driver.switchTo().defaultContent();
-    waitForLoadingSpinnerToComplete();
+    waitForLoadingSpinnerToComplete("loadingSpinner");
     Util.printInfo("Successfully logged into Bic");
   }
 
@@ -468,7 +468,7 @@ public class BICTestBase {
       try {
         continueButton.click();
 
-        waitForLoadingSpinnerToComplete();
+        waitForLoadingSpinnerToComplete("loadingSpinner");
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         wait.until(ExpectedConditions.invisibilityOf(continueButton));
@@ -496,7 +496,7 @@ public class BICTestBase {
         if (bicPage.checkIfElementExistsInPage("taxIdForFlex", 5)) {
           Util.printInfo("Populating tax id: " + taxId);
           bicPage.populateField("taxIdForFlex", taxId);
-          waitForLoadingSpinnerToComplete();
+          waitForLoadingSpinnerToComplete("loadingSpinner");
         }
       }
     } catch (Exception e) {
@@ -605,7 +605,7 @@ public class BICTestBase {
           bicPage.populateField(numberKey, taxId);
           driver.findElement(By.xpath("//input[@name=\"" + numberKey + "\"]"))
               .sendKeys(Keys.TAB);
-          waitForLoadingSpinnerToComplete();
+          waitForLoadingSpinnerToComplete("loadingSpinner");
         }
       } else {
         try {
@@ -1229,7 +1229,7 @@ public class BICTestBase {
       Assert.fail("Environment is neither STG or INT in Maven parameter.");
     }
 
-    waitForLoadingSpinnerToComplete();
+    waitForLoadingSpinnerToComplete("loadingSpinner");
     clickToStayOnSameSite();
 
     return priceId;
@@ -1480,7 +1480,7 @@ public class BICTestBase {
     String paymentTypeXpath = bicPage.getFirstFieldLocator("cartQuantity").replace("<PRICEID>", priceId);
     clearTextInputValue(driver.findElement(By.xpath(paymentTypeXpath)));
     driver.findElement(By.xpath(paymentTypeXpath)).sendKeys(quantity);
-    waitForLoadingSpinnerToComplete();
+    waitForLoadingSpinnerToComplete("loadingSpinner");
   }
 
   public void setStorageData() {
@@ -1616,7 +1616,7 @@ public class BICTestBase {
   public void enterCustomerDetails(Map<String, String> address)
       throws MetadataException {
 
-    bicPage.waitForFieldPresent("companyNameField", 5000);
+    bicPage.waitForFieldPresent("companyNameField", 10000);
     bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
 
     if (bicPage.checkIfElementExistsInPage("selectCountryField", 10)) {
@@ -1704,7 +1704,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("promoCodeInput");
       bicPage.populateField("promoCodeInput", promoCode);
       bicPage.clickUsingLowLevelActions("promoCodeSubmit");
-      waitForLoadingSpinnerToComplete();
+      waitForLoadingSpinnerToComplete("loadingSpinner");
       priceAfterPromo = bicPage.getValueFromGUI("promoCodeAfterDiscountPrice").trim();
 
       Util.printInfo("----------------------------------------------------------------------");
@@ -1739,6 +1739,15 @@ public class BICTestBase {
 
     String taxValue = null;
     if (data.get("productType").equals("flex")) {
+
+      bicPage.waitForField("orderSummarySection", true, 30000);
+      Util.printInfo("Scroll to order summary section");
+      JavascriptExecutor js = (JavascriptExecutor) driver;
+      WebElement Element = driver.findElement(
+          By.xpath(bicPage.getFirstFieldLocator("orderSummarySection")));
+      js.executeScript("arguments[0].scrollIntoView();", Element);
+      Util.sleep(5000);
+
       try {
         if (bicPage.checkIfElementExistsInPage("orderSummaryTax", 60)) {
           Util.printInfo("Flex tax condition for Tax/GST");
@@ -2035,7 +2044,7 @@ public class BICTestBase {
 
     if (bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK)) {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
-      waitForLoadingSpinnerToComplete();
+      waitForLoadingSpinnerToComplete("loadingSpinner");
     }
 
     Util.printInfo("Successfully logged in");
@@ -2078,7 +2087,7 @@ public class BICTestBase {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
         driver.navigate().refresh();
-        waitForLoadingSpinnerToComplete();
+        waitForLoadingSpinnerToComplete("loadingSpinner");
         break;
       }
 

@@ -401,7 +401,7 @@ public class MOETestBase {
     // Agent clicks on 'Resend quote' CTA
     Util.printInfo("Click on 'Resend quote' button.");
     moePage.click("moeResendQuote");
-    bicTestBase.waitForLoadingSpinnerToComplete();
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     return quoteNumber;
   }
@@ -567,7 +567,7 @@ public class MOETestBase {
     try {
       Select drpQuote = new Select(driver.findElement(By.name("quotes")));
       drpQuote.selectByIndex(2);
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     } catch (Exception e) {
       AssertUtils.fail("Unable to select third element from Quote dropdown list");
     }
@@ -598,7 +598,7 @@ public class MOETestBase {
   private void sendQuote() {
     Util.printInfo("Click on 'Send quote' cta");
     moePage.click("moeSendQuote");
-    bicTestBase.waitForLoadingSpinnerToComplete();
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     // TODO: add try catch block to validate if error modal loaded
     // Note: R2.0.2 - Quote feature not fully implemented under INT env.
     try {
@@ -632,7 +632,7 @@ public class MOETestBase {
     try {
       Util.printInfo("Delete cart item");
       moePage.clickUsingLowLevelActions("moeDeleteProduct");
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
       AssertUtils.assertTrue(driver
           .findElement(By.xpath("//h3[contains(text(),\"Your cart is empty\")]"))
           .isDisplayed());
@@ -649,7 +649,7 @@ public class MOETestBase {
       webElement.sendKeys("3ds max 1 month");
       webElement.sendKeys(Keys.RETURN);
       moePage.clickUsingLowLevelActions("moeSelectProductFromSearchResult");
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to retrieve product from search result");
@@ -832,61 +832,79 @@ public class MOETestBase {
       String projectCloseDate, String fulfillment, String currency) {
 
     try {
-      // Finding the iframe for New Opportunity form
-      switchToFrame("//input[@class='customInput slds-input CloseDateInput']");
+      Boolean isNewOpportunityWindowOpen = true;
+      int count = 0;
 
-      moePage.populateField("projectCloseDate", projectCloseDate);
-      Util.printInfo("entered project close date");
-      Util.sleep(2000);
+      while (isNewOpportunityWindowOpen) {
 
-      moePage.click("name");
-      moePage.populateField("name", optyName);
-      Util.printInfo("entered name : " + optyName);
+        count++;
 
-      Select sel;
-      sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:4:j_id47")));
-      sel.selectByValue(fulfillment);
-      Util.printInfo("Selected Fulfillment : " + fulfillment);
-      Util.sleep(1000);
+        if (count > 3) {
+          AssertUtils.fail("Unable to create an opportunity.");
+        }
 
-      moePage.clickUsingLowLevelActions("accountLookup");
-      Util.printInfo("clicked on account lookup");
-      Util.sleep(3000);
-      moePage.populateField("accountTextField", account);
-      Util.printInfo("entered account name");
-      Util.sleep(3000);
-      Util.printInfo("entered account " + account);
-      moePage.clickUsingLowLevelActions("searchAccount");
-      Util.sleep(3000);
-      moePage.clickUsingLowLevelActions("selectAccount");
-      Util.printInfo("selected account name : " + account);
-      Util.sleep(3000);
+        // Finding the iframe for New Opportunity form
+        switchToFrame("//input[@class='customInput slds-input CloseDateInput']");
 
-      sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:2:j_id47")));
-      sel.selectByValue("Stage 1");
-      Util.printInfo("Selected stage : " + stage);
-      Util.sleep(1000);
+        moePage.populateField("projectCloseDate", projectCloseDate);
+        Util.printInfo("entered project close date " + projectCloseDate);
+        Util.sleep(2000);
 
-      sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:5:j_id47")));
-      sel.selectByValue(currency);
-      Util.printInfo("Selected currency : " + currency);
-      Util.sleep(1000);
+        moePage.click("name");
+        moePage.populateField("name", optyName);
+        Util.printInfo("entered name : " + optyName);
 
-      moePage.click("save");
-      Util.printInfo("Clicked on Save button after entering details.");
+        Select sel;
+        sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:4:j_id47")));
+        sel.selectByValue(fulfillment);
+        Util.printInfo("Selected Fulfillment : " + fulfillment);
+        Util.sleep(1000);
 
-      if (moePage.checkIfElementExistsInPage("opportunityError", 5)) {
-        Util.printInfo("Clicking on Save button a second time due to error.");
+        moePage.clickUsingLowLevelActions("accountLookup");
+        Util.printInfo("clicked on account lookup");
+        Util.sleep(3000);
+        moePage.populateField("accountTextField", account);
+        Util.printInfo("entered account name");
+        Util.sleep(3000);
+        Util.printInfo("entered account " + account);
+        moePage.clickUsingLowLevelActions("searchAccount");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath(moePage.getFirstFieldLocator("selectAccount"))));
+
+        moePage.clickUsingLowLevelActions("selectAccount");
+        Util.printInfo("selected account name : " + account);
+        Util.sleep(3000);
+
+        sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:2:j_id47")));
+        sel.selectByValue("Stage 1");
+        Util.printInfo("Selected stage : " + stage);
+        Util.sleep(1000);
+
+        sel = new Select(driver.findElement(By.id("j_id0:j_id25:j_id38:5:j_id47")));
+        sel.selectByValue(currency);
+        Util.printInfo("Selected currency : " + currency);
+        Util.sleep(1000);
+
         moePage.click("save");
+        Util.printInfo("Clicked on Save button after entering details.");
+        moePage.waitForPageToLoad();
+
+        if (moePage.checkIfElementExistsInPage("opportunityError", 20)) {
+          Util.printInfo("Fail to create new opportunity. Refreshing the page. Attempt #" + count);
+          driver.navigate().refresh();
+          moePage.waitForPageToLoad();
+        } else {
+          Util.printInfo("Opportunity saved successfully.");
+          isNewOpportunityWindowOpen = false;
+        }
       }
-
-      Util.sleep(30000);
-      driver.switchTo().defaultContent();
-
     } catch (Exception e) {
       AssertUtils.fail(e.getMessage() + "Failed to enter opty details.");
     }
 
+    driver.switchTo().defaultContent();
     String optyId = driver.findElement(By.xpath(
             "//span[@class='test-id__field-value slds-form-element__static slds-grow  is-read-only' and contains(., 'A-')]"))
         .getText();
@@ -921,11 +939,11 @@ public class MOETestBase {
     Util.printInfo("Clicking on cta: Continue");
     moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 30);
     moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-    bicTestBase.waitForLoadingSpinnerToComplete();
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     if (System.getProperty("usertype").equals("new")) {
       moePage.click("moeModalCloseBtn");
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
       BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
 
@@ -971,7 +989,7 @@ public class MOETestBase {
     bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
 
     moePage.click("savePaymentProfile");
-    bicTestBase.waitForLoadingSpinnerToComplete();
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     bicTestBase.agreeToTerm();
 
@@ -1030,7 +1048,7 @@ public class MOETestBase {
     Util.printInfo("Clicking on cta: Continue");
     moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 30);
     moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-    bicTestBase.waitForLoadingSpinnerToComplete();
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     BICTestBase.bicPage.executeJavascript("window.scrollBy(0,800);");
 
@@ -1050,10 +1068,10 @@ public class MOETestBase {
           .split("@");
 
       bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
       moePage.click("savePaymentProfile");
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     } else {
       emailID = data.get("contactEmail");
@@ -1084,7 +1102,7 @@ public class MOETestBase {
     if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue button after adding the customer details");
       moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     }
 
     bicTestBase.submitOrder(data);
@@ -1157,24 +1175,24 @@ public class MOETestBase {
     if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue button after adding the customer details");
       moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     }
 
     String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
 
     bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
-    bicTestBase.waitForLoadingSpinnerToComplete();
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     Util.printInfo("Clicking on cta: Save");
     moePage.click("savePaymentProfile");
-    bicTestBase.waitForLoadingSpinnerToComplete();
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     // In case address suggestion is returned, continue button will be displayed.
     if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue button after saving payment profile");
       moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     }
 
     bicTestBase.submitOrder(data);
@@ -1233,7 +1251,7 @@ public class MOETestBase {
     if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue button after adding the customer details");
       moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-      bicTestBase.waitForLoadingSpinnerToComplete();
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     }
 
     bicTestBase.submitOrder(data);
@@ -1346,6 +1364,7 @@ public class MOETestBase {
             moePage.clickUsingLowLevelActions("contactLanguage");
             Util.sleep(2000);
             moePage.click("saveContactButton");
+            bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
 
           } else {
             Util.printInfo("Associating existing contact roles to Opty: " + contact);
@@ -1363,7 +1382,7 @@ public class MOETestBase {
           }
           moePage.waitForPageToLoad();
 
-          moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
+          moePage.checkIfElementExistsInPage("contactRolesHeading", 30);
           moePage.clickUsingLowLevelActions("contactRolesHeading");
 
           moePage.checkIfElementExistsInPage("checkPrimaryContactCheckbox", 10);
@@ -1379,7 +1398,8 @@ public class MOETestBase {
           js.executeScript(
               "document.getElementsByClassName(\"slds-button slds-button--brand\")[1].click();");
           Util.printInfo("Clicked on cta: Save");
-          Util.sleep(10000);
+
+          bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
 
           if (moePage.checkIfElementExistsInPage("contactSectionTitle", 30)) {
             Util.printInfo("Contact successfully added to the opportunity.");
@@ -1427,7 +1447,8 @@ public class MOETestBase {
         moePage.clickUsingLowLevelActions("openProductFound");
         moePage.waitForPageToLoad();
 
-        moePage.checkIfElementExistsInPage("checkbox", 30);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath(moePage.getFirstFieldLocator("checkbox"))));
         moePage.click("checkbox");
         Util.sleep(5000);
 
@@ -1462,8 +1483,9 @@ public class MOETestBase {
 
             moePage.checkIfElementExistsInPage("addProductsButton", 20);
             moePage.clickUsingLowLevelActions("addProductsButton");
+            bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
 
-            if (moePage.checkIfElementExistsInPage("successModal", 20)) {
+            if (moePage.checkIfElementExistsInPage("successModal", 45)) {
               Util.printInfo("Success modal is visible.");
               isAlertModalVisible = false;
             }
