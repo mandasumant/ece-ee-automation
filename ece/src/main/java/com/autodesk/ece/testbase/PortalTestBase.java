@@ -249,6 +249,7 @@ public class PortalTestBase {
 
   @Step("Click on All Products & Services Link")
   public void clickALLPSLink() {
+    driver.manage().window().maximize();
     try {
       openPortalURL(accountsPortalProductsServicesUrl);
       Util.sleep(5000);
@@ -582,10 +583,10 @@ public class PortalTestBase {
       JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
       navigateToSubscriptionRow();
       try {
-        portalPage.checkIfElementExistsInPage("editSwitchTermbutton ", 60);
-        portalPage.clickUsingLowLevelActions("editSwitchTermbutton");
+        portalPage.checkIfElementExistsInPage("editSwitchTermButton", 60);
+        portalPage.clickUsingLowLevelActions("editSwitchTermButton");
       } catch (org.openqa.selenium.StaleElementReferenceException ex) {
-        portalPage.clickUsingLowLevelActions("editSwitchTermbutton");
+        portalPage.clickUsingLowLevelActions("editSwitchTermButton");
       }
 
       if (System.getProperty(BICECEConstants.PAYMENT)
