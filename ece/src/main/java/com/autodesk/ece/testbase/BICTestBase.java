@@ -1029,7 +1029,7 @@ public class BICTestBase {
 
     // Get total order value from checkout page
     String orderTotalCheckout = driver
-        .findElement(By.xpath("//h3[@data-testid='checkout--order-summary-section--total']")).getText();
+        .findElement(By.xpath("//p[@data-testid='checkout--order-summary-section--total']")).getText();
     data.put("orderTotalCheckout", orderTotalCheckout);
 
     clickMandateAgreementCheckbox();
