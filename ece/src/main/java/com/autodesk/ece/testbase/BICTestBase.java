@@ -1105,48 +1105,33 @@ public class BICTestBase {
     String orderNumber = null;
 
     try {
-      if (driver.findElement(By.xpath(
-              "//h5[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
-          .isDisplayed()) {
-        Util.printWarning(
-            "Export compliance issue is present. Checking for order number in the Pelican response");
-        JavascriptExecutor executor = (JavascriptExecutor) driver;
-        String response = (String) executor
-            .executeScript("return sessionStorage.getItem('purchase')");
-        JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
-        JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
-        orderNumber = purchaseOrder.get("id").toString();
-        if (orderNumber != null && !orderNumber.isEmpty()) {
-          Util.printInfo("Yay! Found the Order Number. Proceeding to next steps...");
-        }
-      }
-    } catch (Exception e) {
-      Util.printMessage("Great! Export Compliance issue is not present.");
-    }
-    debugPageUrl("Step 1: Check order number is Null");
-    try {
+      debugPageUrl("Step 1: Get Purchase Order number for Confirmation page");
       orderNumber = driver.findElement(By.xpath(
-              "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
-          .getText();
+                      "//*[@data-testid=\"checkout--order-confirmation--invoice-details--order-number\"]"))
+              .getText();
     } catch (Exception e) {
       debugPageUrl("Step 2: Check order number is Null");
     }
 
-    try {
-      orderNumber = driver.findElement(By.xpath(BICECEConstants.JP_ORDER_NUMBER)).getText();
-    } catch (Exception e) {
-      debugPageUrl("Step 3: Check order number is Null for JP");
-    }
-
-    debugPageUrl("Step 3a: Check order number is Null");
     if (orderNumber == null) {
-      bicPage.waitForPageToLoad();
       try {
-        orderNumber = driver.findElement(By.xpath(
-                "//p[contains(@class,'checkout--order-confirmation--invoice-details--order-number')]"))
-            .getText();
+        if (driver.findElement(By.xpath(
+                        "//*[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+                .isDisplayed()) {
+          Util.printWarning(
+                  "Export compliance issue is present. Checking for order number in the Pelican response");
+          JavascriptExecutor executor = (JavascriptExecutor) driver;
+          String response = (String) executor
+                  .executeScript("return sessionStorage.getItem('purchase')");
+          JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
+          JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
+          orderNumber = purchaseOrder.get("id").toString();
+          if (orderNumber != null && !orderNumber.isEmpty()) {
+            Util.printInfo("Yay! Found the Order Number. Proceeding to next steps...");
+          }
+        }
       } catch (Exception e) {
-        debugPageUrl("Step 4: Check order number is Null");
+        Util.printMessage("Great! Export Compliance issue is not present.");
       }
     }
 
@@ -1154,7 +1139,19 @@ public class BICTestBase {
       try {
         orderNumber = driver.findElement(By.xpath(BICECEConstants.JP_ORDER_NUMBER)).getText();
       } catch (Exception e) {
-        debugPageUrl("Step 5: Check order number is Null for JP");
+        debugPageUrl("Step 3: Check order number is Null for JP");
+      }
+    }
+
+    if (orderNumber == null) {
+      debugPageUrl("Step 3a: Check order number is Null");
+      bicPage.waitForPageToLoad();
+      try {
+        orderNumber = driver.findElement(By.xpath(
+                "//*[@data-testid=\"checkout--order-confirmation--invoice-details--order-number\"]"))
+            .getText();
+      } catch (Exception e) {
+        debugPageUrl("Step 4: Check order number is Null");
       }
     }
 
