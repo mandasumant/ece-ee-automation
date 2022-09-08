@@ -1782,8 +1782,42 @@ public class PortalTestBase {
   }
 
   public double getPaymentTotalFromCheckout() throws Exception {
-    String paymentTotalAmount = portalPage.getWebElementFromXpath("totalPaymentCheckout").getText().replaceAll("[^0-9.]", "");
+    String paymentTotalAmount = portalPage.getMultipleWebElementsfromField("totalPaymentCheckout").get(0).getText().replaceAll("[^0-9.]", "");
     Util.printInfo("Return Check out page Payment Total...." + paymentTotalAmount);
     return Double.parseDouble(paymentTotalAmount);
+  }
+
+  @Step("Select and complete the payment for Invoice")
+  public void selectAndSubmitPaymentForInvoice(String invoiceNumber) throws Exception {
+    navigateToInvoiceCreditMemos();
+    double invoiceAmount = 0.00;
+    Util.printInfo("Selecting Invoice Number:" + invoiceNumber);
+    List<WebElement> invoices = portalPage.getMultipleWebElementsfromField("invoiceNumbers");
+    List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
+    List<WebElement> payButtons = portalPage.getMultipleWebElementsfromField("invoicePayButtons");
+    List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
+    if (invoices.size() > 1) {
+      for (int i = 0; i < invoices.size(); i++) {
+        if (invoices.get(i).getText().trim().equalsIgnoreCase(invoiceNumber.trim())) {
+          checkBoxes.get(i).click();
+          invoiceAmount = Double.parseDouble(amounts.get(i).getText().replaceAll("[^0-9.]", ""));
+          payButtons.get(i).click();
+          portalPage.wait(3000);
+          break;
+        }
+      }
+    }
+    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
+    double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout();
+    AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
+    portalPage.clickUsingLowLevelActions("continueButton");
+    double creditMemoAmount = Double.parseDouble(portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
+    double afterAddCreditMemoAmount = getPaymentTotalFromCheckout();
+    AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+    Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
+    portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
+    Util.printInfo("Clicked on Payment Tab for Invoice Number:" + invoiceNumber);
+    portalPage.clickUsingLowLevelActions("submitPaymentButton");
+    Util.printInfo("Clicked on Submit Payment Button for Invoice Number:" + invoiceNumber);
   }
 }
