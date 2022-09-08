@@ -1029,7 +1029,7 @@ public class BICTestBase {
 
     // Get total order value from checkout page
     String orderTotalCheckout = driver
-        .findElement(By.xpath("//p[@data-testid='checkout--order-summary-section--total']")).getText();
+        .findElement(By.xpath("//*[@data-testid='checkout--order-summary-section--total']")).getText();
     data.put("orderTotalCheckout", orderTotalCheckout);
 
     clickMandateAgreementCheckbox();
@@ -1107,7 +1107,7 @@ public class BICTestBase {
     try {
       debugPageUrl("Step 1: Get Purchase Order number for Confirmation page");
       orderNumber = driver.findElement(By.xpath(
-                      "//*[@data-testid=\"checkout--order-confirmation--invoice-details--order-number\"]"))
+                      "//*[@data-testid='checkout--order-confirmation--invoice-details--order-number']"))
               .getText();
     } catch (Exception e) {
       debugPageUrl("Step 2: Check order number is Null");
@@ -1148,7 +1148,7 @@ public class BICTestBase {
       bicPage.waitForPageToLoad();
       try {
         orderNumber = driver.findElement(By.xpath(
-                "//*[@data-testid=\"checkout--order-confirmation--invoice-details--order-number\"]"))
+                "//*[@data-testid='checkout--order-confirmation--invoice-details--order-number']"))
             .getText();
       } catch (Exception e) {
         debugPageUrl("Step 4: Check order number is Null");
@@ -1160,7 +1160,7 @@ public class BICTestBase {
     if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
       Util.printInfo("Asserting that order total equals the total amount from checkout page.");
       String orderTotal = driver
-          .findElement(By.xpath("//p[contains(@class,'checkout--order-confirmation--invoice-details--order-total ')]"))
+          .findElement(By.xpath("//p[@data-testid='checkout--order-confirmation--invoice-details--order-total']"))
           .getText();
 
       orderTotal = orderTotal.replaceAll("[^0-9]", "");
