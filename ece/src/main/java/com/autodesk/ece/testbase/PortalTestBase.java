@@ -1769,7 +1769,7 @@ public class PortalTestBase {
     return amountValue;
   }
 
-  public double getAllInvoicePaymentTotal() throws MetadataException {
+  public double getAllInvoicePaymentTotal() throws Exception {
     double amountValue = 0.00;
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
     Util.printInfo("Getting Invoices Payment Totals...");
@@ -1796,15 +1796,15 @@ public class PortalTestBase {
     List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
     List<WebElement> payButtons = portalPage.getMultipleWebElementsfromField("invoicePayButtons");
     List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
-    if (invoices.size() > 1) {
-      for (int i = 0; i < invoices.size(); i++) {
-        if (invoices.get(i).getText().trim().equalsIgnoreCase(invoiceNumber.trim())) {
-          checkBoxes.get(i).click();
-          invoiceAmount = Double.parseDouble(amounts.get(i).getText().replaceAll("[^0-9.]", ""));
-          payButtons.get(i).click();
-          portalPage.wait(3000);
-          break;
-        }
+    for (int i = 0; i < invoices.size(); i++) {
+      if (invoices.get(i).getText().trim().equalsIgnoreCase(invoiceNumber.trim())) {
+        checkBoxes.get(i).click();
+        invoiceAmount = Double.parseDouble(amounts.get(i).getText().replaceAll("[^0-9.]", ""));
+        payButtons.get(i).click();
+        portalPage.wait(3000);
+        break;
+      } else if (i == invoices.size() - 1 && invoices.get(i).getText().trim().equalsIgnoreCase(invoiceNumber.trim())) {
+        AssertUtils.assertFalse(true, "unable to find the Invoice" + invoiceNumber);
       }
     }
     Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
