@@ -1745,6 +1745,23 @@ public class PortalTestBase {
     Util.printInfo("Clicked on All Invoice Check Box....");
   }
 
+  public double selectInvoiceCheckBox(String invoice) throws MetadataException {
+    double invoiceAmount = 0.00;
+    List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
+    List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
+    List<WebElement> invoices = portalPage.getMultipleWebElementsfromField("invoiceNumbers");
+    for (int i = 0; i < invoices.size(); i++) {
+      if (invoices.get(i).getText().trim().equalsIgnoreCase(invoice.trim())) {
+        checkBoxes.get(i).click();
+        invoiceAmount = Double.parseDouble(amounts.get(i).getText().replaceAll("[^0-9.]", ""));
+        break;
+      } else if (i == invoices.size() - 1 && invoices.get(i).getText().trim().equalsIgnoreCase(invoice.trim())) {
+        AssertUtils.assertFalse(true, "unable to find the Invoice" + invoice);
+      }
+    }
+    return invoiceAmount;
+  }
+
   public void clickOnPayButton() throws MetadataException {
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
     Util.printInfo("Getting Invoices Pay Buttons...");
@@ -1788,36 +1805,26 @@ public class PortalTestBase {
   }
 
   @Step("Select and complete the payment for Invoice")
-  public void selectAndSubmitPaymentForInvoice(String invoiceNumber) throws Exception {
+  public void selectAndSubmitPaymentForInvoice(String[] invoiceNumbers) throws Exception {
     navigateToInvoiceCreditMemos();
     double invoiceAmount = 0.00;
-    Util.printInfo("Selecting Invoice Number:" + invoiceNumber);
-    List<WebElement> invoices = portalPage.getMultipleWebElementsfromField("invoiceNumbers");
-    List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
-    List<WebElement> payButtons = portalPage.getMultipleWebElementsfromField("invoicePayButtons");
-    List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
-    for (int i = 0; i < invoices.size(); i++) {
-      if (invoices.get(i).getText().trim().equalsIgnoreCase(invoiceNumber.trim())) {
-        checkBoxes.get(i).click();
-        invoiceAmount = Double.parseDouble(amounts.get(i).getText().replaceAll("[^0-9.]", ""));
-        payButtons.get(i).click();
-        portalPage.wait(3000);
-        break;
-      } else if (i == invoices.size() - 1 && invoices.get(i).getText().trim().equalsIgnoreCase(invoiceNumber.trim())) {
-        AssertUtils.assertFalse(true, "unable to find the Invoice" + invoiceNumber);
-      }
+    for (int i = 0; i < invoiceNumbers.length; i++) {
+      Util.printInfo("Selecting Invoice Number:" + invoiceNumbers[i]);
+      invoiceAmount = invoiceAmount + selectInvoiceCheckBox(invoiceNumbers[i]);
     }
-    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
+    selectALlInvoicesPayButton();
+    portalPage.wait(3000);
+    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumbers);
     double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout();
     AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
     portalPage.clickUsingLowLevelActions("continueButton");
     double creditMemoAmount = Double.parseDouble(portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
     double afterAddCreditMemoAmount = getPaymentTotalFromCheckout();
     AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
-    Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
+    Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumbers);
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
-    Util.printInfo("Clicked on Payment Tab for Invoice Number:" + invoiceNumber);
+    Util.printInfo("Clicked on Payment Tab for Invoice Number:" + invoiceNumbers);
     portalPage.clickUsingLowLevelActions("submitPaymentButton");
-    Util.printInfo("Clicked on Submit Payment Button for Invoice Number:" + invoiceNumber);
+    Util.printInfo("Clicked on Submit Payment Button for Invoice Number:" + invoiceNumbers);
   }
 }
