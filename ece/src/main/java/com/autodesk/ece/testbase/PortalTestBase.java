@@ -1812,7 +1812,7 @@ public class PortalTestBase {
       Util.printInfo("Selecting Invoice Number:" + invoiceNumbers[i]);
       invoiceAmount = invoiceAmount + selectInvoiceCheckBox(invoiceNumbers[i]);
     }
-    selectALlInvoicesPayButton();
+    selectAllInvoicesPayButton();
     portalPage.wait(3000);
     Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumbers);
     double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout();
