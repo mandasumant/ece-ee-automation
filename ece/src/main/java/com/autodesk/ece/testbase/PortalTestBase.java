@@ -1739,7 +1739,7 @@ public class PortalTestBase {
     Util.printInfo("Clicked on First Invoice Check Box....");
   }
 
-  public void selectALlInvoiceCheckBox() throws MetadataException {
+  public void selectAllInvoiceCheckBox() throws MetadataException {
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
     portalPage.clickUsingLowLevelActions("allInvoiceCheckBox");
     Util.printInfo("Clicked on All Invoice Check Box....");
@@ -1770,7 +1770,7 @@ public class PortalTestBase {
     Util.printInfo("Clicked on First Invoice Pay Button....");
   }
 
-  public void selectALlInvoicesPayButton() throws MetadataException {
+  public void selectAllInvoicesPayButton() throws MetadataException {
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
     portalPage.clickUsingLowLevelActions("allInvoicesPayButton");
     Util.printInfo("Clicked on All Invoice Pay Button....");
