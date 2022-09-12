@@ -1600,7 +1600,7 @@ public class BICTestBase {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get("isNonQuoteFlexOrder") != null &&
         data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
-        data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser")) {
+        data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser") && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
@@ -1669,6 +1669,7 @@ public class BICTestBase {
       if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
         Util.printInfo("Address confirmation requested, Clicking on Continue2 button.");
         bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+        waitForLoadingSpinnerToComplete("loadingSpinner");
       }
     }
 
