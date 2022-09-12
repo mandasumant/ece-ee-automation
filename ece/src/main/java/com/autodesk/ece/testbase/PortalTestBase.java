@@ -258,7 +258,7 @@ public class PortalTestBase {
         Util.printInfo("Clicking on got it button..");
         portalPage.clickUsingLowLevelActions("gotItButton");
       }
-      AssertUtils.assertEquals(driver.findElement(By.xpath("//a[contains(text(),'All Products & Services')]")).isDisplayed(),true,"All products and services header is missing");
+      AssertUtils.assertEquals(driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(),true,"All products and services header is missing");
     } catch (Exception e) {
       e.printStackTrace();
       CustomSoftAssert.s_assert.fail("Unable to click on portalAllPSLink ");
