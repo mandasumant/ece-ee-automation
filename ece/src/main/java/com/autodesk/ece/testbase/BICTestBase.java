@@ -1173,6 +1173,13 @@ public class BICTestBase {
           "The checkout page total and confirmation page total do not match.");
 
     }
+    else {
+      String orderTotal = driver
+              .findElement(By.xpath("//p[@data-testid='checkout--order-confirmation--invoice-details--order-total']"))
+              .getText();
+      orderTotal = orderTotal.replaceAll("[^0-9]", "");
+      data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
+    }
 
     return orderNumber;
   }
