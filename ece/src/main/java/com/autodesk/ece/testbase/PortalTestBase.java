@@ -1721,4 +1721,110 @@ public class PortalTestBase {
     clickPortalClosePopup();
     clickOnSubscriptionRow();
   }
+
+  public void navigateToInvoiceCreditMemos() throws MetadataException {
+    if (!portalPage.checkIfElementExistsInPage("invoicesAndCreditMemos", 60)) {
+      Util.printInfo("Clicking on Billing and Orders link...");
+      portalPage.clickUsingLowLevelActions("billingAndOrders");
+    }
+    Util.printInfo("Clicking on Invoice and Credit Memos Link...");
+    portalPage.clickUsingLowLevelActions("invoicesAndCreditMemos");
+  }
+
+  public void selectInvoiceCheckBox() throws MetadataException {
+    portalPage.checkIfElementExistsInPage("invoicesTab", 30);
+    Util.printInfo("Getting Invoices Check Boxes...");
+    List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
+    checkBoxes.stream().findFirst().ifPresent(ele -> ele.click());
+    Util.printInfo("Clicked on First Invoice Check Box....");
+  }
+
+  public void selectAllInvoiceCheckBox() throws MetadataException {
+    portalPage.checkIfElementExistsInPage("invoicesTab", 30);
+    portalPage.clickUsingLowLevelActions("allInvoiceCheckBox");
+    Util.printInfo("Clicked on All Invoice Check Box....");
+  }
+
+  public double selectInvoiceCheckBox(String invoice) throws MetadataException {
+    double invoiceAmount = 0.00;
+    List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
+    List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
+    List<WebElement> invoices = portalPage.getMultipleWebElementsfromField("invoiceNumbers");
+    for (int i = 0; i < invoices.size(); i++) {
+      if (invoices.get(i).getText().trim().equalsIgnoreCase(invoice.trim())) {
+        checkBoxes.get(i).click();
+        invoiceAmount = Double.parseDouble(amounts.get(i).getText().replaceAll("[^0-9.]", ""));
+        break;
+      } else if (i == invoices.size() - 1 && invoices.get(i).getText().trim().equalsIgnoreCase(invoice.trim())) {
+        AssertUtils.assertFalse(true, "unable to find the Invoice" + invoice);
+      }
+    }
+    return invoiceAmount;
+  }
+
+  public void clickOnPayButton() throws MetadataException {
+    portalPage.checkIfElementExistsInPage("invoicesTab", 30);
+    Util.printInfo("Getting Invoices Pay Buttons...");
+    List<WebElement> payButtons = portalPage.getMultipleWebElementsfromField("invoicePayButtons");
+    payButtons.stream().findFirst().ifPresent(ele -> ele.click());
+    Util.printInfo("Clicked on First Invoice Pay Button....");
+  }
+
+  public void selectAllInvoicesPayButton() throws MetadataException {
+    portalPage.checkIfElementExistsInPage("invoicesTab", 30);
+    portalPage.clickUsingLowLevelActions("allInvoicesPayButton");
+    Util.printInfo("Clicked on All Invoice Pay Button....");
+  }
+
+  public double getInvoicePaymentTotal() throws MetadataException {
+    portalPage.checkIfElementExistsInPage("invoicesTab", 30);
+    Util.printInfo("Getting Invoices Payment Totals...");
+    List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
+    String amount = amounts.stream().findFirst().get().getText().replaceAll("[^0-9.]", "");
+    double amountValue = Double.parseDouble(amount);
+    Util.printInfo("Return Invoice Total...." + amountValue);
+    return amountValue;
+  }
+
+  public double getAllInvoicePaymentTotal() throws Exception {
+    double amountValue = 0.00;
+    portalPage.checkIfElementExistsInPage("invoicesTab", 30);
+    Util.printInfo("Getting Invoices Payment Totals...");
+    List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
+    for (WebElement ele : amounts) {
+      amountValue = amountValue + Double.parseDouble(ele.getText().replaceAll("[^0-9.]", ""));
+    }
+    Util.printInfo("Return All Invoice Payment Totals...." + amountValue);
+    return amountValue;
+  }
+
+  public double getPaymentTotalFromCheckout() throws Exception {
+    String paymentTotalAmount = portalPage.getMultipleWebElementsfromField("totalPaymentCheckout").get(0).getText().replaceAll("[^0-9.]", "");
+    Util.printInfo("Return Check out page Payment Total...." + paymentTotalAmount);
+    return Double.parseDouble(paymentTotalAmount);
+  }
+
+  @Step("Select and complete the payment for Invoice")
+  public void selectAndSubmitPaymentForInvoice(String[] invoiceNumbers) throws Exception {
+    navigateToInvoiceCreditMemos();
+    double invoiceAmount = 0.00;
+    for (int i = 0; i < invoiceNumbers.length; i++) {
+      Util.printInfo("Selecting Invoice Number:" + invoiceNumbers[i]);
+      invoiceAmount = invoiceAmount + selectInvoiceCheckBox(invoiceNumbers[i]);
+    }
+    selectAllInvoicesPayButton();
+    portalPage.wait(3000);
+    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumbers);
+    double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout();
+    AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
+    portalPage.clickUsingLowLevelActions("continueButton");
+    double creditMemoAmount = Double.parseDouble(portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
+    double afterAddCreditMemoAmount = getPaymentTotalFromCheckout();
+    AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+    Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumbers);
+    portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
+    Util.printInfo("Clicked on Payment Tab for Invoice Number:" + invoiceNumbers);
+    portalPage.clickUsingLowLevelActions("submitPaymentButton");
+    Util.printInfo("Clicked on Submit Payment Button for Invoice Number:" + invoiceNumbers);
+  }
 }
