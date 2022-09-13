@@ -1767,7 +1767,7 @@ public class BICTestBase {
           taxValue = driver
               .findElement(
                   By.xpath(
-                      "//div[@class='checkout--order-summary-section--products-total']/div[2]/p[2][@data-pricing-source=\"PQ\"]"))
+                      "//div[@class='checkout--order-summary-section--products-total']/div[2]/p[2][@data-pricing-source=\"C\"]"))
               .getText();
         }
       } catch (MetadataException e) {
