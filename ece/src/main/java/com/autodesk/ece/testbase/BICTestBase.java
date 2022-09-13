@@ -950,6 +950,60 @@ public class BICTestBase {
     Util.sleep(20000);
   }
 
+  @Step("Populate pay by invoice details")
+  public void populatePayByInvoiceDetails(Map<String,String> payByInvoiceDetails) {
+
+    bicPage.waitForField(BICECEConstants.PAY_BY_INVOICE, true, 30000);
+
+    try {
+      Util.printInfo("Clicking on pay By Invoice tab...");
+      bicPage.clickUsingLowLevelActions("portalPayByInvoice");
+
+      Util.printInfo("Waiting for Pay by invoice header...");
+      bicPage.waitForElementVisible(
+              bicPage.getMultipleWebElementsfromField("portalPayByInvoiceHeader").get(0), 10);
+      if(payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)){
+        if(!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")){
+          bicPage.clickUsingLowLevelActions("portalYesPurchaseOrderOption");
+          Util.printInfo("Entering Purchase order number : " +payByInvoiceDetails.get("orderNumber") );
+          bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
+        }else{
+          bicPage.clickUsingLowLevelActions("portalNoPurchaseOrderOption");
+        }
+      }
+      if(payByInvoiceDetails.containsKey(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH)){
+        if(!payByInvoiceDetails.get(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH).equals("")){
+          bicPage.populateField("portalPurchaseOrderDocument", payByInvoiceDetails.get(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH));
+        }
+      }
+      if(payByInvoiceDetails.containsKey(BICECEConstants.INVOICE_NOTES)){
+        if(!payByInvoiceDetails.get(BICECEConstants.INVOICE_NOTES).equals("")){
+          bicPage.clickUsingLowLevelActions("portalAddinvoiceLink");
+          bicPage.waitForElementVisible(
+                  bicPage.getMultipleWebElementsfromField("portalAddInvoiceNotesTextArea").get(0), 10);
+          bicPage.populateField("portalAddInvoiceNotesTextArea", payByInvoiceDetails.get("invoiceNotes"));
+        }
+      }
+      if(!Boolean.parseBoolean(payByInvoiceDetails.get(
+              BICECEConstants.IS_SAME_BILLING_ADDRESS))){
+        bicPage.clickUsingLowLevelActions("portalPayerSameAsCustomer");
+        bicPage.waitForElementVisible(
+                bicPage.getMultipleWebElementsfromField("portalEmailAddress").get(0), 10);
+        bicPage.populateField("portalEmailAddress", payByInvoiceDetails.get(BICECEConstants.EMAIL_ADDRESS));
+        bicPage.populateField("portalPhoneNumber", payByInvoiceDetails.get(BICECEConstants.PHONE_NUMBER));
+        bicPage.populateField("portalCompanyName", payByInvoiceDetails.get(BICECEConstants.COMPANY_NAME));
+        bicPage.populateField("portalAddress", payByInvoiceDetails.get(BICECEConstants.ADDRESS));
+        bicPage.populateField("portalCity", payByInvoiceDetails.get(BICECEConstants.CITY));
+        bicPage.populateField("portalState", payByInvoiceDetails.get(BICECEConstants.STATE));
+        bicPage.populateField("portalPostalCode", payByInvoiceDetails.get(BICECEConstants.POSTAL_CODE));
+      }
+    } catch (MetadataException e) {
+      e.printStackTrace();
+      AssertUtils.fail("Unable to enter Pay By invoice payment details");
+    }
+  }
+
+
   @Step("Click on Zip tab")
   public void populateZipPaymentDetails() {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
@@ -1005,6 +1059,9 @@ public class BICTestBase {
             break;
           case BICECEConstants.PAYMENT_TYPE_ZIP:
             populateZipPaymentDetails();
+            break;
+          case BICECEConstants.PAY_BY_INVOICE:
+            populatePayByInvoiceDetails(data);
             break;
           default:
             populatePaymentDetails(paymentCardDetails);
