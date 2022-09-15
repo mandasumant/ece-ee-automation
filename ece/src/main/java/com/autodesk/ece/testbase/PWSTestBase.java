@@ -248,14 +248,16 @@ public class PWSTestBase {
       Util.sleep((long) (1000L * Math.pow(attempts, 2)));
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
       response = getQuoteStatus(pwsRequestHeaders, transactionId);
-
+      response.prettyPrint();
       String status = response.jsonPath().getString("quoteStatus");
 
       if (status.equals("QUOTED")) {
         Util.printInfo("Got quote in QUOTED state: " + quoteId);
         return quoteId;
-      } else if (status.equals("FAILED")) {
-        Util.printError(response.jsonPath().getJsonObject("error").toString());
+      } else if (status.equals("FAILED") || status.equals("DRAFT-CREATED")) {
+        if(response.jsonPath().getJsonObject("error")) {
+          Util.printError(response.jsonPath().getJsonObject("error").toString());
+        }
         AssertUtils.fail("Quote finalization failed");
       } else if (status.equals("UNDER-REVIEW") || (status.equals("FINALIZING") && attempts == 3)) {
         SFDCAPI sfdcApi = new SFDCAPI();
