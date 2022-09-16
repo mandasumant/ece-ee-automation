@@ -1,0 +1,422 @@
+[
+    {
+        "shipToCountry": "SG",
+        "currency": "SGD",
+        "minThreshold": "1,375.00",
+        "maxThreshold": "137,295.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "JP",
+        "currency": "JPY",
+        "minThreshold": "127,872",
+        "maxThreshold": "12,787,150",
+        "paymentTermCode": "C048"
+    },
+    {
+        "shipToCountry": "AU",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "FJ",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "MH",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "NR",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "NU",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "PW",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "PG",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "PN",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "WS",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "SB",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "TO",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "TV",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "VU",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "CX",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "CC",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "NF",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "NZ",
+        "currency": "AUD",
+        "minThreshold": "1,400.00",
+        "maxThreshold": "140,640.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "GB",
+        "currency": "GBP",
+        "minThreshold": "800.00",
+        "maxThreshold": "80,000.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "CH",
+        "currency": "CHF",
+        "minThreshold": "950.00",
+        "maxThreshold": "96,500.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "CH",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "CZ",
+        "currency": "CZK",
+        "minThreshold": "23,000.00",
+        "maxThreshold": "2,304,100.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "CZ",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "DK",
+        "currency": "DKK",
+        "minThreshold": "7,000.00",
+        "maxThreshold": "695,880.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "DK",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "AT",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "BE",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "BG",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "HR",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "CY",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "EE",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "FI",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "FR",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "DE",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "GR",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "HU",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "IS",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "IE",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "IT",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C008"
+    },
+    {
+        "shipToCountry": "LV",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "LI",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "LT",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "LU",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "MT",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "NL",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "PT",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "RO",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "SK",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "SI",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "ES",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "NO",
+        "currency": "NOK",
+        "minThreshold": "9,600.00",
+        "maxThreshold": "958,754.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "NO",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "PL",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "PL",
+        "currency": "PLN",
+        "minThreshold": "4,310.00",
+        "maxThreshold": "431,085.00",
+        "paymentTermCode": "C006"
+    },
+    {
+        "shipToCountry": "SE",
+        "currency": "SEK",
+        "minThreshold": "9,815.00",
+        "maxThreshold": "981,100.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "SE",
+        "currency": "EUR",
+        "minThreshold": "935.00",
+        "maxThreshold": "93,520.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "US",
+        "currency": "USD",
+        "minThreshold": "1,000.00",
+        "maxThreshold": "100,000.00",
+        "paymentTermCode": "C004"
+    },
+    {
+        "shipToCountry": "BR",
+        "currency": "USD",
+        "minThreshold": "1,000.00",
+        "maxThreshold": "100,000.00",
+        "paymentTermCode": "C009"
+    },
+    {
+        "shipToCountry": "CA",
+        "currency": "CAD",
+        "minThreshold": "1,280.00",
+        "maxThreshold": "128,000.00",
+        "paymentTermCode": "C004"
+    }
+]

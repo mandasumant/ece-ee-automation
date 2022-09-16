@@ -20,6 +20,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -89,8 +90,15 @@ public class BICTestBase {
   @Step("Generate email id")
   public static String generateUniqueEmailID() {
     String storeKey = System.getProperty("store").replace("-", "");
+    String emailType = System.getProperty("emailType");
+
     String sourceName = "thub";
     String emailDomain = "letscheck.pw";
+    if(emailType != null && emailType.isEmpty()) {
+      if (Arrays.asList("biz", "edu", "gov", "org").contains(emailType)) {
+        sourceName = emailType + sourceName;
+      }
+    }
 
     String timeStamp = new RandomStringUtils().random(12, true, false);
     String strDate = null;
