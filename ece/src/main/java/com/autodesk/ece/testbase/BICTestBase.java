@@ -94,9 +94,9 @@ public class BICTestBase {
 
     String sourceName = "thub";
     String emailDomain = "letscheck.pw";
-    if(emailType != null && emailType.isEmpty()) {
+    if(emailType != null && !emailType.isEmpty()) {
       if (Arrays.asList("biz", "edu", "gov", "org").contains(emailType)) {
-        sourceName = emailType + sourceName;
+        sourceName = emailType + "-" + sourceName;
       }
     }
 
