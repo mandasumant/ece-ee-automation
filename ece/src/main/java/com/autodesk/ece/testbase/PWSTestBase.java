@@ -174,7 +174,8 @@ public class PWSTestBase {
         .body(payloadBody)
         .post("https://" + hostname + "/v1/quotes")
         .then().extract().response();
-    response.prettyPrint();
+
+    Util.printInfo("Quote Creation Response : " + response);
 
     String transactionId = response.jsonPath().getString("transactionId");
     Util.printInfo("Quote requested, transactionId: " + transactionId);
@@ -248,14 +249,14 @@ public class PWSTestBase {
       Util.sleep((long) (1000L * Math.pow(attempts, 2)));
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
       response = getQuoteStatus(pwsRequestHeaders, transactionId);
-      response.prettyPrint();
+      Util.printInfo("Quote Finalization Response :"+ response);
       String status = response.jsonPath().getString("quoteStatus");
 
       if (status.equals("QUOTED")) {
         Util.printInfo("Got quote in QUOTED state: " + quoteId);
         return quoteId;
       } else if (status.equals("FAILED") || status.equals("DRAFT-CREATED")) {
-        if(response.jsonPath().getJsonObject("error")) {
+        if(response.jsonPath().getJsonObject("error") != null) {
           Util.printError(response.jsonPath().getJsonObject("error").toString());
         }
         AssertUtils.fail("Quote finalization failed");
@@ -279,7 +280,7 @@ public class PWSTestBase {
         Util.sleep(10000); // Waiting for the status change
 
         Response statusRes = getQuoteStatus(pwsRequestHeaders, transactionId);
-        statusRes.prettyPrint();
+        Util.printInfo("Quote Status Response : " + statusRes);
       } else {
         Util.printInfo("Quote not finalized yet, status: " + status);
       }

@@ -9,7 +9,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5109330358"
     agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
-
+    minAmountPBI: "1,000.00"
+    maxAmountPBI: "100,000.00"
+    
   en_CA:
     region: "ENCA"
     storeName: "STORE-CA"
@@ -20,6 +22,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070259011"
     agentContactEmail: "partneruser_da_int_5070259011@letscheck.email"
+    minAmountPBI: "1,280.00"
+    maxAmountPBI: "128,000.00"
 
   fr_CA:
     region: "FRCA"
@@ -31,6 +35,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070259011"
     agentContactEmail: "partneruser_da_int_5070259011@letscheck.email"
+    minAmountPBI: "1,280.00"
+    maxAmountPBI: "128,000.00"
 
   en_GB:
     region: "ENGB"
@@ -42,6 +48,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070042078"
     agentContactEmail: "partneruser_da_int_5070042078@letscheck.email"
+    minAmountPBI: "800.00"
+    maxAmountPBI: "80,000.00"
 
   en_AU:
     region: "ENAU"
@@ -53,6 +61,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5110129728"
     agentContactEmail: "partneruser_da_int_5110129728@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   nl_NL:
     region: "NLNL"
@@ -64,6 +74,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5106131200"
     agentContactEmail: "partneruser_da_int_5106131200@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   nl_BE:
     region: "NLBE"
@@ -75,6 +87,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070066000"
     agentContactEmail: "partneruser_da_int_5070066000@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   fr_BE:
     region: "FRBE"
@@ -86,6 +100,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070066000"
     agentContactEmail: "partneruser_da_int_5070066000@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   pl_PL:
     region: "PLPL"
@@ -97,6 +113,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070259084"
     agentContactEmail: "partneruser_da_int_5070259084@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   fr_FR:
     region: "FRFR"
@@ -107,6 +125,8 @@ LocaleConfig:
     address: "Autodesk@27 rue La Boétie@Paris@75013@9916800100@France"
     quoteAgentCsnAccount: "5070001658"
     agentContactEmail: "partneruser_da_int_5070001658_1@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   ja_JP:
     region: "JAJP"
@@ -116,6 +136,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL"
     address: "Autodesk@532-0003@Street@Osaka@81-6-6350-5223@Japan"
     isTaxed: "Y"
+    minAmountPBI: "127,872"
+    maxAmountPBI: "12,787,150"
 
   de_DE:
     region: "DEDE"
@@ -127,6 +149,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5103293723"
     agentContactEmail: "partneruser_da_int_5103293723@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   it_IT:
     region: "ITIT"
@@ -138,6 +162,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070375036"
     agentContactEmail: "partneruser_da_int_5070375036@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   es_ES:
     region: "ESES"
@@ -149,6 +175,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070000159"
     agentContactEmail: "partneruser_da_int_5070000159@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   es_MX:
     region: "ESMX"
@@ -158,6 +186,8 @@ LocaleConfig:
     paymentMethods: "CREDITCARD,PAYPAL,SEPA"
     address: "Autodesk@8 Puerta 231@Palencia@13158@03230700940@México@Aragón"
     isTaxed: "Y"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   fi_FI:
     region: "FIFI"
@@ -169,6 +199,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070181756"
     agentContactEmail: "partneruser_da_int_5070181756@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   hu_HU:
     region: "HUHU"
@@ -180,6 +212,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070268110"
     agentContactEmail: "partneruser_da_int_5070268110@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   pt_PT:
     region: "PTPT"
@@ -191,6 +225,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5130334588"
     agentContactEmail: "partneruser_da_int_5130334588@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_AT:
     region: "ENAT"
@@ -202,6 +238,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070181351"
     agentContactEmail: "partneruser_da_int_5070181351@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   de_AT:
     region: "DEAT"
@@ -213,6 +251,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070181351"
     agentContactEmail: "partneruser_da_int_5070181351@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   sv_SE:
     region: "SVSE"
@@ -224,6 +264,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070188209"
     agentContactEmail: "partneruser_da_int_5070188209@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   no_NO:
     region: "NONO"
@@ -235,6 +277,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070055088"
     agentContactEmail: "partneruser_da_int_5070055088@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   da_DK:
     region: "DADK"
@@ -246,6 +290,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070181673"
     agentContactEmail: "partneruser_da_int_5070181673@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   cs_CZ:
     region: "CSCZ"
@@ -256,6 +302,8 @@ LocaleConfig:
     address: "Autodesk@Hornoměcholupská 873@Praha 15@102 00@03230700940@Česká republika"
     quoteAgentCsnAccount: "5070267984"
     agentContactEmail: "partneruser_da_int_5070267984@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   de_CH:
     region: "DECH"
@@ -267,6 +315,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070001234"
     agentContactEmail: "partneruser_da_int_5070001234@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
+
 
   fr_CH:
     region: "FRCH"
@@ -278,6 +329,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070001234"
     agentContactEmail: "partneruser_da_int_5070001234@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
+
 
   it_CH:
     region: "ITCH"
@@ -289,6 +343,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070001234"
     agentContactEmail: "partneruser_da_int_5070001234@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
+
 
   en_BG:
     region: "ENBG"
@@ -300,6 +357,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070267982"
     agentContactEmail: "partneruser_da_int_5070267982@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
+
 
   en_CY:
     region: "ENCY"
@@ -311,6 +371,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5100827226"
     agentContactEmail: "partneruser_da_int_5100827226@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
+
 
   en_HR:
     region: "ENHR"
@@ -322,6 +385,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070268169"
     agentContactEmail: "partneruser_da_int_5070268169@letscheck.email"
+    minAmountPBI: ""
+    maxAmountPBI: ""
 
   en_LI:
     region: "ENLI"
@@ -333,6 +398,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070084998"
     agentContactEmail: "partneruser_da_int_5070084998@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
+
 
   en_LV:
     region: "ENLV"
@@ -344,6 +412,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070000080"
     agentContactEmail: "partneruser_da_int_5070000080@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_IS:
     region: "ENIS"
@@ -355,6 +425,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070181974"
     agentContactEmail: "partneruser_da_int_5070181974@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_GR:
     region: "ENGR"
@@ -366,6 +438,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5108385410"
     agentContactEmail: "partneruser_da_int_5108385410@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_EE:
     region: "ENEE"
@@ -377,6 +451,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070000081"
     agentContactEmail: "partneruser_da_int_5070000081@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_MT:
     region: "ENMT"
@@ -388,6 +464,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5105743587"
     agentContactEmail: "partneruser_da_int_5105743587@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_SE:
     region: "ENSE"
@@ -399,6 +477,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070188209"
     agentContactEmail: "partneruser_da_int_5070188209@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_SI:
     region: "ENSI"
@@ -410,7 +490,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070268019"
     agentContactEmail: "partneruser_da_int_5070268019@letscheck.email"
-
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
+      
   en_SK:
     region: "ENSK"
     storeName: "STORE-EU"
@@ -421,6 +503,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070268137"
     agentContactEmail: "partneruser_da_int_5070268137@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_IE:
     region: "ENIE"
@@ -432,6 +516,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070181967"
     agentContactEmail: "partneruser_da_int_5070181967@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_RO:
     region: "ENRO"
@@ -443,6 +529,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5108346601"
     agentContactEmail: "partneruser_da_int_5108346601@letscheck.email"
+    minAmountPBI: ""
+    maxAmountPBI: ""
 
   en_LU:
     region: "ENLU"
@@ -454,6 +542,8 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070188107"
     agentContactEmail: "partneruser_da_int_5070188107@letscheck.email"
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
 
   en_LT:
     region: "ENLT"
@@ -465,7 +555,9 @@ LocaleConfig:
     isTaxed: "Y"
     quoteAgentCsnAccount: "5119623224"
     agentContactEmail: "partneruser_da_int_5119623224@letscheck.email"
-
+    minAmountPBI: "935.00"
+    maxAmountPBI: "93,520.00"
+    
   ############################################################
   #Additional locales for testing Appolo
   ############################################################
@@ -480,6 +572,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_CC:
     region: "ENCC"
@@ -491,6 +585,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_CX:
     region: "ENCX"
@@ -502,6 +598,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_FJ:
     region: "ENFJ"
@@ -513,6 +611,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_NR:
     region: "ENNR"
@@ -524,6 +624,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_MH:
     region: "ENMH"
@@ -535,6 +637,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_NU:
     region: "ENNU"
@@ -546,6 +650,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_NF:
     region: "ENNF"
@@ -557,6 +663,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_PW:
     region: "ENPW"
@@ -568,6 +676,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_PN:
     region: "ENPN"
@@ -579,6 +689,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_WS:
     region: "EN_WS"
@@ -590,6 +702,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_SB:
     region: "ENSB"
@@ -601,6 +715,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_TO:
     region: "ENTO"
@@ -612,6 +728,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_TV:
     region: "ENTV"
@@ -623,6 +741,8 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
 
   en_VU:
     region: "ENVU"
@@ -634,3 +754,5 @@ LocaleConfig:
     isTaxed: "N"
     quoteAgentCsnAccount: "5070132992"
     agentContactEmail: "partneruser_da_int_5070132992@letscheck.email"
+    minAmountPBI: "1,400.00"
+    maxAmountPBI: "140,640.00"
