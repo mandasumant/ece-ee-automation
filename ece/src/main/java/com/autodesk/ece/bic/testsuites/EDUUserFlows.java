@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 public class EDUUserFlows extends ECETestBase {
 
   private static final String FUSION_360_KEY = "F360";
-  private static final String SUBSCRIPTION_PATTERN_KEY = "subscriptionPattern";
+  private static final String SUBSCRIPTION_NAME_KEY = "nameTestId";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   LinkedHashMap<String, String> testDataForProduct = null;
@@ -68,8 +68,7 @@ public class EDUUserFlows extends ECETestBase {
 
     // Validate that the user has a subscription to Fusion 360 in portal
     portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
-    results.put(BICECEConstants.PRODUCT_PE_ID,
-        portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
+    portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_NAME_KEY));
 
     submitTestResults(results);
   }
@@ -90,9 +89,8 @@ public class EDUUserFlows extends ECETestBase {
 
     // Check that we can see the product in portal
     edutb.switchToNextTab();
-    portaltb.clickALLPSLink();
-    results.put(BICECEConstants.PRODUCT_PE_ID,
-        portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
+    portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
+    portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_NAME_KEY));
 
     submitTestResults(results);
   }
@@ -145,8 +143,7 @@ public class EDUUserFlows extends ECETestBase {
 
     // Validate that the user has a subscription to Fusion 360 in portal
     portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
-    results.put(BICECEConstants.PRODUCT_PE_ID,
-        portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_PATTERN_KEY)));
+    portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_NAME_KEY));
 
     submitTestResults(results);
   }
@@ -156,7 +153,6 @@ public class EDUUserFlows extends ECETestBase {
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
-      testResults.put(BICECEConstants.PRODUCT_PE_ID, results.get(BICECEConstants.PRODUCT_PE_ID));
 
       updateTestingHub(testResults);
     } catch (Exception e) {

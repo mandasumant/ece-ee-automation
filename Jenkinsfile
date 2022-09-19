@@ -154,6 +154,7 @@ pipeline {
         booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order?')
         booleanParam(name: 'APOLLO_FLEX', defaultValue: false, description: 'Run FLEX Order?')
         booleanParam(name: 'APOLLO_FLEX_MOE', defaultValue: false, description: 'Run FLEX MOE Order?')
+        booleanParam(name: 'EDU', defaultValue: false, description: 'Run all EDU tests?')
         choice(name: 'INVOICE_VALIDATION', choices: ['False', 'True'], description: 'Run Invoice Validation ?')
     }
 
@@ -653,6 +654,52 @@ pipeline {
                 }
             }
         }
+        stage('EDU Tests') {
+            when {
+                branch 'master'
+                expression {
+                    params.EDU == true
+                }
+            }
+            steps {
+                script {
+                    triggerTestingHub(serviceBuildHelper);
+                }
+            }
+        }
+    }
+}
+
+def generateEDUTests(product, plc) {
+    return '{"displayname":"Educator flow - ' + product + '","testcasename":"validateProductActivationByEducator","description":"Activate Educator Product","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"activate-product-educator","testMethod":"validateProductActivationByEducator","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","externalKey":"' + plc + '"},"notsupportedenv":[],"wiki":""},' +
+        '{"displayname":"Student Flow - ' + product + '","testcasename":"validateNewStudentSubscription","description":"Student Subscription flow","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"validate-student-subscription","testMethod":"validateNewStudentSubscription","parameters":{"application":"ece"},"testdata":{"usertype":"new","payment":"ACH","password":"","store":"STORE-NAMER","sku":"default:1","email":"","externalKey":"' + plc + '"},"notsupportedenv":[],"wiki":""},' +
+        '{"displayname":"Design Competition Mentor Flow - ' + product + '","testcasename":"validateMentorUser","description":"Design competition mentor flow","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"validate-mentor-user","testMethod":"validateMentorUser","parameters":{"application":"ece","store":"STORE-NAMER"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","externalKey":"' + plc + '"},"notsupportedenv":[],"wiki":"https://wiki.autodesk.com/pages/viewpage.action?spaceKey=EFDE&title=Automation+Command+Line"}'
+}
+
+def triggerTestingHub(servicesBuildHelper) {
+    println("Building Testing Hub API Input Map")
+    def testingHubInputMap = [:]
+    testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
+    testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+    testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/edu/testcase'
+    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"EDU Deploy Tests","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+        generateEDUTests("AutoCAD", "ACD") + ',' +
+        generateEDUTests("Revit", "RVT") + ',' +
+        generateEDUTests("Fusion 360", "F360") + ',' +
+        generateEDUTests("Inventor", "INVNTOR") + ',' +
+        generateEDUTests("3ds Max", "3DSMAX") + ',' +
+        generateEDUTests("Maya", "MAYA") + ',' +
+        generateEDUTests("Civil 3D", "CIV3D") + ',' +
+        generateEDUTests("AutoCAD LT", "ACDLT") + ',' +
+        generateEDUTests("Navisworks Manage", "NAVMAN") + ',' +
+        generateEDUTests("Robot Structural Analysis Professional", "RSAPRO") +
+        '],"workstreamname":"dclecjt"}'
+
+    println("Starting Testing Hub API Call")
+    if (servicesBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)){
+        println('Testing Hub API called successfully')
+    } else {
+        println('Testing Hub API call failed')
     }
 }
 

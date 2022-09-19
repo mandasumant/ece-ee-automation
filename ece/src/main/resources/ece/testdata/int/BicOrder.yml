@@ -48,6 +48,7 @@ default:
   accountsPortalProductsServicesUrl: "https://int-manage.autodesk.com/products"
   accountsPortalAddSeatsUrl: "https://int-manage.autodesk.com/billing/add-seats"
   accountsPortalQuoteUrl: "https://int-manage.autodesk.com/billing/quotes"
+  accountsProductPageUrl: "https://int-manage.autodesk.com/products"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"

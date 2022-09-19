@@ -181,16 +181,31 @@ public class EDUTestBase {
   public void signUpUser(HashMap<String, String> results) {
     acceptVSOSTerms(results);
 
-    // Clear session storage cache and login again
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    js.executeScript("window.sessionStorage.clear()");
-    eduPage.refresh();
-    loginUser(results.get(BICConstants.emailid), results.get(BICECEConstants.PASSWORD));
+    int attempts = 0;
 
-    dismissSuccessPopup();
-    Util.sleep(5000);
-    eduPage.refresh();
-    verifyEducationStatus();
+    while (attempts < 5) {
+      // Clear session storage cache and login again
+      JavascriptExecutor js = (JavascriptExecutor) driver;
+      js.executeScript("window.sessionStorage.clear()");
+      eduPage.refresh();
+      loginUser(results.get(BICConstants.emailid), results.get(BICECEConstants.PASSWORD));
+
+      dismissSuccessPopup();
+      Util.sleep(5000);
+      eduPage.refresh();
+      boolean success = verifyEducationStatus();
+
+      if (!success) {
+        attempts++;
+        if (attempts == 5) {
+          AssertUtils.fail("Failed to login with verified education account");
+        }
+        Util.printInfo("Logged in user still not verified, sleeping and trying again. Attempt: " + attempts);
+        Util.sleep(30000L * attempts);
+      } else {
+        break;
+      }
+    }
   }
 
   @Step("Accept VSOS terms" + GlobalConstants.TAG_TESTINGHUB)
@@ -314,21 +329,22 @@ public class EDUTestBase {
   private void dismissSuccessPopup() {
     try {
       eduPage.waitForField("eduSignSuccess", true, 5000);
-      eduPage.click("eduSignSuccess");
+      if (eduPage.checkIfElementExistsInPage("eduSignSuccess", 1000)) {
+        eduPage.click("eduSignSuccess");
+      }
     } catch (Exception e) {
       Util.printInfo("Dismissing Success popup is unsuccessful, no Action to be taken.");
     }
   }
 
   @Step("Verify Education Status" + GlobalConstants.TAG_TESTINGHUB)
-  private void verifyEducationStatus() {
+  private boolean verifyEducationStatus() {
     String xPath = eduPage.getFirstFieldLocator("eduStatus");
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
     String status = driver.findElement(By.xpath(xPath)).getText();
     Util.printInfo("Current status: " + status);
-    AssertUtils.assertTrue(
-        status.contains("Your educational access to Autodesk products is valid"));
+    return status.contains("Your educational access to Autodesk products is valid");
   }
 
   /**
