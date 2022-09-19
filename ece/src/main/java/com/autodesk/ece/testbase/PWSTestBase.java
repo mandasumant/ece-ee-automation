@@ -175,7 +175,7 @@ public class PWSTestBase {
         .post("https://" + hostname + "/v1/quotes")
         .then().extract().response();
 
-    Util.printInfo("Quote Creation Response : " + response);
+    Util.printInfo("Quote Creation Response : " + response.prettyPrint());
 
     String transactionId = response.jsonPath().getString("transactionId");
     Util.printInfo("Quote requested, transactionId: " + transactionId);
@@ -249,7 +249,7 @@ public class PWSTestBase {
       Util.sleep((long) (1000L * Math.pow(attempts, 2)));
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
       response = getQuoteStatus(pwsRequestHeaders, transactionId);
-      Util.printInfo("Quote Finalization Response :"+ response);
+      Util.printInfo("Quote Finalization Response :"+ response.prettyPrint());
       String status = response.jsonPath().getString("quoteStatus");
 
       if (status.equals("QUOTED")) {
@@ -258,8 +258,8 @@ public class PWSTestBase {
       } else if (status.equals("FAILED") || status.equals("DRAFT-CREATED")) {
         if(response.jsonPath().getJsonObject("error") != null) {
           Util.printError(response.jsonPath().getJsonObject("error").toString());
+          AssertUtils.fail("Quote finalization failed");
         }
-        AssertUtils.fail("Quote finalization failed");
       } else if (status.equals("UNDER-REVIEW") || (status.equals("FINALIZING") && attempts == 3)) {
         SFDCAPI sfdcApi = new SFDCAPI();
         Response quoteDetails = getQuoteDetails(agentCsn, quoteId);
@@ -280,7 +280,7 @@ public class PWSTestBase {
         Util.sleep(10000); // Waiting for the status change
 
         Response statusRes = getQuoteStatus(pwsRequestHeaders, transactionId);
-        Util.printInfo("Quote Status Response : " + statusRes);
+        Util.printInfo("Quote Status Response : " + statusRes.prettyPrint());
       } else {
         Util.printInfo("Quote not finalized yet, status: " + status);
       }
