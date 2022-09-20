@@ -232,6 +232,10 @@ public class BICQuoteOrder extends ECETestBase {
 
       portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+        // ECEEPLT-4029 code will come here
+      }
+
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
       }

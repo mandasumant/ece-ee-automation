@@ -187,7 +187,7 @@ public class PWSTestBase {
       Util.sleep((long) (1000L * Math.pow(attempts, 2)));
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
       response = getQuoteStatus(pwsRequestHeaders, transactionId);
-
+      Util.printInfo("Quote Creation Response : " + response.prettyPrint());
       String status = response.jsonPath().getString("quoteStatus") == null ? "error" :
           response.jsonPath().getString("quoteStatus");
 
@@ -231,6 +231,8 @@ public class PWSTestBase {
 
     String finalizeBody = createQuoteFinalizeBody(quoteId, agentCsn, agentContactEmail);
 
+    Util.sleep(120000);
+
     Response response = given()
         .body(finalizeBody)
         .headers(pwsRequestHeaders)
@@ -260,7 +262,7 @@ public class PWSTestBase {
           Util.printError(response.jsonPath().getJsonObject("error").toString());
           AssertUtils.fail("Quote finalization failed");
         }
-      } else if (status.equals("UNDER-REVIEW") || (status.equals("FINALIZING") && attempts == 3)) {
+      } else if (status.equals("UNDER-REVIEW") || (status.equals("FINALIZING") && attempts == 5)) {
         SFDCAPI sfdcApi = new SFDCAPI();
         Response quoteDetails = getQuoteDetails(agentCsn, quoteId);
         String accountName = quoteDetails.jsonPath().getString("endCustomer.name");

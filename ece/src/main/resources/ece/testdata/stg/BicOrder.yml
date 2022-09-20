@@ -72,6 +72,7 @@ default:
   quoteAgentCsnAccount: "5109330358"
   agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
   offeringId: "OD-000450"
+  isPayer: "true"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID

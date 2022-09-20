@@ -494,7 +494,7 @@ public class PelicanTestBase {
       results.put("getPOResponse_countryCode", jp.get("price.country").toString());
 
       results.put("getPOResponse_storedPaymentProfileId",
-          jp.get("payment.paymentProfileId").toString());
+          jp.get("payment.paymentProfileId") != null ? jp.get("payment.paymentProfileId").toString() : "");
       results.put("getPOResponse_productType", jp.get("lineItems[0].offering.name").toString());
       results.put("getPOResponse_quantity", jp.get("lineItems[0].quantity").toString());
       results.put("getPOResponse_offeringId", jp.get("lineItems[0].offering.id").toString());
@@ -509,7 +509,7 @@ public class PelicanTestBase {
       results.put("getPOResponse_fulfillmentDate",
           jp.get("lineItems[0].fulfillmentDate").toString());
       results.put("getPOResponse_paymentProcessor",
-          jp.get("payment.paymentProcessor").toString());
+          jp.get("payment.paymentProcessor") != null ? jp.get("payment.paymentProcessor").toString() : "");
       results.put("getPOResponse_endCustomer_company",
           jp.get("endCustomer.company"));
       results.put("getPOResponse_endCustomer_firstName",

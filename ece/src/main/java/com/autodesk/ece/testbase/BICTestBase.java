@@ -960,40 +960,50 @@ public class BICTestBase {
 
   @Step("Populate pay by invoice details")
   public void populatePayByInvoiceDetails(Map<String,String> payByInvoiceDetails) {
+    int count = 0;
 
-    bicPage.waitForField(BICECEConstants.PAY_BY_INVOICE, true, 30000);
+    bicPage.waitForField("payByInvoiceButton", true, 30000);
+    while (!bicPage.waitForField("payByInvoiceButton", true, 30000)) {
+      Util.sleep(3000);
+      count++;
+      if (count > 3) {
+        break;
+      }
+      if (count > 2) {
+        driver.navigate().refresh();
+      }
+    }
 
     try {
       Util.printInfo("Clicking on pay By Invoice tab...");
-      bicPage.clickUsingLowLevelActions("portalPayByInvoice");
+      bicPage.clickUsingLowLevelActions("payByInvoiceButton");
 
-      Util.printInfo("Waiting for Pay by invoice header...");
-      bicPage.waitForElementVisible(
-              bicPage.getMultipleWebElementsfromField("portalPayByInvoiceHeader").get(0), 10);
-      if(payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)){
-        if(!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")){
-          bicPage.clickUsingLowLevelActions("portalYesPurchaseOrderOption");
+      if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
+        if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
+          bicPage.clickUsingLowLevelActions("yesPurchaseOrderOption");
           Util.printInfo("Entering Purchase order number : " +payByInvoiceDetails.get("orderNumber") );
           bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
-        }else{
-          bicPage.clickUsingLowLevelActions("portalNoPurchaseOrderOption");
         }
+      } else {
+        bicPage.clickUsingLowLevelActions("noPurchaseOrderOption");
       }
-      if(payByInvoiceDetails.containsKey(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH)){
-        if(!payByInvoiceDetails.get(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH).equals("")){
+
+      if (payByInvoiceDetails.containsKey(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH)) {
+        if (!payByInvoiceDetails.get(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH).equals("")) {
           bicPage.populateField("portalPurchaseOrderDocument", payByInvoiceDetails.get(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH));
         }
       }
-      if(payByInvoiceDetails.containsKey(BICECEConstants.INVOICE_NOTES)){
-        if(!payByInvoiceDetails.get(BICECEConstants.INVOICE_NOTES).equals("")){
+
+      if (payByInvoiceDetails.containsKey(BICECEConstants.INVOICE_NOTES)) {
+        if (!payByInvoiceDetails.get(BICECEConstants.INVOICE_NOTES).equals("")) {
           bicPage.clickUsingLowLevelActions("portalAddinvoiceLink");
           bicPage.waitForElementVisible(
                   bicPage.getMultipleWebElementsfromField("portalAddInvoiceNotesTextArea").get(0), 10);
           bicPage.populateField("portalAddInvoiceNotesTextArea", payByInvoiceDetails.get("invoiceNotes"));
         }
       }
-      if(!Boolean.parseBoolean(payByInvoiceDetails.get(
-              BICECEConstants.IS_SAME_BILLING_ADDRESS))){
+
+      if (!Boolean.parseBoolean(payByInvoiceDetails.get(BICECEConstants.IS_PAYER))) {
         bicPage.clickUsingLowLevelActions("portalPayerSameAsCustomer");
         bicPage.waitForElementVisible(
                 bicPage.getMultipleWebElementsfromField("portalEmailAddress").get(0), 10);
@@ -1009,6 +1019,8 @@ public class BICTestBase {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter Pay By invoice payment details");
     }
+
+    bicPage.click("reviewLOCOrder");
   }
 
 
@@ -1068,7 +1080,7 @@ public class BICTestBase {
           case BICECEConstants.PAYMENT_TYPE_ZIP:
             populateZipPaymentDetails();
             break;
-          case BICECEConstants.PAY_BY_INVOICE:
+          case BICECEConstants.LOC:
             populatePayByInvoiceDetails(data);
             break;
           default:
@@ -1668,14 +1680,16 @@ public class BICTestBase {
     }
     Util.printInfo("Checking if Chat Popup Present. Done");
 
-    if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)) {
+    if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)
+        && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC) ) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get("isNonQuoteFlexOrder") != null &&
         data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
         data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser") && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
-    } else if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
-        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+    } else if ((data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE))
+        && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
       debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
