@@ -428,13 +428,18 @@ public class EDUTestBase {
 
     try {
       int attempts = 0;
-      while (attempts < 5 && downloadDirectory.listFiles().length == 0) {
+      File[] downloadingFiles = null;
+      while (attempts < 5) {
+        downloadingFiles = downloadDirectory.listFiles();
+        if (downloadingFiles != null && downloadingFiles.length > 0) {
+          break;
+        }
         Util.printInfo("Polling download directory for files, attempt " + (attempts + 1));
         attempts++;
         Util.sleep(2500);
+        downloadDirectory = Paths.get(System.getProperty("user.home"), "Downloads").toFile();
       }
-      File[] downloadingFiles = downloadDirectory.listFiles();
-      AssertUtils.assertTrue(downloadingFiles.length > 0,
+      AssertUtils.assertTrue(downloadingFiles != null && downloadingFiles.length > 0,
           "Ensure there are downloading files");
 
       Util.printInfo("Downloading files:");
