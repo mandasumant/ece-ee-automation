@@ -1815,7 +1815,7 @@ public class BICTestBase {
 
   @Step("Assert that tax value matches the tax parameter.")
   private void checkIfTaxValueIsCorrect(HashMap<String, String> data) {
-    Util.sleep(10000);
+    Util.sleep(5000);
     String nonZeroTaxState = data.get("taxOptionEnabled");
     if (nonZeroTaxState.equals("undefined")) {
       return;
@@ -1846,7 +1846,7 @@ public class BICTestBase {
           taxValue = driver
               .findElement(
                   By.xpath(
-                      "//div[@class='checkout--order-summary-section--products-total']/div[2]/p[2][@data-pricing-source=\"C\"]"))
+                      "//div[@class='checkout--order-summary-section--products-total']/div[2]/p[2][@data-pricing-source='C']"))
               .getText();
         }
       } catch (MetadataException e) {
@@ -1856,7 +1856,7 @@ public class BICTestBase {
     } else {
       Util.printInfo("Tax condition for non Flex product");
       taxValue = driver
-          .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax'][@data-pricing-source=\"PQ\"]"))
+          .findElement(By.xpath("//p[@data-testid='checkout--cart-section--tax'][@data-pricing-source='PQ']"))
           .getText();
     }
 
