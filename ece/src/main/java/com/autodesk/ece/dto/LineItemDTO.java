@@ -15,6 +15,6 @@ class LineItemDTO {
   public LineItemDTO(LinkedHashMap<String, String> data) {
     this.offeringId = data.get(BICECEConstants.OFFERING_ID);
     this.quantity = new Float(Integer.valueOf(data.get(BICECEConstants.FLEX_TOKENS)));
-    this.subscriptionStartDate = data.get(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
+    //this.subscriptionStartDate = data.get(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
   }
 }

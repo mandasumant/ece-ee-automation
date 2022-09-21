@@ -48,6 +48,7 @@ default:
   accountsPortalProductsServicesUrl: "https://stg-manage.autodesk.com/products"
   accountsPortalAddSeatsUrl: "https://stg-manage.autodesk.com/billing/add-seats"
   accountsPortalQuoteUrl: "https://stg-manage.autodesk.com/billing/quotes"
+  accountsProductPageUrl: "https://stg-manage.autodesk.com/products"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
@@ -71,6 +72,7 @@ default:
   quoteAgentCsnAccount: "5109330358"
   agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
   offeringId: "OD-000450"
+  isPayer: "true"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID

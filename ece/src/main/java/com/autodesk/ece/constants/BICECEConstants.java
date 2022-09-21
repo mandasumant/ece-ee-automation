@@ -185,9 +185,10 @@ public class BICECEConstants extends BICConstants {
   public static final Boolean DEFAULT_SAP_VALIDATION = false;
 
   public static final String PAY_BY_INVOICE = "pay-by-invoice";
+  public static final String LOC = "LOC";
   public static final String PURCHASE_ORDER_DOCUMENT_PATH = "purchaseOrderDocumentPath";
   public static final String INVOICE_NOTES = "invoiceNotes";
-  public static final String IS_SAME_BILLING_ADDRESS = "isSameBillingAddress";
+  public static final String IS_PAYER = "isPayer";
   public static final String EMAIL_ADDRESS = "emailAddress";
 
   public static final String COMPANY_NAME = "companyName";

@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
 import org.apache.commons.lang.RandomStringUtils;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
@@ -55,6 +54,7 @@ public class PortalTestBase {
   private final String accountsPortalAddSeatsUrl;
   private final String accountsPortalQuoteUrl;
   private final String accountPortalBillingInvoicesUrl;
+  private final String accountsProductPageUrl;
   private final ZipPayTestBase zipTestBase;
   private final BICTestBase bicTestBase;
   public WebDriver driver = null;
@@ -77,7 +77,7 @@ public class PortalTestBase {
     accountsPortalAddSeatsUrl = defaultvalues.get("accountsPortalAddSeatsUrl");
     accountsPortalQuoteUrl = defaultvalues.get("accountsPortalQuoteUrl");
     accountPortalBillingInvoicesUrl = defaultvalues.get("accountPortalBillingInvoicesUrl");
-
+    accountsProductPageUrl = defaultvalues.get("accountsProductPageUrl");
   }
 
   public static String timestamp() {
@@ -1588,7 +1588,15 @@ public class PortalTestBase {
    */
   public void validateProductByName(String cepURL) {
     openPortalBICLaunch(cepURL);
-    clickALLPSLink();
+    portalPage.click("portalPSLink");
+
+    try {
+      if (portalPage.checkIfElementExistsInPage("portalProductPageDismissModal", 10)) {
+        portalPage.click("portalProductPageDismissModal");
+      }
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
@@ -1598,18 +1606,19 @@ public class PortalTestBase {
    * @return - Full pe ID found
    */
   @Step("Verify product is visible in Portal " + GlobalConstants.TAG_TESTINGHUB)
-  public String verifyProductVisible(HashMap<String, String> results, String peIdPattern) {
+  public void verifyProductVisible(HashMap<String, String> results, String productName) {
     int attempts = 0;
     boolean status = false;
-    String subscriptionID = null;
 
     while (attempts < 5) {
-      Pattern pattern = Pattern.compile(peIdPattern);
       try {
-        String lastProductXPath = portalPage.getFirstFieldLocator("lastPurchasedProduct");
+        if (portalPage.checkIfElementExistsInPage("portalProductPageDismissTooltip", 10)) {
+          portalPage.click("portalProductPageDismissTooltip");
+        }
+        String lastProductXPath =
+            "//div[contains(@class, \"dhig-typography-headline-small\") and contains(text(), \"" + productName + "\")]";
         WebElement lastProduct = driver.findElement(By.xpath(lastProductXPath));
-        subscriptionID = lastProduct.getAttribute("data-pe-id");
-        status = pattern.matcher(subscriptionID).find();
+        status = lastProduct.isDisplayed();
       } catch (Exception e) {
         Util.printInfo(
             "Failed to find Student Subscription in Portal - Attempt #" + (attempts + 1));
@@ -1625,12 +1634,9 @@ public class PortalTestBase {
         attempts++;
       } else {
         Util.printInfo("Found Student Subscription in Portal, so skipping the retry logic");
-        AssertUtils.assertTrue(pattern.matcher(subscriptionID).find());
         break;
       }
     }
-
-    return subscriptionID;
   }
 
   @Step("Portal : Cancel subscription" + GlobalConstants.TAG_TESTINGHUB)
