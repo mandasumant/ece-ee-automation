@@ -4,7 +4,7 @@ LocaleConfig:
     storeName: "STORE-NAMER"
     currencyStore: "USD"
     countryDomain: ".com"
-    paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH,FINANCING"
+    paymentMethods: "VISA,MASTERCARD,PAYPAL,ACH,FINANCING,CREDITCARD"
     address: "FNOIIRDQ LNOIIRDQ@1245 Alpine Ave@Boulder@80304@9916800100@United States@CO"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5109330358"

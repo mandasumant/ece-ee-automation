@@ -1394,6 +1394,20 @@ public class BICOrderCreation extends ECETestBase {
     }
   }
 
+  /**
+   * This test is for Pay Invoice on Account Portal
+   *
+   * @throws Exception
+   */
+  @Test(groups = {"bic-pay-invoice"}, description = "Validation of Pay Invoice on Account Portal")
+  public void validatePayInvoiceAccountPortal() throws Exception {
+    Map<String, String> address = getBicTestBase().getBillingAddress(testDataForEachMethod);
+    portaltb.loginToAccountPortal(testDataForEachMethod);
+    portaltb.selectInvoiceAndValidateCreditMemo(testDataForEachMethod.get("invoice"));
+    portaltb.payInvoice(testDataForEachMethod, address, "paymentMethod");
+    portaltb.submitPayment();
+  }
+
   private void triggerPelicanRenewalJob(HashMap<String, String> results) {
     PelicanTestBase pelicanTB = new PelicanTestBase();
     pelicanTB.renewSubscription(results);
