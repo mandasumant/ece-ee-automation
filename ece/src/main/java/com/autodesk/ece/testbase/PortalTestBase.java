@@ -196,11 +196,11 @@ public class PortalTestBase {
     while (attempts < 3) {
       try {
         status =
-                portalPage.isFieldVisible(Field) || portalPage.checkFieldExistence(Field) || portalPage
-                        .isFieldPresent(Field) || portalPage.checkIfElementExistsInPage(Field, 60);
+            portalPage.isFieldVisible(Field) || portalPage.checkFieldExistence(Field) || portalPage
+                .isFieldPresent(Field) || portalPage.checkIfElementExistsInPage(Field, 60);
       } catch (MetadataException e) {
         Util.printInfo(
-                "Failed looking for \"Portal Product and Service Tab\" - Attempt #" + (attempts + 1));
+            "Failed looking for \"Portal Product and Service Tab\" - Attempt #" + (attempts + 1));
       }
 
       if (!status) {
@@ -225,7 +225,7 @@ public class PortalTestBase {
     while (attempts < 15) {
       try {
         String productXpath = portalPage
-                .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
+            .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
         element = driver.findElement(By.xpath(productXpath));
       } catch (Exception e) {
         //Do nothing here.
@@ -258,11 +258,11 @@ public class PortalTestBase {
       openPortalURL(accountsPortalProductsServicesUrl);
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
-      if (portalPage.checkIfElementExistsInPage("gotItButton", 60)) {
+      if(portalPage.checkIfElementExistsInPage("gotItButton", 60)) {
         Util.printInfo("Clicking on got it button..");
         portalPage.clickUsingLowLevelActions("gotItButton");
       }
-      AssertUtils.assertEquals(driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(), true, "All products and services header is missing");
+      AssertUtils.assertEquals(driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(),true,"All products and services header is missing");
     } catch (Exception e) {
       e.printStackTrace();
       CustomSoftAssert.s_assert.fail("Unable to click on portalAllPSLink ");
@@ -297,7 +297,7 @@ public class PortalTestBase {
         Util.printInfo("Clicking on portal email popup got it button...");
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript(BICECEConstants.ARGUMENTS_CLICK,
-                portalPage.getMultipleWebElementsfromField("portalEmailPopupYesButton").get(0));
+            portalPage.getMultipleWebElementsfromField("portalEmailPopupYesButton").get(0));
         Util.printInfo("HTML code - After Clicking portalEmailPopupYesButton");
         Util.sleep(15000);
         debugPageUrl("After Clicking portalEmailPopupYesButton");
@@ -309,7 +309,7 @@ public class PortalTestBase {
 
   @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderProductInCEP(String cepURL, String portalUserName,
-                                           String portalPassword, String subscriptionID) {
+      String portalPassword, String subscriptionID) {
     boolean status = false;
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
@@ -331,7 +331,7 @@ public class PortalTestBase {
 
   @Step("CEP : Purchasing Quote in  Account Portal  " + GlobalConstants.TAG_TESTINGHUB)
   public void purchaseQuoteInAccount(String cepURL, String portalUserName,
-                                     String portalPassword) {
+      String portalPassword) {
     openPortalBICLaunch(cepURL);
 
     openPortalURL(accountsPortalQuoteUrl);
@@ -351,7 +351,7 @@ public class PortalTestBase {
       portalPage.waitForFieldPresent("portalOrderHistoryPrice");
       String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
       AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
-              "Validate order total in history matches order total on checkout");
+          "Validate order total in history matches order total on checkout");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -392,7 +392,7 @@ public class PortalTestBase {
             Util.PrintInfo("Found Invoice. Now need to validate the invoice pop up");
 
             url = accountsPortalInvoiceUrl
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
+                + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=bc";
 
             Util.printInfo("URL for Invoice data: " + url);
             driver.navigate().to(url);
@@ -452,17 +452,17 @@ public class PortalTestBase {
 
     NumberFormat localeFormat = NumberFormat.getNumberInstance(new Locale(localeSplit[0], localeSplit[1]));
     String totalAmountFormattedWithTax =
-            localeFormat.format(Double.valueOf(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)));
+        localeFormat.format(Double.valueOf(results.get(BICECEConstants.SUBTOTAL_WITH_TAX)));
     String totalAmountFormatted = localeFormat.format(Double.valueOf(results.get(
-            "getPOResponse_subtotalAfterPromotions")));
+        "getPOResponse_subtotalAfterPromotions")));
 
     String totalAmountTrimmedWithTax = totalAmountFormattedWithTax.replace(".", "").replace(",", "")
-            .replace("\u00a0", "")
-            .replace("\u00A0", "").trim();
+        .replace("\u00a0", "")
+        .replace("\u00A0", "").trim();
     String totalAmountTrimmed = totalAmountFormatted.replace(".", "").replace(",", "")
-            .replace("\u00a0", "").replace("\u00A0", "").trim();
+        .replace("\u00a0", "").replace("\u00A0", "").trim();
     String pdfContentTrimmed = pdfContent.replace(".", "").replace(",", "").replace("\u00a0", "").replaceAll("\n", " ")
-            .trim();
+        .trim();
 
     if (results.get(BICECEConstants.PDF_TYPE).equalsIgnoreCase(BICECEConstants.CREDIT_NOTE)) {
       totalAmountTrimmedWithTax = "-" + totalAmountTrimmedWithTax;
@@ -475,16 +475,16 @@ public class PortalTestBase {
 
     Util.printInfo("Is subtotal with tax found in Invoice: " + pdfContentTrimmed.contains(totalAmountTrimmedWithTax));
     Util.printInfo("Is subtotal without tax found in Invoice: " + pdfContentTrimmed
-            .contains(totalAmountTrimmed));
+        .contains(totalAmountTrimmed));
 
     return orderFound &&
-            subscriptionFound &&
-            pdfContentTrimmed.contains(totalAmountTrimmedWithTax) &&
-            pdfContentTrimmed.contains(totalAmountTrimmed) &&
-            firstNameFound &&
-            lastNameFound &&
-            streetFound &&
-            cityFound;
+        subscriptionFound &&
+        pdfContentTrimmed.contains(totalAmountTrimmedWithTax) &&
+        pdfContentTrimmed.contains(totalAmountTrimmed) &&
+        firstNameFound &&
+        lastNameFound &&
+        streetFound &&
+        cityFound;
   }
 
   @Step("CEP : Validating Invoice or Credit Note  " + GlobalConstants.TAG_TESTINGHUB)
@@ -526,7 +526,7 @@ public class PortalTestBase {
             }
 
             url = accountsPortalInvoiceUrl
-                    + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
+                + results.get(BICECEConstants.ORDER_ID) + "/invoice?type=" + requestType;
 
             Util.printInfo("URL for " + pdfType + " data: " + url);
             driver.navigate().to(url);
@@ -576,14 +576,14 @@ public class PortalTestBase {
 
   @Step("CEP : Bic Order - Switching Term in Portal  " + GlobalConstants.TAG_TESTINGHUB)
   public void switchTermInUserPortal(String cepURL, String portalUserName,
-                                     String portalPassword) {
+      String portalPassword) {
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
     }
 
     try {
-      clickALLPSLink();
+     clickALLPSLink();
       JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
       navigateToSubscriptionRow();
       try {
@@ -594,7 +594,7 @@ public class PortalTestBase {
       }
 
       if (System.getProperty(BICECEConstants.PAYMENT)
-              .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+          .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
         clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-3-year\"]");
       } else {
         clickWithJavaScriptExecutor(javascriptExecutor, "//div[@data-testid=\"term-1-year\"]");
@@ -603,21 +603,21 @@ public class PortalTestBase {
 
       Util.sleep(5000);
       AssertUtils.assertTrue(driver
-              .findElement(By.xpath("//*[contains(text(),\"Your term change is confirmed\")]"))
-              .isDisplayed());
+          .findElement(By.xpath("//*[contains(text(),\"Your term change is confirmed\")]"))
+          .isDisplayed());
 
       Util.sleep(5000);
       portalPage.clickUsingLowLevelActions("switchTermDone");
 
       if (System.getProperty(BICECEConstants.PAYMENT)
-              .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+          .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
         AssertUtils.assertTrue(driver
-                .findElement(By.xpath("//*[starts-with(text(),\"Changes to 3-year term starting\")]"))
-                .isDisplayed());
+            .findElement(By.xpath("//*[starts-with(text(),\"Changes to 3-year term starting\")]"))
+            .isDisplayed());
       } else {
         AssertUtils.assertTrue(driver
-                .findElement(By.xpath("//*[starts-with(text(),\"Changes to 1-year term starting\")]"))
-                .isDisplayed());
+            .findElement(By.xpath("//*[starts-with(text(),\"Changes to 1-year term starting\")]"))
+            .isDisplayed());
       }
       clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
 
@@ -648,14 +648,14 @@ public class PortalTestBase {
 
   private void debugPageUrl(String messageHeader) {
     Util.printInfo("----------" + messageHeader + "-------------------" +
-            "\n" + " URL :            " + driver.getCurrentUrl() +
-            "\n" + " Page Title :     " + driver.getTitle()
-            + "\n" + BICECEConstants.SEPARATION_LINE);
+        "\n" + " URL :            " + driver.getCurrentUrl() +
+        "\n" + " Page Title :     " + driver.getTitle()
+        + "\n" + BICECEConstants.SEPARATION_LINE);
   }
 
   @Step("Adding seat from portal for BIC orders")
   public HashMap<String, String> createAndValidateAddSeatOrderInPortal(String addSeatQty,
-                                                                       LinkedHashMap<String, String> testDataForEachMethod) {
+      LinkedHashMap<String, String> testDataForEachMethod) {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<String, String>();
     orderDetails.putAll(createAddSeatOrder(addSeatQty, testDataForEachMethod));
@@ -677,7 +677,7 @@ public class PortalTestBase {
         debugPageUrl("Step 2");
 
         Util.waitforPresenceOfElement(
-                portalPage.getFirstFieldLocator(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION));
+            portalPage.getFirstFieldLocator(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION));
         Util.printInfo("Clicking on subscription row...");
 
         debugPageUrl("Step 3");
@@ -709,31 +709,31 @@ public class PortalTestBase {
 
         Util.sleep(5000);
         Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-                BICECEConstants.PORTAL_ORDER_SEAT_COUNT));
+            BICECEConstants.PORTAL_ORDER_SEAT_COUNT));
         String initialOrderQty = portalPage
-                .getTextFromLink(BICECEConstants.PORTAL_ORDER_SEAT_COUNT);
+            .getTextFromLink(BICECEConstants.PORTAL_ORDER_SEAT_COUNT);
         Util.printInfo("Initial seat quantity on order info page: " + initialOrderQty);
         orderDetails.put(BICECEConstants.INITIAL_ORDER_QTY, initialOrderQty);
 
         String paymentDetails = portalPage.getTextFromLink("portalPaymentDetails")
-                .replaceAll("\\s", "");
+            .replaceAll("\\s", "");
         Util.printInfo("Payment Details on order info page: " + paymentDetails);
         orderDetails.put(BICECEConstants.PAYMENT_DETAILS, paymentDetails);
 
         String[] name = portalPage.getTextFromLink("portalGetUserNameTextFromSubs")
-                .split("\\s");
+            .split("\\s");
         String firstName = name[0].trim();
         String lastName = name[1].trim();
         orderDetails.put("firstname", firstName);
         orderDetails.put("lastname", lastName);
 
         String streetAddress = portalPage.getTextFromLink("portalGetUserAddressFromSubs")
-                .trim();
+            .trim();
         Util.printInfo("Street Address : " + streetAddress);
 
         String city = portalPage.getTextFromLink("portalGetUserCityFromSubs")
-                .replace(",", "")
-                .trim();
+            .replace(",", "")
+            .trim();
         Util.printInfo("City : " + city);
         Util.printInfo("Waiting for portalSubscriptionStateFromSubs");
         Util.sleep(10000);
@@ -764,7 +764,7 @@ public class PortalTestBase {
   }
 
   public HashMap<String, String> createAddSeatOrder(String addSeatQty,
-                                                    LinkedHashMap<String, String> testDataForEachMethod) {
+      LinkedHashMap<String, String> testDataForEachMethod) {
     Util.printInfo("Placing add seat order from portal...");
     HashMap<String, String> orderDetails = new HashMap<String, String>();
 
@@ -816,7 +816,7 @@ public class PortalTestBase {
       if (!status) {
         debugPageUrl("Portal - ADD Seat page");
         Util.printTestFailedMessage(
-                "Multiple attempts failed to redirect in Portal - ADD Seat page " + currentURL);
+            "Multiple attempts failed to redirect in Portal - ADD Seat page " + currentURL);
         AssertUtils.fail("Unable to redirect to Add Seat page in Accounts portal.");
       } else {
         Util.printInfo("Status: Successfully clicked on Add seats button.");
@@ -836,7 +836,7 @@ public class PortalTestBase {
 
       portalPage.waitForFieldPresent("portalASProductTerm", 5000);
       String productSubscriptionTerm = portalPage
-              .getLinkText("portalASProductTerm"); // .split(":")[1].trim();
+          .getLinkText("portalASProductTerm"); // .split(":")[1].trim();
       Util.printInfo("Product subscription term on add seat page : " + productSubscriptionTerm);
       orderDetails.put("productSubscriptionTerm", productSubscriptionTerm);
 
@@ -875,7 +875,7 @@ public class PortalTestBase {
 
       // Zip Pay Verification
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
-              .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
         zipTestBase.setTestData(testDataForEachMethod);
         zipTestBase.verifyZipBalance(proratedFinalPrice);
       }
@@ -886,7 +886,7 @@ public class PortalTestBase {
 
       // Zip Pay Checkout
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
-              .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+          .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
         Util.printInfo("Going to Zip Pay Checkout");
         zipTestBase.setTestData(testDataForEachMethod);
         zipTestBase.zipPayCheckout();
@@ -927,7 +927,7 @@ public class PortalTestBase {
 
     try {
       Util.waitForElement(portalPage.getFirstFieldLocator("portalASOrderConfirmationHead"),
-              "Order confirmation page");
+          "Order confirmation page");
       Util.sleep(10000);
       if (portalPage.checkIfElementExistsInPage("portalASOrderNumberText", 10)) {
         String addSeatOrderNumber = portalPage.getLinkText("portalASOrderNumberText");
@@ -940,10 +940,10 @@ public class PortalTestBase {
       String confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
 
       AssertUtils.assertEquals(
-              Double.valueOf(data.get("proratedFinalAmount")
-                      .substring(data.get("proratedFinalAmount").indexOf("$") + 1).replace(",", "")),
-              Double.valueOf(confirmProratedAmount.substring(confirmProratedAmount.indexOf("$") + 1)
-                      .replace(",", "")));
+          Double.valueOf(data.get("proratedFinalAmount")
+              .substring(data.get("proratedFinalAmount").indexOf("$") + 1).replace(",", "")),
+          Double.valueOf(confirmProratedAmount.substring(confirmProratedAmount.indexOf("$") + 1)
+              .replace(",", "")));
 
       Util.printInfo("ZIP Pay subscription URL " + data.get("zipPaySubscriptionUrl"));
 
@@ -965,7 +965,7 @@ public class PortalTestBase {
         Util.sleep(10000);
 
         boolean addSeatsButtonVisible = portalPage
-                .waitForFieldPresent("portalAddSeatButton", 90000);
+            .waitForFieldPresent("portalAddSeatButton", 90000);
         if (addSeatsButtonVisible) {
           String totalSeats = portalPage.getTextFromLink(BICECEConstants.PORTAL_ORDER_SEAT_COUNT);
           Util.printInfo("Total seats displayed on order info page: " + totalSeats);
@@ -977,7 +977,7 @@ public class PortalTestBase {
             break;
           } else {
             AssertUtils.fail("Failed to add seats. Initial order seat : " + initialOrderQty
-                    + " total number of seats : " + totalSeats + " are same");
+                + " total number of seats : " + totalSeats + " are same");
           }
         } else {
           attempts++;
@@ -995,7 +995,7 @@ public class PortalTestBase {
 
   @Step("Reduce seats from portal for BIC orders")
   public HashMap<String, String> reduceSeatsInPortalAndValidate()
-          throws MetadataException {
+      throws MetadataException {
     driver.switchTo().defaultContent();
     HashMap<String, String> orderDetails = new HashMap<>();
     orderDetails.putAll(reduceSeats());
@@ -1004,7 +1004,7 @@ public class PortalTestBase {
   }
 
   public HashMap<String, String> reduceSeats()
-          throws MetadataException {
+      throws MetadataException {
     HashMap<String, String> orderDetails = new HashMap<>();
     orderDetails.putAll(navigateToSubscriptionAndOrdersTab());
 
@@ -1025,7 +1025,7 @@ public class PortalTestBase {
     portalPage.waitForFieldPresent("portalRenewingSeatsCount");
     Util.printInfo("Reduced seats quantity found.");
     String renewingSeatsCount = portalPage
-            .getTextFromLink("portalRenewingSeatsCount");
+        .getTextFromLink("portalRenewingSeatsCount");
     String reducedSeatQty = renewingSeatsCount.split(" ")[0];
     Util.printInfo("Recording new seats count.");
     orderDetails.put("reducedSeatQty", reducedSeatQty);
@@ -1037,20 +1037,20 @@ public class PortalTestBase {
     String newSeatsTotal = data.get("reducedSeatQty");
     String initialOrderQty = data.get(BICECEConstants.INITIAL_ORDER_QTY);
     if (System.getProperty(BICECEConstants.PAYMENT)
-            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       if (newSeatsTotal.equals(initialOrderQty)) {
         Util.printInfo(
-                "Seats reduced successfully. New seats will be in effect after next renewal");
+            "Seats reduced successfully. New seats will be in effect after next renewal");
       } else {
         AssertUtils.fail("Error while reducing seats. Initial order seat : " + initialOrderQty
-                + " total number of seats : " + newSeatsTotal + " should be same");
+            + " total number of seats : " + newSeatsTotal + " should be same");
       }
     } else {
       if (!newSeatsTotal.equals(initialOrderQty)) {
         Util.printInfo("Seats reduced successfully.");
       } else {
         AssertUtils.fail("Failed to reduce seats. Initial order seat : " + initialOrderQty
-                + " total number of seats : " + newSeatsTotal + " are same");
+            + " total number of seats : " + newSeatsTotal + " are same");
       }
     }
   }
@@ -1065,7 +1065,7 @@ public class PortalTestBase {
 
   @Step("Changing payment from Portal" + GlobalConstants.TAG_TESTINGHUB)
   public void changePaymentMethodAndValidate(HashMap<String, String> data,
-                                             String[] paymentCardDetails) {
+      String[] paymentCardDetails) {
     Util.printInfo("Changing the payment method from portal...");
     try {
       debugPageUrl("Step 1");
@@ -1076,8 +1076,8 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
       Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-                      BICECEConstants.PORTAL_PAYMENT_METHOD)
-              .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
+              BICECEConstants.PORTAL_PAYMENT_METHOD)
+          .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data);
     } catch (Exception e) {
@@ -1104,21 +1104,21 @@ public class PortalTestBase {
       populateBillingAddress(data, data.get("userType"));
       Util.printInfo("Clicking on save button");
       if (data.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.VISA) || data
-              .get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.MASTERCARD)) {
+          .get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.MASTERCARD)) {
         portalPage.clickUsingLowLevelActions(BICECEConstants.PORTAL_CARD_SAVE_BTN);
       } else if (data.get(BICECEConstants.PAYMENT_TYPE)
-              .equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
+          .equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
         findAndClickSaveButton("//button[contains(@data-testid,'save-payment-profile')]");
         Util.printInfo("Saved Paypal profile as new payment type");
       } else if (data.get(BICECEConstants.PAYMENT_TYPE)
-              .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+          .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
         data.put(BICECEConstants.PAYMENT_DETAILS, BICECEConstants.ACCOUNT);
         portalPage.waitForFieldPresent(BICECEConstants.PORTAL_ACH_SAVE_BTN, 5000);
         findAndClickSaveButton("//button[contains(@data-testid,'save-payment-profile')]");
         Util.printInfo("Saved ACH profile as new payment type");
         Util.sleep(5000);
         WebElement mandateAgreementElement = driver.findElement(By.xpath(
-                BICECEConstants.ID_MANDATE_AGREEMENT));
+            BICECEConstants.ID_MANDATE_AGREEMENT));
         mandateAgreementElement.click();
         findAndClickSaveButton("//span[.='Save']");
       }
@@ -1149,7 +1149,7 @@ public class PortalTestBase {
     Util.printInfo("Switching to latest window...");
     String parentWindow = driver.getWindowHandle();
     String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
-            .replaceAll(BICECEConstants.PAYMENTOPTION, "PayPal");
+        .replaceAll(BICECEConstants.PAYMENTOPTION, "PayPal");
     Util.waitForElement(paymentMethod, "PayPal tab");
 
     try {
@@ -1172,30 +1172,30 @@ public class PortalTestBase {
 
       String title = driver.getTitle();
       AssertUtils.assertTrue(title.toUpperCase().contains("PayPal".toUpperCase()),
-              "Current title [" + title + "] does not contains keyword : PayPal");
+          "Current title [" + title + "] does not contains keyword : PayPal");
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
       if (BICTestBase.bicPage
-              .checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
+          .checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
         BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
       }
 
       if (BICTestBase.bicPage
-              .checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
+          .checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
         BICTestBase.bicPage
-                .clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
+            .clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
       }
 
       Util.printInfo("Entering paypal user name [" + data.get("paypalUser") + "]...");
       BICTestBase.bicPage.waitForElementVisible(
-              BICTestBase.bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
+          BICTestBase.bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
       BICTestBase.bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
 
       BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
       BICTestBase.bicPage.populateField("paypalPasswordField",
-              ProtectedConfigFile.decrypt(data.get("paypalSsap")));
+          ProtectedConfigFile.decrypt(data.get("paypalSsap")));
 
       Util.printInfo("Clicking on login button...");
       BICTestBase.bicPage.clickUsingLowLevelActions("paypalLoginBtn");
@@ -1204,13 +1204,13 @@ public class PortalTestBase {
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
       if (BICTestBase.bicPage
-              .checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
+          .checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
         BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
       }
 
       Util.printInfo("Selecting paypal payment option " + data.get("paypalPaymentType"));
       String paymentTypeXpath = BICTestBase.bicPage.getFirstFieldLocator("paypalPaymentOption")
-              .replace(BICECEConstants.PAYMENTOPTION, data.get("paypalPaymentType"));
+          .replace(BICECEConstants.PAYMENTOPTION, data.get("paypalPaymentType"));
       driver.findElement(By.xpath(paymentTypeXpath)).click();
 
       BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
@@ -1226,7 +1226,7 @@ public class PortalTestBase {
       driver.switchTo().window(parentWindow);
       Util.sleep(5000);
       AssertUtils.assertEquals(portalPage.getTextFromLink("portalPaypalConfirmationText"),
-              "PayPal is selected for payment.");
+          "PayPal is selected for payment.");
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter paypal details to make payment...");
@@ -1237,7 +1237,7 @@ public class PortalTestBase {
   @Step("Populate Direct Debit payment details")
   public void populateACHPaymentDetails(String[] paymentCardDetails) {
     String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
-            .replaceAll(BICECEConstants.PAYMENTOPTION, "Direct Debit (ACH)");
+        .replaceAll(BICECEConstants.PAYMENTOPTION, "Direct Debit (ACH)");
     Util.waitForElement(paymentMethod, "debit card ACH tab");
 
     try {
@@ -1246,7 +1246,7 @@ public class PortalTestBase {
 
       Util.printInfo("Waiting for Direct Debit ACH Header...");
       BICTestBase.bicPage.waitForElementVisible(
-              BICTestBase.bicPage.getMultipleWebElementsfromField("directDebitHead").get(0), 10);
+          BICTestBase.bicPage.getMultipleWebElementsfromField("directDebitHead").get(0), 10);
 
       // TODO Replace this with condition where we are reading from test class API whether credit card is available or not
       if (portalPage.checkIfElementExistsInPage("portalDebitCardAddLink", 10)) {
@@ -1270,7 +1270,7 @@ public class PortalTestBase {
   public void populateCreditCardDetails(String[] paymentCardDetails) {
     BICTestBase.bicPage.waitForField("creditCardNumberFrame", true, 30000);
     String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
-            .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card");
+        .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card");
     Util.waitForElement(paymentMethod, "Credit card tab");
     driver.findElement(By.xpath(paymentMethod)).click();
     try {
@@ -1281,11 +1281,11 @@ public class PortalTestBase {
 
       Util.sleep(3000);
       WebElement creditCardNumberFrame = BICTestBase.bicPage
-              .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
+          .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
       WebElement expiryDateFrame = BICTestBase.bicPage
-              .getMultipleWebElementsfromField("expiryDateFrame").get(0);
+          .getMultipleWebElementsfromField("expiryDateFrame").get(0);
       WebElement securityCodeFrame = BICTestBase.bicPage
-              .getMultipleWebElementsfromField("securityCodeFrame").get(0);
+          .getMultipleWebElementsfromField("securityCodeFrame").get(0);
 
       driver.switchTo().frame(creditCardNumberFrame);
       Util.printInfo("Entering card number : " + paymentCardDetails[0]);
@@ -1296,10 +1296,10 @@ public class PortalTestBase {
 
       driver.switchTo().frame(expiryDateFrame);
       Util.printInfo(
-              "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
+          "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
       Util.sleep(2000);
       BICTestBase.bicPage
-              .populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
+          .populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
       driver.switchTo().defaultContent();
       Util.sleep(2000);
       driver.switchTo().frame(securityCodeFrame);
@@ -1321,19 +1321,19 @@ public class PortalTestBase {
     String lastNameXpath = "";
     if (paymentType.equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
       firstNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+          .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
       lastNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+          .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
     } else if (paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
       firstNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
+          .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
       lastNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
+          .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
     } else {
       firstNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+          .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
       lastNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
-              .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+          .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
     }
 
     BICTestBase.clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
@@ -1359,15 +1359,15 @@ public class PortalTestBase {
     boolean status = false;
     try {
       status = BICTestBase.bicPage.waitForElementVisible(
-              BICTestBase.bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0),
-              60000);
+          BICTestBase.bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0),
+          60000);
     } catch (MetadataException e) {
       AssertUtils.fail("Organization_NameEMEA is not displayed on page...");
     }
     BICTestBase.bicPage.populateField("Organization_NameEMEA", address.get(
-            BICECEConstants.ORGANIZATION_NAME));
+        BICECEConstants.ORGANIZATION_NAME));
     BICTestBase.bicPage
-            .populateField("Full_AddressEMEA", address.get(BICECEConstants.FULL_ADDRESS));
+        .populateField("Full_AddressEMEA", address.get(BICECEConstants.FULL_ADDRESS));
     BICTestBase.bicPage.populateField("CityEMEA", address.get("City"));
     BICTestBase.bicPage.populateField("ZipcodeEMEA", address.get(BICECEConstants.ZIPCODE));
     BICTestBase.bicPage.populateField("Phone_NumberEMEA", address.get("phone"));
@@ -1376,7 +1376,7 @@ public class PortalTestBase {
   }
 
   private boolean populateNAMERBillingDetails(Map<String, String> address, String paymentType,
-                                              String userType) {
+      String userType) {
     Util.printInfo("Adding billing details...");
     boolean status = false;
     String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "", stateXpath = "";
@@ -1384,51 +1384,51 @@ public class PortalTestBase {
 
       case BICConstants.paymentTypePayPal:
         orgNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         phoneXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         countryXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         stateXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         break;
       case BICConstants.paymentTypeDebitCard:
         orgNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         phoneXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         countryXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         stateXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         break;
       default:
         orgNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         phoneXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         countryXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         stateXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
-                .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
+            .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         break;
     }
 
@@ -1443,7 +1443,7 @@ public class PortalTestBase {
 
     driver.findElement(By.xpath(orgNameXpath)).click();
     driver.findElement(By.xpath(orgNameXpath))
-            .sendKeys(new RandomStringUtils().random(10, true, true));
+        .sendKeys(new RandomStringUtils().random(10, true, true));
 
     BICTestBase.clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
     driver.findElement(By.xpath(fullAddrXpath)).sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
@@ -1464,9 +1464,9 @@ public class PortalTestBase {
       selCountry.selectByIndex(0);
     }
     if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address.get(
-            BICECEConstants.STATE_PROVINCE).isEmpty()) {
+        BICECEConstants.STATE_PROVINCE).isEmpty()) {
       driver.findElement(By.xpath(stateXpath))
-              .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
+          .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
     }
     return status;
   }
@@ -1479,12 +1479,12 @@ public class PortalTestBase {
 
     if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
       Assert.assertTrue(paymentDetails.contains(BICECEConstants.PAYPAL),
-              BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] does not contains text [paypal]");
+          BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] does not contains text [paypal]");
     } else if (data.get(BICECEConstants.PAYMENT_TYPE)
-            .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
+        .equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
       Util.sleep(5000);
       Assert.assertTrue(paymentDetails.contains(BICECEConstants.ACCOUNT),
-              BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] does not contains text [account]");
+          BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] does not contains text [account]");
     } else {
       Util.printInfo(BICECEConstants.PAYMENT_DETAILS1 + paymentDetails + "] ");
     }
@@ -1501,7 +1501,7 @@ public class PortalTestBase {
    */
   @Step("Align subscription billing in portal " + GlobalConstants.TAG_TESTINGHUB)
   public void alignBillingInPortal(String cepURL, String portalUserName, String portalPassword,
-                                   String subscriptionID1, String subscriptionID2) {
+      String subscriptionID1, String subscriptionID2) {
     openPortalBICLaunch(cepURL);
 
     if (isPortalLoginPageVisible()) {
@@ -1526,7 +1526,7 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("alignBillingConfirm");
       portalPage.waitForPageToLoad();
       WebElement creditCardNumberFrame = portalPage
-              .getMultipleWebElementsfromField("alignBillingFrame").get(0);
+          .getMultipleWebElementsfromField("alignBillingFrame").get(0);
       driver.switchTo().frame(creditCardNumberFrame);
       portalPage.clickUsingLowLevelActions("alignBillingContinue");
       checkPortalCheckbox("//input[@id='customCheckboxTerms']");
@@ -1557,7 +1557,7 @@ public class PortalTestBase {
 
   @Step("CEP : META Order capture " + GlobalConstants.TAG_TESTINGHUB)
   public void validateMetaOrderProductInCEP(String cepURL, String portalUserName,
-                                            String portalPassword, String subscriptionID) {
+      String portalPassword, String subscriptionID) {
     boolean status = false;
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
@@ -1568,7 +1568,7 @@ public class PortalTestBase {
       try {
         // The subscription id that is being displayed in Portal is different from Pelican. Hence, Checking for "Subscription ID" text
         if (System.getProperty(BICECEConstants.PAYMENT)
-                .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+            .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
           subscriptionID = "Subscription ID";
         }
         status = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
@@ -1616,12 +1616,12 @@ public class PortalTestBase {
           portalPage.click("portalProductPageDismissTooltip");
         }
         String lastProductXPath =
-                "//div[contains(@class, \"dhig-typography-headline-small\") and contains(text(), \"" + productName + "\")]";
+            "//div[contains(@class, \"dhig-typography-headline-small\") and contains(text(), \"" + productName + "\")]";
         WebElement lastProduct = driver.findElement(By.xpath(lastProductXPath));
         status = lastProduct.isDisplayed();
       } catch (Exception e) {
         Util.printInfo(
-                "Failed to find Student Subscription in Portal - Attempt #" + (attempts + 1));
+            "Failed to find Student Subscription in Portal - Attempt #" + (attempts + 1));
       }
 
       if (!status) {
@@ -1641,7 +1641,7 @@ public class PortalTestBase {
 
   @Step("Portal : Cancel subscription" + GlobalConstants.TAG_TESTINGHUB)
   public void cancelSubscription(String portalUserName, String portalPassword)
-          throws MetadataException {
+      throws MetadataException {
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
     }
@@ -1690,7 +1690,7 @@ public class PortalTestBase {
 
   @Step("Portal : Turn On Auto Renew" + GlobalConstants.TAG_TESTINGHUB)
   public void restartSubscription()
-          throws MetadataException {
+      throws MetadataException {
     Util.printInfo("Turn on subscription auto renew.");
     if (portalPage.checkIfElementExistsInPage("autoRenewOnButton", 10)) {
       portalPage.clickUsingLowLevelActions("autoRenewOnButton");
@@ -1704,7 +1704,7 @@ public class PortalTestBase {
   @Step("Click on Subscription" + GlobalConstants.TAG_TESTINGHUB)
   private void clickOnSubscriptionRow() throws MetadataException {
     Util.waitforPresenceOfElement(
-            portalPage.getFirstFieldLocator(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION));
+        portalPage.getFirstFieldLocator(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION));
     Util.printInfo("Clicking on subscription row...");
     portalPage.clickUsingLowLevelActions(BICECEConstants.SUBSCRIPTION_ROW_IN_SUBSCRIPTION);
     portalPage.waitForPageToLoad();
@@ -1721,11 +1721,11 @@ public class PortalTestBase {
     }
   }
 
-  public void navigateToSubscriptionRow() throws Exception {
+  public void navigateToSubscriptionRow() throws Exception{
     if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 60)) {
       Util.printInfo("Clicking on portal subscription and contracts link...");
       portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
-    } else {
+    }else{
       openPortalURL(accountsPortalSubscriptionsUrl);
     }
     clickPortalClosePopup();
