@@ -109,11 +109,12 @@ def testcases = [
     ]
 ]
 
-def generateTest(name, testcase, address, options = []) {
+def generateTest(name, testcase, address, options = [], payment) {
     def testData = [
         usertype: "new",
         password: "",
         emailType: "biz",
+        payment: payment,
         sapValidation: String.valueOf(SAP_INVOICE_VALIDATION)
     ]
     testData.putAll(address)
@@ -126,7 +127,6 @@ def generateTest(name, testcase, address, options = []) {
         testClass: testcase.testClass,
         testGroup: testcase.testGroup,
         testMethod: testcase.testMethod,
-        os: "windows",
         parameters: [
             application: "ece"
         ],
@@ -416,13 +416,13 @@ pipeline {
                             '{"displayname":"Refund Q2O EMEA(UK)","testcasename":"a2d62443","description":"Refund Q2O EMEA","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","store":"STORE-UK","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_GB","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Europe/London"}},' +
                             '{"displayname":"Refund Q2O AUS","testcasename":"a2d62443","description":"Refund Q2O AUS","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"quote-RefundOrder","testMethod":"validateQuoteRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","store":"STORE-AUS","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_AU","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"AutodeskAU@53 Wakefield St@Adelaide@5000@397202088@Australia@SA","timezone":"Australia/Sydney"}},' +
                             [
-                                    generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION]),
-                                    generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses["United States"]["MT"], ["timezone": "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION]),
-                                    generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses["Canada"]["QC"], ["timezone": "Canada/Pacific" , currency: "CAD"]),
-                                    generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses["Australia"]["NSW"], ["timezone": "Australia/Sydney",  sapValidation:params.INVOICE_VALIDATION]),
-                                    generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses["en_GB"], ["timezone": "Europe/London", sapValidation: params.INVOICE_VALIDATION]),
-                                    generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses["pl_PL"], ["timezone": "Poland", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"]),
-                                    generateTest("Austria (de_AT)", testcases.validateAccountPortalQuoteOrder, addresses["de_AT"], ["timezone": "Europe/Vienna", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"])
+                                    generateTest("USA Colorado (en_US)", testcases.validateAccountPortalQuoteOrder, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, payment: "LOC"]),
+                                    generateTest("USA Montana (en_US)", testcases.validateAccountPortalQuoteOrder, addresses["United States"]["MT"], ["timezone": "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION], "LOC"),
+                                    generateTest("CA Quebec (en_CA)", testcases.validateAccountPortalQuoteOrder, addresses["Canada"]["QC"], ["timezone": "Canada/Pacific" , currency: "CAD"], "LOC"),
+                                    generateTest("AUS NSW (en_AU)", testcases.validateAccountPortalQuoteOrder, addresses["Australia"]["NSW"], ["timezone": "Australia/Sydney",  sapValidation:params.INVOICE_VALIDATION], "LOC"),
+                                    generateTest("UK (en_GB)", testcases.validateAccountPortalQuoteOrder, addresses["en_GB"], ["timezone": "Europe/London", sapValidation: params.INVOICE_VALIDATION], "LOC"),
+                                    generateTest("Poland (pl_PL)", testcases.validateAccountPortalQuoteOrder, addresses["pl_PL"], ["timezone": "Poland", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"], "LOC"),
+                                    generateTest("Austria (de_AT)", testcases.validateAccountPortalQuoteOrder, addresses["de_AT"], ["timezone": "Europe/Vienna", sapValidation: params.INVOICE_VALIDATION, currency: "EUR"], "LOC")
                             ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
@@ -584,13 +584,13 @@ pipeline {
                             '{"displayname":"Flex Estimator CA (en_CA)","testcasename":"fbf7fe55","description":"Flex Estimator CA(en_CA)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","locale":"en_CA","sapValidation":"False","address":"Autodesk CA@10 Rue Saint-Jacques@Montreal@H2Y 1L3@9916800100@Canada@QC"}},' +
                             '{"displayname":"Flex Estimator AUS (en_AU)","testcasename":"fbf7fe55","description":"Flex Estimator AUS(en_AU)","os":"windows","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"AutodeskAU@240 City Walker@Canberra@2601@397202088@Australia@ACT"}},' +
                             [
-                                generateTest("USA Colorado (en_US)", testcases.validateFlexDirectReturningUser, addresses["United States"]["CO"]),
-                                generateTest("USA Montana (en_US)", testcases.validateFlexDirectReturningUser, addresses["United States"]["MT"]),
-                                generateTest("CA Quebec (en_CA)", testcases.validateFlexDirectReturningUser, addresses["Canada"]["QC"]),
-                                generateTest("AUS NSW (en_AU)", testcases.validateFlexDirectReturningUser, addresses["Australia"]["NSW"]),
-                                generateTest("UK (en_GB)", testcases.validateFlexDirectReturningUser, addresses["en_GB"]),
-                                generateTest("Poland (pl_PL)", testcases.validateFlexDirectReturningUser, addresses["pl_PL"]),
-                                generateTest("Austria (de_AT)", testcases.validateFlexDirectReturningUser, addresses["de_AT"])
+                                generateTest("USA Colorado (en_US)", testcases.validateFlexDirectReturningUser, addresses["United States"]["CO"], "VISA"),
+                                generateTest("USA Montana (en_US)", testcases.validateFlexDirectReturningUser, addresses["United States"]["MT"], "VISA"),
+                                generateTest("CA Quebec (en_CA)", testcases.validateFlexDirectReturningUser, addresses["Canada"]["QC"], "CREDITCARD"),
+                                generateTest("AUS NSW (en_AU)", testcases.validateFlexDirectReturningUser, addresses["Australia"]["NSW"], "CREDITCARD"),
+                                generateTest("UK (en_GB)", testcases.validateFlexDirectReturningUser, addresses["en_GB"], "CREDITCARD"),
+                                generateTest("Poland (pl_PL)", testcases.validateFlexDirectReturningUser, addresses["pl_PL"], "CREDITCARD"),
+                                generateTest("Austria (de_AT)", testcases.validateFlexDirectReturningUser, addresses["de_AT"], "CREDITCARD")
                             ].join(',') +
                             '],"workstreamname":"dclecjt"}'
                     println("Starting Testing Hub API Call - estore - All")
