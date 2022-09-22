@@ -959,7 +959,7 @@ public class BICTestBase {
   }
 
   @Step("Populate pay by invoice details")
-  public void populatePayByInvoiceDetails(Map<String,String> payByInvoiceDetails) {
+  public void populatePayByInvoiceDetails(Map<String, String> payByInvoiceDetails, Map<String, String> address) {
     int count = 0;
 
     bicPage.waitForField("payByInvoiceButton", true, 30000);
@@ -1003,17 +1003,13 @@ public class BICTestBase {
         }
       }
 
-      if (!Boolean.parseBoolean(payByInvoiceDetails.get(BICECEConstants.IS_PAYER))) {
-        bicPage.clickUsingLowLevelActions("portalPayerSameAsCustomer");
+      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL)) {
+        bicPage.clickUsingLowLevelActions("payerSameAsCustomer");
         bicPage.waitForElementVisible(
-                bicPage.getMultipleWebElementsfromField("portalEmailAddress").get(0), 10);
-        bicPage.populateField("portalEmailAddress", payByInvoiceDetails.get(BICECEConstants.EMAIL_ADDRESS));
-        bicPage.populateField("portalPhoneNumber", payByInvoiceDetails.get(BICECEConstants.PHONE_NUMBER));
-        bicPage.populateField("portalCompanyName", payByInvoiceDetails.get(BICECEConstants.COMPANY_NAME));
-        bicPage.populateField("portalAddress", payByInvoiceDetails.get(BICECEConstants.ADDRESS));
-        bicPage.populateField("portalCity", payByInvoiceDetails.get(BICECEConstants.CITY));
-        bicPage.populateField("portalState", payByInvoiceDetails.get(BICECEConstants.STATE));
-        bicPage.populateField("portalPostalCode", payByInvoiceDetails.get(BICECEConstants.POSTAL_CODE));
+            bicPage.getMultipleWebElementsfromField("cartEmailAddress").get(0), 10);
+        bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
+
+        enterCustomerDetails(address);
       }
     } catch (MetadataException e) {
       e.printStackTrace();
@@ -1081,7 +1077,7 @@ public class BICTestBase {
             populateZipPaymentDetails();
             break;
           case BICECEConstants.LOC:
-            populatePayByInvoiceDetails(data);
+            populatePayByInvoiceDetails(data, address);
             break;
           default:
             populatePaymentDetails(paymentCardDetails);

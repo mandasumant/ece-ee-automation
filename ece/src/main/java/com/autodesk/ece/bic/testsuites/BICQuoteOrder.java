@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -158,6 +159,17 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateBicQuoteOrder() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
+    if (Objects.equals(System.getProperty("createPayer"), "true")) {
+      Names payerNames = BICTestBase.generateFirstAndLastNames();
+      String payerEmail = BICTestBase.generateUniqueEmailID();
+      Util.printInfo("Payer email: " + payerEmail);
+      getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+      getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
+      getBicTestBase().signOutUsingMeMenu();
+      testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
+      testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
+    }
+
     Address address = getBillingAddress();
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
@@ -217,6 +229,7 @@ public class BICQuoteOrder extends ECETestBase {
         testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
         testResults
             .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+        testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
       } catch (Exception e) {
         Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
       }
