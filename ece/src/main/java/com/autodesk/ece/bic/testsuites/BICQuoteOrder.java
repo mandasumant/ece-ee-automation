@@ -127,7 +127,7 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
-  public void validateBicQuote() throws MetadataException {
+  public void validateBicQuote() {
     String locale = "en_US";
     if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
       locale = System.getProperty("locale");
@@ -155,7 +155,7 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
-  public void validateBicQuoteOrder() throws MetadataException {
+  public void validateBicQuoteOrder() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     Address address = getBillingAddress();
@@ -232,6 +232,14 @@ public class BICQuoteOrder extends ECETestBase {
 
       portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+        Map<String, String> addresses = getBicTestBase().getBillingAddress(testDataForEachMethod);
+        portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+        portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID));
+        portaltb.payInvoice(testDataForEachMethod, addresses, testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE));
+        portaltb.submitPayment();
+        portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
+      }
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
       }
