@@ -592,7 +592,8 @@ public class PelicanTestBase {
 
       results.put("getPOResponse_oxygenID", jp.get("purchaser.oxygenId").toString());
       results.put(BICECEConstants.SUBTOTAL_WITH_TAX, jp.get("price.totalPrice").toString());
-      results.put(BICConstants.emailid, jp.get("purchaser.email").toString());
+      results.put(BICECEConstants.PAYER_EMAIL, jp.get("purchaser.email").toString());
+      results.put(BICECEConstants.PAYER_CSN, jp.get("purchaser.contactCsn").toString());
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service V4 API" + e.getMessage());
     }
