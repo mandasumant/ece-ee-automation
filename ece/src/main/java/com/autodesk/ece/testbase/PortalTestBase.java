@@ -1865,20 +1865,22 @@ public class PortalTestBase {
 
   public void waitForInvoicePageLoadToVisible(String text) {
     String title = "";
-    Util.sleep(20000);
-    for (int i = 0; i < 30; i++) {
-      Util.printInfo("Waiting for another 5 minutes on attempt #" + i);
+    int i = 1;
+    while (i < 16) {
       try {
         title = portalPage.getMultipleWebElementsfromField("invoicePageTableTitle").get(0).getText();
       } catch (Exception e) {
-        driver.navigate().refresh();
-        Util.sleep(10000);
+        e.printStackTrace();
       }
+      Util.printInfo("Waiting for another 5 minutes on attempt #" + i);
       if (!title.isEmpty() && title.contains(text)) {
         break;
-      } else if (i == 29 && !title.isEmpty() && title.contains(text)) {
+      } else if (i == 15 && !title.isEmpty() && title.contains(text)) {
         AssertUtils.fail("Invoice Order Page is not loaded even after 5 minutes");
       }
+      i++;
+      driver.navigate().refresh();
+      Util.sleep(500000);
     }
   }
 
