@@ -1854,6 +1854,7 @@ public class PortalTestBase {
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
     Util.sleep(5000);
     bicTestBase.enterBillingDetails(data, address, paymentMethod);
+    submitPayment();
   }
 
   @Step("CEP : Click Submit Payment Button")
