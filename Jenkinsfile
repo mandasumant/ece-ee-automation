@@ -201,7 +201,8 @@ pipeline {
                             params.CJT == true ||
                             params.APOLLO_Q2O == true ||
                             params.APOLLO_FLEX == true ||
-                            params.APOLLO_FLEX_MOE == true
+                            params.APOLLO_FLEX_MOE == true ||
+                            params.EDU == true
                         }
                     }
                 }
