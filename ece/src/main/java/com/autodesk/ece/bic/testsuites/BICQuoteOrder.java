@@ -181,8 +181,8 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
-    updateTestingHub(testResults);
     testResults.putAll(testDataForEachMethod);
+    updateTestingHub(testResults);
     // Signing out after quote creation
     getBicTestBase().signOutUsingMeMenu();
 
