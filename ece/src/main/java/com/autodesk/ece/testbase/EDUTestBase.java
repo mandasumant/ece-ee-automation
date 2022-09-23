@@ -394,6 +394,17 @@ public class EDUTestBase {
     getProductButton.click();
     Util.sleep(2500);
 
+    File downloadDirectory = Paths.get(System.getProperty("user.home"), "Downloads").toFile();
+    if (!downloadDirectory.exists()) {
+      Util.printInfo("Creating downloads folder");
+      boolean result = downloadDirectory.mkdir();
+      if (!result) {
+        Util.printError("Failed to create download directory");
+      }
+    } else {
+      Util.printInfo("Downloads folder already exists");
+    }
+
     // Wait for the download button to appear
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id(websdk)));
@@ -423,8 +434,6 @@ public class EDUTestBase {
 
     // Wait a bit for downloads to start
     Util.sleep(1000);
-
-    File downloadDirectory = Paths.get(System.getProperty("user.home"), "Downloads").toFile();
 
     try {
       int attempts = 0;
