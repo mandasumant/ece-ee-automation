@@ -249,7 +249,7 @@ public class BICQuoteOrder extends ECETestBase {
         Map<String, String> addresses = getBicTestBase().getBillingAddress(testDataForEachMethod);
         portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
         portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID));
-        portaltb.payInvoice(testDataForEachMethod, addresses, testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE));
+        portaltb.payInvoice(testDataForEachMethod, addresses, System.getProperty("newPaymentType"));
         portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
       }
       if (getBicTestBase().shouldValidateSAP()) {
