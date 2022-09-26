@@ -2251,6 +2251,16 @@ public class BICTestBase {
     return report;
   }
 
+  public Boolean isLOCPresentInCart() throws MetadataException {
+    if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+      Util.sleep(5000);
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    }
+
+    return bicPage.waitForField("payByInvoiceButton", true, 30000);
+  }
+
   public void goToDotcomSignin(LinkedHashMap<String, String> data) {
     String constructDotComURL = data.get("guacDotComBaseURL") + ".com";
 
