@@ -190,6 +190,29 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+
+    // Setup test base for Tax Exemption Document submission
+    if (Objects.equals(System.getProperty("submitTaxInfo"), "true")) {
+      com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+          getDriver(), getTestBase());
+
+      HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {{
+        put(BICConstants.exemptFromSalesTax, "Yes");
+        put(BICConstants.reasonForExempt, "Reseller");
+        put(BICConstants.buyerAccountType, "Reseller");
+        put("state", "Colorado");
+        put(BICConstants.registeredAs, "Retailer");
+        put(BICConstants.salesTaxType, "State Sales Tax");
+        put(BICConstants.businessType, "Construction");
+        put(BICConstants.certToSelect, "Uniform Sales and Use Tax Certificate - Multijurisdiction");
+        put(BICConstants.buyerContactName,
+            testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
+                BICECEConstants.LASTNAME));
+      }};
+
+      coreBicTestBase.uploadAndPunchOutFlow(dataForTTR, "Tax-Exempt Nonprofit");
+    }
+
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -441,7 +464,7 @@ public class BICQuoteOrder extends ECETestBase {
     portaltb.purchaseQuoteInAccount(testDataForEachMethod.get(BICConstants.cepURL),
         testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
 
-    getBicTestBase().clickToStayOnSameSite();
+    getBicTestBase().setStorageData();
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
