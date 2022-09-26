@@ -1306,8 +1306,7 @@ public class BICTestBase {
       Assert.fail("Environment is neither STG or INT in Maven parameter.");
     }
 
-    waitForLoadingSpinnerToComplete("loadingSpinner");
-    clickToStayOnSameSite();
+    setStorageData();
 
     return priceId;
   }
@@ -1391,7 +1390,7 @@ public class BICTestBase {
     data.put("checkoutUrl", url);
 
     getUrl(url);
-    clickToStayOnSameSite();
+    setStorageData();
   }
 
   @Step("Placing the Flex Order " + GlobalConstants.TAG_TESTINGHUB)
@@ -1492,7 +1491,7 @@ public class BICTestBase {
       // Catching exception to continue the test
     }
 
-    clickToStayOnSameSite();
+    setStorageData();
 
     signInIframe(data);
 
@@ -1516,7 +1515,7 @@ public class BICTestBase {
   }
 
   @SuppressWarnings({"static-access", "unused"})
-  @Step("Dot Com: Navigate to  Flex Cart from DotCom " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Dot Com: Navigate to Flex Cart from DotCom " + GlobalConstants.TAG_TESTINGHUB)
   public void navigateToFlexCartFromDotCom(LinkedHashMap<String, String> data) throws MetadataException {
     String priceId = navigateToCart(data);
 
@@ -1563,12 +1562,17 @@ public class BICTestBase {
   public void setStorageData() {
     try {
       JavascriptExecutor js = (JavascriptExecutor) driver;
-      Util.printInfo("Session Storage: set 'nonsensitiveHasProactiveChatLaunched' to true.");
-      js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasProactiveChatLaunched\",\"true\");");
+
+      Util.printInfo("Cookie: add 'OPTOUTMULTI_TYPE=A'");
+      js.executeScript("document.cookie=\"OPTOUTMULTI_TYPE=A\";");
+
       Util.printInfo("Local Storage: set 'usi_launched' to true.");
       js.executeScript("window.localStorage.setItem(\"usi_launched\",\"true\");");
+
       Util.printInfo("Session Storage: set 'nonsensitiveHasNonLocalModalLaunched' to true.");
       js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
+
+      driver.navigate().refresh();
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       e2.printStackTrace();
@@ -2021,20 +2025,6 @@ public class BICTestBase {
     return String.valueOf(num.charAt(12)).trim();
   }
 
-  public void acceptCookiesAndUSSiteLink() {
-    Util.sleep(3000);
-    try {
-      WebElement cookieButton = driver.findElement(
-          By.xpath("//div[@class=\"adsk-gdpr-confirm\"]/button[2]"));
-      cookieButton.click();
-      Util.printInfo("Cookies accepted.");
-    } catch (Exception e) {
-      Util.printInfo("Cookies accept box does not appear on the page.");
-    }
-
-    clickToStayOnSameSite();
-  }
-
   @Step("Guac: Test Trial Download  " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> testCjtTrialDownloadUI(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
@@ -2153,40 +2143,6 @@ public class BICTestBase {
     return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
   }
 
-  public void clickToStayOnSameSite() {
-    Boolean isLocaleSiteModalVisible = true;
-    Integer attempt = 0;
-
-    Util.printInfo("Local modal: Stay on same site.");
-    while (isLocaleSiteModalVisible) {
-      attempt++;
-
-      if (attempt > 3) {
-        Util.printInfo("Retry logic: Failed to find or click on 'Stay on same site' link, attempt, #" + attempt);
-        Util.printInfo("Session Storage: set 'nonsensitiveHasNonLocalModalLaunched' to true.");
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
-        driver.navigate().refresh();
-        waitForLoadingSpinnerToComplete("loadingSpinner");
-        break;
-      }
-
-      try {
-        Util.printInfo("Attempt: " + attempt);
-        bicPage.waitForField("bicStayOnSameSite", true, 5000);
-        isLocaleSiteModalVisible = driver.findElement(
-            By.xpath(bicPage.getFirstFieldLocator("bicStayOnSameSite"))).isDisplayed();
-        Util.printInfo("The link 'Stay on same site' is displayed. Attempt no " + attempt + " to close local modal.");
-        bicPage.clickUsingLowLevelActions("bicStayOnSameSite");
-        Util.sleep(2000);
-        Util.printInfo("Click action performed on the link 'Stay on same site'.");
-      } catch (Exception e) {
-        Util.printInfo("The link 'Stay on same site' is not present.");
-        isLocaleSiteModalVisible = false;
-      }
-    }
-  }
-
   public void navigateToDotComPage(LinkedHashMap<String, String> data) {
     String productName =
         System.getProperty(BICECEConstants.PRODUCT_NAME) != null ? System.getProperty(
@@ -2198,7 +2154,6 @@ public class BICTestBase {
     Util.printInfo("constructDotComURL " + constructDotComURL);
     getUrl(constructDotComURL);
     setStorageData();
-    acceptCookiesAndUSSiteLink();
   }
 
   private void closeGetHelpPopup() {
@@ -2294,6 +2249,16 @@ public class BICTestBase {
     }
 
     return report;
+  }
+
+  public Boolean isLOCPresentInCart() throws MetadataException {
+    if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+      Util.sleep(5000);
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    }
+
+    return bicPage.waitForField("payByInvoiceButton", true, 30000);
   }
 
   public void goToDotcomSignin(LinkedHashMap<String, String> data) {
