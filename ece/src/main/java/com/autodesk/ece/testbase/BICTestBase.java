@@ -111,7 +111,7 @@ public class BICTestBase {
     return strDate.toLowerCase();
   }
   @Step("Validate Pay By Invoice presence")
-  public Map<String, String> validatePayByInvoice() {
+  public void validatePayByInvoice() {
     try {
       bicPage.waitForFieldPresent("portalPayByInvoice", 30000);
       Assert.fail("Pay By Invoice option shouldn't be displayed");

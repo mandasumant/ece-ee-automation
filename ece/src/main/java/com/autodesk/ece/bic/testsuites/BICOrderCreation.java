@@ -105,7 +105,6 @@ public class BICOrderCreation extends ECETestBase {
     testDataForEachMethod.put("taxOptionEnabled", taxOptionEnabled);
 
     String paymentType = System.getProperty("payment");
-    String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
     PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
   }
