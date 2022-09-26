@@ -5,7 +5,7 @@ default:
   paymentMethod: "VISA"
   password: "iAg7eLGIEYMczxIlN8R0AA==:ewmfKH9qq0dmWn91Yw3pRA=="
   cepURL: "https://customer-stg.autodesk.com/"
-  accountPortalURL: https://stg-manage.autodesk.com
+  accountPortalURL: "https://stg-manage.autodesk.com"
   guacBaseURL: "https://checkout-pt.autodesk.com/"
   Quote2OrderBaseURL: "https://checkoutservice-stg.autodesk.com/quoteRedirect/"
   guacDotComBaseURL: "https://www-pt.autodesk"
@@ -48,6 +48,7 @@ default:
   accountsPortalProductsServicesUrl: "https://stg-manage.autodesk.com/products"
   accountsPortalAddSeatsUrl: "https://stg-manage.autodesk.com/billing/add-seats"
   accountsPortalQuoteUrl: "https://stg-manage.autodesk.com/billing/quotes"
+  accountPortalBillingInvoicesUrl: "https://int-manage.autodesk.com/billing/invoices"
   accountsProductPageUrl: "https://stg-manage.autodesk.com/products"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
