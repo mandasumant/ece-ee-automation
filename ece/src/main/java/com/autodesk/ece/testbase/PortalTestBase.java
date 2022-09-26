@@ -1874,17 +1874,15 @@ public class PortalTestBase {
         e.printStackTrace();
       }
       Util.printInfo("Waiting for another 5 minutes on attempt #" + i);
-      if (!title.isEmpty() && title.contains(text)) {
+      if (!title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]",""))!=0)) {
+        Util.PrintInfo("Invoices were generated successfuly");
         break;
-      } else if (i == 15 && !title.isEmpty() && title.contains(text)) {
+      } else if (i == 15 && !title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]",""))==0)) {
         AssertUtils.fail("Invoice Order Page is not loaded even after 5 minutes");
       }
       i++;
       driver.navigate().refresh();
       Util.sleep(500000);
-    }
-    if (Integer.parseInt(title.replaceAll("[^0-9]",""))==0){
-      AssertUtils.fail("Invoices are not generated");
     }
   }
 
