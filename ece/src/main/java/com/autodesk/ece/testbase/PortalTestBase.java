@@ -1742,14 +1742,6 @@ public class PortalTestBase {
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
   }
 
-  public void selectInvoice() throws MetadataException {
-    portalPage.checkIfElementExistsInPage("invoicesTab", 30);
-    Util.printInfo("Getting Invoices Check Boxes...");
-    List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
-    checkBoxes.stream().findFirst().ifPresent(ele -> ele.click());
-    Util.printInfo("Clicked on First Invoice Check Box....");
-  }
-
   public void selectAllInvoiceCheckBox() throws MetadataException {
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
     portalPage.clickUsingLowLevelActions("allInvoiceCheckBox");
@@ -1867,22 +1859,22 @@ public class PortalTestBase {
   public void waitForInvoicePageLoadToVisible(String text) {
     String title = "";
     int i = 1;
-    while (i < 16) {
+    while (i < 30) {
       try {
         title = portalPage.getMultipleWebElementsfromField("invoicePageTableTitle").get(0).getText();
       } catch (Exception e) {
         e.printStackTrace();
       }
       Util.printInfo("Waiting for another 5 minutes on attempt #" + i);
-      if (!title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]",""))!=0)) {
-        Util.PrintInfo("Invoices were generated successfuly");
+      if (!title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]", "")) != 0)) {
+        Util.PrintInfo("Invoices were generated successfully");
         break;
-      } else if (i == 15 && !title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]",""))==0)) {
+      } else if (i == 29 && !title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]", "")) == 0)) {
         AssertUtils.fail("Invoice Order Page is not loaded even after 5 minutes");
       }
       i++;
+      Util.sleep(300000);
       driver.navigate().refresh();
-      Util.sleep(500000);
     }
   }
 
