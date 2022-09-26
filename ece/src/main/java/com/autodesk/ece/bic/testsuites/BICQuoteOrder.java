@@ -464,7 +464,7 @@ public class BICQuoteOrder extends ECETestBase {
     portaltb.purchaseQuoteInAccount(testDataForEachMethod.get(BICConstants.cepURL),
         testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
 
-    getBicTestBase().clickToStayOnSameSite();
+    getBicTestBase().setStorageData();
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
