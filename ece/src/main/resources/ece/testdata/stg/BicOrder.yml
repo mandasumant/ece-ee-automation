@@ -248,3 +248,8 @@ validateFlexOrderNewCartRefund:
 validateFlexOrderNewCartReturningUser:
   isNonQuoteFlexOrder: "true"
   productType: "flex"
+
+validateLocNegativeCases:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"
