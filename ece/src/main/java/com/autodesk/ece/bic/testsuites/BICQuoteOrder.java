@@ -532,15 +532,15 @@ public class BICQuoteOrder extends ECETestBase {
             testDataForEachMethod.get("agentContactEmail"),
             testDataForEachMethod);
 
-    HashMap<String, String> justQuoteDeails = new HashMap<String, String>();
+    HashMap<String, String> justQuoteDetails = new HashMap<String, String>();
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     AssertUtils.assertFalse(getBicTestBase().isLOCPresentInCart(), "Bug: LOC Payment option should Not be seen");
 
-    justQuoteDeails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
-    justQuoteDeails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
+    justQuoteDetails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
+    justQuoteDetails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
 
-    updateTestingHub(justQuoteDeails);
+    updateTestingHub(justQuoteDetails);
   }
 
   private Address getBillingAddress() {
