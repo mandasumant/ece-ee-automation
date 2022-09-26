@@ -1883,6 +1883,9 @@ public class PortalTestBase {
       driver.navigate().refresh();
       Util.sleep(500000);
     }
+    if (Integer.parseInt(title.replaceAll("[^0-9]",""))==0){
+      AssertUtils.fail("Invoices are not generated");
+    }
   }
 
   public void verifyInvoiceStatus(String poNumber) throws MetadataException {
