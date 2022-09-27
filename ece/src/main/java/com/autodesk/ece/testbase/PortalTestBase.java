@@ -53,14 +53,16 @@ public class PortalTestBase {
   private final String accountsPortalProductsServicesUrl;
   private final String accountsPortalAddSeatsUrl;
   private final String accountsPortalQuoteUrl;
+  private final String accountPortalBillingInvoicesUrl;
   private final String accountsProductPageUrl;
   private final ZipPayTestBase zipTestBase;
+  private final BICTestBase bicTestBase;
   public WebDriver driver = null;
 
   public PortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
     portalPage = testbase.createPage("PAGE_PORTAL");
-    new BICTestBase(driver, testbase);
+    bicTestBase = new BICTestBase(driver, testbase);
     zipTestBase = new ZipPayTestBase(testbase);
 
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
@@ -74,6 +76,7 @@ public class PortalTestBase {
     accountsPortalProductsServicesUrl = defaultvalues.get("accountsPortalProductsServicesUrl");
     accountsPortalAddSeatsUrl = defaultvalues.get("accountsPortalAddSeatsUrl");
     accountsPortalQuoteUrl = defaultvalues.get("accountsPortalQuoteUrl");
+    accountPortalBillingInvoicesUrl = defaultvalues.get("accountPortalBillingInvoicesUrl");
     accountsProductPageUrl = defaultvalues.get("accountsProductPageUrl");
   }
 
@@ -1717,7 +1720,7 @@ public class PortalTestBase {
       portalLogin(userEmail, password);
     }
   }
-  
+
   public void navigateToSubscriptionRow() throws Exception{
     if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 60)) {
       Util.printInfo("Clicking on portal subscription and contracts link...");
@@ -1736,14 +1739,7 @@ public class PortalTestBase {
     }
     Util.printInfo("Clicking on Invoice and Credit Memos Link...");
     portalPage.clickUsingLowLevelActions("invoicesAndCreditMemos");
-  }
-
-  public void selectInvoiceCheckBox() throws MetadataException {
-    portalPage.checkIfElementExistsInPage("invoicesTab", 30);
-    Util.printInfo("Getting Invoices Check Boxes...");
-    List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
-    checkBoxes.stream().findFirst().ifPresent(ele -> ele.click());
-    Util.printInfo("Clicked on First Invoice Check Box....");
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
   }
 
   public void selectAllInvoiceCheckBox() throws MetadataException {
@@ -1752,18 +1748,18 @@ public class PortalTestBase {
     Util.printInfo("Clicked on All Invoice Check Box....");
   }
 
-  public double selectInvoiceCheckBox(String invoice) throws MetadataException {
+  public double selectInvoice(String poNumber) throws MetadataException {
     double invoiceAmount = 0.00;
     List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
-    List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
-    List<WebElement> invoices = portalPage.getMultipleWebElementsfromField("invoiceNumbers");
-    for (int i = 0; i < invoices.size(); i++) {
-      if (invoices.get(i).getText().trim().equalsIgnoreCase(invoice.trim())) {
+    List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("purchaseOrderNumbersList");
+    for (int i = 0; i < purchaseNumbers.size(); i++) {
+      if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim())) {
         checkBoxes.get(i).click();
+        List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
         invoiceAmount = Double.parseDouble(amounts.get(i).getText().replaceAll("[^0-9.]", ""));
         break;
-      } else if (i == invoices.size() - 1 && invoices.get(i).getText().trim().equalsIgnoreCase(invoice.trim())) {
-        AssertUtils.assertFalse(true, "unable to find the Invoice" + invoice);
+      } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim())) {
+        AssertUtils.assertFalse(true, "unable to find the Invoice" + poNumber);
       }
     }
     return invoiceAmount;
@@ -1811,27 +1807,87 @@ public class PortalTestBase {
     return Double.parseDouble(paymentTotalAmount);
   }
 
-  @Step("Select and complete the payment for Invoice")
-  public void selectAndSubmitPaymentForInvoice(String[] invoiceNumbers) throws Exception {
-    navigateToInvoiceCreditMemos();
+  @Step("Select invoice and credit memo validations")
+  public void selectInvoiceAndValidateCreditMemo(String poNumber) throws Exception {
+    String[] poNumbers = poNumber.split(",");
+    openPortalURL(accountPortalBillingInvoicesUrl);
+    waitForInvoicePageLoadToVisible("Open invoices");
     double invoiceAmount = 0.00;
-    for (int i = 0; i < invoiceNumbers.length; i++) {
-      Util.printInfo("Selecting Invoice Number:" + invoiceNumbers[i]);
-      invoiceAmount = invoiceAmount + selectInvoiceCheckBox(invoiceNumbers[i]);
+    for (int i = 0; i < poNumbers.length; i++) {
+      Util.printInfo("Selecting PO Number:" + poNumbers[i]);
+      invoiceAmount = invoiceAmount + selectInvoice(poNumbers[i]);
     }
     selectAllInvoicesPayButton();
-    portalPage.wait(3000);
-    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumbers);
+    Util.sleep(8000);
+    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
     double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout();
     AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
-    portalPage.clickUsingLowLevelActions("continueButton");
-    double creditMemoAmount = Double.parseDouble(portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
+    double creditMemoAmount = 0.00;
+    if (portalPage.isFieldVisible("creditMemoPrice")) {
+      portalPage.clickUsingLowLevelActions("continueButton");
+      creditMemoAmount = Double.parseDouble(portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
+    }
     double afterAddCreditMemoAmount = getPaymentTotalFromCheckout();
     AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
-    Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumbers);
+    Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
+  }
+
+  @Step("CEP : Launch Account portal")
+  public void loginToAccountPortal(LinkedHashMap<String, String> data, String portalUserName,
+                                   String portalPassword) {
+    openPortalBICLaunch(data.get("accountPortalURL"));
+    if (isPortalLoginPageVisible()) {
+      portalLogin(portalUserName, portalPassword);
+    }
+  }
+
+  @Step("CEP : Pay Invoice")
+  public void payInvoice(LinkedHashMap<String, String> data, Map<String, String> address, String paymentMethod) throws Exception {
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
-    Util.printInfo("Clicked on Payment Tab for Invoice Number:" + invoiceNumbers);
+    Util.sleep(5000);
+    bicTestBase.enterBillingDetails(data, address, paymentMethod);
+    submitPayment();
+  }
+
+  @Step("CEP : Click Submit Payment Button")
+  public void submitPayment() throws Exception {
     portalPage.clickUsingLowLevelActions("submitPaymentButton");
-    Util.printInfo("Clicked on Submit Payment Button for Invoice Number:" + invoiceNumbers);
+    Util.sleep(2000);
+    Util.printInfo("Payment for Invoice is successfully Completed");
+  }
+
+  public void waitForInvoicePageLoadToVisible(String text) {
+    String title = "";
+    int i = 1;
+    while (i < 30) {
+      try {
+        title = portalPage.getMultipleWebElementsfromField("invoicePageTableTitle").get(0).getText();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      Util.printInfo("Waiting for another 5 minutes on attempt #" + i);
+      if (!title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]", "")) != 0)) {
+        Util.PrintInfo("Invoices were generated successfully");
+        break;
+      } else if (i == 29 && !title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]", "")) == 0)) {
+        AssertUtils.fail("Invoice Order Page is not loaded even after 5 minutes");
+      }
+      i++;
+      Util.sleep(300000);
+      driver.navigate().refresh();
+    }
+  }
+
+  public void verifyInvoiceStatus(String poNumber) throws MetadataException {
+    List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("purchaseOrderNumbersList");
+    List<WebElement> invoiceStatus = portalPage.getMultipleWebElementsfromField("invoiceStatus");
+    for (int i = 0; i < purchaseNumbers.size(); i++) {
+      if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim()) && invoiceStatus.get(i).getText().equalsIgnoreCase("Paid")) {
+        Util.PrintInfo("Invoice Status is updated as PAID for PO Number " + poNumber);
+        break;
+      } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim()) && invoiceStatus.get(i).getText().equalsIgnoreCase("Paid")) {
+        AssertUtils.assertFalse(true, " Able to find the Invoice PO Number " + poNumber + " but the status is " + invoiceStatus.get(i).getText());
+      }
+    }
   }
 }

@@ -11,7 +11,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
     minAmountPBI: "1,000.00"
     maxAmountPBI: "100,000.00"
-    
+
   en_CA:
     region: "ENCA"
     storeName: "STORE-CA"
@@ -492,7 +492,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070268019@letscheck.email"
     minAmountPBI: "935.00"
     maxAmountPBI: "93,520.00"
-      
+
   en_SK:
     region: "ENSK"
     storeName: "STORE-EU"
@@ -557,7 +557,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5119623224@letscheck.email"
     minAmountPBI: "935.00"
     maxAmountPBI: "93,520.00"
-    
+
   ############################################################
   #Additional locales for testing Appolo
   ############################################################
