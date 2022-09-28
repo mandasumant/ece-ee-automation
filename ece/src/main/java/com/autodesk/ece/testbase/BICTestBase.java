@@ -1422,13 +1422,13 @@ public class BICTestBase {
       populateTaxIdForFlex();
     }
 
-    if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
       bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
       Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
-    if (bicPage.checkFieldExistence("customerDetailsContinue2")) {
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 15)) {
       bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
       Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
