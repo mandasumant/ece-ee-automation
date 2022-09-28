@@ -53,7 +53,7 @@ public class PelicanTestBase {
     Util.printInfo("Refund URL: " + baseUrl);
     Util.printInfo("Request Body: " + requestParams.toJSONString());
     Response response = RestAssured.given().headers(header).body(requestParams.toJSONString()).post(baseUrl);
-    Util.printInfo(response.asString());
+    Util.printInfo(BICECEConstants.RESULT + response.asString());
 
     int statusCode = response.getStatusCode();
     if (statusCode != 201) {
@@ -395,7 +395,7 @@ public class PelicanTestBase {
 
     Response response = createRefundOrder(refundPurchaseOrderV4Url, header);
     String result = response.getBody().asString();
-    Util.PrintInfo(BICECEConstants.RESULT + result);
+
   }
 
   @Step("Renew Pelican Subscription" + GlobalConstants.TAG_TESTINGHUB)
