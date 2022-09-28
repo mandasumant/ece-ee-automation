@@ -211,6 +211,7 @@ public class BICQuoteOrder extends ECETestBase {
       }};
 
       coreBicTestBase.uploadAndPunchOutFlow(dataForTTR, "Tax-Exempt Nonprofit");
+      testDataForEachMethod.put("taxOptionEnabled", "N");
     }
 
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
