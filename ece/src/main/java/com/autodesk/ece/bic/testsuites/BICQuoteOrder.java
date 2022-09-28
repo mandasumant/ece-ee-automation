@@ -259,22 +259,26 @@ public class BICQuoteOrder extends ECETestBase {
 
       updateTestingHub(testResults);
 
-      portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-          results.get(BICConstants.emailid),
-          PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+        String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
+            System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
+                BICECEConstants.VISA : BICECEConstants.CREDITCARD;
+        testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
+        portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+        portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID));
+        portaltb.payInvoice(testDataForEachMethod);
+        portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
+      } else {
+        portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+            results.get(BICConstants.emailid),
+            PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+          portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+        }
       }
 
       portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
-      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
-        Map<String, String> addresses = getBicTestBase().getBillingAddress(testDataForEachMethod);
-        portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
-        portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID));
-        portaltb.payInvoice(testDataForEachMethod, addresses, System.getProperty("newPaymentType"));
-        portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
-      }
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
       }
@@ -357,8 +361,8 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"quote-RefundOrder"}, description = "Quote refund order")
-  public void validateQuoteRefundOrder() throws MetadataException {
+  @Test(groups = {"quote-RefundOrder"}, description = "Refund Quote orders with and without Credit Memo use cases")
+  public void validateQuoteRefundOrder() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     Address address = getBillingAddress();
@@ -404,15 +408,36 @@ public class BICQuoteOrder extends ECETestBase {
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
-    // Validate Portal
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+      portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid),
+          PASSWORD);
+      if (System.getProperty("issueCreditMemo") != null || System.getProperty("newPaymentType") != null) {
+        portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID));
+        // If issueCreditMemo param is passed then we issue Credit memo before we refund
+        if (System.getProperty("issueCreditMemo") != null) {
+          //Issue Credit Memo to order before Refund
+        }
+      }
+
+      // Validate Portal. If its LOC and if test has newPaymentType param then we pay the invoice before refund
+      if (System.getProperty("newPaymentType") != null) {
+        String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
+            System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
+                BICECEConstants.VISA : BICECEConstants.CREDITCARD;
+        testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
+
+        portaltb.payInvoice(testDataForEachMethod);
+        portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
+      }
+    } else {
+      portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+          results.get(BICConstants.emailid),
+          PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    }
+
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
       portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
-
-    portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrderV4(results);

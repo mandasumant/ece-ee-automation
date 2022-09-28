@@ -1842,10 +1842,10 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Pay Invoice")
-  public void payInvoice(LinkedHashMap<String, String> data, Map<String, String> address, String paymentMethod) throws Exception {
+  public void payInvoice(LinkedHashMap<String, String> data) throws Exception {
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
     Util.sleep(5000);
-    bicTestBase.enterBillingDetails(data, address, paymentMethod);
+    bicTestBase.enterBillingDetails(data, bicTestBase.getBillingAddress(data), data.get(BICECEConstants.PAYMENT_TYPE));
     submitPayment();
   }
 
@@ -1869,8 +1869,8 @@ public class PortalTestBase {
       if (!title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]", "")) != 0)) {
         Util.PrintInfo("Invoices were generated successfully");
         break;
-      } else if (i == 29 && !title.isEmpty() && title.contains(text) && (Integer.parseInt(title.replaceAll("[^0-9]", "")) == 0)) {
-        AssertUtils.fail("Invoice Order Page is not loaded even after 5 minutes");
+      } else if (i == 29) {
+        AssertUtils.fail("Retries exhausted: Invoice Order not loaded even after 150 minutes");
       }
       i++;
       Util.sleep(300000);
