@@ -94,7 +94,7 @@ public class BICTestBase {
 
     String sourceName = "thub";
     String emailDomain = "letscheck.pw";
-    if(emailType != null && !emailType.isEmpty()) {
+    if (emailType != null && !emailType.isEmpty()) {
       if (Arrays.asList("biz", "edu", "gov", "org").contains(emailType)) {
         sourceName = emailType + "-" + sourceName;
       }
@@ -964,24 +964,40 @@ public class BICTestBase {
 
     bicPage.waitForField("payByInvoiceButton", true, 30000);
     while (!bicPage.waitForField("payByInvoiceButton", true, 30000)) {
+      if (count > 3) {
+        AssertUtils.fail("Retries exhausted: Pay By Invoice Tab is missing in Cart");
+      }
+      driver.navigate().refresh();
       Util.sleep(3000);
       count++;
-      if (count > 3) {
-        break;
-      }
-      if (count > 2) {
-        driver.navigate().refresh();
-      }
     }
 
     try {
+      //if we refreshed the page, we need to click on continue again
+      if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+        bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+        Util.sleep(5000);
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      }
+
       Util.printInfo("Clicking on pay By Invoice tab...");
       bicPage.clickUsingLowLevelActions("payByInvoiceButton");
+
+      if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
+        if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
+          bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
+          bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
+          
+          bicPage.click("reviewLOCOrder");
+        }
+      }
+
+      bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10);
 
       if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
         if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
           bicPage.clickUsingLowLevelActions("yesPurchaseOrderOption");
-          Util.printInfo("Entering Purchase order number : " +payByInvoiceDetails.get("orderNumber") );
+          Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get("orderNumber"));
           bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
         }
       } else {
@@ -990,7 +1006,8 @@ public class BICTestBase {
 
       if (payByInvoiceDetails.containsKey(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH)) {
         if (!payByInvoiceDetails.get(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH).equals("")) {
-          bicPage.populateField("portalPurchaseOrderDocument", payByInvoiceDetails.get(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH));
+          bicPage.populateField("portalPurchaseOrderDocument",
+              payByInvoiceDetails.get(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH));
         }
       }
 
@@ -998,17 +1015,17 @@ public class BICTestBase {
         if (!payByInvoiceDetails.get(BICECEConstants.INVOICE_NOTES).equals("")) {
           bicPage.clickUsingLowLevelActions("portalAddinvoiceLink");
           bicPage.waitForElementVisible(
-                  bicPage.getMultipleWebElementsfromField("portalAddInvoiceNotesTextArea").get(0), 10);
+              bicPage.getMultipleWebElementsfromField("portalAddInvoiceNotesTextArea").get(0), 10);
           bicPage.populateField("portalAddInvoiceNotesTextArea", payByInvoiceDetails.get("invoiceNotes"));
         }
       }
 
-      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL)) {
+      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL) && bicPage.waitForField("payerSameAsCustomer", true, 10000)) {
         bicPage.clickUsingLowLevelActions("payerSameAsCustomer");
         bicPage.waitForElementVisible(
             bicPage.getMultipleWebElementsfromField("cartEmailAddress").get(0), 10);
         bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
-
+        address.put(BICECEConstants.ORGANIZATION_NAME, payByInvoiceDetails.get(BICECEConstants.ORGANIZATION_NAME));
         enterCustomerDetails(address);
       }
     } catch (MetadataException e) {
@@ -1180,8 +1197,8 @@ public class BICTestBase {
     try {
       debugPageUrl("Step 1: Get Purchase Order number for Confirmation page");
       orderNumber = driver.findElement(By.xpath(
-                      "//*[@data-testid='checkout--order-confirmation--invoice-details--order-number']"))
-              .getText();
+              "//*[@data-testid='checkout--order-confirmation--invoice-details--order-number']"))
+          .getText();
     } catch (Exception e) {
       debugPageUrl("Step 2: Check order number is Null");
     }
@@ -1189,13 +1206,13 @@ public class BICTestBase {
     if (orderNumber == null) {
       try {
         if (driver.findElement(By.xpath(
-                        "//*[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
-                .isDisplayed()) {
+                "//*[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
+            .isDisplayed()) {
           Util.printWarning(
-                  "Export compliance issue is present. Checking for order number in the Pelican response");
+              "Export compliance issue is present. Checking for order number in the Pelican response");
           JavascriptExecutor executor = (JavascriptExecutor) driver;
           String response = (String) executor
-                  .executeScript("return sessionStorage.getItem('purchase')");
+              .executeScript("return sessionStorage.getItem('purchase')");
           JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
           JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
           orderNumber = purchaseOrder.get("id").toString();
@@ -1245,11 +1262,10 @@ public class BICTestBase {
       AssertUtils.assertTrue(orderTotal.equals(orderTotalCheckout),
           "The checkout page total and confirmation page total do not match.");
 
-    }
-    else {
+    } else {
       String orderTotal = driver
-              .findElement(By.xpath("//p[@data-testid='checkout--order-confirmation--invoice-details--order-total']"))
-              .getText();
+          .findElement(By.xpath("//p[@data-testid='checkout--order-confirmation--invoice-details--order-total']"))
+          .getText();
       orderTotal = orderTotal.replaceAll("[^0-9]", "");
       data.put(BICECEConstants.FINAL_TAX_AMOUNT, orderTotal);
     }
@@ -1399,7 +1415,6 @@ public class BICTestBase {
     String orderNumber = null;
 
     Map<String, String> address = getBillingAddress(data);
-
     if (data.get("isNonQuoteFlexOrder") != null) {
       enterCustomerDetails(address);
       data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
@@ -1681,11 +1696,12 @@ public class BICTestBase {
     Util.printInfo("Checking if Chat Popup Present. Done");
 
     if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)
-        && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC) ) {
+        && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get("isNonQuoteFlexOrder") != null &&
         data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
-        data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser") && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+        data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser") && !paymentMethod.equalsIgnoreCase(
+        BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if ((data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
         .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE))

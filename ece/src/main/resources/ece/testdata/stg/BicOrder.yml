@@ -250,6 +250,11 @@ validateFlexOrderNewCartReturningUser:
   isNonQuoteFlexOrder: "true"
   productType: "flex"
 
+validateBicQuoteOrderMultiInvoice:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"
+
 validateLocNegativeCases:
   term: "Annual"
   accessModel: "Flex"

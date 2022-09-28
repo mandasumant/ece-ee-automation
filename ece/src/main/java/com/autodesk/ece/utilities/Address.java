@@ -26,6 +26,7 @@ public class Address {
 
   public Address(String localeMap) {
     String[] billingAddress = localeMap.split("@");
+
     this.company = getRandomCompanyName();
     this.addressLine1 = billingAddress[1];
     this.city = billingAddress[2];

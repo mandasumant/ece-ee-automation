@@ -231,7 +231,7 @@ public class PWSTestBase {
 
     String finalizeBody = createQuoteFinalizeBody(quoteId, agentCsn, agentContactEmail);
 
-    Util.sleep(120000);
+    Util.sleep(60000);
 
     Response response = given()
         .body(finalizeBody)

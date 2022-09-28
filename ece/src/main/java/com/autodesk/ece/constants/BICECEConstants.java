@@ -189,5 +189,8 @@ public class BICECEConstants extends BICConstants {
   public static final String INVOICE_NOTES = "invoiceNotes";
   public static final String PAYER_EMAIL = "payerEmail";
   public static final String PAYER_CSN = "payerCSN";
+  public static final String CREATE_PAYER = "createPayer";
+  public static final String IS_SAME_PAYER = "isSamePayer";
+
 }
 
