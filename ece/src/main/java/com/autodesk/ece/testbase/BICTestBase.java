@@ -1891,6 +1891,10 @@ public class BICTestBase {
     }
   }
 
+  public Boolean isTTRButtonPresentInCart() {
+    return bicPage.isFieldPresent("cartTTRRedirectionButton");
+  }
+
   private void validateBicOrderNumber(String orderNumber) {
     if (orderNumber != null) {
       Util.printInfo("Order No: " + orderNumber);
