@@ -55,6 +55,7 @@ public class PortalTestBase {
   private final String accountsPortalQuoteUrl;
   private final String accountPortalBillingInvoicesUrl;
   private final String accountsProductPageUrl;
+  private final String payBYInvoicePageURL;
   private final ZipPayTestBase zipTestBase;
   private final BICTestBase bicTestBase;
   public WebDriver driver = null;
@@ -78,6 +79,7 @@ public class PortalTestBase {
     accountsPortalQuoteUrl = defaultvalues.get("accountsPortalQuoteUrl");
     accountPortalBillingInvoicesUrl = defaultvalues.get("accountPortalBillingInvoicesUrl");
     accountsProductPageUrl = defaultvalues.get("accountsProductPageUrl");
+    payBYInvoicePageURL = defaultvalues.get("payBYInvoicePageURL");
   }
 
   public static String timestamp() {
@@ -1841,6 +1843,7 @@ public class PortalTestBase {
     }
   }
 
+
   @Step("CEP : Pay Invoice")
   public void payInvoice(LinkedHashMap<String, String> data) throws Exception {
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
@@ -1888,6 +1891,28 @@ public class PortalTestBase {
       } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim()) && invoiceStatus.get(i).getText().equalsIgnoreCase("Paid")) {
         AssertUtils.assertFalse(true, " Able to find the Invoice PO Number " + poNumber + " but the status is " + invoiceStatus.get(i).getText());
       }
+
+    }
+  }
+  @Step("Login to blockedCustomer Account")
+  public void loginToPayByInvoice(String portalUserName,String portalPassword) throws Exception{
+    driver.get(payBYInvoicePageURL);
+    portalPage.getMultipleWebElementsfromField("usernameCEP").get(0).sendKeys(portalUserName);
+    portalPage.getMultipleWebElementsfromField("verifyUserCEPBtn").get(0).click();
+    Util.sleep(2000);
+    portalPage.getMultipleWebElementsfromField("passCEP").get(0).click();
+    portalPage.getMultipleWebElementsfromField("passCEP").get(0).sendKeys(portalPassword);
+    Util.sleep(2000);
+    portalPage.getMultipleWebElementsfromField("createAccount").get(0).click();
+  }
+  @Step("Validate Pay By Invoice presence")
+  public void validatePayByInvoice() {
+    try {
+      portalPage.waitForFieldPresent("portalPayByInvoice", 30000);
+      Assert.fail("Pay By Invoice option shouldn't be displayed");
+    }
+    catch(Exception ex){
+      Util.printInfo("Pay By invoice is not displayed");
     }
   }
 }

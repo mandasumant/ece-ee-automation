@@ -110,16 +110,7 @@ public class BICTestBase {
 
     return strDate.toLowerCase();
   }
-  @Step("Validate Pay By Invoice presence")
-  public void validatePayByInvoice() {
-    try {
-      bicPage.waitForFieldPresent("portalPayByInvoice", 30000);
-      Assert.fail("Pay By Invoice option shouldn't be displayed");
-    }
-    catch(Exception ex){
-      Util.printInfo("Pay By invoice is not displayed");
-    }
-  }
+
   @Step("get billing address")
   public Map<String, String> getBillingAddress(String address) {
     Map<String, String> ba = null;
@@ -2290,6 +2281,7 @@ public class BICTestBase {
     }
 
     public HashMap<String, String> getMap() {
+
       return new HashMap<String, String>() {{
         put(BICECEConstants.FIRSTNAME, firstName);
         put(BICECEConstants.LASTNAME, lastName);

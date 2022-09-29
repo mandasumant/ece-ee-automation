@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.Assert;
 
 public class BICQuoteOrder extends ECETestBase {
 
@@ -583,5 +584,11 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     return new Address(billingAddress);
+  }
+
+  @Test(groups = {"PayByInvoiceBlock"}, description = "Pay By Invoices Block User Validation")
+  public void validatePayByInvoices(String portalUserName, String portalPassword) throws Exception {
+    getPortalTestBase().loginToPayByInvoice(portalUserName,portalPassword);
+    getPortalTestBase().validatePayByInvoice();
   }
 }
