@@ -42,7 +42,7 @@ public class ECETestBase {
     portaltb = new PortalTestBase(testbase);
     resttb = new ApigeeTestBase();
     dynamotb = new DynamoDBValidation();
-    pelicantb = new PelicanTestBase();
+    pelicantb = new PelicanTestBase(clientId, clientSecret, hostname);
     subscriptionServiceV4Testbase = new SubscriptionServiceV4TestBase();
     thutil = new TestinghubUtil(testbase);
     tibcotb = new AutomationTibcoTestBase();

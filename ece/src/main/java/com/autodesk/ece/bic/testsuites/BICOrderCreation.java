@@ -1395,7 +1395,7 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   private void triggerPelicanRenewalJob(HashMap<String, String> results) {
-    PelicanTestBase pelicanTB = new PelicanTestBase();
+    PelicanTestBase pelicanTB = new PelicanTestBase(clientId, clientSecret, hostname);
     pelicanTB.renewSubscription(results);
     // Wait for the Pelican job to complete
     Util.sleep(600000);

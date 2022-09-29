@@ -293,6 +293,124 @@ public class BICQuoteOrder extends ECETestBase {
     }
   }
 
+  @Test(groups = {"bic-invocienotpayment"}, description = "Validation of Create BIC Quote Order")
+  public void validteQuoteInvocieNotPaymant() throws Exception {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    Address address = getBillingAddress();
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+                    testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+            PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+            testDataForEachMethod.get("agentContactEmail"),
+            testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.putAll(testDataForEachMethod);
+    updateTestingHub(testResults);
+    // Signing out after quote creation
+    getBicTestBase().signOutUsingMeMenu();
+
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+
+
+
+    // Setup test base for Tax Exemption Document submission
+    if (Objects.equals(System.getProperty("submitTaxInfo"), BICECEConstants.TRUE)) {
+      com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase =
+              new com.autodesk.testinghub.core.testbase.BICTestBase(getDriver(), getTestBase());
+
+      HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {{
+        put(BICConstants.exemptFromSalesTax, "Yes");
+        put(BICConstants.reasonForExempt, "Reseller");
+        put(BICConstants.buyerAccountType, "Reseller");
+        put("state", "Colorado");
+        put(BICConstants.registeredAs, "Retailer");
+        put(BICConstants.salesTaxType, "State Sales Tax");
+        put(BICConstants.businessType, "Construction");
+        put(BICConstants.certToSelect, "Uniform Sales and Use Tax Certificate - Multijurisdiction");
+        put(BICConstants.buyerContactName,
+                testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
+                        BICECEConstants.LASTNAME));
+      }};
+
+      coreBicTestBase.uploadAndPunchOutFlow(dataForTTR, "Tax-Exempt Nonprofit");
+      testDataForEachMethod.put("taxOptionEnabled", "N");
+    }
+
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.putAll(results);
+    updateTestingHub(testResults);
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
+
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      // Getting a PurchaseOrder details from pelican
+      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+      // Compare tax in Checkout and Pelican
+      getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+              results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+      // Validate Quote Details with Pelican
+      pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
+      // Get find Subscription ById
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+      try {
+        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+        testResults
+                .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+        testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+        testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        testResults.put(BICConstants.subscriptionPeriodStartDate,
+                results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+        testResults.put(BICConstants.subscriptionPeriodEndDate,
+                results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+        testResults
+                .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+        testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
+
+      updateTestingHub(testResults);
+
+      // commerce api call
+      pelicantb.CommerceNotPaymentAPI(results);
+
+      // Getting a PurchaseOrder details from pelican
+      JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
+      results.put("refund_orderState", jp.get("orderState").toString());
+
+      // Verify that Order status is Refunded
+      AssertUtils.assertEquals("Order status should change to Not Payment",
+              results.get("refund_orderState"), "NON_PAYMENT");
+
+
+
+
+
+
+
+      // Make API call to commerce for changing the order not payment and then validate palican pucrchase order ( Order status should change to not paymt) and subcription should be cancelled
+    }
+  }
+
+
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
   public void validateMultiLineItemQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
@@ -697,7 +815,7 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(justQuoteDetails);
   }
 
-  private Address getBillingAddress() {
+      private Address getBillingAddress() {
     String billingAddress;
     String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
     if (addressViaParam != null && !addressViaParam.isEmpty()) {

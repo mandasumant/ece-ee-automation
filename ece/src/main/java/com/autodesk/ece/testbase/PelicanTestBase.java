@@ -18,26 +18,36 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
+
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 public class PelicanTestBase {
 
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
 
-  public PelicanTestBase() {
+  private final String clientId;
+  private final String clientSecret;
+  private final String hostname;
+
+  public PelicanTestBase(String clientId, String clientSecret, String hostname) {
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.hostname = hostname;
     Util.PrintInfo("PelicanTestBase from ece");
   }
 
@@ -398,6 +408,69 @@ public class PelicanTestBase {
 
   }
 
+  @Step("Refund O2P Orders" + GlobalConstants.TAG_TESTINGHUB)
+  public void CommerceNotPaymentAPI(HashMap<String, String> data, String csn,) {
+
+    PelicanAccessInfo access_token = getAccessToken();
+    String signature = signString(access_token.token, clientSecret, access_token.timestamp);
+    String quoteNumber = null;
+
+    Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
+      put("Authorization", "Bearer " + access_token.token);
+      put("CSN", csn);
+      put("signature", signature);
+      put("timestamp", access_token.timestamp);
+      put("timezone_city", System.getProperty("timezone"));
+    }};
+
+    String payloadBody = createQuoteBody(data, address, csn, agentContactEmail, isMultiLineItem);
+    Util.printInfo("Create Quote Payload: " + payloadBody);
+    Util.printInfo("Headers: " + pwsRequestHeaders);
+
+    Response response = given()
+            .headers(pwsRequestHeaders)
+            .body(payloadBody)
+            .post("https://" + hostname + "/v1/quotes")
+            .then().extract().response();
+
+    Util.printInfo("Quote Creation Response : " + response.prettyPrint());
+
+  }
+
+  public PelicanAccessInfo getAccessToken() {
+    String base64_header = new String(Base64.getEncoder().encode((clientId + ":" + clientSecret).getBytes()));
+    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    String timestamp = String.valueOf(cal.getTimeInMillis() / 1000);
+    String signature = signString(clientId, clientSecret, timestamp);
+
+    String access_token = given()
+            .contentType(ContentType.JSON)
+            .header("signature", signature)
+            .header("timestamp", timestamp)
+            .header("Authorization", "Basic " + base64_header)
+            .header("timezone_city", System.getProperty("timezone"))
+            .post("https://" + hostname + "/v2/oauth/generateaccesstoken?grant_type=client_credentials")
+            .then().extract().response()
+            .jsonPath().getString("access_token");
+
+    return new PelicanAccessInfo(timestamp, access_token);
+  }
+
+  private String signString(String string, String secret, String timestamp) {
+    String callback = "www.autodesk.com";
+    String base_str = callback + string + timestamp;
+    try {
+      Mac mac = Mac.getInstance("HmacSHA256");
+      SecretKeySpec keySpec = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+      mac.init(keySpec);
+      byte[] signatureBytes = mac.doFinal(base_str.getBytes(StandardCharsets.UTF_8));
+      return new String(Base64.getEncoder().encode(signatureBytes));
+    } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+      e.printStackTrace();
+    }
+    return "";
+  }
+
   @Step("Renew Pelican Subscription" + GlobalConstants.TAG_TESTINGHUB)
   public void renewSubscription(HashMap<String, String> data) {
     String pelicanRenewSubscriptionUrl = data.get("pelicanRenewalURL");
@@ -727,6 +800,16 @@ public class PelicanTestBase {
 
     } catch (Exception e) {
       Util.printInfo("Exception in validating subscription start date . " + e.getMessage());
+    }
+  }
+  public static class PelicanAccessInfo {
+
+    public String timestamp;
+    public String token;
+
+    public PelicanAccessInfo(String timestamp, String token) {
+      this.timestamp = timestamp;
+      this.token = token;
     }
   }
 }
