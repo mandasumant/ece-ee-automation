@@ -1025,7 +1025,11 @@ public class BICTestBase {
         bicPage.waitForElementVisible(
             bicPage.getMultipleWebElementsfromField("cartEmailAddress").get(0), 10);
         bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
-        address.put(BICECEConstants.ORGANIZATION_NAME, payByInvoiceDetails.get(BICECEConstants.ORGANIZATION_NAME));
+
+        if (payByInvoiceDetails.containsKey(BICECEConstants.ORGANIZATION_NAME)) {
+          address.put(BICECEConstants.ORGANIZATION_NAME, payByInvoiceDetails.get(BICECEConstants.ORGANIZATION_NAME));
+        }
+
         enterCustomerDetails(address);
       }
     } catch (MetadataException e) {
