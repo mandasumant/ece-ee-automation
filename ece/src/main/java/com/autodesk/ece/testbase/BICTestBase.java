@@ -961,47 +961,63 @@ public class BICTestBase {
   @Step("Populate pay by invoice details")
   public void populatePayByInvoiceDetails(Map<String, String> payByInvoiceDetails, Map<String, String> address) {
     int count = 0;
-
-    bicPage.waitForField("payByInvoiceButton", true, 30000);
-    while (!bicPage.waitForField("payByInvoiceButton", true, 30000)) {
-      if (count > 3) {
-        AssertUtils.fail("Retries exhausted: Pay By Invoice Tab is missing in Cart");
-      }
-      driver.navigate().refresh();
-      Util.sleep(3000);
-      count++;
-    }
+    Boolean success = true;
 
     try {
-      //if we refreshed the page, we need to click on continue again
-      if (bicPage.checkFieldExistence("customerDetailsContinue")) {
-        bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
-        Util.sleep(5000);
-        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      }
-
-      Util.printInfo("Clicking on pay By Invoice tab...");
-      bicPage.clickUsingLowLevelActions("payByInvoiceButton");
-
-      if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
-        if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
-          bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
-          bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
-
-          bicPage.click("reviewLOCOrder");
+      bicPage.waitForField("payByInvoiceButton", true, 30000);
+      while (success) {
+        count++;
+        if (count > 5) {
+          AssertUtils.fail("Retries exhausted: Pay By Invoice is missing in Cart");
         }
-      }
 
-      bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10);
-
-      if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
-        if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
-          bicPage.clickUsingLowLevelActions("yesPurchaseOrderOption");
-          Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get("orderNumber"));
-          bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
+        //if we refreshed the page, we need to click on continue again
+        if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+          bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+          Util.sleep(5000);
+          bicPage.clickUsingLowLevelActions("customerDetailsContinue");
         }
-      } else {
-        bicPage.clickUsingLowLevelActions("noPurchaseOrderOption");
+
+        Util.printInfo("Clicking on pay By Invoice tab...");
+        bicPage.clickUsingLowLevelActions("payByInvoiceButton");
+
+        try {
+          if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(
+              BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
+            if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
+              Util.printInfo("Entering Payer email and CSN.");
+              bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
+              bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
+              bicPage.click("reviewLOCOrder");
+            }
+          }
+        } catch (Exception e) {
+          Util.printInfo("Failed entering Payer email and CSN.");
+          driver.navigate().refresh();
+          Util.sleep(3000);
+          continue;
+        }
+
+        try {
+          bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10);
+
+          if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
+            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
+              Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get("orderNumber"));
+              bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
+            }
+          } else {
+            Util.printInfo("Selecting No PO Option in LOC flow");
+            bicPage.clickUsingLowLevelActions("noPurchaseOrderOption");
+          }
+        } catch (Exception e) {
+          Util.printInfo("Failed to specify the PO number or No option in LOC flow...");
+          driver.navigate().refresh();
+          Util.sleep(3000);
+          continue;
+        }
+
+        success = false;
       }
 
       if (payByInvoiceDetails.containsKey(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH)) {
