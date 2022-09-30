@@ -302,48 +302,42 @@ public class BICQuoteOrder extends ECETestBase {
   @Test(groups = {"bic-invocienotpayment"}, description = "Validate Quote Invoice Not payment")
   public void validteQuoteInvocieNotPaymant() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
-    HashMap<String, String> results = new HashMap<String, String>();
-    results.put(BICECEConstants.orderNumber, "1000044730");
 
     results.putAll(testDataForEachMethod);
 
-//    Address address = getBillingAddress();
-//    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-//    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-//                    testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
-//            PASSWORD, true);
-//
-//    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
-//            testDataForEachMethod.get("agentContactEmail"),
-//            testDataForEachMethod);
-//    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
-//    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
-//    testResults.putAll(testDataForEachMethod);
-//    updateTestingHub(testResults);
-//    // Signing out after quote creation
-//    getBicTestBase().signOutUsingMeMenu();
-//
-//    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-//
-//    // Re login during checkout
-//    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
-//
-//    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
-//    results.putAll(testDataForEachMethod);
-//
-//    testResults.putAll(results);
-//    updateTestingHub(testResults);
-//
-//    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-//      Util.sleep(120000);
-//    }
+   Address address = getBillingAddress();
+   getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+   getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+                   testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),PASSWORD, true);
+
+   String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+           testDataForEachMethod.get("agentContactEmail"),
+           testDataForEachMethod);
+   testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+   testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+   testResults.putAll(testDataForEachMethod);
+   updateTestingHub(testResults);
+   // Signing out after quote creation
+   getBicTestBase().signOutUsingMeMenu();
+
+   getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+
+   // Re login during checkout
+   getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+
+   HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+   results.putAll(testDataForEachMethod);
+
+   testResults.putAll(results);
+   updateTestingHub(testResults);
+
+   if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+     Util.sleep(120000);
+   }
 
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
       // Getting a PurchaseOrder details from pelican
       results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
-
-      // Validate Quote Details with Pelican
-//      pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
       // Get find Subscription ById
       results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
