@@ -191,9 +191,13 @@ public class BICQuoteOrder extends ECETestBase {
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
 
-    if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {
-      AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart());
-    } else if (testDataForEachMethod.get("taxOptionEnabled").equals("N")) {
+    if (Objects.equals(testDataForEachMethod.get("ttrEnabled"), "true")) {
+      if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {
+        AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart());
+      } else if (testDataForEachMethod.get("taxOptionEnabled").equals("N")) {
+        AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
+      }
+    } else {
       AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
     }
 

@@ -1038,6 +1038,14 @@ public class BICTestBase {
     }
 
     bicPage.click("reviewLOCOrder");
+
+    try {
+      if (bicPage.checkIfElementExistsInPage("paymentContinueButton", 15)) {
+        bicPage.clickUsingLowLevelActions("paymentContinueButton");
+      }
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 
