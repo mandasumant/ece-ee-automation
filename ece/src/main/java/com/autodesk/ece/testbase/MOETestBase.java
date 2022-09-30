@@ -759,7 +759,7 @@ public class MOETestBase {
     bicTestBase.getUrl(constructPortalUrl);
 
     if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      bicTestBase.signOutUsingMeMenu();
+      bicTestBase.getUrl(data.get("oxygenLogOut"));
     }
 
     bicTestBase.loginToOxygen(emailID, password);

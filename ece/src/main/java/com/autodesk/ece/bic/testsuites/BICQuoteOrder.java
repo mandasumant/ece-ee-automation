@@ -165,7 +165,7 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printInfo("Payer email: " + payerEmail);
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
       getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
-      getBicTestBase().signOutUsingMeMenu();
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
       testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
       testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
     }
@@ -184,7 +184,7 @@ public class BICQuoteOrder extends ECETestBase {
     testResults.putAll(testDataForEachMethod);
     updateTestingHub(testResults);
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
@@ -313,7 +313,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
@@ -389,7 +389,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
@@ -563,7 +563,7 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printInfo("Payer email: " + payerEmail);
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
       getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
-      getBicTestBase().signOutUsingMeMenu();
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
       testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
       testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
     }
@@ -583,7 +583,7 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
     testResults.putAll(testDataForEachMethod);
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
@@ -637,7 +637,7 @@ public class BICQuoteOrder extends ECETestBase {
       updateTestingHub(testResults);
 
       //Sign out from first user session
-      getBicTestBase().signOutUsingMeMenu();
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
       // Creating another order with same Payer
       testDataForEachMethod.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
@@ -656,7 +656,7 @@ public class BICQuoteOrder extends ECETestBase {
       testResults.put(BICECEConstants.emailid,secondUserEmail);
       updateTestingHub(testResults);
       // Signing out after quote creation
-      getBicTestBase().signOutUsingMeMenu();
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
       getBicTestBase().navigateToQuoteCheckout(testResults);
       // Re login during checkout

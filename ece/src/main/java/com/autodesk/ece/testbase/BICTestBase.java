@@ -2152,24 +2152,6 @@ public class BICTestBase {
     Util.printInfo("Successfully logged in");
   }
 
-  public void signOutUsingMeMenu() {
-    Util.printInfo("Signing out using meMenu");
-
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(90));
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(bicPage.getFirstFieldLocator("meMenuSignedIn"))));
-
-    Util.printInfo("MeMenu for signed in state found. Trying to sign out.");
-    try {
-      bicPage.checkIfElementExistsInPage("meMenuSignedIn", 20);
-      bicPage.click("meMenuSignedIn");
-      bicPage.checkIfElementExistsInPage("meMenuSignOut", 60);
-      bicPage.click("meMenuSignOut");
-      bicPage.waitForPageToLoad();
-    } catch (Exception e) {
-      AssertUtils.fail("Application Loading issue : Unable to logout");
-    }
-  }
-
   private String[] getCardPaymentDetails(String paymentMethod) {
     debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
     return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
