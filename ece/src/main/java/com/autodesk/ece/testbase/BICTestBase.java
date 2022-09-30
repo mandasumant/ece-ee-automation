@@ -983,7 +983,9 @@ public class BICTestBase {
       Util.printInfo("Clicking on pay By Invoice tab...");
       bicPage.clickUsingLowLevelActions("payByInvoiceButton");
 
-      if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
+      if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null
+          && payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
+        Util.printInfo("Entering Payers emails and csn...");
         if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
           bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
           bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
@@ -992,15 +994,14 @@ public class BICTestBase {
         }
       }
 
-      bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10);
-
-      if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
+      if (bicPage.waitForFieldPresent("yesPurchaseOrderOption", 10000)
+          && payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
         if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
-          bicPage.clickUsingLowLevelActions("yesPurchaseOrderOption");
           Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get("orderNumber"));
           bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
         }
       } else {
+        Util.printInfo("Clicking On \"No\" option.");
         bicPage.clickUsingLowLevelActions("noPurchaseOrderOption");
       }
 
@@ -1020,7 +1021,8 @@ public class BICTestBase {
         }
       }
 
-      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL) && bicPage.waitForField("payerSameAsCustomer", true, 10000)) {
+      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL)
+          && bicPage.waitForField("payerSameAsCustomer", true, 10000)) {
         bicPage.clickUsingLowLevelActions("payerSameAsCustomer");
         bicPage.waitForElementVisible(
             bicPage.getMultipleWebElementsfromField("cartEmailAddress").get(0), 10);
@@ -1028,7 +1030,7 @@ public class BICTestBase {
         address.put(BICECEConstants.ORGANIZATION_NAME, payByInvoiceDetails.get(BICECEConstants.ORGANIZATION_NAME));
         enterCustomerDetails(address);
       }
-    } catch (MetadataException e) {
+    } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter Pay By invoice payment details");
     }

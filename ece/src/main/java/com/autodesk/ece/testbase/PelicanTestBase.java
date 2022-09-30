@@ -417,20 +417,24 @@ public class PelicanTestBase {
   @Step("Not Payment call to Commerce" + GlobalConstants.TAG_TESTINGHUB)
   public void CommerceNotPaymentAPI(HashMap<String, String> data) {
     PelicanAccessInfo access_token = getAccessToken();
+    String signature = signString(access_token.token, clientSecret, access_token.timestamp);
 
-    Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
+    Map<String, String> requestHeaders = new HashMap<String, String>() {{
       put("Authorization", "Bearer " + access_token.token);
-      put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
+      put("signature", signature);
+      put("timestamp", access_token.timestamp);
+      put("timezone_city", System.getProperty("timezone"));
     }};
 
     JSONObject requestParams = new JSONObject();
-    requestParams.put("event", "NOTPAYMENT");
+    requestParams.put("event", "NONPAYMENT");
 
+    Util.printInfo("COmmerce Non Payment endpoint: " + data.get("commerceNotPaymentUrl") + data.get(BICECEConstants.ORDER_ID));
     Util.printInfo("Commerce NOT Payment call Body: " + requestParams.toJSONString());
-    Util.printInfo("Headers: " + pwsRequestHeaders);
+    Util.printInfo("Headers: " + requestHeaders);
 
     Response response = given()
-            .headers(pwsRequestHeaders)
+            .headers(requestHeaders)
             .body(requestParams.toJSONString())
             .post( data.get("commerceNotPaymentUrl") + data.get(BICECEConstants.ORDER_ID))
             .then().extract().response();
