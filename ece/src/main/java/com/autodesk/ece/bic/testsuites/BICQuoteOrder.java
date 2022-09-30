@@ -50,6 +50,7 @@ public class BICQuoteOrder extends ECETestBase {
   public void beforeTestMethod(Method name) {
     LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml
         .get("default");
+    System.out.println("test case" + defaultvalues);
     LinkedHashMap<String, String> testcasedata = (LinkedHashMap<String, String>) loadYaml
         .get(name.getName());
 
@@ -295,7 +296,7 @@ public class BICQuoteOrder extends ECETestBase {
 
   @Test(groups = {"bic-invoicenotpayment"}, description = "Validate Quote Invoice Not payment")
   public void validateQuoteInvoiceNotPayment() throws Exception {
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     Address address = getBillingAddress();
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),

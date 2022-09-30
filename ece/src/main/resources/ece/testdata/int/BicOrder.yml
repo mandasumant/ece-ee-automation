@@ -259,3 +259,6 @@ validateLocNegativeCases:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
+
+validateQuoteInvoiceNotPayment:
+  userType: "newUser"
