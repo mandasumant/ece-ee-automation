@@ -64,7 +64,7 @@ public class PWSTestBase {
     return sdf.format(c.getTime());
   }
 
-  private String createQuoteBody(LinkedHashMap<String, String> data, Address address, String csn,
+  protected String createQuoteBody(LinkedHashMap<String, String> data, Address address, String csn,
       String agentContactEmail, Boolean isMultiLineItem) {
     PurchaserDTO purchaser = new PurchaserDTO(data);
 

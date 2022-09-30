@@ -293,10 +293,9 @@ public class BICQuoteOrder extends ECETestBase {
     }
   }
 
-  @Test(groups = {"bic-invocienotpayment"}, description = "Validation of Create BIC Quote Order")
-  public void validteQuoteInvocieNotPaymant() throws Exception {
+  @Test(groups = {"bic-invoicenotpayment"}, description = "Validate Quote Invoice Not payment")
+  public void validateQuoteInvoiceNotPayment() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
-
     Address address = getBillingAddress();
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
@@ -317,7 +316,6 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
-
 
 
     // Setup test base for Tax Exemption Document submission
@@ -389,27 +387,19 @@ public class BICQuoteOrder extends ECETestBase {
 
       updateTestingHub(testResults);
 
-      // commerce api call
-      pelicantb.CommerceNotPaymentAPI(results);
+      // Commerce api call
+      pelicantb.CommerceNotPaymentAPI(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+              testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, true);
 
       // Getting a PurchaseOrder details from pelican
       JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
-      results.put("refund_orderState", jp.get("orderState").toString());
+      results.put("pelican_orderState", jp.get("orderState").toString());
 
-      // Verify that Order status is Refunded
+      // Verify that Order status is not payment
       AssertUtils.assertEquals("Order status should change to Not Payment",
-              results.get("refund_orderState"), "NON_PAYMENT");
-
-
-
-
-
-
-
-      // Make API call to commerce for changing the order not payment and then validate palican pucrchase order ( Order status should change to not paymt) and subcription should be cancelled
+              results.get("pelican_orderState"), "NON_PAYMENT");
     }
   }
-
 
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
   public void validateMultiLineItemQuoteOrder() throws MetadataException {
