@@ -987,7 +987,7 @@ public class BICTestBase {
         if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
           bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
           bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
-          
+
           bicPage.click("reviewLOCOrder");
         }
       }

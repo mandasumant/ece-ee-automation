@@ -652,11 +652,9 @@ public class BICQuoteOrder extends ECETestBase {
        quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
           testDataForEachMethod.get("agentContactEmail"),
           testDataForEachMethod);
-      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
       testResults.put(BICECEConstants.QUOTE_ID, quoteId);
       testResults.put(BICECEConstants.emailid,secondUserEmail);
       updateTestingHub(testResults);
-      testResults.putAll(testDataForEachMethod);
       // Signing out after quote creation
       getBicTestBase().signOutUsingMeMenu();
 
