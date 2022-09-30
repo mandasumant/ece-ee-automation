@@ -14,6 +14,7 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
@@ -37,12 +38,12 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class PelicanTestBase {
-
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
-
   private final String clientId;
   private final String clientSecret;
   private final String hostname;
+
+  PWSTestBase pwsTestBase;
 
   public PelicanTestBase(String clientId, String clientSecret, String hostname) {
     this.clientId = clientId;
@@ -422,7 +423,7 @@ public class PelicanTestBase {
     Map<String, String> requestHeaders = new HashMap<String, String>() {{
       put("Authorization", "Bearer " + access_token.token);
       put("signature", signature);
-      put("timestamp", access_token.timestamp);
+      put("timestamp", pwsTestBase.getAccessToken().timestamp);
       put("timezone_city", System.getProperty("timezone"));
     }};
 
@@ -805,16 +806,6 @@ public class PelicanTestBase {
 
     } catch (Exception e) {
       Util.printInfo("Exception in validating subscription start date . " + e.getMessage());
-    }
-  }
-  public static class PelicanAccessInfo {
-
-    public String timestamp;
-    public String token;
-
-    public PelicanAccessInfo(String timestamp, String token) {
-      this.timestamp = timestamp;
-      this.token = token;
     }
   }
 }

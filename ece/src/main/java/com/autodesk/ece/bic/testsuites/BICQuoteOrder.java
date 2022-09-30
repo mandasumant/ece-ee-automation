@@ -51,6 +51,7 @@ public class BICQuoteOrder extends ECETestBase {
   public void beforeTestMethod(Method name) {
     LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml
         .get("default");
+    System.out.println("test case" + defaultvalues);
     LinkedHashMap<String, String> testcasedata = (LinkedHashMap<String, String>) loadYaml
         .get(name.getName());
 
@@ -298,11 +299,12 @@ public class BICQuoteOrder extends ECETestBase {
     }
   }
 
-  @Test(groups = {"bic-invocienotpayment"}, description = "Validation of Create BIC Quote Order")
+  @Test(groups = {"bic-invocienotpayment"}, description = "Validate Quote Invoice Not payment")
   public void validteQuoteInvocieNotPaymant() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
     results.put(BICECEConstants.orderNumber, "1000044730");
+
     results.putAll(testDataForEachMethod);
 
 //    Address address = getBillingAddress();
@@ -362,10 +364,8 @@ public class BICQuoteOrder extends ECETestBase {
       results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
       AssertUtils.assertEquals("Order status should change to Not Payment",
           results.get("response_status").toString(), "EXPIRED");
-
     }
   }
-
 
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
   public void validateMultiLineItemQuoteOrder() throws MetadataException {
