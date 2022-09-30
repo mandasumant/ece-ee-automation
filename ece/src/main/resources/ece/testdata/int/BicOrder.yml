@@ -41,6 +41,8 @@ default:
   quantity: "1"
   productType: "bic"
 
+  commerceNotPaymentUrl: "https://commerce.ocstg.autodesk.com/v1/cancel-order/"
+
   accountsPortalOrdersInvoicesUrl: "https://int-manage.autodesk.com/cep/#orders/invoices"
   accountsPortalSubscriptionsUrl: "https://int-manage.autodesk.com/billing/subscriptions-contracts"
   accountsPortalInvoiceUrl: "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
@@ -256,6 +258,11 @@ validateBicQuoteOrderMultiInvoice:
   productType: "flex"
 
 validateLocNegativeCases:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"
+
+validteQuoteInvocieNotPaymant:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"

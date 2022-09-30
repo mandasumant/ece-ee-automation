@@ -101,6 +101,10 @@ public class BICQuoteOrder extends ECETestBase {
         ProtectedConfigFile.decrypt(testDataForEachMethod.get("pwsClientSecret")),
         testDataForEachMethod.get("pwsHostname"));
 
+    pwsTestBase = new PWSTestBase(testDataForEachMethod.get("pwsClientId"),
+        ProtectedConfigFile.decrypt(testDataForEachMethod.get("pwsClientSecret")),
+        testDataForEachMethod.get("pwsHostname"));
+
     Names names = BICTestBase.generateFirstAndLastNames();
     testDataForEachMethod.put(BICECEConstants.FIRSTNAME, names.firstName);
     testDataForEachMethod.put(BICECEConstants.LASTNAME, names.lastName);
@@ -392,21 +396,20 @@ public class BICQuoteOrder extends ECETestBase {
       // commerce api call
       pelicantb.CommerceNotPaymentAPI(results);
 
+      // Sleep for the Order orchestration SQS event to be processed in Pelican
+      Util.sleep(120000);
+
       // Getting a PurchaseOrder details from pelican
       JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
-      results.put("refund_orderState", jp.get("orderState").toString());
 
-      // Verify that Order status is Refunded
+      // Verify that Order status is Not Payment
       AssertUtils.assertEquals("Order status should change to Not Payment",
-              results.get("refund_orderState"), "NON_PAYMENT");
+          jp.get("orderState").toString(), "NON_PAYMENT");
 
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+      AssertUtils.assertEquals("Order status should change to Not Payment",
+          results.get("response_status").toString(), "EXPIRED");
 
-
-
-
-
-
-      // Make API call to commerce for changing the order not payment and then validate palican pucrchase order ( Order status should change to not paymt) and subcription should be cancelled
     }
   }
 

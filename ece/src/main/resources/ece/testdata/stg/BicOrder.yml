@@ -41,6 +41,8 @@ default:
   quantity: "1"
   productType: "bic"
 
+  commerceNotPaymentUrl: "https://commerce.ocint.autodesk.com/v1/cancel-order/"
+
   accountsPortalOrdersInvoicesUrl: "https://stg-manage.autodesk.com/cep/#orders/invoices"
   accountsPortalSubscriptionsUrl: "https://stg-manage.autodesk.com/billing/subscriptions-contracts"
   accountsPortalInvoiceUrl: "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
@@ -259,3 +261,5 @@ validateLocNegativeCases:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
+
+validteQuoteInvocieNotPaymant:

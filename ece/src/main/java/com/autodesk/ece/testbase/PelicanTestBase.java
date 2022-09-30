@@ -48,7 +48,13 @@ public class PelicanTestBase {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.hostname = hostname;
+  }
+
+  public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
+    clientId = null;
+    clientSecret = null;
+    hostname = null;
   }
 
   @SuppressWarnings("unchecked")
@@ -408,33 +414,28 @@ public class PelicanTestBase {
 
   }
 
-  @Step("Refund O2P Orders" + GlobalConstants.TAG_TESTINGHUB)
-  public void CommerceNotPaymentAPI(HashMap<String, String> data, String csn,) {
-
+  @Step("Not Payment call to Commerce" + GlobalConstants.TAG_TESTINGHUB)
+  public void CommerceNotPaymentAPI(HashMap<String, String> data) {
     PelicanAccessInfo access_token = getAccessToken();
-    String signature = signString(access_token.token, clientSecret, access_token.timestamp);
-    String quoteNumber = null;
 
     Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
       put("Authorization", "Bearer " + access_token.token);
-      put("CSN", csn);
-      put("signature", signature);
-      put("timestamp", access_token.timestamp);
-      put("timezone_city", System.getProperty("timezone"));
+      put(BICECEConstants.CONTENT_TYPE, BICECEConstants.APPLICATION_JSON);
     }};
 
-    String payloadBody = createQuoteBody(data, address, csn, agentContactEmail, isMultiLineItem);
-    Util.printInfo("Create Quote Payload: " + payloadBody);
+    JSONObject requestParams = new JSONObject();
+    requestParams.put("event", "NOTPAYMENT");
+
+    Util.printInfo("Commerce NOT Payment call Body: " + requestParams.toJSONString());
     Util.printInfo("Headers: " + pwsRequestHeaders);
 
     Response response = given()
             .headers(pwsRequestHeaders)
-            .body(payloadBody)
-            .post("https://" + hostname + "/v1/quotes")
+            .body(requestParams.toJSONString())
+            .post( data.get("commerceNotPaymentUrl") + data.get(BICECEConstants.ORDER_ID))
             .then().extract().response();
 
-    Util.printInfo("Quote Creation Response : " + response.prettyPrint());
-
+    Util.printInfo("Commerce Not Payment call response : " + response.prettyPrint());
   }
 
   public PelicanAccessInfo getAccessToken() {
