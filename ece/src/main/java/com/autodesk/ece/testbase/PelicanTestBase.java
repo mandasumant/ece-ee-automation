@@ -19,7 +19,6 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.File;
@@ -39,23 +38,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class PelicanTestBase {
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
-  private final String clientId;
-  private final String clientSecret;
-  private final String hostname;
 
   PWSTestBase pwsTestBase;
 
-  public PelicanTestBase(String clientId, String clientSecret, String hostname) {
-    this.clientId = clientId;
-    this.clientSecret = clientSecret;
-    this.hostname = hostname;
-  }
-
   public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
-    clientId = null;
-    clientSecret = null;
-    hostname = null;
   }
 
   @SuppressWarnings("unchecked")
@@ -416,50 +403,32 @@ public class PelicanTestBase {
   }
 
   @Step("Not Payment call to Commerce" + GlobalConstants.TAG_TESTINGHUB)
-  public void CommerceNotPaymentAPI(HashMap<String, String> data) {
-    PelicanAccessInfo access_token = getAccessToken();
-    String signature = signString(access_token.token, clientSecret, access_token.timestamp);
+  public void commerceNotPaymentAPI(Address address, String csn,
+                                    String agentContactEmail, LinkedHashMap<String, String> data, Boolean isMultiLineItem) {
+    String clientSecret = ProtectedConfigFile.decrypt(data.get("pwsClientSecret"));
+    pwsTestBase = new PWSTestBase(data.get("pwsClientId"),
+            ProtectedConfigFile.decrypt(data.get("pwsClientSecret")),
+            data.get("pwsHostname"));
 
-    Map<String, String> requestHeaders = new HashMap<String, String>() {{
-      put("Authorization", "Bearer " + access_token.token);
+    String signature = signString(pwsTestBase.getAccessToken().token, clientSecret, pwsTestBase.getAccessToken().timestamp);
+    String quoteNumber = null;
+    Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
+      put("Authorization", "Bearer " + pwsTestBase.getAccessToken().token);
+      put("CSN", csn);
       put("signature", signature);
       put("timestamp", pwsTestBase.getAccessToken().timestamp);
       put("timezone_city", System.getProperty("timezone"));
     }};
-
-    JSONObject requestParams = new JSONObject();
-    requestParams.put("event", "NONPAYMENT");
-
-    Util.printInfo("COmmerce Non Payment endpoint: " + data.get("commerceNotPaymentUrl") + data.get(BICECEConstants.ORDER_ID));
-    Util.printInfo("Commerce NOT Payment call Body: " + requestParams.toJSONString());
-    Util.printInfo("Headers: " + requestHeaders);
-
+    String payloadBody = pwsTestBase.createQuoteBody(data, address, csn, agentContactEmail, isMultiLineItem);
+    Util.printInfo("Create Quote Payload: " + payloadBody);
+    Util.printInfo("Headers: " + pwsRequestHeaders);
     Response response = given()
-            .headers(requestHeaders)
-            .body(requestParams.toJSONString())
-            .post( data.get("commerceNotPaymentUrl") + data.get(BICECEConstants.ORDER_ID))
+            .headers(pwsRequestHeaders)
+            .body(payloadBody)
+            .post("https://" + data.get("pwsHostname") + "/v1/quotes")
             .then().extract().response();
 
-    Util.printInfo("Commerce Not Payment call response : " + response.prettyPrint());
-  }
-
-  public PelicanAccessInfo getAccessToken() {
-    String base64_header = new String(Base64.getEncoder().encode((clientId + ":" + clientSecret).getBytes()));
-    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-    String timestamp = String.valueOf(cal.getTimeInMillis() / 1000);
-    String signature = signString(clientId, clientSecret, timestamp);
-
-    String access_token = given()
-            .contentType(ContentType.JSON)
-            .header("signature", signature)
-            .header("timestamp", timestamp)
-            .header("Authorization", "Basic " + base64_header)
-            .header("timezone_city", System.getProperty("timezone"))
-            .post("https://" + hostname + "/v2/oauth/generateaccesstoken?grant_type=client_credentials")
-            .then().extract().response()
-            .jsonPath().getString("access_token");
-
-    return new PelicanAccessInfo(timestamp, access_token);
+    Util.printInfo("Quote Creation Response : " + response.prettyPrint());
   }
 
   private String signString(String string, String secret, String timestamp) {
