@@ -264,7 +264,7 @@ public class BICTestBase {
     }
 
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
-        "[data-testid=\"order-summary-section\"] .checkout--order-summary-section--submit-order .checkout--order-summary-section--submit-order--button-container button"));
+        "[data-testid='order-summary-section'] .checkout--order-summary-section--submit-order button"));
     if (submitButton.size() == 0) {
       AssertUtils.fail("The 'Submit order' button is not displayed.");
     }
