@@ -151,7 +151,8 @@ pipeline {
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['INT', 'STG'], description: 'Choose Environment')
         booleanParam(name: 'CJT', defaultValue: false, description: 'Run CJT Regression')
-        booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order?')
+        booleanParam(name: 'APOLLO_TTR', defaultValue: false, description: 'Run Quote 2 Order TTR?')
+        booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order with LOC?')
         booleanParam(name: 'APOLLO_FLEX', defaultValue: false, description: 'Run FLEX Order?')
         booleanParam(name: 'APOLLO_FLEX_MOE', defaultValue: false, description: 'Run FLEX MOE Order?')
         booleanParam(name: 'EDU', defaultValue: false, description: 'Run all EDU tests?')
@@ -176,7 +177,8 @@ pipeline {
                             params.CJT == true ||
                             params.APOLLO_Q2O == true ||
                             params.APOLLO_FLEX == true ||
-                            params.APOLLO_FLEX_MOE == true
+                            params.APOLLO_FLEX_MOE == true ||
+                            params.APOLLO_TTR == true
                         }
                     }
                 }
@@ -201,7 +203,8 @@ pipeline {
                             params.APOLLO_Q2O == true ||
                             params.APOLLO_FLEX == true ||
                             params.APOLLO_FLEX_MOE == true ||
-                            params.EDU == true
+                            params.EDU == true ||
+                            params.APOLLO_TTR == true
                         }
                     }
                 }
@@ -229,7 +232,8 @@ pipeline {
                             params.CJT == true ||
                             params.APOLLO_Q2O == true ||
                             params.APOLLO_FLEX == true ||
-                            params.APOLLO_FLEX_MOE == true
+                            params.APOLLO_FLEX_MOE == true ||
+                            params.APOLLO_TTR == true
                         }
                     }
                 }
@@ -290,12 +294,15 @@ pipeline {
                 anyOf {
                     triggeredBy 'TimerTrigger'
                     expression {
-                        params.APOLLO_Q2O == true
+                        params.APOLLO_TTR == true
                     }
                 }
             }
             steps {
                 triggerApolloTTR()
+                script {
+                    sh 'sleep 600'
+                }
             }
         }
         stage('Apollo Quote 2 Order') {
@@ -310,6 +317,9 @@ pipeline {
             }
             steps {
                 triggerApolloR2_3()
+                script {
+                    sh 'sleep 600'
+                }
             }
         }
 
@@ -325,6 +335,9 @@ pipeline {
             }
             steps {
                 triggerApolloDirectFlexR2_2()
+                script {
+                    sh 'sleep 600'
+                }
             }
         }
 
