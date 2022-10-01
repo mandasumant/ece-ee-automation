@@ -299,7 +299,7 @@ pipeline {
                 }
             }
             steps {
-                triggerApolloTTR()
+                triggerApolloTTR(serviceBuildHelper)
                 script {
                     sh 'sleep 600'
                 }
@@ -316,7 +316,7 @@ pipeline {
                 }
             }
             steps {
-                triggerApolloR2_3()
+                triggerApolloR2_3(serviceBuildHelper)
                 script {
                     sh 'sleep 600'
                 }
@@ -334,7 +334,7 @@ pipeline {
                 }
             }
             steps {
-                triggerApolloDirectFlexR2_2()
+                triggerApolloDirectFlexR2_2(serviceBuildHelper)
                 script {
                     sh 'sleep 600'
                 }
@@ -441,7 +441,7 @@ def triggerTestingHub(servicesBuildHelper) {
     }
 }
 
-def triggerApolloDirectFlexR2_2() {
+def triggerApolloDirectFlexR2_2(def serviceBuildHelper) {
     echo 'Initiating Apollo Flex Order - All'
     script {
         println("Building Testing Hub API Input Map - All")
@@ -598,7 +598,7 @@ def triggerApolloDirectFlexR2_2() {
     }
 }
 
-def triggerApolloR2_3() {
+def triggerApolloR2_3(def serviceBuildHelper) {
     echo 'Initiating Apollo Quote 2 Order - All'
     script {
         println("Building Testing Hub API Input Map - All")
@@ -759,7 +759,7 @@ def triggerApolloR2_3() {
     }
 }
 
-def triggerApolloTTR() {
+def triggerApolloTTR(def serviceBuildHelper) {
     echo 'Initiating Apollo TTR Quote 2 Order Tests'
     script {
         def addresses = readJSON file: "./testdata/addresses.json"
