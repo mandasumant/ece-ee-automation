@@ -41,7 +41,7 @@ default:
   quantity: "1"
   productType: "bic"
 
-  commerceNotPaymentUrl: "https://commerce.ocstg.autodesk.com/v1/cancel-order/"
+  commerceNotPaymentUrl: "https://commerce.ocdev.autodesk.com/v1/cancel-order/"
 
   accountsPortalOrdersInvoicesUrl: "https://int-manage.autodesk.com/cep/#orders/invoices"
   accountsPortalSubscriptionsUrl: "https://int-manage.autodesk.com/billing/subscriptions-contracts"
@@ -262,8 +262,11 @@ validateLocNegativeCases:
   accessModel: "Flex"
   productType: "flex"
 
-validteQuoteInvocieNotPaymant:
+validateQuoteInvoiceNotPayment:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
+  client_id  : "ZkdRWlVHVVBwWnpqZWpoMTNZQk5FdlRCVldtY3R0S20="
+  client_secret: "b0J0azhHbkpncEFMTWNRQQ=="
+  host_name: "https://developer-dev.api.autodesk.com/authentication/v1/authenticate"
 

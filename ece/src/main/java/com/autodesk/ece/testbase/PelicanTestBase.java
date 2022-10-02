@@ -14,18 +14,16 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.config.EncoderConfig;
+import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,13 +31,9 @@ import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 public class PelicanTestBase {
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
-
-  PWSTestBase pwsTestBase;
 
   public PelicanTestBase() {
     Util.PrintInfo("PelicanTestBase from ece");
@@ -403,47 +397,45 @@ public class PelicanTestBase {
   }
 
   @Step("Not Payment call to Commerce" + GlobalConstants.TAG_TESTINGHUB)
-  public void commerceNotPaymentAPI(Address address, String csn,
-                                    String agentContactEmail, LinkedHashMap<String, String> data, Boolean isMultiLineItem) {
-    String clientSecret = ProtectedConfigFile.decrypt(data.get("pwsClientSecret"));
-    pwsTestBase = new PWSTestBase(data.get("pwsClientId"),
-            ProtectedConfigFile.decrypt(data.get("pwsClientSecret")),
-            data.get("pwsHostname"));
-
-    String signature = signString(pwsTestBase.getAccessToken().token, clientSecret, pwsTestBase.getAccessToken().timestamp);
-    String quoteNumber = null;
-    Map<String, String> pwsRequestHeaders = new HashMap<String, String>() {{
-      put("Authorization", "Bearer " + pwsTestBase.getAccessToken().token);
-      put("CSN", csn);
-      put("signature", signature);
-      put("timestamp", pwsTestBase.getAccessToken().timestamp);
-      put("timezone_city", System.getProperty("timezone"));
+  public static void commerceNotPaymentAPI(HashMap<String, String> data) {
+    String access_token = getForgeToken(data);
+    Map<String, String> requestHeaders = new HashMap<String, String>() {{
+      put("Authorization", "Bearer " + access_token);
+      put("Content-Type", "application/json");
     }};
-    String payloadBody = pwsTestBase.createQuoteBody(data, address, csn, agentContactEmail, isMultiLineItem);
-    Util.printInfo("Create Quote Payload: " + payloadBody);
-    Util.printInfo("Headers: " + pwsRequestHeaders);
+    JSONObject requestParams = new JSONObject();
+    requestParams.put("event", "NONPAYMENT");
+
+    Util.printInfo("Commerce NOT Payment endpoint: " + data.get("commerceNotPaymentUrl") + data.get(BICConstants.orderNumber));
+    Util.printInfo("Commerce NOT Payment call Body: " + requestParams.toJSONString());
+    Util.printInfo("Headers: " + requestHeaders);
+
     Response response = given()
-            .headers(pwsRequestHeaders)
-            .body(payloadBody)
-            .post("https://" + data.get("pwsHostname") + "/v1/quotes")
+            .headers(requestHeaders)
+            .body(requestParams.toJSONString())
+            .put(data.get("commerceNotPaymentUrl") + data.get(BICConstants.orderNumber))
             .then().extract().response();
 
-    Util.printInfo("Quote Creation Response : " + response.prettyPrint());
+    int statusCode = response.getStatusCode();
+    Util.PrintInfo("Commerce Not Payment Response HTTP Status Code: " + statusCode);
+
+    if (statusCode != 200) {
+      String result = response.getBody().asString();
+      Assert.fail("Commerce Not Payment gave none HTTP.OK response. Status Code: " + result);
+    }
   }
 
-  private String signString(String string, String secret, String timestamp) {
-    String callback = "www.autodesk.com";
-    String base_str = callback + string + timestamp;
-    try {
-      Mac mac = Mac.getInstance("HmacSHA256");
-      SecretKeySpec keySpec = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
-      mac.init(keySpec);
-      byte[] signatureBytes = mac.doFinal(base_str.getBytes(StandardCharsets.UTF_8));
-      return new String(Base64.getEncoder().encode(signatureBytes));
-    } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-      e.printStackTrace();
-    }
-    return "";
+  public static String getForgeToken(HashMap<String, String> data) {
+    return RestAssured.given()
+            .config(RestAssured.config()
+                    .encoderConfig(EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs("x-www-form-urlencoded",
+                                    ContentType.URLENC)))
+            .contentType("application/x-www-form-urlencoded; charset=UTF-8")
+            .formParam("grant_type", "client_credentials")
+            .formParam("client_id", new String(Base64.getMimeDecoder().decode(data.get("client_id"))))
+            .formParam("client_secret", new String(Base64.getMimeDecoder().decode(data.get("client_secret"))))
+            .post(data.get("host_name")).then().extract().response().jsonPath().getString("access_token");
   }
 
   @Step("Renew Pelican Subscription" + GlobalConstants.TAG_TESTINGHUB)

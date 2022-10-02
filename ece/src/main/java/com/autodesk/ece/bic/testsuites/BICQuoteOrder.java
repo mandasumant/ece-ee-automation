@@ -392,7 +392,7 @@ public class BICQuoteOrder extends ECETestBase {
       updateTestingHub(testResults);
 
       // Commerce api call
-      pelicantb.commerceNotPaymentAPI(results);
+      PelicanTestBase.commerceNotPaymentAPI(results);
 
       // Getting a PurchaseOrder details from pelican
       JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
