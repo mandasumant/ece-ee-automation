@@ -2302,6 +2302,15 @@ public class BICTestBase {
     bicPage.click("signInButton");
   }
 
+  public void validateUserTaxExempt() {
+    try {
+      AssertUtils.assertTrue(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10));
+      Util.printInfo("User's tax exemption certificate was accepted");
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public static class Names {
 
     public final String firstName;

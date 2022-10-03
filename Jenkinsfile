@@ -11,102 +11,110 @@ def buildInfo = new BuildInfo(currentBuild: currentBuild, moduleName: "testinghu
 def serviceBuildHelper = new ServicesBuildHelper(this, 'svc_d_artifactory', buildInfo)
 
 testcases = [
-        "quoteToOrder"                   : [
-                displaynamePrefix: "Quote 2 Order",
-                testcasename     : "9d3de1c2",
-                descriptionPrefix: "Quote 2 Order",
-                testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
-                testGroup        : "bic-quoteorder",
-                testMethod       : "validateBicQuoteOrder"
-        ],
-        "quoteMultiLineOrder"            : [
-                displaynamePrefix: "Quote 2 Order Multi line item Order",
-                testcasename     : "e803e4a4",
-                descriptionPrefix: "Quote 2 Order Multi line item Order",
-                testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
-                testGroup        : "multiline-quoteorder",
-                testMethod       : "validateMultiLineItemQuoteOrder"
-        ],
-        "quoteRefund"                    : [
-                displaynamePrefix: "Quote 2 Order Refund",
-                testcasename     : "a2d62443",
-                descriptionPrefix: "Quote 2 Order Refund",
-                testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
-                testGroup        : "quote-RefundOrder",
-                testMethod       : "validateQuoteRefundOrder"
-        ],
-        "validateAccountPortalQuoteOrder": [
-                displaynamePrefix: "Account Portal Q2O",
-                testcasename     : "604584f1",
-                descriptionPrefix: "Account Portal Q2O",
-                testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
-                testGroup        : "quote-accountportal",
-                testMethod       : "validateAccountPortalQuoteOrder"
-        ],
-        "flexDirect"                     : [
-                displaynamePrefix: "Flex Direct",
-                testcasename     : "d27c5060",
-                descriptionPrefix: "Flex Direct",
-                testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
-                testGroup        : "bic-flexorder-new",
-                testMethod       : "validateFlexOrderNewCart"
-        ],
-        "flexDirectRefund"               : [
-                displaynamePrefix: "Flex Direct Refund",
-                testcasename     : "a1c54974",
-                descriptionPrefix: "Flex Direct Refund",
-                testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
-                testGroup        : "bic-flexdirect-new-refund",
-                testMethod       : "validateFlexOrderNewCartRefund"
-        ],
-        "flexDirectEstimator"            : [
-                displaynamePrefix: "Flex Direct Estimator Tool",
-                testcasename     : "fbf7fe55",
-                descriptionPrefix: "Flex Direct Estimator Tool",
-                testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
-                testGroup        : "flex-token-estimator",
-                testMethod       : "validateFlexTokenEstimatorTool"
-        ],
-        "validateFlexDirectReturningUser": [
-                displaynamePrefix: "Flex Direct Returning User",
-                testcasename     : "bea28298",
-                descriptionPrefix: "Flex Direct Returning User",
-                testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
-                testGroup        : "bic-flexdirect-returning",
-                testMethod       : "validateFlexOrderNewCartReturningUser"
-        ],
-        "moeO2PAgent"                    : [
-                displaynamePrefix: "MOE O2P Order Agent",
-                testcasename     : "e2ea9875",
-                descriptionPrefix: "MOE O2P Order Agent",
-                testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
-                testGroup        : "bic-basicFlowOdmAgent-moe",
-                testMethod       : "validateMoeOdmOpportunityFlowAgent"
-        ],
-        "moeO2PCustomer"                 : [
-                displaynamePrefix: "MOE O2P Order Customer",
-                testcasename     : "97993340",
-                descriptionPrefix: "MOE O2P Order Customer",
-                testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
-                testGroup        : "bic-basicFlowOdmCustomer-moe",
-                testMethod       : "validateMoeOdmOpportunityFlowCustomer"
-        ],
-        "moeDTCO2PCustomerNew"           : [
-                displaynamePrefix: "MOE DTC O2P Order Customer New",
-                testcasename     : "28d21011",
-                descriptionPrefix: "MOE DTC O2P Order Customer New",
-                testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
-                testGroup        : "bic-basicFlowOdmDtcCustomer-moe",
-                testMethod       : "validateMoeOdmDtcFlowCustomer"
-        ],
-        "moeDTCO2PCustomerExisting"      : [
-                displaynamePrefix: "MOE DTC O2P Order Customer Existing",
-                testcasename     : "2363224d",
-                descriptionPrefix: "MOE DTC O2P Order Customer Existing",
-                testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
-                testGroup        : "bic-returningUserOdmDtc-moe",
-                testMethod       : "validateMoeOdmDtcFlowReturningCustomer"
-        ]
+    "quoteToOrder": [
+        displaynamePrefix: "Quote 2 Order",
+        testcasename     : "9d3de1c2",
+        descriptionPrefix: "Quote 2 Order",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "bic-quoteorder",
+        testMethod       : "validateBicQuoteOrder"
+    ],
+    "quoteMultiLineOrder": [
+        displaynamePrefix: "Quote 2 Order Multi line item Order",
+        testcasename     : "e803e4a4",
+        descriptionPrefix: "Quote 2 Order Multi line item Order",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "multiline-quoteorder",
+        testMethod       : "validateMultiLineItemQuoteOrder"
+    ],
+    "quoteRefund": [
+        displaynamePrefix: "Quote 2 Order Refund",
+        testcasename     : "a2d62443",
+        descriptionPrefix: "Quote 2 Order Refund",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "quote-RefundOrder",
+        testMethod       : "validateQuoteRefundOrder"
+    ],
+    "validateAccountPortalQuoteOrder": [
+        displaynamePrefix: "Account Portal Q2O",
+        testcasename     : "604584f1",
+        descriptionPrefix: "Account Portal Q2O",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "quote-accountportal",
+        testMethod       : "validateAccountPortalQuoteOrder"
+    ],
+    "flexDirect": [
+        displaynamePrefix: "Flex Direct",
+        testcasename     : "d27c5060",
+        descriptionPrefix: "Flex Direct",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+        testGroup        : "bic-flexorder-new",
+        testMethod       : "validateFlexOrderNewCart"
+    ],
+    "flexDirectRefund": [
+        displaynamePrefix: "Flex Direct Refund",
+        testcasename     : "a1c54974",
+        descriptionPrefix: "Flex Direct Refund",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+        testGroup        : "bic-flexdirect-new-refund",
+        testMethod       : "validateFlexOrderNewCartRefund"
+    ],
+    "flexDirectEstimator": [
+        displaynamePrefix: "Flex Direct Estimator Tool",
+        testcasename     : "fbf7fe55",
+        descriptionPrefix: "Flex Direct Estimator Tool",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+        testGroup        : "flex-token-estimator",
+        testMethod       : "validateFlexTokenEstimatorTool"
+    ],
+    "validateFlexDirectReturningUser": [
+        displaynamePrefix: "Flex Direct Returning User",
+        testcasename     : "bea28298",
+        descriptionPrefix: "Flex Direct Returning User",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICOrderCreation",
+        testGroup        : "bic-flexdirect-returning",
+        testMethod       : "validateFlexOrderNewCartReturningUser"
+    ],
+    "moeO2PAgent": [
+        displaynamePrefix: "MOE O2P Order Agent",
+        testcasename     : "e2ea9875",
+        descriptionPrefix: "MOE O2P Order Agent",
+        testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
+        testGroup        : "bic-basicFlowOdmAgent-moe",
+        testMethod       : "validateMoeOdmOpportunityFlowAgent"
+    ],
+    "moeO2PCustomer": [
+        displaynamePrefix: "MOE O2P Order Customer",
+        testcasename     : "97993340",
+        descriptionPrefix: "MOE O2P Order Customer",
+        testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
+        testGroup        : "bic-basicFlowOdmCustomer-moe",
+        testMethod       : "validateMoeOdmOpportunityFlowCustomer"
+    ],
+    "moeDTCO2PCustomerNew": [
+        displaynamePrefix: "MOE DTC O2P Order Customer New",
+        testcasename     : "28d21011",
+        descriptionPrefix: "MOE DTC O2P Order Customer New",
+        testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
+        testGroup        : "bic-basicFlowOdmDtcCustomer-moe",
+        testMethod       : "validateMoeOdmDtcFlowCustomer"
+    ],
+    "moeDTCO2PCustomerExisting": [
+        displaynamePrefix: "MOE DTC O2P Order Customer Existing",
+        testcasename     : "2363224d",
+        descriptionPrefix: "MOE DTC O2P Order Customer Existing",
+        testClass        : "com.autodesk.ece.bic.testsuites.MOEOrderFlows",
+        testGroup        : "bic-returningUserOdmDtc-moe",
+        testMethod       : "validateMoeOdmDtcFlowReturningCustomer"
+    ],
+    "q2oTTRReturningUser": [
+        displaynamePrefix: "Q2O TTR Returning User",
+        testcasename     : "79f5c6a6",
+        descriptionPrefix: "Q2O TTR Returning User",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "bic-returning-quote-user",
+        testMethod       : "validateReturningQuoteUser"
+    ]
 ]
 
 def generateTest(name, testcase, address, options = []) {
@@ -322,7 +330,6 @@ pipeline {
                 }
             }
         }
-
         stage('Apollo Flex Direct Order Suite') {
             when {
                 branch 'master'
@@ -831,7 +838,10 @@ def triggerApolloTTR(def serviceBuildHelper) {
                 '{"displayname":"Quote 2 Order CA Prince Edward Island(en_CA)","testcasename":"9d3de1c2","description":"Quote 2 Order CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","locale":"en_CA","sapValidation":"False","address":"Autodesk@18 Queen St@Charlottetown@C1A 4A1@9916800100@Canada@PE","timezone":"Canada/Pacific"}},' +
                 '{"displayname":"Quote 2 Order CA Quebec(en_CA)","testcasename":"9d3de1c2","description":"Quote 2 Order CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","locale":"en_CA","sapValidation":"False","address":"Autodesk CA@10 Rue Saint Jacques@Montreal@H2Y 1L3@9916800100@Canada@QC","timezone":"Canada/Pacific"}},' +
                 '{"displayname":"Quote 2 Order CA Saskatchewan(en_CA)","testcasename":"9d3de1c2","description":"Quote 2 Order CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","locale":"en_CA","sapValidation":"False","address":"Autodesk@2002 Airport Dr@Saskatoon@S7L 6M4@9916800100@Canada@SK","timezone":"Canada/Pacific"}},' +
-                '{"displayname":"Quote 2 Order CA Yukon(en_CA)","testcasename":"9d3de1c2","description":"Quote 2 Order CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","locale":"en_CA","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@1026 Second Ave@Dawson@Y0B 1G0@9916800100@Canada@YT","timezone":"Canada/Pacific"}}' +
+                '{"displayname":"Quote 2 Order CA Yukon(en_CA)","testcasename":"9d3de1c2","description":"Quote 2 Order CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","locale":"en_CA","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@1026 Second Ave@Dawson@Y0B 1G0@9916800100@Canada@YT","timezone":"Canada/Pacific"}},' +
+                [
+                    generateTest("Returning (en_US)", testcases.q2oTTRReturningUser, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
+                ].join(',') +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore - All")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {

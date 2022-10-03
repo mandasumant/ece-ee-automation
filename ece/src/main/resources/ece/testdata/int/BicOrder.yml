@@ -259,3 +259,8 @@ validateLocNegativeCases:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
+
+validateReturningQuoteUser:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"
