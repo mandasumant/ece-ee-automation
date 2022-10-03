@@ -971,8 +971,8 @@ public class BICTestBase {
           AssertUtils.fail("Retries exhausted: Pay By Invoice is missing in Cart");
         }
 
-        //if we refreshed the page, we need to click on continue again
-        if (bicPage.checkFieldExistence("customerDetailsContinue")) {
+        // If we refreshed the page, we need to click on continue again
+        if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
           bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
           Util.sleep(5000);
           bicPage.clickUsingLowLevelActions("customerDetailsContinue");
@@ -989,7 +989,7 @@ public class BICTestBase {
               bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
               bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
               bicPage.waitForFieldPresent("reviewLOCOrder", 10);
-              Util.printInfo("clickoing continue");
+              Util.printInfo("clicking continue");
               bicPage.clickUsingLowLevelActions("reviewLOCOrder");
             }
           }
