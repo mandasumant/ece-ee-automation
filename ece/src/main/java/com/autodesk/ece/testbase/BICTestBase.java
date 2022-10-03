@@ -964,7 +964,7 @@ public class BICTestBase {
     Boolean success = true;
 
     try {
-      bicPage.waitForField("payByInvoiceButton", true, 30000);
+      bicPage.waitForField("payByInvoiceTab", true, 30000);
       while (success) {
         count++;
         if (count > 5) {
@@ -979,7 +979,7 @@ public class BICTestBase {
         }
 
         Util.printInfo("Clicking on pay By Invoice tab...");
-        bicPage.clickUsingLowLevelActions("payByInvoiceButton");
+        bicPage.clickUsingLowLevelActions("payByInvoiceTab");
 
         try {
           if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(
@@ -988,7 +988,9 @@ public class BICTestBase {
               Util.printInfo("Entering Payer email and CSN.");
               bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
               bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
-              bicPage.click("reviewLOCOrder");
+              bicPage.waitForFieldPresent("reviewLOCOrder", 10);
+              Util.printInfo("clickoing continue");
+              bicPage.clickUsingLowLevelActions("reviewLOCOrder");
             }
           }
         } catch (Exception e) {
@@ -2288,7 +2290,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
-    return bicPage.waitForField("payByInvoiceButton", true, 30000);
+    return bicPage.waitForField("payByInvoiceTab", true, 30000);
   }
 
   public void goToDotcomSignin(LinkedHashMap<String, String> data) {

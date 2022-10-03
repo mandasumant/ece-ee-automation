@@ -555,25 +555,17 @@ public class BICQuoteOrder extends ECETestBase {
 
   @Test(groups = {"bic-quoteorder-multiinvoice"}, description = "Validation of Create BIC Quote Order with Common Payer")
   public void validateBicQuoteOrderMultiInvoice() throws MetadataException {
+
     LinkedHashMap<String, String> testResults = new LinkedHashMap<String, String>();
 
-    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-      Names payerNames = BICTestBase.generateFirstAndLastNames();
-      String payerEmail = BICTestBase.generateUniqueEmailID();
-      Util.printInfo("Payer email: " + payerEmail);
-      getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-      getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
-      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
-      testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
-      testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
-    }
-
     Address firstAddress = getBillingAddress();
+
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
             testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
         PASSWORD, true);
 
+    String purchaser = testDataForEachMethod.get(BICECEConstants.emailid);
     String quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"),
         testDataForEachMethod);
@@ -588,7 +580,7 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
     // Re login during checkout
-    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().loginToOxygen(purchaser, PASSWORD);
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -641,13 +633,17 @@ public class BICQuoteOrder extends ECETestBase {
 
       // Creating another order with same Payer
       testDataForEachMethod.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
-
+      testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
+      testResults.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
+      testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
       Names  secondUser = BICTestBase.generateFirstAndLastNames();
       String secondUserEmail = BICTestBase.generateUniqueEmailID();
 
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-      getBicTestBase().createBICAccount(secondUser, secondUserEmail,
-          PASSWORD, true);
+      getBicTestBase().createBICAccount(secondUser, secondUserEmail, PASSWORD, true);
+      testDataForEachMethod.put(BICECEConstants.emailid, secondUserEmail);
+      testResults.put(BICECEConstants.PAYER_EMAIL, purchaser);
+
 
        quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
           testDataForEachMethod.get("agentContactEmail"),
