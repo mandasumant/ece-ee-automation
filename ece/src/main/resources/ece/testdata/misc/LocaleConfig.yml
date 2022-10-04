@@ -11,6 +11,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
     minAmountPBI: "1,000.00"
     maxAmountPBI: "100,000.00"
+    ttrEnabled: "true"
 
   en_CA:
     region: "ENCA"
@@ -24,6 +25,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070259011@letscheck.email"
     minAmountPBI: "1,280.00"
     maxAmountPBI: "128,000.00"
+    ttrEnabled: "true"
 
   fr_CA:
     region: "FRCA"
@@ -37,6 +39,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070259011@letscheck.email"
     minAmountPBI: "1,280.00"
     maxAmountPBI: "128,000.00"
+    ttrEnabled: "true"
 
   en_GB:
     region: "ENGB"

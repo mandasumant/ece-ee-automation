@@ -673,7 +673,7 @@ public class PortalTestBase {
     try {
       if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 60)) {
         Util.printInfo("Clicking on portal subscription and contracts link...");
-        portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
+        driver.get(accountsPortalSubscriptionsUrl);
         portalPage.waitForPageToLoad();
 
         debugPageUrl("Step 2");
@@ -1601,12 +1601,7 @@ public class PortalTestBase {
     }
   }
 
-  /**
-   * Find the last purchased product and determine if it's peId matches the provided pattern
-   *
-   * @param peIdPattern - Regex pattern to match
-   * @return - Full pe ID found
-   */
+
   @Step("Verify product is visible in Portal " + GlobalConstants.TAG_TESTINGHUB)
   public void verifyProductVisible(HashMap<String, String> results, String productName) {
     int attempts = 0;

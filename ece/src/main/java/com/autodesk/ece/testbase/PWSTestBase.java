@@ -92,7 +92,10 @@ public class PWSTestBase {
     EndCustomerDTO endCustomer = null;
     if (System.getProperty("existingCSN") != null) {
       endCustomer = new EndCustomerDTO(System.getProperty("existingCSN"));
-    } else {
+    } else if (data.get(BICECEConstants.PAYER_CSN) != null){
+      endCustomer = new EndCustomerDTO(data.get(BICECEConstants.PAYER_CSN));
+    }
+    else {
       endCustomer = new EndCustomerDTO(address);
     }
 
@@ -231,7 +234,7 @@ public class PWSTestBase {
 
     String finalizeBody = createQuoteFinalizeBody(quoteId, agentCsn, agentContactEmail);
 
-    Util.sleep(120000);
+    Util.sleep(60000);
 
     Response response = given()
         .body(finalizeBody)
