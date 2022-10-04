@@ -194,6 +194,5 @@ public class BICECEConstants extends BICConstants {
   public static final String EXISTING_PAYER_CSN = "existingPayerCSN";
   public static final String EXISTING_PAYER_EMAIL = "existingPayerEmail";
   public static final String SUBMIT_TAX_INFO = "submitTaxInfo";
-
 }
 
