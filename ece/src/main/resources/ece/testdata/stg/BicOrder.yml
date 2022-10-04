@@ -254,3 +254,7 @@ validateLocNegativeCases:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
+
+validateBlockedUser:
+  blockeduseremailid: "biz-thubnameramarlozfjjvq@letscheck.pw"
+  blockedusernewPassword: "Password1"

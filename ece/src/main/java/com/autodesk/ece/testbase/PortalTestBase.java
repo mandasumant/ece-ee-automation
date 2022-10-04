@@ -55,7 +55,7 @@ public class PortalTestBase {
   private final String accountsPortalQuoteUrl;
   private final String accountPortalBillingInvoicesUrl;
   private final String accountsProductPageUrl;
-  private final String payBYInvoicePageURL;
+  private final String payByInvoicePageURL;
   private final ZipPayTestBase zipTestBase;
   private final BICTestBase bicTestBase;
   public WebDriver driver = null;
@@ -79,7 +79,7 @@ public class PortalTestBase {
     accountsPortalQuoteUrl = defaultvalues.get("accountsPortalQuoteUrl");
     accountPortalBillingInvoicesUrl = defaultvalues.get("accountPortalBillingInvoicesUrl");
     accountsProductPageUrl = defaultvalues.get("accountsProductPageUrl");
-    payBYInvoicePageURL = defaultvalues.get("payBYInvoicePageURL");
+    payByInvoicePageURL = defaultvalues.get("payByInvoicePageURL");
   }
 
   public static String timestamp() {
@@ -1894,16 +1894,9 @@ public class PortalTestBase {
 
     }
   }
-  @Step("Login to blockedCustomer Account")
-  public void loginToPayByInvoice(String portalUserName,String portalPassword) throws Exception{
-    driver.get(payBYInvoicePageURL);
-    portalPage.getMultipleWebElementsfromField("usernameCEP").get(0).sendKeys(portalUserName);
-    portalPage.getMultipleWebElementsfromField("verifyUserCEPBtn").get(0).click();
-    Util.sleep(2000);
-    portalPage.getMultipleWebElementsfromField("passCEP").get(0).click();
-    portalPage.getMultipleWebElementsfromField("passCEP").get(0).sendKeys(portalPassword);
-    Util.sleep(2000);
-    portalPage.getMultipleWebElementsfromField("createAccount").get(0).click();
+  @Step("Navigate To login to Pay By invoice URL")
+  public void navigateTLoginToPayByinvoiceURL() throws Exception{
+    driver.get(payByInvoicePageURL);
   }
   @Step("Validate Pay By Invoice presence")
   public void validatePayByInvoice() {

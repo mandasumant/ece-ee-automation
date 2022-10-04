@@ -29,7 +29,7 @@ public class ECETestBase {
   protected AutomationTibcoTestBase tibcotb = null;
   LinkedHashMap<String, String> localeConfig;
   private WebDriver webdriver = null;
-  public GlobalTestBase testbase = null;
+  private GlobalTestBase testbase = null;
   private BICTestBase bictb = null;
 
   public ECETestBase() {

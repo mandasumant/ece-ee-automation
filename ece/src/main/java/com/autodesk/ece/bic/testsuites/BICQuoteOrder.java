@@ -587,8 +587,9 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"PayByInvoiceBlock"}, description = "Pay By Invoices Block User Validation")
-  public void validatePayByInvoices(String portalUserName, String portalPassword) throws Exception {
-    getPortalTestBase().loginToPayByInvoice(portalUserName,portalPassword);
+  public void validatePayByInvoices() throws Exception {
+    getPortalTestBase().navigateTLoginToPayByinvoiceURL();
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get("blockeduseremailid") , testDataForEachMethod.get("blockedusernewPassword"));
     getPortalTestBase().validatePayByInvoice();
   }
 }
