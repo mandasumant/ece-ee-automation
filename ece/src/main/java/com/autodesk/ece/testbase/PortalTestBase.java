@@ -1890,7 +1890,7 @@ public class PortalTestBase {
     }
   }
   @Step("Navigate To login to Pay By invoice URL")
-  public void navigateTLoginToPayByinvoiceURL() throws Exception{
+  public void navigateToLoginToPayByinvoiceURL() throws Exception{
     driver.get(payByInvoicePageURL);
   }
   @Step("Validate Pay By Invoice presence")
