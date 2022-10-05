@@ -14,10 +14,13 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.config.EncoderConfig;
+import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.File;
@@ -33,8 +36,8 @@ import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
 
-public class PelicanTestBase {
 
+public class PelicanTestBase {
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
 
   public PelicanTestBase() {
@@ -93,6 +96,52 @@ public class PelicanTestBase {
       e.printStackTrace();
     }
     return response;
+  }
+
+  @Step("Not Payment call to Commerce" + GlobalConstants.TAG_TESTINGHUB)
+  public static void commerceNotPaymentAPI(HashMap<String, String> data) {
+    String access_token = getForgeToken(data);
+    Map<String, String> requestHeaders = new HashMap<String, String>() {{
+      put("Authorization", "Bearer " + access_token);
+      put("Content-Type", "application/json");
+    }};
+    JSONObject requestParams = new JSONObject();
+    requestParams.put("event", "NONPAYMENT");
+
+    Util.printInfo(
+        "Commerce NOT Payment endpoint: " + data.get("commerceNotPaymentUrl") + data.get(BICConstants.orderNumber));
+    Util.printInfo("Commerce NOT Payment call Body: " + requestParams.toJSONString());
+    Util.printInfo("Headers: " + requestHeaders);
+
+    Response response = given()
+        .headers(requestHeaders)
+        .body(requestParams.toJSONString())
+        .put(data.get("commerceNotPaymentUrl") + data.get(BICConstants.orderNumber))
+        .then().extract().response();
+
+    int statusCode = response.getStatusCode();
+    Util.PrintInfo("Commerce Not Payment Response HTTP Status Code: " + statusCode);
+
+    if (statusCode != 200) {
+      String result = response.getBody().asString();
+      Assert.fail("Commerce Not Payment gave none HTTP.OK response. Status Code: " + result);
+    }
+  }
+
+  public static String getForgeToken(HashMap<String, String> data) {
+    Response response = RestAssured.given()
+        .config(RestAssured.config()
+            .encoderConfig(EncoderConfig.encoderConfig()
+                .encodeContentTypeAs("x-www-form-urlencoded",
+                    ContentType.URLENC)))
+        .contentType("application/x-www-form-urlencoded; charset=UTF-8")
+        .formParam("grant_type", "client_credentials")
+        .formParam("client_id", data.get("pelicanForgeClientId"))
+        .formParam("client_secret", ProtectedConfigFile.decrypt(data.get("pelicanForgeClientSecret")))
+        .post("https://" + data.get("pelicanForgeHostName") + "/authentication/v1/authenticate");
+    int statusCode = response.getStatusCode();
+    Util.PrintInfo("Forge token generation response status: " + statusCode);
+    return response.jsonPath().getString("access_token");
   }
 
   @Step("Order Service : Order Capture" + GlobalConstants.TAG_TESTINGHUB)

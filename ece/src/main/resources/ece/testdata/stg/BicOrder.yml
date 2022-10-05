@@ -41,6 +41,8 @@ default:
   quantity: "1"
   productType: "bic"
 
+  commerceNotPaymentUrl: "https://commerce.ocstg.autodesk.com/v1/cancel-order/"
+
   accountsPortalOrdersInvoicesUrl: "https://stg-manage.autodesk.com/cep/#orders/invoices"
   accountsPortalSubscriptionsUrl: "https://stg-manage.autodesk.com/billing/subscriptions-contracts"
   accountsPortalInvoiceUrl: "https://api.stg-manage.autodesk.com/service/orders/v1/orders/"
@@ -73,6 +75,10 @@ default:
   quoteAgentCsnAccount: "5109330358"
   agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
   offeringId: "OD-000450"
+
+  pelicanForgeClientID: "yO8g1j3vGTUI6Hh2tIwG4xL1RJ9qdRTi"
+  pelicanForgeClientSecret: "VLdeRETxxPtfxZMLjg05qw==:fiOt5Jrth3zkDvggC4HdeQRkUAG+0g3fWZbTbyoJLwo="
+  pelicanForgeHostName: "developer-stg.api.autodesk.com"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
@@ -256,6 +262,11 @@ validateBicQuoteOrderMultiInvoice:
   productType: "flex"
 
 validateLocNegativeCases:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"
+
+validateQuoteInvoiceNonPayment:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
