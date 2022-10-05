@@ -136,9 +136,9 @@ public class PelicanTestBase {
                     ContentType.URLENC)))
         .contentType("application/x-www-form-urlencoded; charset=UTF-8")
         .formParam("grant_type", "client_credentials")
-        .formParam("client_id", data.get("forgeClientId"))
-        .formParam("client_secret", ProtectedConfigFile.decrypt(data.get("forgeClientSecret")))
-        .post("https://" + data.get("forgeHostName") + "/authentication/v1/authenticate");
+        .formParam("client_id", data.get("pelicanForgeClientId"))
+        .formParam("client_secret", ProtectedConfigFile.decrypt(data.get("pelicanForgeClientSecret")))
+        .post("https://" + data.get("pelicanForgeHostName") + "/authentication/v1/authenticate");
     int statusCode = response.getStatusCode();
     Util.PrintInfo("Forge token generation response status: " + statusCode);
     return response.jsonPath().getString("access_token");

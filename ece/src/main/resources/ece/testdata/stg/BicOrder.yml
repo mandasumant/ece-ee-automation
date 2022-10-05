@@ -76,9 +76,9 @@ default:
   agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
   offeringId: "OD-000450"
 
-  forgeClientId: "ZkdRWlVHVVBwWnpqZWpoMTNZQk5FdlRCVldtY3R0S20="
-  forgeClientSecret: "b0J0azhHbkpncEFMTWNRQQ=="
-  forgeHostName: "https://developer-dev.api.autodesk.com/authentication/v1/authenticate"
+  pelicanForgeClientID: "yO8g1j3vGTUI6Hh2tIwG4xL1RJ9qdRTi"
+  pelicanForgeClientSecret: "VLdeRETxxPtfxZMLjg05qw==:fiOt5Jrth3zkDvggC4HdeQRkUAG+0g3fWZbTbyoJLwo="
+  pelicanForgeHostName: "developer-stg.api.autodesk.com"
 
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
