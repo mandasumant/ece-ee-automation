@@ -210,7 +210,7 @@ public class BICQuoteOrder extends ECETestBase {
         put(BICConstants.exemptFromSalesTax, "Yes");
         put(BICConstants.reasonForExempt, "Reseller");
         put(BICConstants.buyerAccountType, "Reseller");
-        put("state", "Colorado");
+        put("state", address.provinceName);
         put(BICConstants.registeredAs, "Retailer");
         put(BICConstants.salesTaxType, "State Sales Tax");
         put(BICConstants.businessType, "Construction");
@@ -726,7 +726,7 @@ public class BICQuoteOrder extends ECETestBase {
         put(BICConstants.exemptFromSalesTax, "Yes");
         put(BICConstants.reasonForExempt, "Reseller");
         put(BICConstants.buyerAccountType, "Reseller");
-        put("state", "Colorado");
+        put("state", address.provinceName);
         put(BICConstants.registeredAs, "Retailer");
         put(BICConstants.salesTaxType, "State Sales Tax");
         put(BICConstants.businessType, "Construction");

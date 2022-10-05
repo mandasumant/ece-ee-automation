@@ -967,15 +967,16 @@ public class BICTestBase {
       bicPage.waitForField("payByInvoiceTab", true, 30000);
       while (success) {
         count++;
-        if (count > 5) {
-          AssertUtils.fail("Retries exhausted: Pay By Invoice is missing in Cart");
-        }
 
         // If we refreshed the page, we need to click on continue again
         if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
           bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
           Util.sleep(5000);
           bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+        }
+
+        if (count > 5) {
+          AssertUtils.fail("Retries exhausted: Pay By Invoice is missing in Cart");
         }
 
         Util.printInfo("Clicking on pay By Invoice tab...");
