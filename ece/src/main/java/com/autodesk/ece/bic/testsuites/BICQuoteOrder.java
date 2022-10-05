@@ -314,8 +314,9 @@ public class BICQuoteOrder extends ECETestBase {
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.putAll(testDataForEachMethod);
     updateTestingHub(testResults);
+
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
