@@ -439,9 +439,9 @@ public class PelicanTestBase {
                                     ContentType.URLENC)))
             .contentType("application/x-www-form-urlencoded; charset=UTF-8")
             .formParam("grant_type", "client_credentials")
-            .formParam("client_id", new String(Base64.getMimeDecoder().decode(data.get("client_id"))))
-            .formParam("client_secret", new String(Base64.getMimeDecoder().decode(data.get("client_secret"))))
-            .post(data.get("host_name"));
+            .formParam("client_id", new String(Base64.getMimeDecoder().decode(data.get("forgeClientId"))))
+            .formParam("client_secret", new String(Base64.getMimeDecoder().decode(data.get("forgeClientSecret"))))
+            .post("https://" + data.get("forgeHostName") + "/authentication/v1/authenticate");
     int statusCode = response.getStatusCode();
     Util.PrintInfo("Forge token generation response status: " + statusCode);
     return response.jsonPath().getString("access_token");

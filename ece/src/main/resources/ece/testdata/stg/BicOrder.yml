@@ -76,6 +76,10 @@ default:
   agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"
   offeringId: "OD-000450"
 
+  forgeClientId: "ZkdRWlVHVVBwWnpqZWpoMTNZQk5FdlRCVldtY3R0S20="
+  forgeClientSecret: "b0J0azhHbkpncEFMTWNRQQ=="
+  forgeHostName: "https://developer-dev.api.autodesk.com/authentication/v1/authenticate"
+
 validateBicNativeOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
@@ -262,10 +266,7 @@ validateLocNegativeCases:
   accessModel: "Flex"
   productType: "flex"
 
-validateQuoteInvoiceNotPayment:
+validateQuoteInvoiceNonPayment:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
-  client_id: "ZkdRWlVHVVBwWnpqZWpoMTNZQk5FdlRCVldtY3R0S20="
-  client_secret: "b0J0azhHbkpncEFMTWNRQQ=="
-  host_name: "https://developer-dev.api.autodesk.com/authentication/v1/authenticate"
