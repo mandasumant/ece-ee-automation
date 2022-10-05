@@ -426,7 +426,7 @@ public class PelicanTestBase {
   }
 
   public static String getForgeToken(HashMap<String, String> data) {
-    return RestAssured.given()
+    Response response = RestAssured.given()
             .config(RestAssured.config()
                     .encoderConfig(EncoderConfig.encoderConfig()
                             .encodeContentTypeAs("x-www-form-urlencoded",
@@ -435,7 +435,10 @@ public class PelicanTestBase {
             .formParam("grant_type", "client_credentials")
             .formParam("client_id", new String(Base64.getMimeDecoder().decode(data.get("client_id"))))
             .formParam("client_secret", new String(Base64.getMimeDecoder().decode(data.get("client_secret"))))
-            .post(data.get("host_name")).then().extract().response().jsonPath().getString("access_token");
+            .post(data.get("host_name"));
+    int statusCode = response.getStatusCode();
+    Util.PrintInfo("Forge token generation response status: " + statusCode);
+    return response.jsonPath().getString("access_token");
   }
 
   @Step("Renew Pelican Subscription" + GlobalConstants.TAG_TESTINGHUB)

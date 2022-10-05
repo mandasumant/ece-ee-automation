@@ -319,7 +319,6 @@ public class BICQuoteOrder extends ECETestBase {
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
 
-
     // Setup test base for Tax Exemption Document submission
     if (Objects.equals(System.getProperty("submitTaxInfo"), BICECEConstants.TRUE)) {
       com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase =
@@ -400,11 +399,8 @@ public class BICQuoteOrder extends ECETestBase {
       // Verify that Order status is Not Payment
       AssertUtils.assertEquals("Order status should change to Not Payment",
           jp.get("orderState").toString(), "NON_PAYMENT");
-
-      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-      AssertUtils.assertEquals("Order status should change to Not Payment",
-          results.get("response_status").toString(), "EXPIRED");
     }
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
