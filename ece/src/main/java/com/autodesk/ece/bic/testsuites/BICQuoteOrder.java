@@ -51,7 +51,6 @@ public class BICQuoteOrder extends ECETestBase {
   public void beforeTestMethod(Method name) {
     LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml
         .get("default");
-    System.out.println("test case" + defaultvalues);
     LinkedHashMap<String, String> testcasedata = (LinkedHashMap<String, String>) loadYaml
         .get(name.getName());
 
@@ -167,7 +166,7 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printInfo("Payer email: " + payerEmail);
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
       getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
-      getBicTestBase().signOutUsingMeMenu();
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
       testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
       testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
     }
@@ -186,29 +185,33 @@ public class BICQuoteOrder extends ECETestBase {
     testResults.putAll(testDataForEachMethod);
     updateTestingHub(testResults);
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
 
-    if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {
-      AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart());
-    } else if (testDataForEachMethod.get("taxOptionEnabled").equals("N")) {
+    if (Objects.equals(testDataForEachMethod.get("ttrEnabled"), "true")) {
+      if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {
+        AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart());
+      } else if (testDataForEachMethod.get("taxOptionEnabled").equals("N")) {
+        AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
+      }
+    } else {
       AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
     }
 
     // Setup test base for Tax Exemption Document submission
-    if (Objects.equals(System.getProperty("submitTaxInfo"), BICECEConstants.TRUE)) {
-      com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase =
-          new com.autodesk.testinghub.core.testbase.BICTestBase(getDriver(), getTestBase());
+    if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
+      com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+          getDriver(), getTestBase());
 
       HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {{
         put(BICConstants.exemptFromSalesTax, "Yes");
         put(BICConstants.reasonForExempt, "Reseller");
         put(BICConstants.buyerAccountType, "Reseller");
-        put("state", "Colorado");
+        put("state", address.provinceName);
         put(BICConstants.registeredAs, "Retailer");
         put(BICConstants.salesTaxType, "State Sales Tax");
         put(BICConstants.businessType, "Construction");
@@ -268,7 +271,7 @@ public class BICQuoteOrder extends ECETestBase {
 
       updateTestingHub(testResults);
 
-      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC) && getBicTestBase().shouldValidateSAP()) {
         String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
             System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
                 BICECEConstants.VISA : BICECEConstants.CREDITCARD;
@@ -419,7 +422,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
@@ -495,7 +498,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
@@ -661,25 +664,17 @@ public class BICQuoteOrder extends ECETestBase {
 
   @Test(groups = {"bic-quoteorder-multiinvoice"}, description = "Validation of Create BIC Quote Order with Common Payer")
   public void validateBicQuoteOrderMultiInvoice() throws MetadataException {
+
     LinkedHashMap<String, String> testResults = new LinkedHashMap<String, String>();
 
-    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-      Names payerNames = BICTestBase.generateFirstAndLastNames();
-      String payerEmail = BICTestBase.generateUniqueEmailID();
-      Util.printInfo("Payer email: " + payerEmail);
-      getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-      getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
-      getBicTestBase().signOutUsingMeMenu();
-      testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
-      testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
-    }
-
     Address firstAddress = getBillingAddress();
+
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
             testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
         PASSWORD, true);
 
+    String purchaser = testDataForEachMethod.get(BICECEConstants.emailid);
     String quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"),
         testDataForEachMethod);
@@ -689,12 +684,12 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
     testResults.putAll(testDataForEachMethod);
     // Signing out after quote creation
-    getBicTestBase().signOutUsingMeMenu();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
     // Re login during checkout
-    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().loginToOxygen(purchaser, PASSWORD);
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -743,28 +738,30 @@ public class BICQuoteOrder extends ECETestBase {
       updateTestingHub(testResults);
 
       //Sign out from first user session
-      getBicTestBase().signOutUsingMeMenu();
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
       // Creating another order with same Payer
       testDataForEachMethod.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
-
+      testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
+      testResults.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
+      testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
       Names  secondUser = BICTestBase.generateFirstAndLastNames();
       String secondUserEmail = BICTestBase.generateUniqueEmailID();
 
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-      getBicTestBase().createBICAccount(secondUser, secondUserEmail,
-          PASSWORD, true);
+      getBicTestBase().createBICAccount(secondUser, secondUserEmail, PASSWORD, true);
+      testDataForEachMethod.put(BICECEConstants.emailid, secondUserEmail);
+      testResults.put(BICECEConstants.PAYER_EMAIL, purchaser);
+
 
        quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
           testDataForEachMethod.get("agentContactEmail"),
           testDataForEachMethod);
-      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
       testResults.put(BICECEConstants.QUOTE_ID, quoteId);
       testResults.put(BICECEConstants.emailid,secondUserEmail);
       updateTestingHub(testResults);
-      testResults.putAll(testDataForEachMethod);
       // Signing out after quote creation
-      getBicTestBase().signOutUsingMeMenu();
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
       getBicTestBase().navigateToQuoteCheckout(testResults);
       // Re login during checkout
@@ -807,7 +804,123 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(justQuoteDetails);
   }
 
-      private Address getBillingAddress() {
+  @Test(groups = {"bic-returning-quote-user"}, description = "Validation Returning Quote User")
+  public void validateReturningQuoteUser() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    Address address = getBillingAddress();
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    updateTestingHub(testResults);
+    // Signing out after quote creation
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+
+    // Setup test base for Tax Exemption Document submission
+    if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
+      com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+          getDriver(), getTestBase());
+
+      HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {{
+        put(BICConstants.exemptFromSalesTax, "Yes");
+        put(BICConstants.reasonForExempt, "Reseller");
+        put(BICConstants.buyerAccountType, "Reseller");
+        put("state", address.provinceName);
+        put(BICConstants.registeredAs, "Retailer");
+        put(BICConstants.salesTaxType, "State Sales Tax");
+        put(BICConstants.businessType, "Construction");
+        put(BICConstants.certToSelect, "Uniform Sales and Use Tax Certificate - Multijurisdiction");
+        put(BICConstants.buyerContactName,
+            testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
+                BICECEConstants.LASTNAME));
+      }};
+
+      coreBicTestBase.uploadAndPunchOutFlow(dataForTTR, "Tax-Exempt Nonprofit");
+      getBicTestBase().validateUserTaxExempt();
+      testDataForEachMethod.put("taxOptionEnabled", "N");
+    }
+
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+    testResults.put(BICECEConstants.orderNumber, results.get(BICConstants.orderNumber));
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
+
+    updateTestingHub(testResults);
+
+    testDataForEachMethod.put("isReturningUser", BICECEConstants.TRUE);
+
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
+    String quote2Id = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quote2Id);
+
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+
+    if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
+      // On the second visit to checkout validate that the user is still tax exempt
+      getBicTestBase().validateUserTaxExempt();
+    }
+
+    results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    testResults.put(BICECEConstants.orderNumber + "_2", results.get(BICConstants.orderNumber));
+    results.putAll(testDataForEachMethod);
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
+    updateTestingHub(testResults);
+  }
+
+  private Address getBillingAddress() {
     String billingAddress;
     String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
     if (addressViaParam != null && !addressViaParam.isEmpty()) {

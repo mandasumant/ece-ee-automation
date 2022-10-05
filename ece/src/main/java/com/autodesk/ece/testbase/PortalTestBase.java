@@ -671,7 +671,7 @@ public class PortalTestBase {
     try {
       if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 60)) {
         Util.printInfo("Clicking on portal subscription and contracts link...");
-        portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
+        driver.get(accountsPortalSubscriptionsUrl);
         portalPage.waitForPageToLoad();
 
         debugPageUrl("Step 2");

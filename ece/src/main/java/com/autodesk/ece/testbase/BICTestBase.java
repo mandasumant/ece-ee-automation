@@ -264,7 +264,7 @@ public class BICTestBase {
     }
 
     List<WebElement> submitButton = driver.findElements(By.cssSelector(
-        "[data-testid=\"order-summary-section\"] .checkout--order-summary-section--submit-order .checkout--order-summary-section--submit-order--button-container button"));
+        "[data-testid='order-summary-section'] .checkout--order-summary-section--submit-order button"));
     if (submitButton.size() == 0) {
       AssertUtils.fail("The 'Submit order' button is not displayed.");
     }
@@ -961,48 +961,66 @@ public class BICTestBase {
   @Step("Populate pay by invoice details")
   public void populatePayByInvoiceDetails(Map<String, String> payByInvoiceDetails, Map<String, String> address) {
     int count = 0;
-
-    bicPage.waitForField("payByInvoiceButton", true, 30000);
-    while (!bicPage.waitForField("payByInvoiceButton", true, 30000)) {
-      if (count > 3) {
-        AssertUtils.fail("Retries exhausted: Pay By Invoice Tab is missing in Cart");
-      }
-      driver.navigate().refresh();
-      Util.sleep(3000);
-      count++;
-    }
+    Boolean success = true;
 
     try {
-      //if we refreshed the page, we need to click on continue again
-      if (bicPage.checkFieldExistence("customerDetailsContinue")) {
-        bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
-        Util.sleep(5000);
-        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      }
+      bicPage.waitForField("payByInvoiceTab", true, 30000);
+      while (success) {
+        count++;
 
-      Util.printInfo("Clicking on pay By Invoice tab...");
-      bicPage.clickUsingLowLevelActions("payByInvoiceButton");
-
-      if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null
-          && payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
-        Util.printInfo("Entering Payers emails and csn...");
-        if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
-          bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
-          bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
-          
-          bicPage.click("reviewLOCOrder");
+        // If we refreshed the page, we need to click on continue again
+        if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
+          bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+          Util.sleep(5000);
+          bicPage.clickUsingLowLevelActions("customerDetailsContinue");
         }
-      }
 
-      if (bicPage.waitForFieldPresent("yesPurchaseOrderOption", 10000)
-          && payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
-        if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
-          Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get("orderNumber"));
-          bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
+        if (count > 5) {
+          AssertUtils.fail("Retries exhausted: Pay By Invoice is missing in Cart");
         }
-      } else {
-        Util.printInfo("Clicking On \"No\" option.");
-        bicPage.clickUsingLowLevelActions("noPurchaseOrderOption");
+
+        Util.printInfo("Clicking on pay By Invoice tab...");
+        bicPage.clickUsingLowLevelActions("payByInvoiceTab");
+
+        try {
+          if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(
+              BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
+            if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
+              Util.printInfo("Entering Payer email and CSN.");
+              bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
+              bicPage.populateField("payerCSN", payByInvoiceDetails.get(BICECEConstants.PAYER_CSN));
+              bicPage.waitForFieldPresent("reviewLOCOrder", 10);
+              Util.printInfo("clicking continue");
+              bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+            }
+          }
+        } catch (Exception e) {
+          Util.printInfo("Failed entering Payer email and CSN.");
+          driver.navigate().refresh();
+          Util.sleep(3000);
+          continue;
+        }
+
+        try {
+          bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10);
+
+          if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
+            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
+              Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get("orderNumber"));
+              bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
+            }
+          } else {
+            Util.printInfo("Selecting No PO Option in LOC flow");
+            bicPage.clickUsingLowLevelActions("noPurchaseOrderOption");
+          }
+        } catch (Exception e) {
+          Util.printInfo("Failed to specify the PO number or No option in LOC flow...");
+          driver.navigate().refresh();
+          Util.sleep(3000);
+          continue;
+        }
+
+        success = false;
       }
 
       if (payByInvoiceDetails.containsKey(BICECEConstants.PURCHASE_ORDER_DOCUMENT_PATH)) {
@@ -1021,21 +1039,32 @@ public class BICTestBase {
         }
       }
 
-      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL)
-          && bicPage.waitForField("payerSameAsCustomer", true, 10000)) {
+      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL) && bicPage.waitForField("payerSameAsCustomer", true, 10000)) {
         bicPage.clickUsingLowLevelActions("payerSameAsCustomer");
         bicPage.waitForElementVisible(
             bicPage.getMultipleWebElementsfromField("cartEmailAddress").get(0), 10);
         bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));
-        address.put(BICECEConstants.ORGANIZATION_NAME, payByInvoiceDetails.get(BICECEConstants.ORGANIZATION_NAME));
+
+        if (payByInvoiceDetails.containsKey(BICECEConstants.ORGANIZATION_NAME)) {
+          address.put(BICECEConstants.ORGANIZATION_NAME, payByInvoiceDetails.get(BICECEConstants.ORGANIZATION_NAME));
+        }
+
         enterCustomerDetails(address);
       }
-    } catch (Exception e) {
+    } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter Pay By invoice payment details");
     }
 
     bicPage.click("reviewLOCOrder");
+
+    try {
+      if (bicPage.checkIfElementExistsInPage("paymentContinueButton", 15)) {
+        bicPage.clickUsingLowLevelActions("paymentContinueButton");
+      }
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 
@@ -2142,24 +2171,6 @@ public class BICTestBase {
     Util.printInfo("Successfully logged in");
   }
 
-  public void signOutUsingMeMenu() {
-    Util.printInfo("Signing out using meMenu");
-
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(90));
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(bicPage.getFirstFieldLocator("meMenuSignedIn"))));
-
-    Util.printInfo("MeMenu for signed in state found. Trying to sign out.");
-    try {
-      bicPage.checkIfElementExistsInPage("meMenuSignedIn", 20);
-      bicPage.click("meMenuSignedIn");
-      bicPage.checkIfElementExistsInPage("meMenuSignOut", 60);
-      bicPage.click("meMenuSignOut");
-      bicPage.waitForPageToLoad();
-    } catch (Exception e) {
-      AssertUtils.fail("Application Loading issue : Unable to logout");
-    }
-  }
-
   private String[] getCardPaymentDetails(String paymentMethod) {
     debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
     return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
@@ -2280,7 +2291,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
 
-    return bicPage.waitForField("payByInvoiceButton", true, 30000);
+    return bicPage.waitForField("payByInvoiceTab", true, 30000);
   }
 
   public void goToDotcomSignin(LinkedHashMap<String, String> data) {
@@ -2290,6 +2301,15 @@ public class BICTestBase {
     Util.sleep(10000);
     bicPage.waitForFieldPresent("signInButton", 10000);
     bicPage.click("signInButton");
+  }
+
+  public void validateUserTaxExempt() {
+    try {
+      AssertUtils.assertTrue(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10));
+      Util.printInfo("User's tax exemption certificate was accepted");
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static class Names {
