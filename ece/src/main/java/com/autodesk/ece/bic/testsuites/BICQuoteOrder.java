@@ -5,6 +5,7 @@ import com.autodesk.ece.testbase.BICTestBase;
 import com.autodesk.ece.testbase.BICTestBase.Names;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
+import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -210,7 +211,7 @@ public class BICQuoteOrder extends ECETestBase {
         put(BICConstants.exemptFromSalesTax, "Yes");
         put(BICConstants.reasonForExempt, "Reseller");
         put(BICConstants.buyerAccountType, "Reseller");
-        put("state", "Colorado");
+        put("state", address.provinceName);
         put(BICConstants.registeredAs, "Retailer");
         put(BICConstants.salesTaxType, "State Sales Tax");
         put(BICConstants.businessType, "Construction");
@@ -295,6 +296,92 @@ public class BICQuoteOrder extends ECETestBase {
       }
       updateTestingHub(testResults);
     }
+  }
+
+  @Test(groups = {"bic-invoicenonpayment"}, description = "Validate Quote Invoice Non payment")
+  public void validateQuoteInvoiceNonPayment() throws Exception {
+    HashMap<String, String> testResults = new HashMap<>();
+    Address address = getBillingAddress();
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+                    testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+            PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+            testDataForEachMethod.get("agentContactEmail"),
+            testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.putAll(testDataForEachMethod);
+    updateTestingHub(testResults);
+
+    // Signing out after quote creation
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+
+    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.putAll(results);
+    updateTestingHub(testResults);
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
+
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      // Getting a PurchaseOrder details from pelican
+      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+      // Compare tax in Checkout and Pelican
+      getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+              results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+      // Validate Quote Details with Pelican
+      pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
+      // Get find Subscription ById
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+      try {
+        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+        testResults
+                .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+        testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+        testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        testResults.put(BICConstants.subscriptionPeriodStartDate,
+                results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+        testResults.put(BICConstants.subscriptionPeriodEndDate,
+                results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+        testResults
+                .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+        testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
+
+      // Sleep for the Order orchestration SQS event to be processed in Pelican
+      Util.sleep(120000);
+      updateTestingHub(testResults);
+
+      // Commerce api call
+      PelicanTestBase.commerceNotPaymentAPI(results);
+
+      // Getting a PurchaseOrder details from pelican
+      JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
+
+      // Verify that Order status is Not Payment
+      AssertUtils.assertEquals("Order status should change to Not Payment",
+          jp.get("orderState").toString(), "NON_PAYMENT");
+    }
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
@@ -726,7 +813,7 @@ public class BICQuoteOrder extends ECETestBase {
         put(BICConstants.exemptFromSalesTax, "Yes");
         put(BICConstants.reasonForExempt, "Reseller");
         put(BICConstants.buyerAccountType, "Reseller");
-        put("state", "Colorado");
+        put("state", address.provinceName);
         put(BICConstants.registeredAs, "Retailer");
         put(BICConstants.salesTaxType, "State Sales Tax");
         put(BICConstants.businessType, "Construction");

@@ -22,7 +22,8 @@ public class Address {
   public String phoneNumber;
   public String country;
   public String countryCode;
-  public String province;
+  public String province = "";
+  public String provinceName;
 
   public Address(String localeMap) {
     String[] billingAddress = localeMap.split("@");
@@ -36,22 +37,34 @@ public class Address {
 
     if (billingAddress.length == 7) {
       this.province = billingAddress[6];
-    } else {
-      this.province = "";
     }
 
     ClassLoader classLoader = this.getClass().getClassLoader();
 
-    String jsonFilePath = Objects.requireNonNull(
+    String countryCodeJsonFilePath = Objects.requireNonNull(
         classLoader.getResource("ece/payload/countryCodes.json")).getPath();
 
     try {
-      FileInputStream fileStream = new FileInputStream(jsonFilePath);
+      FileInputStream fileStream = new FileInputStream(countryCodeJsonFilePath);
       InputStreamReader inputStream = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
       JsonPath jp = new JsonPath(inputStream);
       countryCode = jp.getString("find { it.Name == '" + this.country + "' }.Code");
     } catch (FileNotFoundException e) {
       Util.printError("Failed to load country codes file: " + e.getMessage());
+    }
+
+    String provinceNameJsonFilePath = Objects.requireNonNull(
+        classLoader.getResource("ece/testdata/misc/provinces.json")).getPath();
+
+    if (!this.province.equals("")) {
+      try {
+        FileInputStream fileStream = new FileInputStream(provinceNameJsonFilePath);
+        InputStreamReader inputStream = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
+        JsonPath jp = new JsonPath(inputStream);
+        provinceName = jp.get(this.province);
+      } catch (FileNotFoundException e) {
+        Util.printError("Failed to load country codes file: " + e.getMessage());
+      }
     }
   }
 
