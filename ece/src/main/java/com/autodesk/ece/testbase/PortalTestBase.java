@@ -316,16 +316,16 @@ public class PortalTestBase {
       portalLogin(portalUserName, portalPassword);
     }
 
-    try {
-      clickALLPSLink();
-      status = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    if (!status) {
-      AssertUtils.fail(BICECEConstants.PRODUCT_IS_DISPLAYED_IN_PORTAL + BICECEConstants.FALSE);
-    }
+//    try {
+//      clickALLPSLink();
+//      status = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//
+//    if (!status) {
+//      AssertUtils.fail(BICECEConstants.PRODUCT_IS_DISPLAYED_IN_PORTAL + BICECEConstants.FALSE);
+//    }
   }
 
 
