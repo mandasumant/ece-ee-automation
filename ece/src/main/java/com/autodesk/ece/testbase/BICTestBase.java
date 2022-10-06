@@ -1877,7 +1877,7 @@ public class BICTestBase {
       WebElement Element = driver.findElement(
           By.xpath(bicPage.getFirstFieldLocator("orderSummarySection")));
       js.executeScript("arguments[0].scrollIntoView();", Element);
-      Util.sleep(5000);
+      Util.sleep(10000);
 
       try {
         if (bicPage.checkIfElementExistsInPage("orderSummaryTax", 60)) {
@@ -1893,7 +1893,7 @@ public class BICTestBase {
           taxValue = driver
               .findElement(
                   By.xpath(
-                      "//div[@class='checkout--order-summary-section--products-total']/div[2]/p[2][@data-pricing-source='C']"))
+                      "//div[@class='checkout--order-summary-section--products-total']/div[2]/p[2][@data-pricing-source='C' or @data-pricing-source='PQ']"))
               .getText();
         }
       } catch (MetadataException e) {
