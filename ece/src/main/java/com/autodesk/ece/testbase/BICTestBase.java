@@ -1877,14 +1877,18 @@ public class BICTestBase {
       WebElement Element = driver.findElement(
           By.xpath(bicPage.getFirstFieldLocator("orderSummarySection")));
       js.executeScript("arguments[0].scrollIntoView();", Element);
-      Util.sleep(10000);
+      Util.sleep(5000);
 
       try {
-        if (bicPage.checkIfElementExistsInPage("orderSummaryTax", 60)) {
-          Util.printInfo("Flex tax condition for Tax/GST");
+        if (bicPage.checkIfElementExistsInPage("orderSummaryUSTax", 5)) {
+          Util.printInfo("Flex tax condition for US Tax");
           taxValue = driver.findElement(
-              By.xpath(bicPage.getFirstFieldLocator("orderSummaryTax"))).getText();
-        } else if (bicPage.checkIfElementExistsInPage("orderSummaryVat", 60)) {
+              By.xpath(bicPage.getFirstFieldLocator("orderSummaryUSTax"))).getText();
+        } else if (bicPage.checkIfElementExistsInPage("orderSummaryUKTax", 5)) {
+          Util.printInfo("Flex tax condition for GBP Tax");
+          taxValue = driver.findElement(
+              By.xpath(bicPage.getFirstFieldLocator("orderSummaryUKTax"))).getText();
+        } else if (bicPage.checkIfElementExistsInPage("orderSummaryVat", 5)) {
           Util.printInfo("Flex tax condition for Vat");
           taxValue = driver.findElement(
               By.xpath(bicPage.getFirstFieldLocator("orderSummaryVat"))).getText();
