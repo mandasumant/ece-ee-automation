@@ -1877,7 +1877,7 @@ public class BICTestBase {
       WebElement Element = driver.findElement(
           By.xpath(bicPage.getFirstFieldLocator("orderSummarySection")));
       js.executeScript("arguments[0].scrollIntoView();", Element);
-      Util.sleep(5000);
+      Util.sleep(10000);
 
       try {
         if (bicPage.checkIfElementExistsInPage("orderSummaryUSTax", 5)) {
