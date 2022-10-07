@@ -1905,7 +1905,6 @@ public class PortalTestBase {
   @Step("Validate Pay By Invoice Payment Tab presence")
   public void validatePayByInvoiceTabPresence() {
     try {
-      portalPage.waitForElementToDisappear("portalPayByInvoice", 30000);
       portalPage.checkIfElementExistsInPage("portalPayByInvoice", 10);
     } catch (Exception e) {
       e.printStackTrace();
