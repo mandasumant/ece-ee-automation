@@ -2323,7 +2323,6 @@ public class BICTestBase {
     }
 
     public HashMap<String, String> getMap() {
-
       return new HashMap<String, String>() {{
         put(BICECEConstants.FIRSTNAME, firstName);
         put(BICECEConstants.LASTNAME, lastName);

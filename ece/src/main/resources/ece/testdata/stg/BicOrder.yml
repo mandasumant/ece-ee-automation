@@ -52,8 +52,7 @@ default:
   accountsPortalQuoteUrl: "https://stg-manage.autodesk.com/billing/quotes"
   accountPortalBillingInvoicesUrl: "https://int-manage.autodesk.com/billing/invoices"
   accountsProductPageUrl: "https://stg-manage.autodesk.com/products"
-  payByInvoicePageURL : " https://checkoutservice-int.autodesk.com/quoteRedirect/Q-75490?lang=en&country=US&currency=USD
-"
+  payByInvoicePageURL : "https://checkoutservice-stg.autodesk.com/quoteRedirect/Q-75490?lang=en&country=US&currency=USD"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
@@ -273,7 +272,5 @@ validateQuoteInvoiceNonPayment:
   accessModel: "Flex"
   productType: "flex"
 
-
-validateBlockedUser:
-  blockeduseremailid: "biz-thubnamercsfpxysscfxy@letscheck.pw"
-  blockedusernewPassword: "Password1"
+validatePayByInvoiceBlockUser:
+  blockedUserEmailId: "biz-thubnamercsfpxysscfxy@letscheck.pw"

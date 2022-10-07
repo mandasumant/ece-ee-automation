@@ -898,6 +898,14 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  @Test(groups = {"pay-by-invoice-block"}, description = "Validate Pay By Invoice Block User")
+  public void validatePayByInvoiceBlockUser() {
+    testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
+    getPortalTestBase().navigateToLoginToPayByInvoiceURL();
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get("blockedUserEmailId"), PASSWORD);
+    getPortalTestBase().validatePayByInvoiceTabPresence();
+  }
+
   private Address getBillingAddress() {
     String billingAddress;
     String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
@@ -909,12 +917,5 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     return new Address(billingAddress);
-  }
-
-  @Test(groups = {"PayByInvoiceBlock"}, description = "Pay By Invoices Block User Validation")
-  public void validatePayByInvoices() throws Exception {
-    getPortalTestBase().navigateToLoginToPayByinvoiceURL();
-    getBicTestBase().loginToOxygen(testDataForEachMethod.get("blockeduseremailid") , testDataForEachMethod.get("blockedusernewPassword"));
-    getPortalTestBase().validatePayByInvoice();
   }
 }

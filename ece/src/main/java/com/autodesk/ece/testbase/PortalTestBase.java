@@ -1889,18 +1889,27 @@ public class PortalTestBase {
 
     }
   }
-  @Step("Navigate To login to Pay By invoice URL")
-  public void navigateToLoginToPayByinvoiceURL() throws Exception{
-    driver.get(payByInvoicePageURL);
-  }
-  @Step("Validate Pay By Invoice presence")
-  public void validatePayByInvoice() {
+
+  @Step("Navigate To login to Pay By Invoice URL")
+  public void navigateToLoginToPayByInvoiceURL() {
     try {
-      portalPage.waitForFieldPresent("portalPayByInvoice", 30000);
-      Assert.fail("Pay By Invoice option shouldn't be displayed");
+      openPortalURL(payByInvoicePageURL);
+      portalPage.waitForPageToLoad();
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail("Unable to open Pay By Invoice");
     }
-    catch(Exception ex){
-      Util.printInfo("Pay By invoice is not displayed");
+    portalPage.waitForPageToLoad();
+  }
+
+  @Step("Validate Pay By Invoice Payment Tab presence")
+  public void validatePayByInvoiceTabPresence() {
+    try {
+      portalPage.waitForElementToDisappear("portalPayByInvoice", 30000);
+      portalPage.checkIfElementExistsInPage("portalPayByInvoice", 10);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Util.printInfo("Pay By Invoice Payment Tab should not be displayed");
     }
   }
 }
