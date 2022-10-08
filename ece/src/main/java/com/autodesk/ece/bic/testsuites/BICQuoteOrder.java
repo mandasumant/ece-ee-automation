@@ -900,8 +900,7 @@ public class BICQuoteOrder extends ECETestBase {
 
   @Test(groups = {"pay-by-invoice-block"}, description = "Validate Pay By Invoice Block User")
   public void validatePayByInvoiceBlockUser() {
-    testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
-    getPortalTestBase().navigateToLoginToPayByInvoiceURL();
+    getPortalTestBase().navigateToLoginToPayByInvoiceURL(testDataForEachMethod.get("payByInvoicePageURL"));
     getBicTestBase().loginToOxygen(testDataForEachMethod.get("blockedUserEmailId"), PASSWORD);
     getPortalTestBase().validatePayByInvoiceTabPresence();
   }

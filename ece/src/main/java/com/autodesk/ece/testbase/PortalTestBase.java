@@ -55,7 +55,6 @@ public class PortalTestBase {
   private final String accountsPortalQuoteUrl;
   private final String accountPortalBillingInvoicesUrl;
   private final String accountsProductPageUrl;
-  private final String payByInvoicePageURL;
   private final ZipPayTestBase zipTestBase;
   private final BICTestBase bicTestBase;
   public WebDriver driver = null;
@@ -79,7 +78,6 @@ public class PortalTestBase {
     accountsPortalQuoteUrl = defaultvalues.get("accountsPortalQuoteUrl");
     accountPortalBillingInvoicesUrl = defaultvalues.get("accountPortalBillingInvoicesUrl");
     accountsProductPageUrl = defaultvalues.get("accountsProductPageUrl");
-    payByInvoicePageURL = defaultvalues.get("payByInvoicePageURL");
   }
 
   public static String timestamp() {
@@ -1891,9 +1889,9 @@ public class PortalTestBase {
   }
 
   @Step("Navigate To login to Pay By Invoice URL")
-  public void navigateToLoginToPayByInvoiceURL() {
+  public void navigateToLoginToPayByInvoiceURL(String data) {
     try {
-      openPortalURL(payByInvoicePageURL);
+      openPortalURL(data);
       portalPage.waitForPageToLoad();
     } catch (Exception e) {
       e.printStackTrace();

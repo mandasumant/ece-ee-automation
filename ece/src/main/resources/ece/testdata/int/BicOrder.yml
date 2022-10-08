@@ -52,7 +52,6 @@ default:
   accountsPortalQuoteUrl: "https://int-manage.autodesk.com/billing/quotes"
   accountPortalBillingInvoicesUrl: "https://int-manage.autodesk.com/billing/invoices"
   accountsProductPageUrl: "https://int-manage.autodesk.com/products"
-  payByInvoicePageURL: "https://checkoutservice-int.autodesk.com/quoteRedirect/Q-75490?lang=en&country=US&currency=USD"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
@@ -279,4 +278,4 @@ validateQuoteInvoiceNonPayment:
 
 validatePayByInvoiceBlockUser:
   blockedUserEmailId: "biz-thubnamercsfpxysscfxy@letscheck.pw"
-
+  payByInvoicePageURL: "https://checkoutservice-int.autodesk.com/quoteRedirect/Q-75490?lang=en&country=US&currency=USD"
