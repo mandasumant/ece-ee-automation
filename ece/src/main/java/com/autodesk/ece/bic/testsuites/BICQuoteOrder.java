@@ -17,6 +17,7 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -69,6 +70,14 @@ public class BICQuoteOrder extends ECETestBase {
       AssertUtils.fail("The locale configuration is not found for the given country/locale: " + locale);
     } else {
       testDataForEachMethod.putAll(localeDataMap.get(locale));
+
+      // Limitation of our localeConfig, our locale is configured to support 1 store with 1 currency setting
+      // Workaround to above issue is to have this currency condition (a dirty fix) for Quote and EURO only.
+      if(!Arrays.stream(testDataForEachMethod.get(BICECEConstants.PAYMENT_METHODS).split(","))
+          .equals(BICECEConstants.LOC)) {
+        testDataForEachMethod.put(BICECEConstants.PAYMENT_METHODS,
+            testDataForEachMethod.get(BICECEConstants.PAYMENT_METHODS) + "," + BICECEConstants.LOC);
+      }
     }
 
     Util.printInfo(
