@@ -907,6 +907,13 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  @Test(groups = {"pay-by-invoice-block"}, description = "Validate Pay By Invoice Block User")
+  public void validatePayByInvoiceBlockUser() {
+    getPortalTestBase().navigateToLoginToPayByInvoiceURL(testDataForEachMethod.get("payByInvoicePageURL"));
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get("blockedUserEmailId"), PASSWORD);
+    getPortalTestBase().validatePayByInvoiceTabPresence();
+  }
+
   private Address getBillingAddress() {
     String billingAddress;
     String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);

@@ -276,4 +276,6 @@ validateQuoteInvoiceNonPayment:
   accessModel: "Flex"
   productType: "flex"
 
-
+validatePayByInvoiceBlockUser:
+  blockedUserEmailId: "biz-thubnamercsfpxysscfxy@letscheck.pw"
+  payByInvoicePageURL: "https://checkoutservice-int.autodesk.com/quoteRedirect/Q-75490?lang=en&country=US&currency=USD"

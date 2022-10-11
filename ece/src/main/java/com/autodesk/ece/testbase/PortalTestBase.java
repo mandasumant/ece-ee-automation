@@ -1836,6 +1836,7 @@ public class PortalTestBase {
     }
   }
 
+
   @Step("CEP : Pay Invoice")
   public void payInvoice(LinkedHashMap<String, String> data) throws Exception {
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
@@ -1883,6 +1884,29 @@ public class PortalTestBase {
       } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim()) && invoiceStatus.get(i).getText().equalsIgnoreCase("Paid")) {
         AssertUtils.assertFalse(true, " Able to find the Invoice PO Number " + poNumber + " but the status is " + invoiceStatus.get(i).getText());
       }
+
+    }
+  }
+
+  @Step("Navigate To login to Pay By Invoice URL")
+  public void navigateToLoginToPayByInvoiceURL(String data) {
+    try {
+      openPortalURL(data);
+      portalPage.waitForPageToLoad();
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail("Unable to open Pay By Invoice");
+    }
+    portalPage.waitForPageToLoad();
+  }
+
+  @Step("Validate Pay By Invoice Payment Tab presence")
+  public void validatePayByInvoiceTabPresence() {
+    try {
+      portalPage.checkIfElementExistsInPage("portalPayByInvoice", 10);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Util.printInfo("Pay By Invoice Payment Tab should not be displayed");
     }
   }
 }
