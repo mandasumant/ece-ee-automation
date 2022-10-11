@@ -1458,7 +1458,7 @@ public class BICTestBase {
       Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
     }
-
+    Util.sleep(10000);
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 15)) {
       bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
       Util.sleep(5000);
