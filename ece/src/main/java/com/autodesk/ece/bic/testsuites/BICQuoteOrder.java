@@ -8,6 +8,7 @@ import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -228,7 +229,18 @@ public class BICQuoteOrder extends ECETestBase {
         put(BICConstants.buyerContactName,
             testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
                 BICECEConstants.LASTNAME));
+        put(TestingHubConstants.fileName, EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
       }};
+
+      switch (address.country) {
+        case "Canada":
+          dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
+          break;
+        case "United States":
+        default:
+          dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
+          break;
+      }
 
       coreBicTestBase.uploadAndPunchOutFlow(dataForTTR, "Tax-Exempt Nonprofit");
       testDataForEachMethod.put("taxOptionEnabled", "N");
