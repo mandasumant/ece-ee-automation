@@ -27,6 +27,7 @@ import java.util.Objects;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.util.Strings;
 
 public class BICQuoteOrder extends ECETestBase {
 
@@ -269,6 +270,10 @@ public class BICQuoteOrder extends ECETestBase {
       // Getting a PurchaseOrder details from pelican
       results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
+      AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
+          Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
+          "Pelican 'Tax Exempt' flag didnt match with Test Param");
+
       // Compare tax in Checkout and Pelican
       getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
           results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
@@ -306,7 +311,8 @@ public class BICQuoteOrder extends ECETestBase {
       results.putAll(testDataForEachMethod);
     }
 
-    if(!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice") && !System.getProperty("prvtransactionid").isEmpty()) {
+    if(!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice") &&
+        Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid"))) {
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
         String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
             System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
@@ -333,7 +339,7 @@ public class BICQuoteOrder extends ECETestBase {
       }
       updateTestingHub(testResults);
     } else {
-      if(!System.getProperty("prvtransactionid").isEmpty()) {
+      if(Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid"))) {
         Util.printInfo("Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
       } else {
         Util.printInfo("Skipping Pay Invoice flow, Pay Invoice was successful in Transaction Id provided!");
