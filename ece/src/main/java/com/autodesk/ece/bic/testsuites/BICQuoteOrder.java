@@ -176,7 +176,6 @@ public class BICQuoteOrder extends ECETestBase {
     HashMap<String, String> results = new HashMap<String, String>();
 
     if(!getTestingHubUtil().isStepCompleted("Placing the Flex Order ")) {
-
       if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
         Names payerNames = BICTestBase.generateFirstAndLastNames();
         String payerEmail = BICTestBase.generateUniqueEmailID();
@@ -302,12 +301,12 @@ public class BICQuoteOrder extends ECETestBase {
 
       updateTestingHub(testResults);
     } else {
-      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Transaction: " + System.getProperty("transactionid"));
+      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Transaction: " + System.getProperty("prvtransactionid"));
       testDataForEachMethod.putAll(getTestingHubUtil().getTransactionOutputObject());
       results.putAll(testDataForEachMethod);
     }
 
-    if(!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice") && !System.getProperty("transactionid").isEmpty()) {
+    if(!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice") && !System.getProperty("prvtransactionid").isEmpty()) {
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
         String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
             System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
@@ -334,10 +333,10 @@ public class BICQuoteOrder extends ECETestBase {
       }
       updateTestingHub(testResults);
     } else {
-      if(!System.getProperty("transactionid").isEmpty()) {
+      if(!System.getProperty("prvtransactionid").isEmpty()) {
         Util.printInfo("Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
       } else {
-        Util.printInfo("Skipping Pay Invoice flow, Pay Invoice was successful in Transaction provided!");
+        Util.printInfo("Skipping Pay Invoice flow, Pay Invoice was successful in Transaction Id provided!");
       }
     }
 
