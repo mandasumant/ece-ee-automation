@@ -1454,15 +1454,13 @@ public class BICTestBase {
     }
 
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
-      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
-      Util.sleep(5000);
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
     }
-    Util.sleep(10000);
-    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 15)) {
-      bicPage.waitForFieldPresent("customerDetailsContinue2", 10000);
-      Util.sleep(5000);
-      bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
     }
 
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
@@ -1784,14 +1782,12 @@ public class BICTestBase {
 
     populateTaxIdForFlex();
 
-    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
-      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      Util.sleep(2000);
+      bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
     }
 
-    Util.sleep(5000);
 
     if (bicPage.checkIfElementExistsInPage("confirmCustomerAddressAlert", 10)) {
       if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
@@ -1799,16 +1795,16 @@ public class BICTestBase {
         bicPage.clickUsingLowLevelActions("customerDetailsAddress");
       }
 
-      if (bicPage.checkIfElementExistsInPage("customerDetailsContinue2", 10)) {
-        Util.printInfo("Address confirmation requested, Clicking on Continue2 button.");
-        bicPage.clickUsingLowLevelActions("customerDetailsContinue2");
+      if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+        Util.printInfo("Address confirmation requested, Clicking on Continue button.");
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
         waitForLoadingSpinnerToComplete("loadingSpinner");
       }
     }
 
     Util.sleep(5000);
 
-    boolean isCustomerDetailsComplete = bicPage.waitForFieldPresent("customerDetailsComplete", 1000);
+    boolean isCustomerDetailsComplete = bicPage.waitForFieldPresent("customerDetailsComplete", 10);
     if (isCustomerDetailsComplete) {
       Util.printInfo("Customer details address saved successfully!");
     } else {
