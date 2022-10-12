@@ -72,6 +72,10 @@ public class ECETestBase {
     return bictb;
   }
 
+  public TestinghubUtil getTestingHubUtil() {
+    return thutil;
+  }
+
   public String getSAPOrderNumberUsingPO(String poNumber) {
     String orderNumber = "";
     String OS = System.getProperty("os.name").toLowerCase();

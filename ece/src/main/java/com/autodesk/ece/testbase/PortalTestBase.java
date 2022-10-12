@@ -1747,6 +1747,8 @@ public class PortalTestBase {
     double invoiceAmount = 0.00;
     List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
     List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("purchaseOrderNumbersList");
+    AssertUtils.assertFalse(purchaseNumbers.size() == 0, "FAILURE: No Invoices available in Invoices page to Pay");
+
     for (int i = 0; i < purchaseNumbers.size(); i++) {
       if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim())) {
         checkBoxes.get(i).click();
@@ -1803,10 +1805,12 @@ public class PortalTestBase {
   }
 
   @Step("Select invoice and credit memo validations")
-  public void selectInvoiceAndValidateCreditMemo(String poNumber) throws Exception {
+  public void selectInvoiceAndValidateCreditMemo(String poNumber, Boolean shouldWaitForInvoice) throws Exception {
     String[] poNumbers = poNumber.split(",");
     openPortalURL(accountPortalBillingInvoicesUrl);
-    waitForInvoicePageLoadToVisible("Open invoices");
+    if (shouldWaitForInvoice) {
+      waitForInvoicePageLoadToVisible("Open invoices");
+    }
     double invoiceAmount = 0.00;
     for (int i = 0; i < poNumbers.length; i++) {
       Util.printInfo("Selecting PO Number:" + poNumbers[i]);
