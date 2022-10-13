@@ -157,7 +157,7 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['INT', 'STG'], description: 'Choose Environment')
+        choice(name: 'ENVIRONMENT', choices: ['STG', 'INT'], description: 'Choose Environment')
         booleanParam(name: 'CJT', defaultValue: false, description: 'Run CJT Regression')
         booleanParam(name: 'APOLLO_TTR', defaultValue: false, description: 'Run Quote 2 Order TTR?')
         booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order with LOC?')
