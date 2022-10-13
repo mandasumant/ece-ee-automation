@@ -17,7 +17,7 @@ import java.util.HashMap;
 public class SubscriptionServiceV4TestBase {
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
 
-  @Step("Order Service : Order Capture" + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Subscription Service : Get Subscription API" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> getSubscriptionById(HashMap<String, String> data) {
     ApiClient defaultClient = Configuration.getDefaultApiClient();
     defaultClient.setBasePath(data.get("getPelicanBaseUrl"));
