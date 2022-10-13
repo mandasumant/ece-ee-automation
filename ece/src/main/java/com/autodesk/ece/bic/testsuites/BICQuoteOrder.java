@@ -208,6 +208,7 @@ public class BICQuoteOrder extends ECETestBase {
 
       // Re login during checkout
       getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+      getBicTestBase().refreshCartIfEmpty();
 
       if (Objects.equals(testDataForEachMethod.get("ttrEnabled"), "true")) {
         if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {
@@ -372,7 +373,7 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
-
+    getBicTestBase().refreshCartIfEmpty();
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -456,6 +457,7 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -532,6 +534,7 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -718,6 +721,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
     // Re login during checkout
     getBicTestBase().loginToOxygen(purchaser, PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
@@ -794,6 +798,7 @@ public class BICQuoteOrder extends ECETestBase {
       getBicTestBase().navigateToQuoteCheckout(testResults);
       // Re login during checkout
       getBicTestBase().loginToOxygen(testResults.get(BICECEConstants.emailid), PASSWORD);
+      getBicTestBase().refreshCartIfEmpty();
       // Place second order with Same Payer
       results = getBicTestBase().placeFlexOrder(testResults);
       results.putAll(testResults);
@@ -853,6 +858,7 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
 
     // Setup test base for Tax Exemption Document submission
     if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
@@ -916,6 +922,7 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
 
     if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
       // On the second visit to checkout validate that the user is still tax exempt
@@ -949,9 +956,10 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"pay-by-invoice-block"}, description = "Validate Pay By Invoice Block User")
-  public void validatePayByInvoiceBlockUser() {
+  public void validatePayByInvoiceBlockUser() throws MetadataException {
     getPortalTestBase().navigateToLoginToPayByInvoiceURL(testDataForEachMethod.get("payByInvoicePageURL"));
     getBicTestBase().loginToOxygen(testDataForEachMethod.get("blockedUserEmailId"), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
     getPortalTestBase().validatePayByInvoiceTabPresence();
   }
 

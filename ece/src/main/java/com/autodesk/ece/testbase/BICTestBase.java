@@ -1926,6 +1926,21 @@ public class BICTestBase {
     return bicPage.isFieldPresent("cartTTRRedirectionButton");
   }
 
+  public Boolean refreshCartIfEmpty() throws MetadataException {
+    int count = 0;
+    while (!bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
+      count++;
+      driver.navigate().refresh();
+      Util.sleep(5000);
+      if (count > 5) {
+        return false;
+      }
+      Util.printInfo("Refresh Cart until end Customer continue Button is seen, Attempt: " + count);
+    }
+
+    return true;
+  }
+
   private void validateBicOrderNumber(String orderNumber) {
     if (orderNumber != null) {
       Util.printInfo("Order No: " + orderNumber);
