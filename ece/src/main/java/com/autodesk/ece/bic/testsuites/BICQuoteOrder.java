@@ -242,6 +242,13 @@ public class BICQuoteOrder extends ECETestBase {
 
         switch (address.country) {
           case "Canada":
+            switch (address.province) {
+              case "BC":
+              case "MB":
+              case "SK":
+                dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
+                break;
+            }
             dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
             break;
           case "United States":
