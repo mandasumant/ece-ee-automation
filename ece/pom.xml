@@ -29,7 +29,7 @@
         <repository>
             <id>central</id>
             <name>ArtifactorySantaClara-releases</name>
-            <url>https://art-toucan.autodesk.com/artifactory/team-eis-qa-maven</url>
+            <url>https://art-bobcat.autodesk.com/artifactory/team-eis-qa-maven</url>
         </repository>
 
         <repository>
@@ -46,7 +46,7 @@
         <repository>
             <id>platform-automation</id>
             <name>ArtifactoryPlatformAutomation-releases</name>
-            <url>https://art-toucan.autodesk.com/artifactory/team-dcle-platform-automation-release
+            <url>https://art-bobcat.autodesk.com/artifactory/team-dcle-platform-automation-release
             </url>
         </repository>
     </repositories>
