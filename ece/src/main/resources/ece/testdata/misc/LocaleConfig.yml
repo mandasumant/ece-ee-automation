@@ -356,7 +356,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL,ZIP,LOC"
-    address: "Autodesk@ulitsa Sabev dab@Saedinenie@4190@392 83 44 92@Bulgaria"
+    address: "Autodesk@2A Rojen Str.@Saedinenie@4190@392 83 44 92@Bulgaria"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070267982"
     agentContactEmail: "partneruser_da_int_5070267982@letscheck.email"

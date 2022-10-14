@@ -2318,10 +2318,16 @@ public class BICTestBase {
     bicPage.click("signInButton");
   }
 
-  public void validateUserTaxExempt() {
+  public void validateUserTaxExempt(Boolean shouldPresent) {
     try {
-      AssertUtils.assertTrue(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10));
-      Util.printInfo("User's tax exemption certificate was accepted");
+      if(shouldPresent) {
+        AssertUtils.assertTrue(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10));
+        Util.printInfo("User's tax exemption certificate was accepted");
+      } else {
+        AssertUtils.assertFalse(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10));
+        Util.printInfo("User's tax exemption certificate was NOT accepted");
+      }
+
     } catch (MetadataException e) {
       throw new RuntimeException(e);
     }

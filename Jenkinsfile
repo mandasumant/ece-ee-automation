@@ -843,6 +843,7 @@ def triggerApolloTTR(def serviceBuildHelper) {
                 '{"displayname":"TTR Q2O CA Yukon(en_CA)","testcasename":"9d3de1c2","description":"Quote 2 Order CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","locale":"en_CA","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@1026 Second Ave@Dawson@Y0B 1G0@9916800100@Canada@YT","timezone":"Canada/Pacific"}},' +
                 [
                     generateTest("Returning (en_US)", testcases.q2oTTRReturningUser, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
+                    generateTest("Neg: TTR Q2O Returning User with Diff. Address", testcases.q2oTTRReturningUser, addresses["United States"]["AZ"], ["changeAddress": "true", "timezone": "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
                 ].join(',') +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore - All")

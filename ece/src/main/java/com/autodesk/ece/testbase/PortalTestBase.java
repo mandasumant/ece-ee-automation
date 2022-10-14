@@ -222,7 +222,7 @@ public class PortalTestBase {
     int attempts = 0;
     WebElement element = null;
     openPortalURL(accountsPortalSubscriptionsUrl);
-    while (attempts < 15) {
+    while (attempts < 5) {
       try {
         String productXpath = portalPage
             .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
@@ -232,7 +232,7 @@ public class PortalTestBase {
       }
 
       if (isNull(element)) {
-        if (attempts >= 14) {
+        if (attempts >= 4) {
           AssertUtils.fail("All retries exhausted: Couldn't find subscription/agreement productXpath element");
         }
 
@@ -258,7 +258,7 @@ public class PortalTestBase {
       openPortalURL(accountsPortalProductsServicesUrl);
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
-      if(portalPage.checkIfElementExistsInPage("gotItButton", 60)) {
+      if(portalPage.checkIfElementExistsInPage("gotItButton", 10)) {
         Util.printInfo("Clicking on got it button..");
         portalPage.clickUsingLowLevelActions("gotItButton");
       }
@@ -267,7 +267,6 @@ public class PortalTestBase {
       e.printStackTrace();
       CustomSoftAssert.s_assert.fail("Unable to click on portalAllPSLink ");
     }
-    Util.sleep(10000);
   }
 
   /**
@@ -632,7 +631,7 @@ public class PortalTestBase {
   private boolean isPortalLoginPageVisible() {
     boolean status = false;
     try {
-      status = portalPage.checkIfElementExistsInPage("createAccountCEP", 60);
+      status = portalPage.checkIfElementExistsInPage("createAccountCEP", 10);
     } catch (MetadataException e) {
     }
     return status;

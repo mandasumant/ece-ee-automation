@@ -314,7 +314,7 @@ public class BICQuoteOrder extends ECETestBase {
 
       updateTestingHub(testResults);
     } else {
-//      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Transaction: " + System.getProperty("prvtransactionid"));
+//      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Transaction: " + Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid")));
       testDataForEachMethod.putAll(getTestingHubUtil().getTransactionOutputObject());
       results.putAll(testDataForEachMethod);
     }
@@ -875,7 +875,6 @@ public class BICQuoteOrder extends ECETestBase {
         put(BICConstants.exemptFromSalesTax, "Yes");
         put(BICConstants.reasonForExempt, "Reseller");
         put(BICConstants.buyerAccountType, "Reseller");
-        put("state", address.provinceName);
         put(BICConstants.registeredAs, "Retailer");
         put(BICConstants.salesTaxType, "State Sales Tax");
         put(BICConstants.businessType, "Construction");
@@ -883,10 +882,30 @@ public class BICQuoteOrder extends ECETestBase {
         put(BICConstants.buyerContactName,
             testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
                 BICECEConstants.LASTNAME));
+        put(TestingHubConstants.fileName, EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
       }};
 
+      dataForTTR.put("state", address.provinceName);
+
+      switch (address.country) {
+        case "Canada":
+          switch (address.province) {
+            case "BC":
+            case "MB":
+            case "SK":
+              dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
+              break;
+          }
+          dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
+          break;
+        case "United States":
+        default:
+          dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
+          break;
+      }
+
       coreBicTestBase.uploadAndPunchOutFlow(dataForTTR, "Tax-Exempt Nonprofit");
-      getBicTestBase().validateUserTaxExempt();
+      getBicTestBase().validateUserTaxExempt(true);
       testDataForEachMethod.put("taxOptionEnabled", "N");
     }
 
@@ -896,6 +915,10 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
+        Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
+        "Pelican 'Tax Exempt' flag didnt match with Test Param");
 
     // Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
@@ -920,6 +943,13 @@ public class BICQuoteOrder extends ECETestBase {
 
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
+    if(Boolean.valueOf(System.getProperty("changeAddress"))) {
+      testDataForEachMethod.putAll(localeDataMap.get(defaultLocale));
+      address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+      testDataForEachMethod.put("taxOptionEnabled", "Y");
+      System.setProperty(BICECEConstants.SUBMIT_TAX_INFO, "false");
+    }
+
     String quote2Id = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"),
         testDataForEachMethod);
@@ -930,9 +960,12 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
     getBicTestBase().refreshCartIfEmpty();
 
-    if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
-      // On the second visit to checkout validate that the user is still tax exempt
-      getBicTestBase().validateUserTaxExempt();
+    // On the second visit to checkout validate that the user is still tax exempt
+    if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE) &&
+        !Boolean.valueOf(System.getProperty("changeAddress"))) {
+      getBicTestBase().validateUserTaxExempt(true);
+    } else {
+      getBicTestBase().validateUserTaxExempt(false);
     }
 
     results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
@@ -942,6 +975,10 @@ public class BICQuoteOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
+    AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
+        Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
+        "Pelican 'Tax Exempt' flag didnt match with Test Param");
+
     // Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
@@ -949,15 +986,10 @@ public class BICQuoteOrder extends ECETestBase {
     // Validate Quote Details with Pelican
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
+
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-        results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
-    }
     updateTestingHub(testResults);
   }
 
