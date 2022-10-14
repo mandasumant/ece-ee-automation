@@ -50,7 +50,7 @@ default:
   accountsPortalProductsServicesUrl: "https://stg-manage.autodesk.com/products"
   accountsPortalAddSeatsUrl: "https://stg-manage.autodesk.com/billing/add-seats"
   accountsPortalQuoteUrl: "https://stg-manage.autodesk.com/billing/quotes"
-  accountPortalBillingInvoicesUrl: "https://int-manage.autodesk.com/billing/invoices"
+  accountPortalBillingInvoicesUrl: "https://stg-manage.autodesk.com/billing/invoices"
   accountsProductPageUrl: "https://stg-manage.autodesk.com/products"
 
   priceIDNativeOrder: &NativeOrderPriceID "1573"
