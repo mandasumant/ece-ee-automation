@@ -319,7 +319,7 @@ public class BICQuoteOrder extends ECETestBase {
       results.putAll(testDataForEachMethod);
     }
 
-    if(!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice")) {
+    if(getTestingHubUtil().isStepCompleted("CEP : Pay Invoice")) {
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
         String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
             System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?

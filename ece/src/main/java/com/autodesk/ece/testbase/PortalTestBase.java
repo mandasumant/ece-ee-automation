@@ -251,7 +251,7 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("Click on All Products & Services Link")
+  @Step("Click on All Products & Services Link" + GlobalConstants.TAG_TESTINGHUB)
   public void clickALLPSLink() {
     driver.manage().window().maximize();
     try {
@@ -272,7 +272,7 @@ public class PortalTestBase {
   /**
    * Navigate to the "Upcoming Payments" section of portal
    */
-  @Step("Click on Upcoming Payments Link")
+  @Step("Click on Upcoming Payments Link" + GlobalConstants.TAG_TESTINGHUB)
   public void navigateToUpcomingPaymentsLink() {
     try {
       openPortalURL(accountsPortalOrdersInvoicesUrl);
@@ -652,7 +652,7 @@ public class PortalTestBase {
         + "\n" + BICECEConstants.SEPARATION_LINE);
   }
 
-  @Step("Adding seat from portal for BIC orders")
+  @Step("Adding seat from portal for BIC orders" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createAndValidateAddSeatOrderInPortal(String addSeatQty,
       LinkedHashMap<String, String> testDataForEachMethod) {
     driver.switchTo().defaultContent();
@@ -992,7 +992,7 @@ public class PortalTestBase {
     return orderDetails;
   }
 
-  @Step("Reduce seats from portal for BIC orders")
+  @Step("Reduce seats from portal for BIC orders" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> reduceSeatsInPortalAndValidate()
       throws MetadataException {
     driver.switchTo().defaultContent();
@@ -1143,7 +1143,7 @@ public class PortalTestBase {
     }
   }
 
-  @Step("Add Paypal Payment Details")
+  @Step("Add Paypal Payment Details" + GlobalConstants.TAG_TESTINGHUB)
   public void populatePaypalDetails(HashMap<String, String> data) {
     Util.printInfo("Switching to latest window...");
     String parentWindow = driver.getWindowHandle();
@@ -1233,7 +1233,7 @@ public class PortalTestBase {
     Util.sleep(10000);
   }
 
-  @Step("Populate Direct Debit payment details")
+  @Step("Populate Direct Debit payment details" + GlobalConstants.TAG_TESTINGHUB)
   public void populateACHPaymentDetails(String[] paymentCardDetails) {
     String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
         .replaceAll(BICECEConstants.PAYMENTOPTION, "Direct Debit (ACH)");
@@ -1265,7 +1265,7 @@ public class PortalTestBase {
     Util.sleep(10000);
   }
 
-  @Step("Populate credit card details")
+  @Step("Populate credit card details" + GlobalConstants.TAG_TESTINGHUB)
   public void populateCreditCardDetails(String[] paymentCardDetails) {
     BICTestBase.bicPage.waitForField("creditCardNumberFrame", true, 30000);
     String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
@@ -1655,7 +1655,7 @@ public class PortalTestBase {
     portalPage.clickUsingLowLevelActions("autoRenewDone");
   }
 
-  @Step("Close Subscription Term Popup")
+  @Step("Close Subscription Term Popup" + GlobalConstants.TAG_TESTINGHUB)
   private void closeSubscriptionTermPopup() throws MetadataException {
     if (portalPage.checkIfElementExistsInPage("portalSubscriptionTermPopup", 10)) {
       Util.printInfo("Closing subscription popup");
@@ -1665,7 +1665,7 @@ public class PortalTestBase {
     }
   }
 
-  @Step("Close Portal Banner")
+  @Step("Close Portal Banner" + GlobalConstants.TAG_TESTINGHUB)
   private void closeAlertBanner() throws MetadataException {
     if (portalPage.checkIfElementExistsInPage("portalBannerAlert", 10)) {
       Util.printInfo("Closing portal banner");
@@ -1675,7 +1675,7 @@ public class PortalTestBase {
     }
   }
 
-  @Step("Click on a radio button")
+  @Step("Click on a radio button" + GlobalConstants.TAG_TESTINGHUB)
   private void radioButtonClick(String fieldName, int indexOfElement) throws MetadataException {
     portalPage.checkIfElementExistsInPage(fieldName, 10);
     List<WebElement> listEle = portalPage.getMultipleWebElementsfromField(fieldName);
@@ -1803,7 +1803,7 @@ public class PortalTestBase {
     return Double.parseDouble(paymentTotalAmount);
   }
 
-  @Step("Select invoice and credit memo validations")
+  @Step("Select invoice and credit memo validations" + GlobalConstants.TAG_TESTINGHUB)
   public void selectInvoiceAndValidateCreditMemo(String poNumber, Boolean shouldWaitForInvoice) throws Exception {
     String[] poNumbers = poNumber.split(",");
     openPortalURL(accountPortalBillingInvoicesUrl);
@@ -1830,7 +1830,7 @@ public class PortalTestBase {
     Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
   }
 
-  @Step("CEP : Launch Account portal")
+  @Step("CEP : Launch Account portal" + GlobalConstants.TAG_TESTINGHUB)
   public void loginToAccountPortal(LinkedHashMap<String, String> data, String portalUserName,
                                    String portalPassword) {
     openPortalBICLaunch(data.get("accountPortalURL"));
@@ -1840,7 +1840,7 @@ public class PortalTestBase {
   }
 
 
-  @Step("CEP : Pay Invoice")
+  @Step("CEP : Pay Invoice" + GlobalConstants.TAG_TESTINGHUB)
   public void payInvoice(LinkedHashMap<String, String> data) throws Exception {
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
     Util.sleep(5000);
@@ -1848,7 +1848,7 @@ public class PortalTestBase {
     submitPayment();
   }
 
-  @Step("CEP : Click Submit Payment Button")
+  @Step("CEP : Click Submit Payment Button" + GlobalConstants.TAG_TESTINGHUB)
   public void submitPayment() throws Exception {
     portalPage.clickUsingLowLevelActions("submitPaymentButton");
     Util.sleep(2000);
@@ -1891,7 +1891,7 @@ public class PortalTestBase {
     }
   }
 
-  @Step("Navigate To login to Pay By Invoice URL")
+  @Step("Navigate To login to Pay By Invoice URL" + GlobalConstants.TAG_TESTINGHUB)
   public void navigateToLoginToPayByInvoiceURL(String data) {
     try {
       openPortalURL(data);
@@ -1903,7 +1903,7 @@ public class PortalTestBase {
     portalPage.waitForPageToLoad();
   }
 
-  @Step("Validate Pay By Invoice Payment Tab presence")
+  @Step("Validate Pay By Invoice Payment Tab presence" + GlobalConstants.TAG_TESTINGHUB)
   public void validatePayByInvoiceTabPresence() {
     try {
       portalPage.checkIfElementExistsInPage("portalPayByInvoice", 10);
