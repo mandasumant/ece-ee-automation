@@ -26,6 +26,7 @@ import java.util.Objects;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.util.Strings;
 
 public class BICQuoteOrder extends ECETestBase {
 
@@ -317,7 +318,8 @@ public class BICQuoteOrder extends ECETestBase {
       updateTestingHub(testResults);
     } else {
       Util.printInfo("Flex Order is Charged: Resubmitted Test case for Pay Invoice. TransactionId: "
-          + Strings.isNotNullAndNotEmpty(System.getProperty("transactionid")) ? System.getProperty("transactionid") : "Not passed");
+          + (Strings.isNotNullAndNotEmpty(System.getProperty("transactionid")) ? System.getProperty("transactionid")
+          : "Not passed"));
       testDataForEachMethod.putAll(getTestingHubUtil().getTransactionOutputObject());
       results.putAll(testDataForEachMethod);
     }
