@@ -253,7 +253,11 @@ public class BICQuoteOrder extends ECETestBase {
           case "United States":
             switch (address.province) {
               case "MS":
+              case "MA":
                 dataForTTR.put(BICConstants.identityNumberLength, "9");
+                break;
+              case "MD":
+                dataForTTR.put(BICConstants.identityNumberLength, "8");
             }
           default:
             dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
