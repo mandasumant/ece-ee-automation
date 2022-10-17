@@ -316,12 +316,15 @@ public class BICQuoteOrder extends ECETestBase {
 
       updateTestingHub(testResults);
     } else {
-//      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Transaction: " + Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid")));
+      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Pay Invoice. TransactionId: "
+          + Strings.isNotNullAndNotEmpty(System.getProperty("transactionid")) ? System.getProperty("transactionid") : "Not passed");
       testDataForEachMethod.putAll(getTestingHubUtil().getTransactionOutputObject());
       results.putAll(testDataForEachMethod);
     }
 
-    if(getTestingHubUtil().isStepCompleted("CEP : Pay Invoice")) {
+    portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
+
+    if(!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice") && Strings.isNotNullAndNotEmpty(System.getProperty("transactionid"))) {
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
         String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
             System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
@@ -341,19 +344,17 @@ public class BICQuoteOrder extends ECETestBase {
         }
       }
 
-      portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
       }
       updateTestingHub(testResults);
-//    } else {
-//      if (Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid"))) {
-//        Util.printInfo(
-//            "Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
-//      } else {
-//        Util.printInfo("Skipping Pay Invoice flow, Pay Invoice was successful in Transaction Id provided!");
-//      }
+    } else {
+      if(Strings.isNotNullAndNotEmpty(System.getProperty("transactionid"))) {
+        Util.printInfo("Skipping: As Pay Invoice was successful in Transaction Id provided!");
+      } else {
+        Util.printInfo("Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
+      }
     }
 
   }
