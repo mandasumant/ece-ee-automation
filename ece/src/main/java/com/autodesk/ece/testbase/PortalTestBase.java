@@ -1754,7 +1754,8 @@ public class PortalTestBase {
         List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
         invoiceAmount = Double.parseDouble(amounts.get(i).getText().replaceAll("[^0-9.]", ""));
         break;
-      } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim())) {
+      } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim()
+          .equalsIgnoreCase(poNumber.trim())) {
         AssertUtils.assertFalse(true, "unable to find the Invoice" + poNumber);
       }
     }
@@ -1816,7 +1817,7 @@ public class PortalTestBase {
       invoiceAmount = invoiceAmount + selectInvoice(poNumbers[i]);
     }
     selectAllInvoicesPayButton();
-    Util.sleep(8000);
+    Util.sleep(10000);
     Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
     double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout();
     AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
@@ -1842,6 +1843,7 @@ public class PortalTestBase {
 
   @Step("CEP : Pay Invoice" + GlobalConstants.TAG_TESTINGHUB)
   public void payInvoice(LinkedHashMap<String, String> data) throws Exception {
+    portalPage.waitForFieldPresent("clickOnPaymentTab", 20000);
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
     Util.sleep(5000);
     bicTestBase.enterBillingDetails(data, bicTestBase.getBillingAddress(data), data.get(BICECEConstants.PAYMENT_TYPE));
@@ -1850,8 +1852,11 @@ public class PortalTestBase {
 
   @Step("CEP : Click Submit Payment Button" + GlobalConstants.TAG_TESTINGHUB)
   public void submitPayment() throws Exception {
+    portalPage.waitForFieldPresent("submitPaymentButton", 15000);
     portalPage.clickUsingLowLevelActions("submitPaymentButton");
-    Util.sleep(2000);
+    Util.sleep(5000);
+    Util.waitForElement(portalPage.getFirstFieldLocator("invoiceOrderConfirmation"),
+        "Thank you for your payment");
     Util.printInfo("Payment for Invoice is successfully Completed");
   }
 
@@ -1877,17 +1882,32 @@ public class PortalTestBase {
     }
   }
 
-  public void verifyInvoiceStatus(String poNumber) throws MetadataException {
-    List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("purchaseOrderNumbersList");
-    List<WebElement> invoiceStatus = portalPage.getMultipleWebElementsfromField("invoiceStatus");
+  public void verifyInvoiceStatus(String poNumber) throws Exception {
+
+    viewAllInvoices();
+
+    verifyPaidInvoicesFromOpenTab();
+
+    List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("paidPurchaseOrderNumbersList");
+    List<WebElement> invoiceStatus = portalPage.getMultipleWebElementsfromField("paidInvoiceStatus");
+
+    String[] poNumbers = poNumber.replaceAll("^\"|\"$", "").split(",");
+
     for (int i = 0; i < purchaseNumbers.size(); i++) {
-      if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim()) && invoiceStatus.get(i).getText().equalsIgnoreCase("Paid")) {
+      Util.printInfo("Split PO number: " + poNumbers[i] + "\r\n");
+
+      if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumbers[i]) && invoiceStatus.get(i)
+          .getText()
+          .equalsIgnoreCase("Paid")) {
         Util.PrintInfo("Invoice Status is updated as PAID for PO Number " + poNumber);
         break;
-      } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim()) && invoiceStatus.get(i).getText().equalsIgnoreCase("Paid")) {
-        AssertUtils.assertFalse(true, " Able to find the Invoice PO Number " + poNumber + " but the status is " + invoiceStatus.get(i).getText());
+      } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim()
+          .equalsIgnoreCase(poNumbers[i]) && invoiceStatus.get(i).getText().equalsIgnoreCase("Paid")) {
+        AssertUtils.assertFalse(true,
+            " Able to find the Invoice PO Number " + poNumber + " but the status is " + invoiceStatus.get(i).getText());
+      } else {
+        Util.printInfo("No invoice status found.");
       }
-
     }
   }
 
@@ -1910,6 +1930,49 @@ public class PortalTestBase {
     } catch (Exception e) {
       e.printStackTrace();
       Util.printInfo("Pay By Invoice Payment Tab should not be displayed");
+    }
+  }
+
+  @Step("CEP : Click View all invoices")
+  public void viewAllInvoices() throws Exception {
+    portalPage.waitForFieldPresent("seeAllInvoices", 20);
+    portalPage.clickUsingLowLevelActions("seeAllInvoices");
+    Util.sleep(5000);
+    Util.printInfo("Payment for Invoice is successfully Completed");
+  }
+
+  @Step("Verify paid invoices are not visible from Open tab " + GlobalConstants.TAG_TESTINGHUB)
+  public void verifyPaidInvoicesFromOpenTab() throws Exception {
+
+    int attempts = 0;
+    boolean status = false;
+
+    while (attempts < 13) {
+      try {
+        if (portalPage.checkIfElementExistsInPage("viewPaidInvoices", 15)) {
+          status = true;
+          portalPage.clickUsingLowLevelActions("viewPaidInvoices");
+          Util.waitForElement(portalPage.getFirstFieldLocator("invoicePageTableTitle"),
+              "Paid invoices");
+        }
+      } catch (Exception e) {
+        Util.printInfo(
+            "Failed to find 'View paid invoices' button - Attempt #" + (attempts + 1));
+      }
+
+      if (!status) {
+        if (attempts >= 12) {
+          AssertUtils.fail(
+              "All retries exhausted: Failed to find 'View paid invoices' button from Open tab.");
+        }
+        Util.sleep(300000);
+        Util.printInfo("Refreshing the page!!!");
+        driver.navigate().refresh();
+        attempts++;
+      } else {
+        Util.printInfo("Found 'View paid invoices' button, so skipping the retry logic.");
+        break;
+      }
     }
   }
 }

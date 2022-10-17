@@ -459,11 +459,12 @@ public class BICTestBase {
 
   public void clickOnContinueBtn(String paymentType) {
     Util.sleep(2000);
-    Util.printInfo("Clicking on Save button...");
+    Util.printInfo("Clicking on Save button");
 
     String tabKey = paymentType.toLowerCase();
     if (paymentType.equalsIgnoreCase(BICECEConstants.VISA) || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
-        || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD)) {
+        || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD) || paymentType.equalsIgnoreCase(
+        BICECEConstants.LOC)) {
       tabKey = "credit-card";
     }
 

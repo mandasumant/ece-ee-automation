@@ -12,7 +12,6 @@ import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
-import com.autodesk.testinghub.core.testbase.TestinghubUtil;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
@@ -27,7 +26,6 @@ import java.util.Objects;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.util.Strings;
 
 public class BICQuoteOrder extends ECETestBase {
 
@@ -346,8 +344,9 @@ public class BICQuoteOrder extends ECETestBase {
       }
       updateTestingHub(testResults);
 //    } else {
-//      if(Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid"))) {
-//        Util.printInfo("Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
+//      if (Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid"))) {
+//        Util.printInfo(
+//            "Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
 //      } else {
 //        Util.printInfo("Skipping Pay Invoice flow, Pay Invoice was successful in Transaction Id provided!");
 //      }
@@ -361,8 +360,8 @@ public class BICQuoteOrder extends ECETestBase {
     Address address = getBillingAddress();
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-                    testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
-            PASSWORD, true);
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
             testDataForEachMethod.get("agentContactEmail"),
@@ -698,47 +697,54 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-
-  @Test(groups = {"bic-quoteorder-multiinvoice"}, description = "Validation of Create BIC Quote Order with Common Payer")
-  public void validateBicQuoteOrderMultiInvoice() throws MetadataException {
+  @Test(groups = {
+      "bic-quoteorder-multiinvoice"}, description = "Validation of Create BIC Quote Order with Common Payer")
+  public void validateBicQuoteOrderMultiInvoice() throws Exception {
 
     LinkedHashMap<String, String> testResults = new LinkedHashMap<String, String>();
+    HashMap<String, String> results = new HashMap<String, String>();
 
-    Address firstAddress = getBillingAddress();
+    if (!getTestingHubUtil().isStepCompleted("Placing the Flex Order ")) {
 
-    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
-        PASSWORD, true);
+      Address firstAddress = getBillingAddress();
 
-    String purchaser = testDataForEachMethod.get(BICECEConstants.emailid);
-    String quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
-        testDataForEachMethod.get("agentContactEmail"),
-        testDataForEachMethod);
-    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
-    testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
-    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
-    updateTestingHub(testResults);
-    testResults.putAll(testDataForEachMethod);
-    // Signing out after quote creation
-    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+      getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+      getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+              testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+          PASSWORD, true);
 
-    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-    testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
-    // Re login during checkout
-    getBicTestBase().loginToOxygen(purchaser, PASSWORD);
-    getBicTestBase().refreshCartIfEmpty();
-    HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
-    results.putAll(testDataForEachMethod);
+      String purchaser = testDataForEachMethod.get(BICECEConstants.emailid);
+      String quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress,
+          testDataForEachMethod.get("quoteAgentCsnAccount"),
+          testDataForEachMethod.get("agentContactEmail"),
+          testDataForEachMethod);
+      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+      testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
+      testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+      updateTestingHub(testResults);
+      testResults.putAll(testDataForEachMethod);
+      // Signing out after quote creation
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
-    testResults.putAll(results);
-    updateTestingHub(testResults);
+      getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+      testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
+      // Re login during checkout
+      getBicTestBase().loginToOxygen(purchaser, PASSWORD);
+      getBicTestBase().refreshCartIfEmpty();
+      results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+      results.putAll(testDataForEachMethod);
 
-    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-      Util.sleep(120000);
-    }
+      testResults.putAll(results);
+      updateTestingHub(testResults);
 
-    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        Util.sleep(120000);
+      }
+
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+        return;
+      }
+
       // Getting a PurchaseOrder details from pelican
       results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
@@ -768,14 +774,14 @@ public class BICQuoteOrder extends ECETestBase {
         testResults
             .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
         testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
-        testResults.put(BICECEConstants.PAYER_EMAIL,results.get(BICConstants.emailid));
+        testResults.put(BICECEConstants.PAYER_EMAIL, results.get(BICConstants.emailid));
       } catch (Exception e) {
         Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
       }
 
       updateTestingHub(testResults);
 
-      //Sign out from first user session
+      // Sign out from first user session
       getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
       // Creating another order with same Payer
@@ -783,7 +789,7 @@ public class BICQuoteOrder extends ECETestBase {
       testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
       testResults.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
       testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
-      Names  secondUser = BICTestBase.generateFirstAndLastNames();
+      Names secondUser = BICTestBase.generateFirstAndLastNames();
       String secondUserEmail = BICTestBase.generateUniqueEmailID();
 
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
@@ -791,12 +797,11 @@ public class BICQuoteOrder extends ECETestBase {
       testDataForEachMethod.put(BICECEConstants.emailid, secondUserEmail);
       testResults.put(BICECEConstants.PAYER_EMAIL, purchaser);
 
-
-       quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
+      quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
           testDataForEachMethod.get("agentContactEmail"),
           testDataForEachMethod);
       testResults.put(BICECEConstants.QUOTE_ID, quoteId);
-      testResults.put(BICECEConstants.emailid,secondUserEmail);
+      testResults.put(BICECEConstants.emailid, secondUserEmail);
       updateTestingHub(testResults);
       // Signing out after quote creation
       getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
@@ -810,9 +815,47 @@ public class BICQuoteOrder extends ECETestBase {
       results.putAll(testResults);
 
       updateTestingHub(testResults);
+    } else {
+//      Util.printInfo(
+//          "Flex Order is Charged: Resubmitted Test case for Transaction: " + System.getProperty("prvtransactionid"));
+      testDataForEachMethod.putAll(getTestingHubUtil().getTransactionOutputObject());
+      results.putAll(testDataForEachMethod);
+    }
+    if (!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice")) {
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+        String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
+            System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
+                BICECEConstants.VISA : BICECEConstants.CREDITCARD;
+        testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
+        portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid),
+            PASSWORD);
+        portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
+        portaltb.payInvoice(testDataForEachMethod);
+        portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
+      } else {
+        portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+            results.get(BICConstants.emailid),
+            PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+          portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+        }
+      }
+
+      portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
+
+      if (getBicTestBase().shouldValidateSAP()) {
+        portaltb.validateBICOrderTaxInvoice(results);
+      }
+      updateTestingHub(testResults);
+//    } else {
+//      if (Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid"))) {
+//        Util.printInfo(
+//            "Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
+//      } else {
+//        Util.printInfo("Skipping Pay Invoice flow, Pay Invoice was successful in Transaction Id provided!");
+//      }
     }
   }
-
 
   @Test(groups = {"bic-locnegative"}, description = "Validation LOC Negative Use cases")
   public void validateLocNegativeCases() throws MetadataException {
