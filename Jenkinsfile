@@ -844,6 +844,7 @@ def triggerApolloTTR(def serviceBuildHelper) {
                 [
                     generateTest("Returning (en_US)", testcases.q2oTTRReturningUser, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
                     generateTest("Neg: TTR Q2O Returning User with Diff. Address", testcases.q2oTTRReturningUser, addresses["United States"]["AZ"], ["changeAddress": "true", "timezone": "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
+                    generateTest("Returning (en_CA)", testcases.q2oTTRReturningUser, addresses["Canada"]["ON"], ["timezone": "America/Toronto", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
                 ].join(',') +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore - All")
