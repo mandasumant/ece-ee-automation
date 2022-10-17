@@ -2350,4 +2350,56 @@ public class BICTestBase {
       }};
     }
   }
+
+  /**
+   * Method to enter LOC Email and CSN
+   *
+   * @param payByInvoiceDetails
+   * @throws MetadataException
+   */
+  public void enterLOCEmailAndCSN(LinkedHashMap<String, String> payByInvoiceDetails) throws MetadataException {
+    //if we refreshed the page, we need to click on continue again
+    if (bicPage.waitForFieldPresent("customerDetailsContinue", 20)) {
+      bicPage.clickUsingLowLevelActions(("customerDetailsContinue"));
+    }
+
+    if (bicPage.waitForFieldPresent("payByInvoiceTab", 10)) {
+      bicPage.clickUsingLowLevelActions(("payByInvoiceTab"));
+    }
+
+    try {
+      if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
+        Util.printInfo("Entering Payer email and CSN.");
+        bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get("payerEmailId"));
+        bicPage.populateField("payerCSN", payByInvoiceDetails.get("incorrectCSNNumber"));
+        bicPage.waitForFieldPresent("reviewLOCOrder", 10);
+        Util.printInfo("clicking continue");
+        bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+      }
+
+    } catch (Exception e) {
+      Util.printInfo("Failed entering Payer email and CSN.");
+      Util.sleep(3000);
+    }
+  }
+
+  /**
+   * Method to check if submit order enabled
+   *
+   * @return boolean true/false
+   */
+  public boolean isSubmitOrderEnabled() {
+    try {
+      return bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10);
+    } catch (MetadataException e) {
+      return false;
+    }
+  }
+
+  public void verifyIncorrectPayerDetailsAlertMessage(){
+    WebElement alertInvalidMatch = driver.findElement(
+            By.xpath(bicPage.getFirstFieldLocator("alertMessage")));
+    AssertUtils.assertTrue(
+            alertInvalidMatch.getText().contains("The details entered do not match an available line of credit."), "No Alert message for Wrong Payer");
+  }
 }

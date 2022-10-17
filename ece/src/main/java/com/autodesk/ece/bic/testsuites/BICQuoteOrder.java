@@ -1001,6 +1001,17 @@ public class BICQuoteOrder extends ECETestBase {
     getPortalTestBase().validatePayByInvoiceTabPresence();
   }
 
+  @Test(groups = {"bic-quoteorder-wrongCSN"},  description = "Validate wrong csn")
+  public void validateWrongPayerCSNForExistingLOC() throws MetadataException {
+    testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
+    getBicTestBase().getUrl(testDataForEachMethod.get("url"));
+    getBicTestBase().setStorageData();
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get("payerEmailId"), PASSWORD);
+    getBicTestBase().enterLOCEmailAndCSN(testDataForEachMethod);
+    getBicTestBase().verifyIncorrectPayerDetailsAlertMessage();
+    AssertUtils.assertFalse(getBicTestBase().isSubmitOrderEnabled(), "Submit Order option is disabled ");
+  }
+
   private Address getBillingAddress() {
     String billingAddress;
     String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
