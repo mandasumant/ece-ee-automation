@@ -227,7 +227,7 @@ public class BICQuoteOrder extends ECETestBase {
           put(BICConstants.exemptFromSalesTax, "Yes");
           put(BICConstants.reasonForExempt, "Reseller");
           put(BICConstants.buyerAccountType, "Reseller");
-          put("state", address.provinceName);
+          put(TestingHubConstants.state, address.provinceName);
           put(BICConstants.registeredAs, "Retailer");
           put(BICConstants.salesTaxType, "State Sales Tax");
           put(BICConstants.businessType, "Construction");
@@ -250,6 +250,10 @@ public class BICQuoteOrder extends ECETestBase {
             dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
             break;
           case "United States":
+            switch (address.province) {
+              case "MS":
+                dataForTTR.put(BICConstants.identityNumberLength, "9");
+            }
           default:
             dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
             break;
