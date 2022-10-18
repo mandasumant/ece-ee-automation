@@ -236,7 +236,7 @@ public class BICQuoteOrder extends ECETestBase {
           put(BICConstants.buyerContactName,
               testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
                   BICECEConstants.LASTNAME));
-          put(TestingHubConstants.fileName, EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
+          put(BICConstants.certificateName, EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
         }};
 
         switch (address.country) {
@@ -264,7 +264,7 @@ public class BICQuoteOrder extends ECETestBase {
             break;
         }
 
-        coreBicTestBase.uploadAndPunchOutFlow(dataForTTR, "Tax-Exempt Nonprofit");
+        coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
         testDataForEachMethod.put("taxOptionEnabled", "N");
       }
 
@@ -935,7 +935,7 @@ public class BICQuoteOrder extends ECETestBase {
         put(BICConstants.buyerContactName,
             testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
                 BICECEConstants.LASTNAME));
-        put(TestingHubConstants.fileName, EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
+        put(BICConstants.certificateName, EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
       }};
 
       dataForTTR.put("state", address.provinceName);
@@ -957,7 +957,7 @@ public class BICQuoteOrder extends ECETestBase {
           break;
       }
 
-      coreBicTestBase.uploadAndPunchOutFlow(dataForTTR, "Tax-Exempt Nonprofit");
+      coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
       getBicTestBase().validateUserTaxExempt(true);
       testDataForEachMethod.put("taxOptionEnabled", "N");
     }
