@@ -42,6 +42,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.util.Strings;
 
 public class PortalTestBase {
 
@@ -1816,6 +1817,18 @@ public class PortalTestBase {
       Util.printInfo("Selecting PO Number:" + poNumbers[i]);
       invoiceAmount = invoiceAmount + selectInvoice(poNumbers[i]);
     }
+
+    try {
+      String locale = System.getProperty("locale");
+      if (Strings.isNotNullAndNotEmpty(locale) && locale != "en_US") {
+        String localeReplace = locale.replaceAll("_", "-");
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.cfp.providers.localization.getLocale = () => '" + localeReplace + "';");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     selectAllInvoicesPayButton();
     Util.sleep(10000);
     Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
@@ -1824,7 +1837,8 @@ public class PortalTestBase {
     double creditMemoAmount = 0.00;
     if (portalPage.isFieldVisible("creditMemoPrice")) {
       portalPage.clickUsingLowLevelActions("continueButton");
-      creditMemoAmount = Double.parseDouble(portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
+      creditMemoAmount = Double.parseDouble(
+          portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
     }
     double afterAddCreditMemoAmount = getPaymentTotalFromCheckout();
     AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
