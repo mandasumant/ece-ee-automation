@@ -301,7 +301,7 @@ public class BICQuoteOrder extends ECETestBase {
 
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICECEConstants.ORDER_ID, results.get(BICECEConstants.ORDER_ID));
         testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
         testResults
             .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -414,7 +414,7 @@ public class BICQuoteOrder extends ECETestBase {
 
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICECEConstants.ORDER_ID, results.get(BICECEConstants.ORDER_ID));
         testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
         testResults
                 .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -497,7 +497,7 @@ public class BICQuoteOrder extends ECETestBase {
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICECEConstants.ORDER_ID, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults.put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -769,7 +769,7 @@ public class BICQuoteOrder extends ECETestBase {
 
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICECEConstants.ORDER_ID, results.get(BICECEConstants.ORDER_ID));
         testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
         testResults
             .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
@@ -825,11 +825,13 @@ public class BICQuoteOrder extends ECETestBase {
 
       updateTestingHub(testResults);
     } else {
-//      Util.printInfo(
-//          "Flex Order is Charged: Resubmitted Test case for Transaction: " + System.getProperty("prvtransactionid"));
+      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Pay Invoice. TransactionId: "
+          + (Strings.isNotNullAndNotEmpty(System.getProperty("transactionid")) ? System.getProperty("transactionid")
+          : "Not passed"));
       testDataForEachMethod.putAll(getTestingHubUtil().getTransactionOutputObject());
       results.putAll(testDataForEachMethod);
     }
+
     if (!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice")) {
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
         String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
@@ -856,13 +858,12 @@ public class BICQuoteOrder extends ECETestBase {
         portaltb.validateBICOrderTaxInvoice(results);
       }
       updateTestingHub(testResults);
-//    } else {
-//      if (Strings.isNotNullAndNotEmpty(System.getProperty("prvtransactionid"))) {
-//        Util.printInfo(
-//            "Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
-//      } else {
-//        Util.printInfo("Skipping Pay Invoice flow, Pay Invoice was successful in Transaction Id provided!");
-//      }
+    } else {
+      if(Strings.isNotNullAndNotEmpty(System.getProperty("transactionid"))) {
+        Util.printInfo("Skipping: As Pay Invoice was successful in Transaction Id provided!");
+      } else {
+        Util.printInfo("Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
+      }
     }
   }
 
