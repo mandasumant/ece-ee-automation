@@ -2401,6 +2401,24 @@ public class BICTestBase {
     }
   }
 
+  @Step("Validate Pay By Invoice Payment Tab presence" + GlobalConstants.TAG_TESTINGHUB)
+  public void validatePayByInvoiceTabPresence() {
+    try {
+      Util.printInfo("Clicking on Continue..");
+      if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
+        bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+        Util.sleep(5000);
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      }
+      Util.sleep(5000);
+      Util.printInfo("Landing  on Payment tab..");
+      bicPage.checkIfElementExistsInPage("portalPayByInvoice", 10);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Util.printInfo("Pay By Invoice Payment Tab should not be displayed");
+    }
+  }
+
   public void verifyIncorrectPayerDetailsAlertMessage(){
     WebElement alertInvalidMatch = driver.findElement(
             By.xpath(bicPage.getFirstFieldLocator("alertMessage")));

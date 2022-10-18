@@ -276,13 +276,14 @@ validateQuoteInvoiceNonPayment:
   accessModel: "Flex"
   productType: "flex"
 
+
 validatePayByInvoiceBlockUser:
-  blockedUserEmailId: "biz-thubnamercsfpxysscfxy@letscheck.pw"
-  payByInvoicePageURL: "https://checkoutservice-stg.autodesk.com/quoteRedirect/Q-75490?lang=en&country=US&currency=USD"
+  blockedUserEmailId: "biz-thubnamernwmluejtkhve@letscheck.pw"
+  payByInvoicePageURL: "https://checkoutservice-stg.autodesk.com/quoteRedirect/Q-27719?lang=en&country=US&currency=USD"
 
 
 validateWrongPayerCSNForExistingLOC:
-  url: "https://checkout-apollo.autodesk.com/en-US/cart?quoteNumber=Q-78917"
+  url: "https://checkout-pt.autodesk.com/en-US/cart?quoteNumber=Q-27391"
   productType: "flex"
-  payerEmailId: "biz-thubnameramarlozfjjvq@letscheck.pw"
-  incorrectCSNNumber: "550118880212"
+  payerEmailId: "biz-thubnamernkqzrdvjvruw@letscheck.pw"
+  incorrectCSNNumber: "55006844172"

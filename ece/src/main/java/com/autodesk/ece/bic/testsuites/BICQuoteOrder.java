@@ -1051,7 +1051,7 @@ public class BICQuoteOrder extends ECETestBase {
     getPortalTestBase().navigateToLoginToPayByInvoiceURL(testDataForEachMethod.get("payByInvoicePageURL"));
     getBicTestBase().loginToOxygen(testDataForEachMethod.get("blockedUserEmailId"), PASSWORD);
     getBicTestBase().refreshCartIfEmpty();
-    getPortalTestBase().validatePayByInvoiceTabPresence();
+    getBicTestBase().validatePayByInvoiceTabPresence();
   }
 
   @Test(groups = {"bic-quoteorder-wrongCSN"},  description = "Validate wrong csn")

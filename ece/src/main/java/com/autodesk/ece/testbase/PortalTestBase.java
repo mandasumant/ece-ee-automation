@@ -1936,17 +1936,7 @@ public class PortalTestBase {
     }
     portalPage.waitForPageToLoad();
   }
-
-  @Step("Validate Pay By Invoice Payment Tab presence" + GlobalConstants.TAG_TESTINGHUB)
-  public void validatePayByInvoiceTabPresence() {
-    try {
-      portalPage.checkIfElementExistsInPage("portalPayByInvoice", 10);
-    } catch (Exception e) {
-      e.printStackTrace();
-      Util.printInfo("Pay By Invoice Payment Tab should not be displayed");
-    }
-  }
-
+  
   @Step("CEP : Click View all invoices")
   public void viewAllInvoices() throws Exception {
     portalPage.waitForFieldPresent("seeAllInvoices", 20);
