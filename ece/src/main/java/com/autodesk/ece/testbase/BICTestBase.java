@@ -1441,7 +1441,7 @@ public class BICTestBase {
     setStorageData();
   }
 
-  @Step("Placing the Flex Order " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Placing the Flex Order" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> placeFlexOrder(LinkedHashMap<String, String> data) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;

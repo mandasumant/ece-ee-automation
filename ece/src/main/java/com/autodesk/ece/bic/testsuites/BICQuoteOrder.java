@@ -175,7 +175,7 @@ public class BICQuoteOrder extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
 
-    if(!getTestingHubUtil().isStepCompleted("Placing the Flex Order ")) {
+    if(!getTestingHubUtil().isStepCompleted("Placing the Flex Order")) {
       if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
         Names payerNames = BICTestBase.generateFirstAndLastNames();
         String payerEmail = BICTestBase.generateUniqueEmailID();
@@ -328,8 +328,6 @@ public class BICQuoteOrder extends ECETestBase {
       results.putAll(testDataForEachMethod);
     }
 
-    portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
-
     if(!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice") && Strings.isNotNullAndNotEmpty(System.getProperty("transactionid"))) {
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
         String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
@@ -349,7 +347,7 @@ public class BICQuoteOrder extends ECETestBase {
           portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
         }
       }
-
+      portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
@@ -715,7 +713,7 @@ public class BICQuoteOrder extends ECETestBase {
     LinkedHashMap<String, String> testResults = new LinkedHashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
 
-    if (!getTestingHubUtil().isStepCompleted("Placing the Flex Order ")) {
+    if (!getTestingHubUtil().isStepCompleted("Placing the Flex Order")) {
 
       Address firstAddress = getBillingAddress();
 
