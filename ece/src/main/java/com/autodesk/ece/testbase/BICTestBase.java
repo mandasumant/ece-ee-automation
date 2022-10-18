@@ -1454,6 +1454,8 @@ public class BICTestBase {
       populateTaxIdForFlex();
     }
 
+    AssertUtils.assertFalse(isTTRButtonPresentInCart());
+
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
       bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
@@ -1681,6 +1683,8 @@ public class BICTestBase {
     if (promoCode != null && !promoCode.isEmpty()) {
       populatePromoCode(promoCode, data);
     }
+
+    AssertUtils.assertFalse(isTTRButtonPresentInCart());
 
     enterBillingDetails(data, address, paymentMethod);
 

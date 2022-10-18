@@ -244,10 +244,10 @@ public class BICOrderCreation extends ECETestBase {
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
-      }
 
-      // Put the SAP Order number into results map
-      testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
+        // Put the SAP Order number into results map
+        testResults.put("SAPOrderNumber", getSAPOrderNumber(results.get(BICConstants.orderNumber)));
+      }
 
       updateTestingHub(testResults);
     }
