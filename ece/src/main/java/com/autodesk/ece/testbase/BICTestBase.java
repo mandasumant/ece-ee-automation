@@ -1682,7 +1682,7 @@ public class BICTestBase {
       populatePromoCode(promoCode, data);
     }
 
-    AssertUtils.assertFalse(isTTRButtonPresentInCart());
+    AssertUtils.assertFalse(isTTRButtonPresentInCart(), "TTR button should not be present for this scenario");
 
     enterBillingDetails(data, address, paymentMethod);
 

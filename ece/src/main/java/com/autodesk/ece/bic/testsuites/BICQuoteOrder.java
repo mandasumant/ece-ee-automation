@@ -211,12 +211,13 @@ public class BICQuoteOrder extends ECETestBase {
 
     if (Objects.equals(testDataForEachMethod.get("ttrEnabled"), "true")) {
       if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {
-        AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart());
+        AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart(), "TTR button should be present");
       } else if (testDataForEachMethod.get("taxOptionEnabled").equals("N")) {
-        AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
+        AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart(), "TTR button should be hidden");
       }
     } else {
-      AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
+      AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart(),
+          "TTR button should not be present for this scenario");
     }
 
     // Setup test base for Tax Exemption Document submission
