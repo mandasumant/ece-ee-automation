@@ -1454,8 +1454,6 @@ public class BICTestBase {
       populateTaxIdForFlex();
     }
 
-    AssertUtils.assertFalse(isTTRButtonPresentInCart());
-
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
       bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
