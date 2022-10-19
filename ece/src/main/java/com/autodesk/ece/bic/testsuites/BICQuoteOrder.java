@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -138,8 +141,6 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
         PWSTestBase.getQuoteStartDateAsString());
 
-    //Load Output and Steps from Origin Transaction
-    getTestingHubUtil().getTransactionOutput();
   }
 
   @Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
@@ -175,160 +176,174 @@ public class BICQuoteOrder extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
 
-    if(!getTestingHubUtil().isStepCompleted("Placing the Flex Order")) {
-      if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-        Names payerNames = BICTestBase.generateFirstAndLastNames();
-        String payerEmail = BICTestBase.generateUniqueEmailID();
-        Util.printInfo("Payer email: " + payerEmail);
-        getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-        getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
-        getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
-        testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
-        testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
-      }
-
-      Address address = getBillingAddress();
+    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+      Names payerNames = BICTestBase.generateFirstAndLastNames();
+      String payerEmail = BICTestBase.generateUniqueEmailID();
+      Util.printInfo("Payer email: " + payerEmail);
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-      getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-              testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
-          PASSWORD, true);
-
-      String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
-          testDataForEachMethod.get("agentContactEmail"),
-          testDataForEachMethod);
-      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
-      testResults.put(BICECEConstants.QUOTE_ID, quoteId);
-      testResults.putAll(testDataForEachMethod);
-      updateTestingHub(testResults);
-      // Signing out after quote creation
+      getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
       getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
-
-      getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-
-      // Re login during checkout
-      getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
-      getBicTestBase().refreshCartIfEmpty();
-
-      if (Objects.equals(testDataForEachMethod.get("ttrEnabled"), "true")) {
-        if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {
-          AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart());
-        } else if (testDataForEachMethod.get("taxOptionEnabled").equals("N")) {
-          AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
-        }
-      } else {
-        AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
-      }
-
-      // Setup test base for Tax Exemption Document submission
-      if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
-        com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
-            getDriver(), getTestBase());
-
-        HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {{
-          put(BICConstants.exemptFromSalesTax, "Yes");
-          put(BICConstants.reasonForExempt, "Reseller");
-          put(BICConstants.buyerAccountType, "Reseller");
-          put(TestingHubConstants.state, address.provinceName);
-          put(BICConstants.registeredAs, "Retailer");
-          put(BICConstants.salesTaxType, "State Sales Tax");
-          put(BICConstants.businessType, "Construction");
-          put(BICConstants.certToSelect, "Uniform Sales and Use Tax Certificate - Multijurisdiction");
-          put(BICConstants.buyerContactName,
-              testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
-                  BICECEConstants.LASTNAME));
-          put(BICConstants.certificateName, EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
-        }};
-
-        switch (address.country) {
-          case "Canada":
-            switch (address.province) {
-              case "BC":
-              case "MB":
-              case "SK":
-                dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
-                break;
-            }
-            dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
-            break;
-          case "United States":
-            switch (address.province) {
-              case "MS":
-              case "MA":
-                dataForTTR.put(BICConstants.identityNumberLength, "9");
-                break;
-              case "MD":
-                dataForTTR.put(BICConstants.identityNumberLength, "8");
-            }
-          default:
-            dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
-            break;
-        }
-
-        coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
-        testDataForEachMethod.put("taxOptionEnabled", "N");
-      }
-
-      results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
-      results.putAll(testDataForEachMethod);
-
-      testResults.putAll(results);
-      updateTestingHub(testResults);
-
-      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-        Util.sleep(120000);
-      }
-
-      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-        return;
-      }
-
-      // Getting a PurchaseOrder details from pelican
-      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
-
-      AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
-          Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
-          "Pelican 'Tax Exempt' flag didnt match with Test Param");
-
-      // Compare tax in Checkout and Pelican
-      getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
-          results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-
-      // Validate Quote Details with Pelican
-      pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
-
-      // Get find Subscription ById
-      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-
-      try {
-        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-        testResults.put(BICECEConstants.ORDER_ID, results.get(BICECEConstants.ORDER_ID));
-        testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-        testResults
-            .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
-        testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
-        testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-        testResults.put(BICConstants.subscriptionPeriodStartDate,
-            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
-        testResults.put(BICConstants.subscriptionPeriodEndDate,
-            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
-        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-        testResults
-            .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
-        testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
-      } catch (Exception e) {
-        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-      }
-
-      updateTestingHub(testResults);
-    } else {
-      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Pay Invoice. TransactionId: "
-          + (Strings.isNotNullAndNotEmpty(System.getProperty("transactionid")) ? System.getProperty("transactionid")
-          : "Not passed"));
-      testDataForEachMethod.putAll(getTestingHubUtil().getTransactionOutputObject());
-      results.putAll(testDataForEachMethod);
+      testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
+      testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
     }
 
-    if(!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice") && Strings.isNotNullAndNotEmpty(System.getProperty("transactionid"))) {
+    Address address = getBillingAddress();
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.putAll(testDataForEachMethod);
+    updateTestingHub(testResults);
+    // Signing out after quote creation
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
+
+    if (Objects.equals(testDataForEachMethod.get("ttrEnabled"), "true")) {
+      if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {
+        AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart());
+      } else if (testDataForEachMethod.get("taxOptionEnabled").equals("N")) {
+        AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
+      }
+    } else {
+      AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart());
+    }
+
+    // Setup test base for Tax Exemption Document submission
+    if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
+      com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+          getDriver(), getTestBase());
+
+      HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {{
+        put(BICConstants.exemptFromSalesTax, "Yes");
+        put(BICConstants.reasonForExempt, "Reseller");
+        put(BICConstants.buyerAccountType, "Reseller");
+        put(TestingHubConstants.state, address.provinceName);
+        put(BICConstants.registeredAs, "Retailer");
+        put(BICConstants.salesTaxType, "State Sales Tax");
+        put(BICConstants.businessType, "Construction");
+        put(BICConstants.certToSelect, "Uniform Sales and Use Tax Certificate - Multijurisdiction");
+        put(BICConstants.buyerContactName,
+            testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " " + testDataForEachMethod.get(
+                BICECEConstants.LASTNAME));
+        put(BICConstants.certificateName, EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
+      }};
+
+      switch (address.country) {
+        case "Canada":
+          switch (address.province) {
+            case "BC":
+            case "MB":
+            case "SK":
+              dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
+              break;
+          }
+          dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
+          break;
+        case "United States":
+          switch (address.province) {
+            case "MS":
+            case "MA":
+              dataForTTR.put(BICConstants.identityNumberLength, "9");
+              break;
+            case "MD":
+              dataForTTR.put(BICConstants.identityNumberLength, "8");
+          }
+        default:
+          dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
+          break;
+      }
+
+      coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
+      testDataForEachMethod.put("taxOptionEnabled", "N");
+    }    
+
+    results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.putAll(results);
+    updateTestingHub(testResults);
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      return;
+    }
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
+        Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
+        "Pelican 'Tax Exempt' flag didnt match with Test Param");
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICECEConstants.ORDER_ID, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+      testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
+
+    portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
+
+    updateTestingHub(testResults);
+  }
+
+  @Test(groups = {"bic-loc-payinvoice"}, description = "Validation for Pay Invoice")
+  public void validateLocPayInvoice() throws Exception {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> results = new HashMap<String, String>();
+
+    loadPrevTransactionOut();
+    results.putAll(testDataForEachMethod);
+    if(results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
+      results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
+    }
+
+    if(testDataForEachMethod.containsKey("Placing the Flex Order") &&
+        testDataForEachMethod.get("Placing the Flex Order").equalsIgnoreCase("Passed")) {
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
         String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
             System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
@@ -340,27 +355,16 @@ public class BICQuoteOrder extends ECETestBase {
         portaltb.payInvoice(testDataForEachMethod);
         portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
       } else {
-        portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-            results.get(BICConstants.emailid),
-            PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-        if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-          portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
-        }
+        Assert.fail("NON LOC Orders Do NOT have Pay Invoice Flow!!!");
       }
-      portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
       }
       updateTestingHub(testResults);
     } else {
-      if(Strings.isNotNullAndNotEmpty(System.getProperty("transactionid"))) {
-        Util.printInfo("Skipping: As Pay Invoice was successful in Transaction Id provided!");
-      } else {
-        Util.printInfo("Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
-      }
+      Assert.fail("Pay By Invoice Step failed in the previous transaction, so failing Pay Invoice Testcase!!!");
     }
-
   }
 
   @Test(groups = {"bic-invoicenonpayment"}, description = "Validate Quote Invoice Non payment")
@@ -713,8 +717,6 @@ public class BICQuoteOrder extends ECETestBase {
     LinkedHashMap<String, String> testResults = new LinkedHashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
 
-    if (!getTestingHubUtil().isStepCompleted("Placing the Flex Order")) {
-
       Address firstAddress = getBillingAddress();
 
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
@@ -824,47 +826,6 @@ public class BICQuoteOrder extends ECETestBase {
       results.putAll(testResults);
 
       updateTestingHub(testResults);
-    } else {
-      Util.printInfo("Flex Order is Charged: Resubmitted Test case for Pay Invoice. TransactionId: "
-          + (Strings.isNotNullAndNotEmpty(System.getProperty("transactionid")) ? System.getProperty("transactionid")
-          : "Not passed"));
-      testDataForEachMethod.putAll(getTestingHubUtil().getTransactionOutputObject());
-      results.putAll(testDataForEachMethod);
-    }
-
-    if (!getTestingHubUtil().isStepCompleted("CEP : Pay Invoice")) {
-      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
-        String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
-            System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
-                BICECEConstants.VISA : BICECEConstants.CREDITCARD;
-        testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
-        portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid),
-            PASSWORD);
-        portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
-        portaltb.payInvoice(testDataForEachMethod);
-        portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
-      } else {
-        portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-            results.get(BICConstants.emailid),
-            PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-        if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-          portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
-        }
-      }
-
-      portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
-
-      if (getBicTestBase().shouldValidateSAP()) {
-        portaltb.validateBICOrderTaxInvoice(results);
-      }
-      updateTestingHub(testResults);
-    } else {
-      if(Strings.isNotNullAndNotEmpty(System.getProperty("transactionid"))) {
-        Util.printInfo("Skipping: As Pay Invoice was successful in Transaction Id provided!");
-      } else {
-        Util.printInfo("Skipping Pay Invoice flow in Account Portal we just placed the Flex Order, resubmit the Job after Invoices are generated");
-      }
-    }
   }
 
   @Test(groups = {"bic-locnegative"}, description = "Validation LOC Negative Use cases")
@@ -958,6 +919,7 @@ public class BICQuoteOrder extends ECETestBase {
       }
 
       coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
+
       getBicTestBase().validateUserTaxExempt(true);
       testDataForEachMethod.put("taxOptionEnabled", "N");
     }
@@ -1076,5 +1038,23 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     return new Address(billingAddress);
+  }
+
+  private void loadPrevTransactionOut() {
+    String currentTestName = String.valueOf(getTestingHubUtil().getTransactionOutput().get("name"));
+    String prvExecutionResponse = getTestingHubUtil().getAllTransactions(System.getProperty("prvexecutionid"));
+
+    JSONArray jsonObject = new JSONObject(prvExecutionResponse).getJSONArray("items");
+
+    jsonObject.forEach(item -> {
+      JSONObject transactionJson = (JSONObject) item;
+      if(transactionJson.get("name").equals(currentTestName)) {
+        Util.printInfo("Found the matching Test cases for : " + currentTestName);
+        HashMap<String, HashMap<String, String>> transactionResult =
+            getTestingHubUtil().getTransactionOutput(transactionJson.get("executionid").toString(), transactionJson.get("transactionid").toString());
+        testDataForEachMethod.putAll(transactionResult.get("output"));
+        testDataForEachMethod.putAll(transactionResult.get("steps"));
+      }
+    });
   }
 }

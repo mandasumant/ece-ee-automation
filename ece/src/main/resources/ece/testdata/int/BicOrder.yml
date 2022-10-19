@@ -282,7 +282,10 @@ validatePayByInvoiceBlockUser:
 
 
 validateWrongPayerCSNForExistingLOC:
-   url: "https://checkout-apollo.autodesk.com/en-US/cart?quoteNumber=Q-78917"
-   productType: "flex"
-   payerEmailId: "biz-thubnameramarlozfjjvq@letscheck.pw"
-   incorrectCSNNumber : "550118880212"
+  url: "https://checkout-apollo.autodesk.com/en-US/cart?quoteNumber=Q-78917"
+  productType: "flex"
+  payerEmailId: "biz-thubnameramarlozfjjvq@letscheck.pw"
+  incorrectCSNNumber : "550118880212"
+
+validateLocPayInvoice:
+  productType: "flex"
