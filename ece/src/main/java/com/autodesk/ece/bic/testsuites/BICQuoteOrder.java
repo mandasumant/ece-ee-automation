@@ -825,6 +825,10 @@ public class BICQuoteOrder extends ECETestBase {
       results = getBicTestBase().placeFlexOrder(testResults);
       results.putAll(testResults);
 
+      //Appending both the Purchase Orders for Multi Pay Invoice tests
+      testResults.put(BICConstants.orderNumber,testResults.get(BICECEConstants.ORDER_ID) + "," +
+          results.get(BICConstants.orderNumber));
+
       updateTestingHub(testResults);
   }
 
