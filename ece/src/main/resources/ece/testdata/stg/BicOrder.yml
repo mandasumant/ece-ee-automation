@@ -282,10 +282,11 @@ validatePayByInvoiceBlockUser:
   payByInvoicePageURL: "https://checkoutservice-stg.autodesk.com/quoteRedirect/Q-27719?lang=en&country=US&currency=USD"
 
 validateWrongPayerCSNForExistingLOC:
-  url: "https://checkout-pt.autodesk.com/en-US/cart?quoteNumber=Q-27391"
+  url: "https://checkout-pt.autodesk.com/en-US/cart?quoteNumber=Q-29135"
   productType: "flex"
-  payerEmailId: "biz-thubnamernkqzrdvjvruw@letscheck.pw"
-  incorrectCSNNumber: "55006844172"
+  purchaserEmailId: "biz-thubnameroeqdrjispmtf@letscheck.pw"
+  payerEmailId: "biz-thubnamerbkrijgirbgpm@letscheck.pw"
+  incorrectCSNNumber: "5500684000"
 
 validateLocPayInvoice:
   productType: "flex"

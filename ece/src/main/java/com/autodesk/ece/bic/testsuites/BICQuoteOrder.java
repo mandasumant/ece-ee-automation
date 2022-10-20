@@ -1026,7 +1026,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
     getBicTestBase().getUrl(testDataForEachMethod.get("url"));
     getBicTestBase().setStorageData();
-    getBicTestBase().loginToOxygen(testDataForEachMethod.get("payerEmailId"), PASSWORD);
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get("purchaserEmailId"), PASSWORD);
     getBicTestBase().enterLOCEmailAndCSN(testDataForEachMethod);
     getBicTestBase().verifyIncorrectPayerDetailsAlertMessage();
     AssertUtils.assertFalse(getBicTestBase().isSubmitOrderEnabled(), "Submit Order option is disabled ");
