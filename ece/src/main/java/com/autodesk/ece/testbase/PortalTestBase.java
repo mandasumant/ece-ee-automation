@@ -1860,7 +1860,7 @@ public class PortalTestBase {
     portalPage.waitForFieldPresent("clickOnPaymentTab", 20000);
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
     Util.sleep(5000);
-    bicTestBase.enterBillingDetails(data, bicTestBase.getBillingAddress(data), data.get(BICECEConstants.PAYMENT_TYPE));
+    bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data), data.get(BICECEConstants.PAYMENT_TYPE));
     submitPayment();
   }
 
