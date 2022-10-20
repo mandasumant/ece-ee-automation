@@ -1021,7 +1021,7 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().validatePayByInvoiceTabPresence();
   }
 
-  @Test(groups = {"bic-quoteorder-wrongCSN"},  description = "Validate wrong csn")
+  @Test(groups = {"bic-quoteorder-wrongCSN"}, description = "Validate wrong csn")
   public void validateWrongPayerCSNForExistingLOC() throws MetadataException {
     testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
     getBicTestBase().getUrl(testDataForEachMethod.get("url"));
@@ -1030,6 +1030,32 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().enterLOCEmailAndCSN(testDataForEachMethod);
     getBicTestBase().verifyIncorrectPayerDetailsAlertMessage();
     AssertUtils.assertFalse(getBicTestBase().isSubmitOrderEnabled(), "Submit Order option is disabled ");
+  }
+
+  @Test(groups = {"ttr-expired-certificate"}, description = "Validate expired TTR certificate")
+  public void validateExpiredTTRCertificate() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    Address address = getBillingAddress();
+    testDataForEachMethod.put(BICConstants.emailid, testDataForEachMethod.get("existingUserEmail"));
+    testDataForEachMethod.put(BICECEConstants.FIRSTNAME, testDataForEachMethod.get("existingUserFirstname"));
+    testDataForEachMethod.put(BICECEConstants.LASTNAME, testDataForEachMethod.get("existingUserLastname"));
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    updateTestingHub(testResults);
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    try {
+      getBicTestBase().refreshCartIfEmpty();
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
+
+    AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button should be present");
   }
 
   private Address getBillingAddress() {
