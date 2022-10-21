@@ -290,3 +290,11 @@ validateWrongPayerCSNForExistingLOC:
 
 validateLocPayInvoice:
   productType: "flex"
+
+validateExpiredTTRCertificate:
+  term: "Annual"
+  productType: "flex"
+  accessModel: "Flex"
+  existingUserEmail: "thubnameratvephramcfz@letscheck.pw"
+  existingUserFirstname: "FNJFtOmR"
+  existingUserLastname: "LNJFtOmR"

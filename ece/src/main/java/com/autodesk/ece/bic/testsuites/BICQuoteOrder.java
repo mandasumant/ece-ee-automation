@@ -530,7 +530,7 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"quote-RefundOrder"}, description = "Refund Quote orders with and without Credit Memo use cases")
+  @Test(groups = {"quote-RefundOrder"}, description = "Refund Quote order")
   public void validateQuoteRefundOrder() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
@@ -577,33 +577,6 @@ public class BICQuoteOrder extends ECETestBase {
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-
-    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
-      portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid),
-          PASSWORD);
-      if (System.getProperty("issueCreditMemo") != null || System.getProperty("newPaymentType") != null) {
-        portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
-        // If issueCreditMemo param is passed then we issue Credit memo before we refund
-        if (System.getProperty("issueCreditMemo") != null) {
-          //Issue Credit Memo to order before Refund
-        }
-      }
-
-      // Validate Portal. If its LOC and if test has newPaymentType param then we pay the invoice before refund
-      if (System.getProperty("newPaymentType") != null) {
-        String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType") :
-            System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER") ?
-                BICECEConstants.VISA : BICECEConstants.CREDITCARD;
-        testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
-
-        portaltb.payInvoice(testDataForEachMethod);
-        portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
-      }
-    } else {
-      portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-          results.get(BICConstants.emailid),
-          PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-    }
 
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
       portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
@@ -1021,7 +994,7 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().validatePayByInvoiceTabPresence();
   }
 
-  @Test(groups = {"bic-quoteorder-wrongCSN"},  description = "Validate wrong csn")
+  @Test(groups = {"bic-quoteorder-wrongCSN"}, description = "Validate wrong csn")
   public void validateWrongPayerCSNForExistingLOC() throws MetadataException {
     testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
     getBicTestBase().getUrl(testDataForEachMethod.get("url"));
@@ -1030,6 +1003,32 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().enterLOCEmailAndCSN(testDataForEachMethod);
     getBicTestBase().verifyIncorrectPayerDetailsAlertMessage();
     AssertUtils.assertFalse(getBicTestBase().isSubmitOrderEnabled(), "Submit Order option is disabled ");
+  }
+
+  @Test(groups = {"ttr-expired-certificate"}, description = "Validate expired TTR certificate")
+  public void validateExpiredTTRCertificate() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    Address address = getBillingAddress();
+    testDataForEachMethod.put(BICConstants.emailid, testDataForEachMethod.get("existingUserEmail"));
+    testDataForEachMethod.put(BICECEConstants.FIRSTNAME, testDataForEachMethod.get("existingUserFirstname"));
+    testDataForEachMethod.put(BICECEConstants.LASTNAME, testDataForEachMethod.get("existingUserLastname"));
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    updateTestingHub(testResults);
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    try {
+      getBicTestBase().refreshCartIfEmpty();
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
+
+    AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button should be present");
   }
 
   private Address getBillingAddress() {

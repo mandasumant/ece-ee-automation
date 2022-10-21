@@ -528,7 +528,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".eu"
     paymentMethods: "CREDITCARD,PAYPAL,LOC"
-    address: "Autodesk@Calea Calarasilor 34@Braila@030167@0241547987@Romania"
+    address: "Autodesk@Calea Calarasilor 34@Braila@810008@0241547987@Romania"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5108346601"
     agentContactEmail: "partneruser_da_int_5108346601@letscheck.email"

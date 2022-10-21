@@ -1744,6 +1744,14 @@ public class BICTestBase {
     }
   }
 
+  public void enterPayInvoiceBillingDetails(LinkedHashMap<String, String> data,
+      Map<String, String> address, String paymentMethod) {
+    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
+    selectPaymentProfile(data, paymentCardDetails, address);
+    populateBillingAddress(address, data);
+    debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
+  }
+
   public void enterCustomerDetails(Map<String, String> address)
       throws MetadataException {
 
