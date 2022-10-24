@@ -298,3 +298,8 @@ validateExpiredTTRCertificate:
   existingUserEmail: "thubnameratvephramcfz@letscheck.pw"
   existingUserFirstname: "FNJFtOmR"
   existingUserLastname: "LNJFtOmR"
+  
+validateTTRCertificateDeclined:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"

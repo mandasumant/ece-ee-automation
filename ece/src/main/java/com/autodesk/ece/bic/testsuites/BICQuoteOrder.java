@@ -1029,6 +1029,44 @@ public class BICQuoteOrder extends ECETestBase {
 
 		return new Address(billingAddress);
 	}
+    
+  @Test(groups = {"ttr-certificate-declined"}, description = "Validate expired TTR certificate")
+  public void validateTTRCertificateDeclined() {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    Address address = getBillingAddress();
+
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+        PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"),
+        testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    updateTestingHub(testResults);
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    try {
+      getBicTestBase().refreshCartIfEmpty();
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
+
+    AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button should be present");
+
+    com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+        getDriver(), getTestBase());
+    coreBicTestBase.navigateToTTRPageForTaxExempt();
+
+    getBicTestBase().exitECMS();
+    getBicTestBase().validateTaxExemptionIneligibility();
+
+    AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button not should be present");
+  }
 
 	private void loadPrevTransactionOut() {
 

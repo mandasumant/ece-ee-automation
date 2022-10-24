@@ -122,6 +122,14 @@ testcases = [
         testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
         testGroup        : "ttr-expired-certificate",
         testMethod       : "validateExpiredTTRCertificate"
+    ],
+    "q2oTTRCertificateDeclined": [
+        displaynamePrefix: "Q2O TTR Certificate Declined",
+        testcasename     : "",
+        descriptionPrefix: "Q2O TTR User with their certificate declined",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "ttr-certificate-declined",
+        testMethod       : "validateTTRCertificateDeclined"
     ]
 ]
 
@@ -868,7 +876,8 @@ def triggerApolloTTR(def serviceBuildHelper) {
                     generateTest("Returning (en_US)", testcases.q2oTTRReturningUser, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
                     generateTest("Neg: TTR Q2O Returning User with Diff. Address", testcases.q2oTTRReturningUser, addresses["United States"]["AZ"], ["changeAddress": "true", "timezone": "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
                     generateTest("Returning (en_CA)", testcases.q2oTTRReturningUser, addresses["Canada"]["ON"], ["timezone": "America/Toronto", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
-                    generateTest("Expired cert (en_US)", testcases.q2oTTRExpiredCertificate, addresses["United States"]["CO"], ["timezone": "America/Denver"])
+                    generateTest("Expired cert (en_US)", testcases.q2oTTRExpiredCertificate, addresses["United States"]["CO"], ["timezone": "America/Denver"]),
+                    generateTest("Declined cert (en_US)", testcases.q2oTTRCertificateDeclined, addresses["United States"]["CO"], ["timezone": "America/Denver"])
                 ].join(',') +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore - All")

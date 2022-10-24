@@ -2412,6 +2412,23 @@ public class BICTestBase {
         "No Alert message for Wrong Payer");
   }
 
+  @Step("Navigate back to checkout" + GlobalConstants.TAG_TESTINGHUB)
+  public void exitECMS() {
+    bicPage.click("ttrReturnToCheckout");
+  }
+
+  @Step("Validate user is not tax exempt" + GlobalConstants.TAG_TESTINGHUB)
+  public void validateTaxExemptionIneligibility() {
+    try {
+      String status = bicPage.getMultipleTextValuesfromField("ttrTaxExemptionStatus")[0];
+      AssertUtils.assertTrue(status.contains("Sorry, you are not eligible for tax exemption"));
+    } catch (MetadataException e) {
+      Util.printError("Failed to validate TTR status");
+      throw new RuntimeException(e);
+    }
+
+  }
+
   public static class Names {
 
     public final String firstName;
