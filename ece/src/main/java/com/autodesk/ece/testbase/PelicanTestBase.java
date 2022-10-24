@@ -38,6 +38,7 @@ import org.testng.Assert;
 
 
 public class PelicanTestBase {
+
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
 
   public PelicanTestBase() {
@@ -585,7 +586,7 @@ public class PelicanTestBase {
           jp.get("endCustomer.city"));
       results.put("getPOResponse_subtotalAfterPromotions",
           jp.get("price.totalPrice").toString());
-      
+
       results.put("getPOResponse_endCustomer_country",
           jp.get("endCustomer.country"));
       results.put("getPOResponse_endCustomer_postalCode",
@@ -751,8 +752,9 @@ public class PelicanTestBase {
           address.postalCode.substring(0, 3));
     }
 
-    if (System.getProperty("taxId") != null ) {
-      if (Arrays.asList("en_AU", "de_CH", "no_NO", "en_IS", "en_LI", "es_ES").contains(quoteInputMap.get(BICECEConstants.LOCALE))) {
+    if (System.getProperty("taxId") != null) {
+      if (Arrays.asList("en_AU", "de_CH", "no_NO", "en_IS", "en_LI", "es_ES")
+          .contains(quoteInputMap.get(BICECEConstants.LOCALE))) {
         AssertUtils.assertEquals("TaxId should match.",
             System.getProperty("taxId").toUpperCase(),
             pelicanResponseMap.get("getPOResponse_taxId").toUpperCase());

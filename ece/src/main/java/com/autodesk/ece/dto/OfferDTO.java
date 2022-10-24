@@ -6,6 +6,7 @@ import lombok.Data;
 
 public @Data
 class OfferDTO {
+
   private String term;
   private String accessModel = "Flex";
   private String intendedUsage = "Commercial";

@@ -589,13 +589,10 @@ public class BICTestBase {
 
       if (taxId != null && !taxId.isEmpty()) {
         String numberKey;
-        switch (System.getProperty(BICECEConstants.STORE)) {
-          case "STORE-AUS":
-            numberKey = BICECEConstants.ABN_NUMBER;
-            break;
-          default:
-            numberKey = BICECEConstants.VAT_NUMBER;
-            break;
+        if ("STORE-AUS".equals(System.getProperty(BICECEConstants.STORE))) {
+          numberKey = BICECEConstants.ABN_NUMBER;
+        } else {
+          numberKey = BICECEConstants.VAT_NUMBER;
         }
 
         try {
@@ -1040,7 +1037,8 @@ public class BICTestBase {
         }
       }
 
-      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL) && bicPage.waitForField("payerSameAsCustomer", true, 10000)) {
+      if (payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL) && bicPage.waitForField("payerSameAsCustomer",
+          true, 10000)) {
         bicPage.clickUsingLowLevelActions("payerSameAsCustomer");
         bicPage.waitForElementVisible(
             bicPage.getMultipleWebElementsfromField("cartEmailAddress").get(0), 10);
@@ -1799,7 +1797,6 @@ public class BICTestBase {
       bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
     }
 
-
     if (bicPage.checkIfElementExistsInPage("confirmCustomerAddressAlert", 10)) {
       if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
         Util.printInfo("Two or more suggested addresses. Clicking on radio button to choose one.");
@@ -2331,7 +2328,7 @@ public class BICTestBase {
 
   public void validateUserTaxExempt(Boolean shouldPresent) {
     try {
-      if(shouldPresent) {
+      if (shouldPresent) {
         AssertUtils.assertTrue(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10));
         Util.printInfo("User's tax exemption certificate was accepted");
       } else {
@@ -2341,24 +2338,6 @@ public class BICTestBase {
 
     } catch (MetadataException e) {
       throw new RuntimeException(e);
-    }
-  }
-
-  public static class Names {
-
-    public final String firstName;
-    public final String lastName;
-
-    public Names(String firstName, String lastName) {
-      this.firstName = firstName;
-      this.lastName = lastName;
-    }
-
-    public HashMap<String, String> getMap() {
-      return new HashMap<String, String>() {{
-        put(BICECEConstants.FIRSTNAME, firstName);
-        put(BICECEConstants.LASTNAME, lastName);
-      }};
     }
   }
 
@@ -2425,10 +2404,29 @@ public class BICTestBase {
     }
   }
 
-  public void verifyIncorrectPayerDetailsAlertMessage(){
+  public void verifyIncorrectPayerDetailsAlertMessage() {
     WebElement alertInvalidMatch = driver.findElement(
-            By.xpath(bicPage.getFirstFieldLocator("alertMessage")));
+        By.xpath(bicPage.getFirstFieldLocator("alertMessage")));
     AssertUtils.assertTrue(
-            alertInvalidMatch.getText().contains("The details entered do not match an available line of credit."), "No Alert message for Wrong Payer");
+        alertInvalidMatch.getText().contains("The details entered do not match an available line of credit."),
+        "No Alert message for Wrong Payer");
+  }
+
+  public static class Names {
+
+    public final String firstName;
+    public final String lastName;
+
+    public Names(String firstName, String lastName) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+    }
+
+    public HashMap<String, String> getMap() {
+      return new HashMap<String, String>() {{
+        put(BICECEConstants.FIRSTNAME, firstName);
+        put(BICECEConstants.LASTNAME, lastName);
+      }};
+    }
   }
 }

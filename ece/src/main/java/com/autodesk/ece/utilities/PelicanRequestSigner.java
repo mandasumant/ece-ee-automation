@@ -14,6 +14,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class PelicanRequestSigner {
+
   private final String actorSecret;
   private final String xE2PartnerId;
   private final String xE2AppFamilyId;
@@ -41,6 +42,7 @@ public class PelicanRequestSigner {
   }
 
   public static class PelicanSignature {
+
     public final String xE2PartnerId;
     public final String xE2AppFamilyId;
     public final String xE2HMACTimestamp;

@@ -5,6 +5,7 @@ import lombok.Data;
 
 public @Data
 class EndCustomerDTO {
+
   private String accountCsn;
   private String name;
   private String addressLine1;

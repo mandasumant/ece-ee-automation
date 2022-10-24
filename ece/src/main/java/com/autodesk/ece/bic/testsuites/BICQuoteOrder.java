@@ -30,7 +30,6 @@ import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.util.Strings;
 
 public class BICQuoteOrder extends ECETestBase {
 
@@ -141,7 +140,7 @@ public class BICQuoteOrder extends ECETestBase {
 
 	}
 
-	@Test(groups = { "bic-quoteonly" }, description = "Validation of Create BIC Quote Order")
+	@Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
 	public void validateBicQuote() {
 		String locale = "en_US";
 		if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
@@ -166,10 +165,10 @@ public class BICQuoteOrder extends ECETestBase {
 		justQuoteDeails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
 
 		updateTestingHub(justQuoteDeails);
-		Util.printInfo("Final List " + justQuoteDeails.toString());
+		Util.printInfo("Final List " + justQuoteDeails);
 	}
 
-	@Test(groups = { "bic-quoteorder" }, description = "Validation of Create BIC Quote Order")
+	@Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
 	public void validateBicQuoteOrder() throws Exception {
 		HashMap<String, String> testResults = new HashMap<String, String>();
 		HashMap<String, String> results = new HashMap<String, String>();
@@ -241,28 +240,28 @@ public class BICQuoteOrder extends ECETestBase {
 			};
 
 			switch (address.country) {
-			case "Canada":
-				switch (address.province) {
-				case "BC":
-				case "MB":
-				case "SK":
-					dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
+				case "Canada":
+					switch (address.province) {
+						case "BC":
+						case "MB":
+						case "SK":
+							dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
+							break;
+					}
+					dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
 					break;
-				}
-				dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
-				break;
-			case "United States":
-				switch (address.province) {
-				case "MS":
-				case "MA":
-					dataForTTR.put(BICConstants.identityNumberLength, "9");
+				case "United States":
+					switch (address.province) {
+						case "MS":
+						case "MA":
+							dataForTTR.put(BICConstants.identityNumberLength, "9");
+							break;
+						case "MD":
+							dataForTTR.put(BICConstants.identityNumberLength, "8");
+					}
+				default:
+					dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
 					break;
-				case "MD":
-					dataForTTR.put(BICConstants.identityNumberLength, "8");
-				}
-			default:
-				dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
-				break;
 			}
 
 			coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
@@ -329,7 +328,7 @@ public class BICQuoteOrder extends ECETestBase {
 		updateTestingHub(testResults);
 	}
 
-	@Test(groups = { "bic-loc-payinvoice" }, description = "Validation for Pay Invoice")
+	@Test(groups = {"bic-loc-payinvoice"}, description = "Validation for Pay Invoice")
 	public void validateLocPayInvoice() throws Exception {
 		HashMap<String, String> testResults = new HashMap<String, String>();
 		HashMap<String, String> results = new HashMap<String, String>();
@@ -366,7 +365,7 @@ public class BICQuoteOrder extends ECETestBase {
 		}
 	}
 
-	@Test(groups = { "bic-invoicenonpayment" }, description = "Validate Quote Invoice Non payment")
+	@Test(groups = {"bic-invoicenonpayment"}, description = "Validate Quote Invoice Non payment")
 	public void validateQuoteInvoiceNonPayment() throws Exception {
 		HashMap<String, String> testResults = new HashMap<>();
 		Address address = getBillingAddress();
@@ -450,7 +449,7 @@ public class BICQuoteOrder extends ECETestBase {
 		updateTestingHub(testResults);
 	}
 
-	@Test(groups = { "multiline-quoteorder" }, description = "Validation of Create Multiline item quote Order")
+	@Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
 	public void validateMultiLineItemQuoteOrder() throws MetadataException {
 		HashMap<String, String> testResults = new HashMap<>();
 
@@ -527,7 +526,7 @@ public class BICQuoteOrder extends ECETestBase {
 		updateTestingHub(testResults);
 	}
 
-	@Test(groups = { "quote-RefundOrder" }, description = "Refund Quote order")
+	@Test(groups = {"quote-RefundOrder"}, description = "Refund Quote order")
 	public void validateQuoteRefundOrder() throws Exception {
 		HashMap<String, String> testResults = new HashMap<String, String>();
 
@@ -612,7 +611,7 @@ public class BICQuoteOrder extends ECETestBase {
 		updateTestingHub(testResults);
 	}
 
-	@Test(groups = { "quote-accountportal" }, description = "Validation of Quote purchase from account portal")
+	@Test(groups = {"quote-accountportal"}, description = "Validation of Quote purchase from account portal")
 	public void validateAccountPortalQuoteOrder() throws MetadataException {
 		HashMap<String, String> testResults = new HashMap<String, String>();
 
@@ -679,7 +678,7 @@ public class BICQuoteOrder extends ECETestBase {
 	}
 
 	@Test(groups = {
-			"bic-quoteorder-multiinvoice" }, description = "Validation of Create BIC Quote Order with Common Payer")
+			"bic-quoteorder-multiinvoice"}, description = "Validation of Create BIC Quote Order with Common Payer")
 	public void validateBicQuoteOrderMultiInvoice() throws Exception {
 
 		LinkedHashMap<String, String> testResults = new LinkedHashMap<String, String>();
@@ -797,7 +796,7 @@ public class BICQuoteOrder extends ECETestBase {
 		updateTestingHub(testResults);
 	}
 
-	@Test(groups = { "bic-locnegative" }, description = "Validation LOC Negative Use cases")
+	@Test(groups = {"bic-locnegative"}, description = "Validation LOC Negative Use cases")
 	public void validateLocNegativeCases() throws MetadataException {
 		String locale = "en_US";
 		if (System.getProperty(BICECEConstants.LOCALE) != null
@@ -827,7 +826,7 @@ public class BICQuoteOrder extends ECETestBase {
 		updateTestingHub(justQuoteDetails);
 	}
 
-	@Test(groups = { "bic-returning-quote-user" }, description = "Validation Returning Quote User")
+	@Test(groups = {"bic-returning-quote-user"}, description = "Validation Returning Quote User")
 	public void validateReturningQuoteUser() throws MetadataException {
 		HashMap<String, String> testResults = new HashMap<String, String>();
 
@@ -874,20 +873,20 @@ public class BICQuoteOrder extends ECETestBase {
 			dataForTTR.put("state", address.provinceName);
 
 			switch (address.country) {
-			case "Canada":
-				switch (address.province) {
-				case "BC":
-				case "MB":
-				case "SK":
-					dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
+				case "Canada":
+					switch (address.province) {
+						case "BC":
+						case "MB":
+						case "SK":
+							dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
+							break;
+					}
+					dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
 					break;
-				}
-				dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
-				break;
-			case "United States":
-			default:
-				dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
-				break;
+				case "United States":
+				default:
+					dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
+					break;
 			}
 
 			coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
@@ -946,12 +945,9 @@ public class BICQuoteOrder extends ECETestBase {
 		getBicTestBase().refreshCartIfEmpty();
 
 		// On the second visit to checkout validate that the user is still tax exempt
-		if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)
-				&& !Boolean.valueOf(System.getProperty("changeAddress"))) {
-			getBicTestBase().validateUserTaxExempt(true);
-		} else {
-			getBicTestBase().validateUserTaxExempt(false);
-		}
+		getBicTestBase().validateUserTaxExempt(
+				Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)
+						&& !Boolean.valueOf(System.getProperty("changeAddress")));
 
 		results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
 		testResults.put(BICECEConstants.orderNumber + "_2", results.get(BICConstants.orderNumber));
@@ -977,7 +973,7 @@ public class BICQuoteOrder extends ECETestBase {
 		updateTestingHub(testResults);
 	}
 
-	@Test(groups = { "pay-by-invoice-block" }, description = "Validate Pay By Invoice Block User")
+	@Test(groups = {"pay-by-invoice-block"}, description = "Validate Pay By Invoice Block User")
 	public void validatePayByInvoiceBlockUser() throws MetadataException {
 		getPortalTestBase().navigateToLoginToPayByInvoiceURL(testDataForEachMethod.get("payByInvoicePageURL"));
 		getBicTestBase().loginToOxygen(testDataForEachMethod.get("blockedUserEmailId"), PASSWORD);
@@ -985,7 +981,7 @@ public class BICQuoteOrder extends ECETestBase {
 		getBicTestBase().validatePayByInvoiceTabPresence();
 	}
 
-	@Test(groups = { "bic-quoteorder-wrongCSN" }, description = "Validate wrong csn")
+	@Test(groups = {"bic-quoteorder-wrongCSN"}, description = "Validate wrong csn")
 	public void validateWrongPayerCSNForExistingLOC() throws MetadataException {
 		testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
 		getBicTestBase().getUrl(testDataForEachMethod.get("url"));
@@ -996,7 +992,7 @@ public class BICQuoteOrder extends ECETestBase {
 		AssertUtils.assertFalse(getBicTestBase().isSubmitOrderEnabled(), "Submit Order option is disabled ");
 	}
 
-	@Test(groups = { "ttr-expired-certificate" }, description = "Validate expired TTR certificate")
+	@Test(groups = {"ttr-expired-certificate"}, description = "Validate expired TTR certificate")
 	public void validateExpiredTTRCertificate() {
 		HashMap<String, String> testResults = new HashMap<String, String>();
 

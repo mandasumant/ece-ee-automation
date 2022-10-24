@@ -5,6 +5,7 @@ import lombok.Builder;
 
 public @Builder
 class QuoteDTO {
+
   private String quoteNote;
   private String currency;
   private AgentAccountDTO agentAccount;

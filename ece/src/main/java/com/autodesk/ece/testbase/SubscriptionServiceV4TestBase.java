@@ -15,6 +15,7 @@ import io.qameta.allure.Step;
 import java.util.HashMap;
 
 public class SubscriptionServiceV4TestBase {
+
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
 
   @Step("Subscription Service : Get Subscription API" + GlobalConstants.TAG_TESTINGHUB)
