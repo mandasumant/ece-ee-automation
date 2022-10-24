@@ -1872,9 +1872,8 @@ public class PortalTestBase {
   public void submitPayment() throws Exception {
     portalPage.waitForFieldPresent("submitPaymentButton", 15000);
     portalPage.clickUsingLowLevelActions("submitPaymentButton");
+    portalPage.waitForElementToDisappear("submitPaymentButton", 20);
     Util.sleep(5000);
-    Util.waitForElement(portalPage.getFirstFieldLocator("invoiceOrderConfirmation"),
-        "Thank you for your payment");
     Util.printInfo("Payment for Invoice is successfully Completed");
   }
 
