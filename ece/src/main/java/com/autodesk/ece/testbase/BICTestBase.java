@@ -2428,7 +2428,6 @@ public class BICTestBase {
       Util.printError("Failed to validate TTR status");
       throw new RuntimeException(e);
     }
-
   }
 
   public static class Names {

@@ -348,6 +348,11 @@ public class BICQuoteOrder extends ECETestBase {
 								: BICECEConstants.CREDITCARD;
 				testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
 				System.setProperty(BICECEConstants.PAYMENT, paymentType);
+
+				//For purchaser as Payer test cases we need to update the Payer email address for login.
+				if (!testDataForEachMethod.containsKey(BICECEConstants.PAYER_EMAIL) || testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
+					testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, testDataForEachMethod.get(BICConstants.emailid));
+				}
 				portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
 						PASSWORD);
 				portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
