@@ -337,6 +337,7 @@ public class PortalTestBase {
     openPortalBICLaunch(cepURL);
 
     openPortalURL(accountsPortalQuoteUrl);
+    portalPage.waitForFieldPresent("portalQuoteBuyButton", 30000);
     portalPage.click("portalQuoteBuyButton");
 
     // Buy will open a new tab, this closes the original tab and switches to the new tab
