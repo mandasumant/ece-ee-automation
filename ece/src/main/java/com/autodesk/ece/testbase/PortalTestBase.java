@@ -1864,7 +1864,10 @@ public class PortalTestBase {
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
     Util.sleep(5000);
     bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
-        data.get(BICECEConstants.PAYMENT_TYPE));
+            data.get(BICECEConstants.PAYMENT_TYPE));
+    if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 2000)) {
+      bicTestBase.clickMandateAgreementCheckbox();
+    }
     submitPayment();
   }
 

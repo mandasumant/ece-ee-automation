@@ -419,6 +419,7 @@ public class BICTestBase {
       String lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
 
+      bicPage.waitForFieldPresent(BICECEConstants.FIRSTNAME, 2000);
       clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
       driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
 
@@ -558,6 +559,7 @@ public class BICTestBase {
       stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
 
+      bicPage.waitForFieldPresent(BICECEConstants.FULL_ADDRESS, 2000);
       clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
       driver.findElement(By.xpath(fullAddrXpath))
           .sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
@@ -1622,7 +1624,7 @@ public class BICTestBase {
     }
   }
 
-  private void clickMandateAgreementCheckbox() {
+  public void clickMandateAgreementCheckbox() {
     try {
       if (System.getProperty(BICECEConstants.PAYMENT)
           .equalsIgnoreCase(BICConstants.paymentTypeDebitCard) || System
