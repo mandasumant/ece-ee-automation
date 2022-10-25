@@ -348,7 +348,7 @@ public class BICQuoteOrder extends ECETestBase {
 								: BICECEConstants.CREDITCARD;
 				testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
 				System.setProperty(BICECEConstants.PAYMENT, paymentType);
-				portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.emailid),
+				portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
 						PASSWORD);
 				portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
 				portaltb.payInvoice(testDataForEachMethod);
@@ -711,6 +711,7 @@ public class BICQuoteOrder extends ECETestBase {
 		getBicTestBase().loginToOxygen(purchaser, PASSWORD);
 		getBicTestBase().refreshCartIfEmpty();
 		results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+		String multiOrders = results.get(BICECEConstants.orderNumber);
 		results.putAll(testDataForEachMethod);
 
 		testResults.putAll(results);
@@ -788,11 +789,9 @@ public class BICQuoteOrder extends ECETestBase {
 		getBicTestBase().refreshCartIfEmpty();
 		// Place second order with Same Payer
 		results = getBicTestBase().placeFlexOrder(testResults);
-		results.putAll(testResults);
-
+		multiOrders = multiOrders + "," + results.get(BICConstants.orderNumber);
 		// Appending both the Purchase Orders for Multi Pay Invoice tests
-		testResults.put(BICConstants.orderNumber,
-				testResults.get(BICECEConstants.ORDER_ID) + "," + results.get(BICConstants.orderNumber));
+		testResults.put(BICConstants.orderNumber, multiOrders);
 
 		updateTestingHub(testResults);
 	}
