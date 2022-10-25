@@ -286,11 +286,11 @@ validateWrongPayerCSNForExistingLOC:
   productType: "flex"
   purchaserEmailId: "biz-thubnamerpmnhnongvuhc@letscheck.pw"
   payerEmailId: "biz-thubnameramarlozfjjvq@letscheck.pw"
-  incorrectCSNNumber : "5501181000"
+  incorrectCSNNumber: "5501181000"
 
 validateLocPayInvoice:
   productType: "flex"
-  
+
 validateExpiredTTRCertificate:
   term: "Annual"
   accessModel: "Flex"
@@ -298,3 +298,8 @@ validateExpiredTTRCertificate:
   existingUserEmail: "thubnamergesgplhfiuag@letscheck.pw"
   existingUserFirstname: "FNCeLiKS"
   existingUserLastname: "LNCeLiKS"
+  
+validateTTRCertificateDeclined:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"

@@ -6,6 +6,7 @@ import lombok.Data;
 
 public @Data
 class PurchaserDTO {
+
   private String email;
   private String firstName;
   private String lastName;

@@ -259,11 +259,13 @@ public class PortalTestBase {
       openPortalURL(accountsPortalProductsServicesUrl);
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
-      if(portalPage.checkIfElementExistsInPage("gotItButton", 10)) {
+      if (portalPage.checkIfElementExistsInPage("gotItButton", 10)) {
         Util.printInfo("Clicking on got it button..");
         portalPage.clickUsingLowLevelActions("gotItButton");
       }
-      AssertUtils.assertEquals(driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(),true,"All products and services header is missing");
+      AssertUtils.assertEquals(
+          driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(), true,
+          "All products and services header is missing");
     } catch (Exception e) {
       e.printStackTrace();
       CustomSoftAssert.s_assert.fail("Unable to click on portalAllPSLink ");
@@ -583,7 +585,7 @@ public class PortalTestBase {
     }
 
     try {
-     clickALLPSLink();
+      clickALLPSLink();
       JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
       navigateToSubscriptionRow();
       try {
@@ -1716,11 +1718,11 @@ public class PortalTestBase {
     }
   }
 
-  public void navigateToSubscriptionRow() throws Exception{
+  public void navigateToSubscriptionRow() throws Exception {
     if (portalPage.checkIfElementExistsInPage("portalLinkSubscriptions", 60)) {
       Util.printInfo("Clicking on portal subscription and contracts link...");
       portalPage.clickUsingLowLevelActions("portalLinkSubscriptions");
-    }else{
+    } else {
       openPortalURL(accountsPortalSubscriptionsUrl);
     }
     clickPortalClosePopup();
@@ -1800,7 +1802,8 @@ public class PortalTestBase {
   }
 
   public double getPaymentTotalFromCheckout() throws Exception {
-    String paymentTotalAmount = portalPage.getMultipleWebElementsfromField("totalPaymentCheckout").get(0).getText().replaceAll("[^0-9.]", "");
+    String paymentTotalAmount = portalPage.getMultipleWebElementsfromField("totalPaymentCheckout").get(0).getText()
+        .replaceAll("[^0-9.]", "");
     Util.printInfo("Return Check out page Payment Total...." + paymentTotalAmount);
     return Double.parseDouble(paymentTotalAmount);
   }
@@ -1847,7 +1850,7 @@ public class PortalTestBase {
 
   @Step("CEP : Launch Account portal" + GlobalConstants.TAG_TESTINGHUB)
   public void loginToAccountPortal(LinkedHashMap<String, String> data, String portalUserName,
-                                   String portalPassword) {
+      String portalPassword) {
     openPortalBICLaunch(data.get("accountPortalURL"));
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
@@ -1860,7 +1863,8 @@ public class PortalTestBase {
     portalPage.waitForFieldPresent("clickOnPaymentTab", 20000);
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
     Util.sleep(5000);
-    bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data), data.get(BICECEConstants.PAYMENT_TYPE));
+    bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
+        data.get(BICECEConstants.PAYMENT_TYPE));
     submitPayment();
   }
 
@@ -1868,9 +1872,8 @@ public class PortalTestBase {
   public void submitPayment() throws Exception {
     portalPage.waitForFieldPresent("submitPaymentButton", 15000);
     portalPage.clickUsingLowLevelActions("submitPaymentButton");
+    portalPage.waitForElementToDisappear("submitPaymentButton", 20);
     Util.sleep(5000);
-    Util.waitForElement(portalPage.getFirstFieldLocator("invoiceOrderConfirmation"),
-        "Thank you for your payment");
     Util.printInfo("Payment for Invoice is successfully Completed");
   }
 
@@ -1936,7 +1939,7 @@ public class PortalTestBase {
     }
     portalPage.waitForPageToLoad();
   }
-  
+
   @Step("CEP : Click View all invoices")
   public void viewAllInvoices() throws Exception {
     portalPage.waitForFieldPresent("seeAllInvoices", 20);

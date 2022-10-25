@@ -1,8 +1,6 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.head;
-import static io.restassured.RestAssured.post;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.dto.AgentAccountDTO;
 import com.autodesk.ece.dto.AgentContactDTO;
@@ -92,10 +90,9 @@ public class PWSTestBase {
     EndCustomerDTO endCustomer = null;
     if (System.getProperty("existingCSN") != null) {
       endCustomer = new EndCustomerDTO(System.getProperty("existingCSN"));
-    } else if (data.get(BICECEConstants.PAYER_CSN) != null){
+    } else if (data.get(BICECEConstants.PAYER_CSN) != null) {
       endCustomer = new EndCustomerDTO(data.get(BICECEConstants.PAYER_CSN));
-    }
-    else {
+    } else {
       endCustomer = new EndCustomerDTO(address);
     }
 
@@ -254,14 +251,14 @@ public class PWSTestBase {
       Util.sleep((long) (1000L * Math.pow(attempts, 2)));
       Util.printInfo("Attempting to get status on transaction, attempt: " + attempts);
       response = getQuoteStatus(pwsRequestHeaders, transactionId);
-      Util.printInfo("Quote Finalization Response :"+ response.prettyPrint());
+      Util.printInfo("Quote Finalization Response :" + response.prettyPrint());
       String status = response.jsonPath().getString("quoteStatus");
 
       if (status.equals("QUOTED")) {
         Util.printInfo("Got quote in QUOTED state: " + quoteId);
         return quoteId;
       } else if (status.equals("FAILED") || status.equals("DRAFT-CREATED")) {
-        if(response.jsonPath().getJsonObject("error") != null) {
+        if (response.jsonPath().getJsonObject("error") != null) {
           Util.printError(response.jsonPath().getJsonObject("error").toString());
           AssertUtils.fail("Quote finalization failed");
         }

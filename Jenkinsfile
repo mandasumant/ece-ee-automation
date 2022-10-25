@@ -122,6 +122,14 @@ testcases = [
         testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
         testGroup        : "ttr-expired-certificate",
         testMethod       : "validateExpiredTTRCertificate"
+    ],
+    "q2oTTRCertificateDeclined": [
+        displaynamePrefix: "Q2O TTR Certificate Declined",
+        testcasename     : "",
+        descriptionPrefix: "Q2O TTR User with their certificate declined",
+        testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
+        testGroup        : "ttr-certificate-declined",
+        testMethod       : "validateTTRCertificateDeclined"
     ]
 ]
 
@@ -870,7 +878,8 @@ def triggerApolloTTR(def serviceBuildHelper) {
                     generateTest("Returning (en_US)", testcases.q2oTTRReturningUser, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
                     generateTest("Neg: TTR Q2O Returning User with Diff. Address", testcases.q2oTTRReturningUser, addresses["United States"]["AZ"], ["changeAddress": "true", "timezone": "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
                     generateTest("Returning (en_CA)", testcases.q2oTTRReturningUser, addresses["Canada"]["ON"], ["timezone": "America/Toronto", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
-                    generateTest("Expired cert (en_US)", testcases.q2oTTRExpiredCertificate, addresses["United States"]["CO"], ["timezone": "America/Denver"])
+                    generateTest("Expired cert (en_US)", testcases.q2oTTRExpiredCertificate, addresses["United States"]["CO"], ["timezone": "America/Denver"]),
+                    generateTest("Declined cert (en_US)", testcases.q2oTTRCertificateDeclined, addresses["United States"]["CO"], ["timezone": "America/Denver"])
                 ].join(',') +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore - All")
@@ -1012,7 +1021,7 @@ def triggerApolloR2_3PayInvoice(def serviceBuildHelper) {
                 '{"displayname":"LOC Quote 2 Order Existing Payer - UK(en_GB)","testcasename":"9329504a","description":"LOC Quote 2 Order  pay invoice with existing payer - UK(en_GB)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice-multiinvoice","testMethod":"validateBicQuoteOrderMultiInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_GB","prvexecutionid":"' + params.EXECUTION_ID + '","timezone":"Europe/London"}},' +
                 '{"displayname":"LOC Quote 2 Order Existing Payer - Germany(de_DE)","testcasename":"9329504a","description":"LOC Quote 2 Order  pay invoice with existing payer - DE(de_DE)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice-multiinvoice","testMethod":"validateBicQuoteOrderMultiInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-DE","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"de_DE","prvexecutionid":"' + params.EXECUTION_ID + '","timezone":"Europe/Berlin"}},' +
                 '{"displayname":"Quote 2 Order New Payer (en_US)","testcasename":"9329504a","description":"Quote 2 Order US(en_US) pay invoice with new different payer","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validatePayByInvoiceNewPayer","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","store":"STORE-NAMER","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","prvexecutionid":"' + params.EXECUTION_ID + '","timezone":"US/Alaska", "createPayer": "true"}},' +
-                '{"displayname":"Quote 2 Order LOC Common Payer for two purchasers (en_US)","testcasename":"9329504a","description":"Quote 2 Order LOC Common Payer (en_US) for two purchasers","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice-multiinvoice","testMethod":"validateBicQuoteOrderMultiInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","store":"STORE-NAMER","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"US/Alaska", "createPayer": "true"}}' +
+                '{"displayname":"Quote 2 Order LOC Common Payer for two purchasers (en_US)","testcasename":"9329504a","description":"Quote 2 Order LOC Common Payer (en_US) for two purchasers","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice-multiinvoice","testMethod":"validateBicQuoteOrderMultiInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","store":"STORE-NAMER","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","sapValidation":"' + params.INVOICE_VALIDATION + '","prvexecutionid":"' + params.EXECUTION_ID + '","timezone":"US/Alaska", "createPayer": "true"}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore - All")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {

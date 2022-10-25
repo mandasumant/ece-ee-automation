@@ -6,8 +6,9 @@ import lombok.Data;
 
 public @Data
 class LineItemDTO {
+
   private Float quantity;
-  private String offeringId ;
+  private String offeringId;
   private String orderAction = "New";
   private String subscriptionStartDate;
   private OfferDTO offer;
