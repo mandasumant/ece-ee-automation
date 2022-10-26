@@ -42,7 +42,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.util.Strings;
 
 public class PortalTestBase {
 
@@ -1827,7 +1826,7 @@ public class PortalTestBase {
     }
     double invoiceAmount = 0.00;
 
-    if(poNumbers.length > 1) {
+    if (poNumbers.length > 1) {
       for (int i = 0; i < poNumbers.length; i++) {
         Util.printInfo("Selecting PO Number:" + poNumbers[i]);
         invoiceAmount = invoiceAmount + selectInvoice(poNumbers[i]);
@@ -1838,18 +1837,7 @@ public class PortalTestBase {
       invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", ""));
     }
 
-    try {
-      String locale = System.getProperty("locale");
-      if (Strings.isNotNullAndNotEmpty(locale) && locale != "en_US") {
-        String localeReplace = locale.replaceAll("_", "-");
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.cfp.providers.localization.getLocale = () => '" + localeReplace + "';");
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    //selectAllInvoicesPayButton();
+//    selectAllInvoicesPayButton();
     portalPage.click("invoicePagePay");
 
     Util.sleep(10000);
@@ -1876,14 +1864,13 @@ public class PortalTestBase {
     }
   }
 
-
   @Step("CEP : Pay Invoice" + GlobalConstants.TAG_TESTINGHUB)
   public void payInvoice(LinkedHashMap<String, String> data) throws Exception {
     portalPage.waitForFieldPresent("clickOnPaymentTab", 20000);
     portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
     Util.sleep(5000);
     bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
-            data.get(BICECEConstants.PAYMENT_TYPE));
+        data.get(BICECEConstants.PAYMENT_TYPE));
     if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)) {
       bicTestBase.clickMandateAgreementCheckbox();
     }
