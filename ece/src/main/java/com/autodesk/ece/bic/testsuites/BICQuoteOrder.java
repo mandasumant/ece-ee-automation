@@ -834,6 +834,8 @@ public class BICQuoteOrder extends ECETestBase {
 	@Test(groups = {"bic-returning-quote-user"}, description = "Validation Returning Quote User")
 	public void validateReturningQuoteUser() throws MetadataException {
 		HashMap<String, String> testResults = new HashMap<String, String>();
+		boolean changeAddress = Boolean.parseBoolean(System.getProperty("changeAddress"));
+		boolean submitTaxInfo = Boolean.parseBoolean(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO));
 
 		Address address = getBillingAddress();
 		getBicTestBase().goToDotcomSignin(testDataForEachMethod);
@@ -933,7 +935,7 @@ public class BICQuoteOrder extends ECETestBase {
 
 		getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
-		if (Boolean.valueOf(System.getProperty("changeAddress"))) {
+		if (changeAddress) {
 			testDataForEachMethod.putAll(localeDataMap.get(defaultLocale));
 			address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
 			testDataForEachMethod.put("taxOptionEnabled", "Y");
@@ -947,12 +949,11 @@ public class BICQuoteOrder extends ECETestBase {
 		getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 		// Re login during checkout
 		getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
-		getBicTestBase().refreshCartIfEmpty();
 
 		// On the second visit to checkout validate that the user is still tax exempt
 		getBicTestBase().validateUserTaxExempt(
 				Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)
-						&& !Boolean.valueOf(System.getProperty("changeAddress")));
+						&& !changeAddress);
 
 		results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
 		testResults.put(BICECEConstants.orderNumber + "_2", results.get(BICConstants.orderNumber));
@@ -961,9 +962,13 @@ public class BICQuoteOrder extends ECETestBase {
 		// Getting a PurchaseOrder details from pelican
 		results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-		AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
-				Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
-				"Pelican 'Tax Exempt' flag didnt match with Test Param");
+		if (submitTaxInfo && !changeAddress) {
+			AssertUtils.assertTrue(Objects.equals(results.get(BICECEConstants.IS_TAX_EXCEMPT), "null"),
+					"Pelican 'Tax Exempt' flag should be null for returning tax exempt users");
+		} else {
+			AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
+					false, "Pelican 'Tax Exempt' flag didnt match with Test Param");
+		}
 
 		// Compare tax in Checkout and Pelican
 		getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),

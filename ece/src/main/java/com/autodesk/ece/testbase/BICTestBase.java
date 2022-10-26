@@ -2331,10 +2331,12 @@ public class BICTestBase {
   public void validateUserTaxExempt(Boolean shouldPresent) {
     try {
       if (shouldPresent) {
-        AssertUtils.assertTrue(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10));
+        AssertUtils.assertTrue(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10),
+            "User's tax exemption certificate was accepted");
         Util.printInfo("User's tax exemption certificate was accepted");
       } else {
-        AssertUtils.assertFalse(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10));
+        AssertUtils.assertFalse(bicPage.checkIfElementExistsInPage("taxCertificateProvided", 10),
+            "User's tax exemption certificate was NOT accepted");
         Util.printInfo("User's tax exemption certificate was NOT accepted");
       }
 
