@@ -125,7 +125,7 @@ testcases = [
     ],
     "q2oTTRCertificateDeclined": [
         displaynamePrefix: "Q2O TTR Certificate Declined",
-        testcasename     : "",
+        testcasename     : "b62c2651",
         descriptionPrefix: "Q2O TTR User with their certificate declined",
         testClass        : "com.autodesk.ece.bic.testsuites.BICQuoteOrder",
         testGroup        : "ttr-certificate-declined",
