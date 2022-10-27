@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import org.json.JSONArray;
@@ -30,6 +31,7 @@ import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.util.Strings;
 
 public class BICQuoteOrder extends ECETestBase {
 
@@ -41,6 +43,8 @@ public class BICQuoteOrder extends ECETestBase {
 	LinkedHashMap<String, Map<String, String>> localeDataMap = null;
 	String locale = System.getProperty(BICECEConstants.LOCALE);
 	String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
+	String creditMemo = System.getProperty(BICECEConstants.CREDIT_MEMO);
+
 	private String PASSWORD;
 	private PWSTestBase pwsTestBase;
 
@@ -137,6 +141,12 @@ public class BICQuoteOrder extends ECETestBase {
 		}
 		testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
 				PWSTestBase.getQuoteStartDateAsString());
+
+		if (creditMemo == null || creditMemo.isEmpty()) {
+			testDataForEachMethod.put(BICECEConstants.CREDIT_MEMO, "500");
+		} else {
+			testDataForEachMethod.put(BICECEConstants.CREDIT_MEMO, System.getProperty("creditMemo"));
+		}
 
 	}
 
@@ -333,6 +343,9 @@ public class BICQuoteOrder extends ECETestBase {
 		HashMap<String, String> testResults = new HashMap<String, String>();
 		HashMap<String, String> results = new HashMap<String, String>();
 
+		String creditMemoAmount = testDataForEachMethod.get("creditMemo");
+		Util.printInfo("The Credit Memo amount is: " + creditMemoAmount);
+
 		loadPrevTransactionOut();
 		results.putAll(testDataForEachMethod);
 		if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
@@ -355,9 +368,73 @@ public class BICQuoteOrder extends ECETestBase {
 				}
 				portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
 						PASSWORD);
+
+				if (System.getProperty("issueCreditMemo") != null) {
+					portaltb.navigateToInvoiceCreditMemos();
+					portaltb.waitForInvoicePageLoadToVisible("Open invoices");
+
+					// Issue Credit Memo to order before Refund
+					if (Strings.isNotNullAndNotEmpty(creditMemoAmount)) {
+						testDataForEachMethod.put(TestingHubConstants.creditMemoAmount, creditMemoAmount);
+					}
+
+					if (Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
+						String somOrderNumber = getSOMOrderNumber(results.get(BICECEConstants.ORDER_ID));
+						Util.printInfo("SOM order number found - " + somOrderNumber);
+
+						HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTableUsingSOM(
+								somOrderNumber);
+						if (invoiceDetails.size() == 0) {
+							AssertUtils.fail("Failed to get invoice details from SAP for the initial order : " + results.get(
+									BICECEConstants.ORDER_ID));
+						}
+
+						Util.printInfo("Found invoice details " + invoiceDetails);
+
+						// Get credit memo invoice numbers list if credit memo is available from S4
+						HashMap<String, LinkedList<String>> creditMemoDetails = saptb.sapConnector.getCMInvDetailsFromTableUsingSOM(
+								somOrderNumber);
+						int cmInvB4Order = creditMemoDetails.size();
+						Util.printInfo("Total credit memos available in S4 : " + cmInvB4Order);
+						if (cmInvB4Order == 0) {
+							Util.printInfo("There are no credit memo invoices in S4 yet.");
+						}
+
+						sapfioritb.loginToSAPFiori();
+						String invoiceNumber = invoiceDetails.get(TestingHubConstants.invoiceNumber);
+						String creditMemo = sapfioritb.createCreditMemoOrder(invoiceNumber, results.get(BICECEConstants.ORDER_ID),
+								creditMemoAmount);
+						results.put(TestingHubConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+						results.put(TestingHubConstants.creditMemoOrderNumber, creditMemo);
+						Util.printInfo("creditMemo return value :: " + creditMemo);
+						results.put(TestingHubConstants.invoiceNumber, invoiceNumber);
+						results.put(TestingHubConstants.somOrderNumber, somOrderNumber);
+
+						// Get new credit memo invoice number (Below step often fail to return cm within 10min.)
+						String creditMemoInvoiceNo = saptb.sapConnector.getCMInvNoForNewCMOrderUsingSOM(
+								results.get(BICECEConstants.ORDER_ID), somOrderNumber,
+								cmInvB4Order);
+						results.put(TestingHubConstants.creditMemoInvoiceNumber, creditMemoInvoiceNo);
+						updateTestingHub(results);
+						Util.printInfo("creditMemoInvoiceNo return value :: " + creditMemoInvoiceNo);
+
+						// Portal Validations of credit memo
+						portaltb.validateNewCreditMemoInPortal(
+								results.get(TestingHubConstants.creditMemoInvoiceNumber));
+
+					} else {
+						AssertUtils.fail("Please provide the initial order. Order number is null or empty");
+					}
+				}
+
 				portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
 				portaltb.payInvoice(testDataForEachMethod);
 				portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
+
+				if (System.getProperty("issueCreditMemo") != null) {
+					portaltb.verifyCreditMemoStatus("//*[@data-testid=\"credit-memo-list-empty-container\"]");
+				}
+
 			} else {
 				Assert.fail("NON LOC Orders Do NOT have Pay Invoice Flow!!!");
 			}
@@ -1039,44 +1116,44 @@ public class BICQuoteOrder extends ECETestBase {
 
 		return new Address(billingAddress);
 	}
-    
-  @Test(groups = {"ttr-certificate-declined"}, description = "Validate expired TTR certificate")
-  public void validateTTRCertificateDeclined() {
-    HashMap<String, String> testResults = new HashMap<String, String>();
 
-    Address address = getBillingAddress();
+	@Test(groups = {"ttr-certificate-declined"}, description = "Validate expired TTR certificate")
+	public void validateTTRCertificateDeclined() {
+		HashMap<String, String> testResults = new HashMap<String, String>();
 
-    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-    getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-            testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
-        PASSWORD, true);
+		Address address = getBillingAddress();
 
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
-        testDataForEachMethod.get("agentContactEmail"),
-        testDataForEachMethod);
-    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
-    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
-    updateTestingHub(testResults);
-    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
-    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
-    try {
-      getBicTestBase().refreshCartIfEmpty();
-    } catch (MetadataException e) {
-      throw new RuntimeException(e);
-    }
+		getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+		getBicTestBase().createBICAccount(new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+						testDataForEachMethod.get(BICECEConstants.LASTNAME)), testDataForEachMethod.get(BICECEConstants.emailid),
+				PASSWORD, true);
 
-    AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button should be present");
+		String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+				testDataForEachMethod.get("agentContactEmail"),
+				testDataForEachMethod);
+		testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+		testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+		updateTestingHub(testResults);
+		getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+		getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+		getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+		try {
+			getBicTestBase().refreshCartIfEmpty();
+		} catch (MetadataException e) {
+			throw new RuntimeException(e);
+		}
 
-    com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
-        getDriver(), getTestBase());
-    coreBicTestBase.navigateToTTRPageForTaxExempt();
+		AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button should be present");
 
-    getBicTestBase().exitECMS();
-    getBicTestBase().validateTaxExemptionIneligibility();
+		com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+				getDriver(), getTestBase());
+		coreBicTestBase.navigateToTTRPageForTaxExempt();
 
-    AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button not should be present");
-  }
+		getBicTestBase().exitECMS();
+		getBicTestBase().validateTaxExemptionIneligibility();
+
+		AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button not should be present");
+	}
 
 	private void loadPrevTransactionOut() {
 
@@ -1099,4 +1176,5 @@ public class BICQuoteOrder extends ECETestBase {
 			}
 		});
 	}
+
 }
