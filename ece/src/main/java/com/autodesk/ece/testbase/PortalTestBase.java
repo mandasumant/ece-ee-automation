@@ -334,17 +334,21 @@ public class PortalTestBase {
   @Step("CEP : Purchasing Quote in  Account Portal  " + GlobalConstants.TAG_TESTINGHUB)
   public void purchaseQuoteInAccount(String cepURL, String portalUserName,
       String portalPassword) {
-    openPortalBICLaunch(cepURL);
-
     openPortalURL(accountsPortalQuoteUrl);
-    portalPage.waitForFieldPresent("portalQuoteBuyButton", 30000);
-    portalPage.click("portalQuoteBuyButton");
+    try {
+      portalPage.waitForFieldPresent("portalQuoteBuyButton", 50000);
+      portalPage.clickUsingLowLevelActions("portalQuoteBuyButton");
 
-    // Buy will open a new tab, this closes the original tab and switches to the new tab
-    driver.close();
-    Set<String> windowHandles = driver.getWindowHandles();
-    String newTabHandle = windowHandles.iterator().next();
-    driver.switchTo().window(newTabHandle);
+      // Buy will open a new tab, this closes the original tab and switches to the new tab
+      driver.close();
+      Set<String> windowHandles = driver.getWindowHandles();
+      String newTabHandle = windowHandles.iterator().next();
+      driver.switchTo().window(newTabHandle);
+    } catch (Exception e) {
+      e.printStackTrace();
+      AssertUtils.fail("Quote buy button not visible");
+    }
+
   }
 
   @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)
