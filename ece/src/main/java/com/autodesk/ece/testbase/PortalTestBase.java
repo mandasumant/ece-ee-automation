@@ -1841,14 +1841,14 @@ public class PortalTestBase {
         Util.printInfo("Selecting PO Number:" + poNumbers[i]);
         invoiceAmount = invoiceAmount + selectInvoice(poNumbers[i]);
       }
+      selectAllInvoicesPayButton();
     } else {
       clickOnInvoice(poNumbers[0]);
       List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
       invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", ""));
-    }
 
-//    selectAllInvoicesPayButton();
-    portalPage.click("invoicePagePay");
+      portalPage.click("invoicePagePay");
+    }
 
     Util.sleep(10000);
     Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
@@ -1894,8 +1894,8 @@ public class PortalTestBase {
     portalPage.waitForFieldPresent("clickOnPaymentTab", 20000);
     try {
       portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
-    } catch(Exception e) {
-      if(isPortalLoginPageVisible()) {
+    } catch (Exception e) {
+      if (isPortalLoginPageVisible()) {
         Util.printInfo("Failed to make Payment for LOC Invoice, we are seeing Login Page. Lets retry login!!!");
         //return true, for while loop to re login again.
         return true;

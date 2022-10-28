@@ -367,25 +367,26 @@ public class BICQuoteOrder extends ECETestBase {
 				System.setProperty(BICECEConstants.PAYMENT, paymentType);
 
 				//For purchaser as Payer test cases we need to update the Payer email address for login.
-				if (!testDataForEachMethod.containsKey(BICECEConstants.PAYER_EMAIL) || testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
+				if (!testDataForEachMethod.containsKey(BICECEConstants.PAYER_EMAIL)
+						|| testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
 					testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, testDataForEachMethod.get(BICConstants.emailid));
 				}
 				while (isLoggedIn) {
 					attempt++;
-					if(attempt > 5 ) {
+					if (attempt > 5) {
 						Assert.fail("Retries Exhausted: Payment of Invoice failed because Session issues. Check Screenshots!");
 					}
 
-          portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
-              PASSWORD);
+					portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
+							PASSWORD);
 
-          if (System.getProperty("issueCreditMemo") != null) {
-            portaltb.navigateToInvoiceCreditMemos();
-            portaltb.waitForInvoicePageLoadToVisible();
+					if (System.getProperty("issueCreditMemo") != null) {
+						portaltb.navigateToInvoiceCreditMemos();
+						portaltb.waitForInvoicePageLoadToVisible();
 
-            // Issue Credit Memo to order before Refund
-            if (Strings.isNotNullAndNotEmpty(creditMemoAmount)) {
-              testDataForEachMethod.put(TestingHubConstants.creditMemoAmount, creditMemoAmount);
+						// Issue Credit Memo to order before Refund
+						if (Strings.isNotNullAndNotEmpty(creditMemoAmount)) {
+							testDataForEachMethod.put(TestingHubConstants.creditMemoAmount, creditMemoAmount);
 						}
 
 						if (Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
