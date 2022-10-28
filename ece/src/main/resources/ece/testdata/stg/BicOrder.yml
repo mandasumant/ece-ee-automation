@@ -18,6 +18,7 @@ default:
   guacMoeOdmDtcResourceURL: "manual-order-entry-odm-dtc"
   guacMoeDTCURL: "manual-order-entry-dtc"
   oxygenLogOut: "https://accounts-staging.autodesk.com/Authentication/LogOut"
+  oxygenLanguageURL: "https://profile-stg.autodesk.com/settings/language"
   productName: "autocad"
   postalCode: "80202"
   pelicanRenewalURL: "https://api.pelicanstg.autodesk.com/subscriptions/v4/passtoken/renew"

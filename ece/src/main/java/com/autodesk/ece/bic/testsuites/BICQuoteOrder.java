@@ -189,6 +189,7 @@ public class BICQuoteOrder extends ECETestBase {
 			Util.printInfo("Payer email: " + payerEmail);
 			getBicTestBase().goToDotcomSignin(testDataForEachMethod);
 			getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
+			getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
 			getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 			testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
 			testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
@@ -201,6 +202,7 @@ public class BICQuoteOrder extends ECETestBase {
 						testDataForEachMethod.get(BICECEConstants.LASTNAME)),
 				testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
 
+		getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
 		String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
 				testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
 		testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
@@ -371,7 +373,7 @@ public class BICQuoteOrder extends ECETestBase {
 
 				if (System.getProperty("issueCreditMemo") != null) {
 					portaltb.navigateToInvoiceCreditMemos();
-					portaltb.waitForInvoicePageLoadToVisible("Open invoices");
+					portaltb.waitForInvoicePageLoadToVisible();
 
 					// Issue Credit Memo to order before Refund
 					if (Strings.isNotNullAndNotEmpty(creditMemoAmount)) {

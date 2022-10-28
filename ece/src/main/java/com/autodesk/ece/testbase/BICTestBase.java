@@ -52,6 +52,7 @@ import org.openqa.selenium.WindowType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.util.Strings;
 
 public class BICTestBase {
 
@@ -1068,7 +1069,6 @@ public class BICTestBase {
       throw new RuntimeException(e);
     }
   }
-
 
   @Step("Click on Zip tab")
   public void populateZipPaymentDetails() {
@@ -2233,6 +2233,11 @@ public class BICTestBase {
       waitForLoadingSpinnerToComplete("loadingSpinner");
     }
 
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    Util.printInfo("Set session storage data 'nonsensitiveHasNonLocalModalLaunched' from 'loginToOxygen'.");
+    js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
+    driver.navigate().refresh();
+
     Util.printInfo("Successfully logged in");
   }
 
@@ -2366,6 +2371,40 @@ public class BICTestBase {
     Util.sleep(10000);
     bicPage.waitForFieldPresent("signInButton", 10000);
     bicPage.click("signInButton");
+  }
+
+  @Step("Oxygen: Load language page " + GlobalConstants.TAG_TESTINGHUB)
+  public void goToOxygenLanguageURL(LinkedHashMap<String, String> data) {
+    String locale = data.get(BICECEConstants.LOCALE);
+
+    bicPage.navigateToURL(data.get("oxygenLanguageURL"));
+    Util.sleep(2000);
+
+    try {
+      if (Strings.isNotNullAndNotEmpty(locale)) {
+        if (locale != "pt_PT" && locale != "fr_CA") {
+          locale = locale.substring(0, 2);
+        }
+
+        Util.printInfo("Language value to set: " + locale);
+        if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG)) {
+          bicPage.navigateToURL(data.get("oxygenLanguageURL"));
+          Util.sleep(2000);
+
+          Select selection = new Select(driver.findElement(By.className("input-container__select")));
+          selection.selectByValue(locale);
+        } else {
+          bicPage.click("changeLanguage");
+          Select selection = new Select(driver.findElement(By.name("Language")));
+          selection.selectByValue(locale);
+        }
+
+        bicPage.clickUsingLowLevelActions("saveLanguage");
+        Util.sleep(2000);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public void validateUserTaxExempt(Boolean shouldPresent) {
