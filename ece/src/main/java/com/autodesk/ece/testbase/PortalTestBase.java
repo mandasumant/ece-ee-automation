@@ -1890,9 +1890,19 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Pay Invoice" + GlobalConstants.TAG_TESTINGHUB)
-  public void payInvoice(LinkedHashMap<String, String> data) throws Exception {
+  public Boolean payInvoice(LinkedHashMap<String, String> data) throws Exception {
     portalPage.waitForFieldPresent("clickOnPaymentTab", 20000);
-    portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
+    try {
+      portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
+    } catch(Exception e) {
+      if(isPortalLoginPageVisible()) {
+        Util.printInfo("Failed to make Payment for LOC Invoice, we are seeing Login Page. Lets retry login!!!");
+        //return true, for while loop to re login again.
+        return true;
+      } else {
+        Assert.fail("Failed to Click on Payment section in Pay Invoice.");
+      }
+    }
     Util.sleep(5000);
     bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
         data.get(BICECEConstants.PAYMENT_TYPE));
@@ -1900,6 +1910,7 @@ public class PortalTestBase {
       bicTestBase.clickMandateAgreementCheckbox();
     }
     submitPayment();
+    return false;
   }
 
   @Step("CEP : Click Submit Payment Button" + GlobalConstants.TAG_TESTINGHUB)

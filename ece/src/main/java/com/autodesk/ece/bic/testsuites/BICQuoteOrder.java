@@ -344,6 +344,8 @@ public class BICQuoteOrder extends ECETestBase {
 	public void validateLocPayInvoice() throws Exception {
 		HashMap<String, String> testResults = new HashMap<String, String>();
 		HashMap<String, String> results = new HashMap<String, String>();
+		Boolean isLoggedIn = true;
+		Integer attempt = 0;
 
 		String creditMemoAmount = testDataForEachMethod.get("creditMemo");
 		Util.printInfo("The Credit Memo amount is: " + creditMemoAmount);
@@ -368,69 +370,76 @@ public class BICQuoteOrder extends ECETestBase {
 				if (!testDataForEachMethod.containsKey(BICECEConstants.PAYER_EMAIL) || testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
 					testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, testDataForEachMethod.get(BICConstants.emailid));
 				}
-				portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
-						PASSWORD);
-
-				if (System.getProperty("issueCreditMemo") != null) {
-					portaltb.navigateToInvoiceCreditMemos();
-					portaltb.waitForInvoicePageLoadToVisible();
-
-					// Issue Credit Memo to order before Refund
-					if (Strings.isNotNullAndNotEmpty(creditMemoAmount)) {
-						testDataForEachMethod.put(TestingHubConstants.creditMemoAmount, creditMemoAmount);
+				while (isLoggedIn) {
+					attempt++;
+					if(attempt > 5 ) {
+						Assert.fail("Retries Exhausted: Payment of Invoice failed because Session issues. Check Screenshots!");
 					}
 
-					if (Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
-						String somOrderNumber = getSOMOrderNumber(results.get(BICECEConstants.ORDER_ID));
-						Util.printInfo("SOM order number found - " + somOrderNumber);
+          portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
+              PASSWORD);
 
-						HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTableUsingSOM(
-								somOrderNumber);
-						if (invoiceDetails.size() == 0) {
-							AssertUtils.fail("Failed to get invoice details from SAP for the initial order : " + results.get(
-									BICECEConstants.ORDER_ID));
+          if (System.getProperty("issueCreditMemo") != null) {
+            portaltb.navigateToInvoiceCreditMemos();
+            portaltb.waitForInvoicePageLoadToVisible();
+
+            // Issue Credit Memo to order before Refund
+            if (Strings.isNotNullAndNotEmpty(creditMemoAmount)) {
+              testDataForEachMethod.put(TestingHubConstants.creditMemoAmount, creditMemoAmount);
 						}
 
-						Util.printInfo("Found invoice details " + invoiceDetails);
+						if (Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
+							String somOrderNumber = getSOMOrderNumber(results.get(BICECEConstants.ORDER_ID));
+							Util.printInfo("SOM order number found - " + somOrderNumber);
 
-						// Get credit memo invoice numbers list if credit memo is available from S4
-						HashMap<String, LinkedList<String>> creditMemoDetails = saptb.sapConnector.getCMInvDetailsFromTableUsingSOM(
-								somOrderNumber);
-						int cmInvB4Order = creditMemoDetails.size();
-						Util.printInfo("Total credit memos available in S4 : " + cmInvB4Order);
-						if (cmInvB4Order == 0) {
-							Util.printInfo("There are no credit memo invoices in S4 yet.");
+							HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTableUsingSOM(
+									somOrderNumber);
+							if (invoiceDetails.size() == 0) {
+								AssertUtils.fail("Failed to get invoice details from SAP for the initial order : " + results.get(
+										BICECEConstants.ORDER_ID));
+							}
+
+							Util.printInfo("Found invoice details " + invoiceDetails);
+
+							// Get credit memo invoice numbers list if credit memo is available from S4
+							HashMap<String, LinkedList<String>> creditMemoDetails = saptb.sapConnector.getCMInvDetailsFromTableUsingSOM(
+									somOrderNumber);
+							int cmInvB4Order = creditMemoDetails.size();
+							Util.printInfo("Total credit memos available in S4 : " + cmInvB4Order);
+							if (cmInvB4Order == 0) {
+								Util.printInfo("There are no credit memo invoices in S4 yet.");
+							}
+
+							sapfioritb.loginToSAPFiori();
+							String invoiceNumber = invoiceDetails.get(TestingHubConstants.invoiceNumber);
+							String creditMemo = sapfioritb.createCreditMemoOrder(invoiceNumber, results.get(BICECEConstants.ORDER_ID),
+									creditMemoAmount);
+							results.put(TestingHubConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+							results.put(TestingHubConstants.creditMemoOrderNumber, creditMemo);
+							Util.printInfo("creditMemo return value :: " + creditMemo);
+							results.put(TestingHubConstants.invoiceNumber, invoiceNumber);
+							results.put(TestingHubConstants.somOrderNumber, somOrderNumber);
+
+							// Get new credit memo invoice number (Below step often fail to return cm within 10min.)
+							String creditMemoInvoiceNo = saptb.sapConnector.getCMInvNoForNewCMOrderUsingSOM(
+									results.get(BICECEConstants.ORDER_ID), somOrderNumber,
+									cmInvB4Order);
+							results.put(TestingHubConstants.creditMemoInvoiceNumber, creditMemoInvoiceNo);
+							updateTestingHub(results);
+							Util.printInfo("creditMemoInvoiceNo return value :: " + creditMemoInvoiceNo);
+
+							// Portal Validations of credit memo
+							portaltb.validateNewCreditMemoInPortal(
+									results.get(TestingHubConstants.creditMemoInvoiceNumber));
+
+						} else {
+							AssertUtils.fail("Please provide the initial order. Order number is null or empty");
 						}
-
-						sapfioritb.loginToSAPFiori();
-						String invoiceNumber = invoiceDetails.get(TestingHubConstants.invoiceNumber);
-						String creditMemo = sapfioritb.createCreditMemoOrder(invoiceNumber, results.get(BICECEConstants.ORDER_ID),
-								creditMemoAmount);
-						results.put(TestingHubConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
-						results.put(TestingHubConstants.creditMemoOrderNumber, creditMemo);
-						Util.printInfo("creditMemo return value :: " + creditMemo);
-						results.put(TestingHubConstants.invoiceNumber, invoiceNumber);
-						results.put(TestingHubConstants.somOrderNumber, somOrderNumber);
-
-						// Get new credit memo invoice number (Below step often fail to return cm within 10min.)
-						String creditMemoInvoiceNo = saptb.sapConnector.getCMInvNoForNewCMOrderUsingSOM(
-								results.get(BICECEConstants.ORDER_ID), somOrderNumber,
-								cmInvB4Order);
-						results.put(TestingHubConstants.creditMemoInvoiceNumber, creditMemoInvoiceNo);
-						updateTestingHub(results);
-						Util.printInfo("creditMemoInvoiceNo return value :: " + creditMemoInvoiceNo);
-
-						// Portal Validations of credit memo
-						portaltb.validateNewCreditMemoInPortal(
-								results.get(TestingHubConstants.creditMemoInvoiceNumber));
-
-					} else {
-						AssertUtils.fail("Please provide the initial order. Order number is null or empty");
 					}
+
+					portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
+					isLoggedIn = portaltb.payInvoice(testDataForEachMethod);
 				}
-
-				portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
-				portaltb.payInvoice(testDataForEachMethod);
 				portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
 
 				if (System.getProperty("issueCreditMemo") != null) {
