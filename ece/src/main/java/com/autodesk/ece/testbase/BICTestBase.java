@@ -12,6 +12,7 @@ import com.autodesk.testinghub.core.testbase.SAPTestBase;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
+import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 import java.awt.AWTException;
@@ -1144,81 +1145,96 @@ public class BICTestBase {
     }
   }
 
-  @Step("Submit Order on Checkout page")
   public void submitOrder(HashMap<String, String> data) {
-    // Check if tax amount calculated properly
-    checkIfTaxValueIsCorrect(data);
+    submitOrder(data, true);
+  }
 
-    // Get total order value from checkout page
-    String orderTotalCheckout = driver
-        .findElement(By.xpath("//*[@data-testid='checkout--order-summary-section--total']")).getText();
-    data.put("orderTotalCheckout", orderTotalCheckout);
-
-    clickMandateAgreementCheckbox();
-    int count = 0;
-    debugPageUrl("Step 1: Wait for submit order button.");
-    while (!bicPage.waitForField(BICECEConstants.SUBMIT_ORDER_BUTTON, true, 60000)) {
-      Util.sleep(20000);
-      count++;
-      if (count > 3) {
-        break;
-      }
-      if (count > 2) {
-        driver.navigate().refresh();
-      }
-    }
-
-    debugPageUrl("Step 2: Wait for submit order button.");
+  @Step("Submit Order on Checkout page")
+  public void submitOrder(HashMap<String, String> data, Boolean shouldFail) {
     try {
-      int countModal = 0;
-      while (driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).isDisplayed()) {
-        Util.printInfo(" CONTINUE CHECKOUT Modal is present");
-        driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).click();
-        Util.sleep(5000);
-        countModal++;
-        if (countModal > 3) {
-          AssertUtils.fail("Unexpected Pop up in the cart - Please contact TestingHub");
+      // Check if tax amount calculated properly
+      checkIfTaxValueIsCorrect(data);
+
+      // Get total order value from checkout page
+      String orderTotalCheckout = driver
+          .findElement(By.xpath("//*[@data-testid='checkout--order-summary-section--total']")).getText();
+      data.put("orderTotalCheckout", orderTotalCheckout);
+
+      clickMandateAgreementCheckbox();
+      int count = 0;
+      debugPageUrl("Step 1: Wait for submit order button.");
+      while (!bicPage.waitForField(BICECEConstants.SUBMIT_ORDER_BUTTON, true, 60000)) {
+        Util.sleep(20000);
+        count++;
+        if (count > 3) {
           break;
         }
+        if (count > 2) {
+          driver.navigate().refresh();
+        }
       }
-    } catch (Exception e) {
-      Util.printInfo("CONTINUE_CHECKOUT_Modal is not present");
-    }
 
-    // Zip Pay Verification
-    if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-      String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
-      WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
-      zipTestBase.setTestData(data);
-      zipTestBase.verifyZipBalance(amountDueElement.getText());
-    }
-
-    try {
-      if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)) {
-        bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+      debugPageUrl("Step 2: Wait for submit order button.");
+      try {
+        int countModal = 0;
+        while (driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).isDisplayed()) {
+          Util.printInfo(" CONTINUE CHECKOUT Modal is present");
+          driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).click();
+          Util.sleep(5000);
+          countModal++;
+          if (countModal > 3) {
+            AssertUtils.fail("Unexpected Pop up in the cart");
+            break;
+          }
+        }
+      } catch (Exception e) {
+        Util.printInfo("CONTINUE_CHECKOUT_Modal is not present");
       }
-    } catch (Exception e) {
-      e.printStackTrace();
-      debugPageUrl(e.getMessage());
-      AssertUtils.fail("Failed to click on Submit button.");
-    }
 
-    // Zip Pay Checkout
-    if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-      zipTestBase.setTestData(data);
-      zipTestBase.zipPayCheckout();
-    }
-
-    debugPageUrl("Step 3: Check order number is Null");
-    bicPage.waitForPageToLoad();
-
-    try {
-      if (driver.findElement(By.xpath("//*[(text()='Order Processing Problem')]")).isDisplayed()) {
-        Util.printInfo("Order Processing Problem");
+      // Zip Pay Verification
+      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+        String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
+        WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
+        zipTestBase.setTestData(data);
+        zipTestBase.verifyZipBalance(amountDueElement.getText());
       }
-      AssertUtils.fail("Unable to place BIC order : " + "Order Processing Problem");
-    } catch (Exception e) {
-      Util.printInfo("Great! Export Compliance issue is not present");
+
+      try {
+        if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)) {
+          bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        debugPageUrl(e.getMessage());
+        if (shouldFail) {
+          AssertUtils.fail("Failed to click on Submit button.");
+        } else {
+          ScreenCapture.getInstance().captureFullScreenshot();
+          Util.printInfo("Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
+          return;
+        }
+      }
+
+      // Zip Pay Checkout
+      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+        zipTestBase.setTestData(data);
+        zipTestBase.zipPayCheckout();
+      }
+
+      debugPageUrl("Step 3: Check order number is Null");
+      bicPage.waitForPageToLoad();
+
+      try {
+        if (driver.findElement(By.xpath("//*[(text()='Order Processing Problem')]")).isDisplayed()) {
+          Util.printInfo("Order Processing Problem");
+        }
+        AssertUtils.fail("Unable to place BIC order : " + "Order Processing Problem");
+      } catch (Exception e) {
+        Util.printInfo("Great! Export Compliance issue is not present");
+      }
+    } catch (NoSuchElementException nSE) {
+      ScreenCapture.getInstance().captureFullScreenshot();
+      Util.printInfo("Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
     }
   }
 
@@ -1277,7 +1293,13 @@ public class BICTestBase {
       }
     }
 
-    validateBicOrderNumber(orderNumber);
+    if(null == orderNumber) {
+      ScreenCapture.getInstance().captureFullScreenshot();
+      Util.printInfo("Taking screenshot, failed to find Order Number. Dont worry we have retries");
+      return null;
+    } else {
+      validateBicOrderNumber(orderNumber);
+    }
 
     if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
       Util.printInfo("Asserting that order total equals the total amount from checkout page.");
@@ -1445,38 +1467,56 @@ public class BICTestBase {
   public HashMap<String, String> placeFlexOrder(LinkedHashMap<String, String> data) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
-
     Map<String, String> address = getBillingAddress(data);
-    if (data.get("isNonQuoteFlexOrder") != null) {
-      enterCustomerDetails(address);
-      data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
-    } else {
-      populateTaxIdForFlex();
-    }
+    int attempt = 0;
+    Boolean isOrderCaptured = false;
 
-    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
-      bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
-    }
+    while (!isOrderCaptured) {
 
-    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
-      bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-      bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
-    }
-
-    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-
-    if (data.get("isReturningUser") == null) {
-      enterBillingDetails(data, address, paymentMethod);
-    }
-
-    if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
-        submitOrder(data);
+      if (attempt > 10) {
+        Assert.fail("Retries exhausted \"Submit Order\" failed to place the Order.");
+      } else {
+        Util.printInfo("Placing Flex Order Attempt: " + attempt++);
       }
-      orderNumber = getOrderNumber(data);
 
-      printConsole(orderNumber, data, address);
+      if (data.get("isNonQuoteFlexOrder") != null) {
+        enterCustomerDetails(address);
+        data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+      } else {
+        populateTaxIdForFlex();
+      }
+
+      if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+        bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
+      }
+
+      if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+        bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
+      }
+
+      String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+
+      if (data.get("isReturningUser") == null) {
+        enterBillingDetails(data, address, paymentMethod);
+      }
+
+      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+          submitOrder(data, false);
+        }
+        orderNumber = getOrderNumber(data);
+        if(null != orderNumber) {
+          isOrderCaptured = true;
+          printConsole(orderNumber, data, address);
+          Util.printInfo("Placing Flex Order Attempt: " + attempt + " - Successful !");
+        } else {
+          Util.printInfo("Placing Flex Order Attempt: " + attempt + " - Failed !");
+          Util.sleep(60000);
+          driver.navigate().refresh();
+        }
+      }
     }
 
     results.put(BICConstants.emailid, data.get(BICConstants.emailid));
