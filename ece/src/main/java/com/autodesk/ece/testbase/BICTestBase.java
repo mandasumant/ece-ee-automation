@@ -2431,6 +2431,7 @@ public class BICTestBase {
    * @throws MetadataException
    */
   public void enterLOCEmailAndCSN(LinkedHashMap<String, String> payByInvoiceDetails) throws MetadataException {
+    Util.sleep(10000);
     //if we refreshed the page, we need to click on continue again
     if (bicPage.waitForFieldPresent("customerDetailsContinue", 20)) {
       bicPage.clickUsingLowLevelActions(("customerDetailsContinue"));
