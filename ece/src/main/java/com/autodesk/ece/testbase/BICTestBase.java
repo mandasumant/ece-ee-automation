@@ -1590,7 +1590,7 @@ public class BICTestBase {
         );
 
     String totalCostOrderSummary = driver
-        .findElement(By.xpath("//h3[@data-testid=\"checkout--order-summary-section--total\"]")).getText();
+        .findElement(By.xpath("//p[@data-testid=\"checkout--order-summary-section--total\"]")).getText();
     totalCostOrderSummary = totalCostOrderSummary.replaceAll("[^0-9 .]", "");
     double totalCostOrderSummaryDouble = Math.round(Double.parseDouble(totalCostOrderSummary));
 
