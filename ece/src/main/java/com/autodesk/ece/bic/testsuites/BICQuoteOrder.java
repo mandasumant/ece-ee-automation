@@ -1024,6 +1024,11 @@ public class BICQuoteOrder extends ECETestBase {
 
 		getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
+		if (submitTaxInfo) {
+			// Wait 7.5 minutes for returning tax-exempt user
+			Util.sleep(450000);
+		}
+
 		if (changeAddress) {
 			testDataForEachMethod.putAll(localeDataMap.get(defaultLocale));
 			address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
