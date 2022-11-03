@@ -1813,15 +1813,8 @@ public class PortalTestBase {
     return amountValue;
   }
 
-  public double getPaymentTotalFromCheckout() throws Exception {
-    String paymentTotalAmount = portalPage.getMultipleWebElementsfromField("totalPaymentCheckout").get(0).getText()
-        .replaceAll("[^0-9.]", "");
-    Util.printInfo("Return Check out page Payment Total...." + paymentTotalAmount);
-    return Double.parseDouble(paymentTotalAmount);
-  }
-
-  public double getPaymentTotalFromCheckoutWithCreditMemo() throws Exception {
-    String paymentTotalAmount = portalPage.getMultipleWebElementsfromField("totalPaymentCheckoutWithCreditMemo").get(0)
+  public double getPaymentTotalFromCheckout(String elementXPath) throws Exception {
+    String paymentTotalAmount = portalPage.getMultipleWebElementsfromField(elementXPath).get(0)
         .getText().replaceAll("[^0-9.]", "");
     Util.printInfo("Return Check out page Payment Total...." + paymentTotalAmount);
     return Double.parseDouble(paymentTotalAmount);
@@ -1833,7 +1826,10 @@ public class PortalTestBase {
     openPortalURL(accountPortalBillingInvoicesUrl);
     if (shouldWaitForInvoice) {
       waitForInvoicePageLoadToVisible();
+    } else {
+      portalPage.waitForFieldPresent("invoicePageTableTitle", 60000);
     }
+
     double invoiceAmount = 0.00;
 
     if (poNumbers.length > 1) {
@@ -1852,9 +1848,10 @@ public class PortalTestBase {
 
     Util.sleep(10000);
     Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
-//    double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout();
+//    double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
 //    AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
     double creditMemoAmount = 0.00;
+
     if (portalPage.isFieldVisible("creditMemoTab")) {
       portalPage.clickUsingLowLevelActions("creditMemoTab");
       Util.sleep(2000);
@@ -1868,15 +1865,14 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("continueButton");
       Util.sleep(5000);
 
-//      double afterAddCreditMemoAmount = getPaymentTotalFromCheckoutWithCreditMemo();
+//      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout(
+//          "totalPaymentCheckoutWithCreditMemo");
 //      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
     } else {
-//      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout();
+//      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
 //      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
-      Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
     }
-//    double afterAddCreditMemoAmount = getPaymentTotalFromCheckout();
-//    AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+
     Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
   }
 
