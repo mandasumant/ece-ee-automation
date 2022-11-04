@@ -944,6 +944,11 @@ public class BICTestBase {
 
       driver.switchTo().window(parentWindow);
 
+      if(bicPage.checkIfElementExistsInPage("paypalCheckoutFrame", 10)) {
+        bicPage.selectFrame("paypalCheckoutFrame");
+        Util.printInfo("Switched to Frame and clicking on Paypal checkout close button...");
+        bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
+      }
       Util.sleep(5000);
       Util.printInfo(
           "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
