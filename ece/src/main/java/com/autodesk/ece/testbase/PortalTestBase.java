@@ -1815,13 +1815,13 @@ public class PortalTestBase {
 
   public double getPaymentTotalFromCheckout(String elementXPath) throws Exception {
     String paymentTotalAmount = portalPage.getMultipleWebElementsfromField(elementXPath).get(0)
-        .getText().replaceAll("[^0-9.]", "");
+        .getText().replaceAll("[^0-9.]", "").replace(".", "");
     Util.printInfo("Return Check out page Payment Total...." + paymentTotalAmount);
     return Double.parseDouble(paymentTotalAmount);
   }
 
   @Step("Select invoice and credit memo validations" + GlobalConstants.TAG_TESTINGHUB)
-  public void selectInvoiceAndValidateCreditMemo(String poNumber, Boolean shouldWaitForInvoice) throws Exception {
+  public double selectInvoiceAndValidateCreditMemo(String poNumber, Boolean shouldWaitForInvoice) throws Exception {
     String[] poNumbers = poNumber.split(",");
     openPortalURL(accountPortalBillingInvoicesUrl);
     if (shouldWaitForInvoice) {
@@ -1841,15 +1841,15 @@ public class PortalTestBase {
     } else {
       clickOnInvoice(poNumbers[0]);
       List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
-      invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", ""));
+      invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
 
       portalPage.click("invoicePagePay");
     }
 
     Util.sleep(10000);
     Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
-//    double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
-//    AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
+    double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
+    AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
     double creditMemoAmount = 0.00;
 
     if (portalPage.isFieldVisible("creditMemoTab")) {
@@ -1865,15 +1865,16 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("continueButton");
       Util.sleep(5000);
 
-//      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout(
-//          "totalPaymentCheckoutWithCreditMemo");
-//      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout(
+          "totalPaymentCheckoutWithCreditMemo");
+      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
     } else {
-//      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
-//      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
+      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
     }
 
     Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + poNumber);
+    return invoiceAmount;
   }
 
   @Step("CEP : Launch Account portal" + GlobalConstants.TAG_TESTINGHUB)
@@ -2079,6 +2080,18 @@ public class PortalTestBase {
     creditMemoNumber.contains(cmNumber);
     // Commenting out the assertEquals due to the '00' issue.
     // AssertUtils.assertEquals(cmNumber, creditMemoNumber);
+  }
+
+  public double getInvoiceTotalAfterPayment(String elementXPath) throws Exception {
+    String invoiceTotalAfterPayment = portalPage.getMultipleWebElementsfromField(elementXPath).get(0)
+            .getText().replaceAll("[^0-9.]", "").replace(".", "");
+    Util.printInfo("Return Payment Total After Payment...." + invoiceTotalAfterPayment);
+    return Double.parseDouble(invoiceTotalAfterPayment);
+  }
+
+  public void verifyInvoiceTotalAfterPayment(double invoiceTotalBeforePayment) throws Exception {
+    double invoiceTotalAfterPayment = getInvoiceTotalAfterPayment("invoiceAmountAfterPayment");
+    AssertUtils.assertEquals(invoiceTotalBeforePayment, invoiceTotalAfterPayment);
   }
 
 }

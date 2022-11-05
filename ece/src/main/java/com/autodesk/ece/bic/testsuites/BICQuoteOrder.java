@@ -438,8 +438,9 @@ public class BICQuoteOrder extends ECETestBase {
 						}
 					}
 
-					portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
+					double invoiceTotalBeforePayment = portaltb.selectInvoiceAndValidateCreditMemo(results.get(BICECEConstants.ORDER_ID), false);
 					isLoggedIn = portaltb.payInvoice(testDataForEachMethod);
+					portaltb.verifyInvoiceTotalAfterPayment(invoiceTotalBeforePayment);
 				}
 				portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
 
