@@ -1613,8 +1613,8 @@ public class BICTestBase {
     if (data.get("isReturningUser") == null) {
       signInIframe(data);
     } else {
-      boolean isLoggedIn = bicPage.checkIfElementExistsInPage("signInSectionUserProfile", 20);
-      if (!isLoggedIn) {
+      boolean isLoggedOut = bicPage.checkIfElementExistsInPage("createNewUseriFrame", 20);
+      if (isLoggedOut) {
         loginAccount(data);
       }
     }
