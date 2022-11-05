@@ -207,6 +207,7 @@ public class PWSTestBase {
 
     Util.printInfo("Getting Quote Details");
     Response res = getQuoteDetails(csn, quoteNumber);
+    Util.printInfo("The Quote Details : " + res.prettyPrint());
     Util.sleep(30000);
     return finalizeQuote(quoteNumber, transactionId, csn, agentContactEmail);
   }

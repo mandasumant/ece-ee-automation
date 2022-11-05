@@ -2384,7 +2384,7 @@ public class BICTestBase {
 
     bicPage.navigateToURL(data.get("oxygenLanguageURL"));
     Util.sleep(2000);
-
+    Util.printInfo("The current locale is " + locale);
     try {
       if (Strings.isNotNullAndNotEmpty(locale)) {
         if (locale != "pt_PT" && locale != "fr_CA") {
