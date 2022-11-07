@@ -259,11 +259,11 @@ public class PortalTestBase {
       openPortalURL(accountsPortalProductsServicesUrl);
       Util.sleep(5000);
       checkEmailVerificationPopupAndClick();
-     /*
+
       if (portalPage.checkIfElementExistsInPage("gotItButton", 10)) {
         Util.printInfo("Clicking on got it button..");
         portalPage.clickUsingLowLevelActions("gotItButton");
-      }*/
+      }
       AssertUtils.assertEquals(
           driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(), true,
           "All products and services header is missing");
