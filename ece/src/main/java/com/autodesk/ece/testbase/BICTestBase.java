@@ -950,10 +950,11 @@ public class BICTestBase {
         bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
       }
       Util.sleep(5000);
-      Util.printInfo(
-          "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
+
 
       if (bicPage.checkIfElementExistsInPage("paypalPaymentConfirmation", 10)) {
+        Util.printInfo(
+                "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
         Util.printInfo("Paypal Payment is successfully added...");
       } else {
         AssertUtils.fail("Failed to add paypal payment profile...");
