@@ -1441,12 +1441,14 @@ public class MOETestBase {
         moePage.clickUsingLowLevelActions("productSearchButton");
         moePage.waitForPageToLoad();
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(90));
         wait.until(ExpectedConditions.visibilityOfElementLocated(
             By.xpath(moePage.getFirstFieldLocator("openProductFound"))));
         moePage.clickUsingLowLevelActions("openProductFound");
         moePage.waitForPageToLoad();
 
+        Util.printInfo("Page scroll down");
+        BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
         wait.until(ExpectedConditions.visibilityOfElementLocated(
             By.xpath(moePage.getFirstFieldLocator("checkbox"))));
         moePage.click("checkbox");

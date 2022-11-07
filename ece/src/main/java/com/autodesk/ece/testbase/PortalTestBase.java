@@ -1760,7 +1760,7 @@ public class PortalTestBase {
       if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim())) {
         checkBoxes.get(i).click();
         List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
-        invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", ""));
+        invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
         break;
       } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim()
           .equalsIgnoreCase(poNumber.trim())) {
