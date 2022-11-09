@@ -1657,8 +1657,13 @@ public class PortalTestBase {
     Util.printInfo("Going through cancel flow");
     portalPage.clickUsingLowLevelActions("autoRenewOffButton");
     portalPage.clickUsingLowLevelActions("autoRenewOffContinue");
-    radioButtonClick("autoRenewOffRadioButton", 6);
-    portalPage.populateField("autoRenewOffComments", "Test cancellation.");
+
+    // Fill out survey only present on STG env
+    if (System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_STG)) {
+      radioButtonClick("autoRenewOffRadioButton", 6);
+      portalPage.populateField("autoRenewOffComments", "Test cancellation.");
+    }
+
     portalPage.clickUsingLowLevelActions("autoRenewTurnOffButton");
     portalPage.clickUsingLowLevelActions("autoRenewDone");
   }
