@@ -258,18 +258,16 @@ public class PortalTestBase {
     try {
       openPortalURL(accountsPortalProductsServicesUrl);
       Util.sleep(5000);
+
       checkEmailVerificationPopupAndClick();
 
-      if (portalPage.checkIfElementExistsInPage("gotItButton", 10)) {
-        Util.printInfo("Clicking on got it button..");
-        portalPage.clickUsingLowLevelActions("gotItButton");
-      }
+      portalPage.waitForFieldPresent("portalPSSideNav", 60000);
       AssertUtils.assertEquals(
           driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(), true,
-          "All products and services header is missing");
+          "All products and services link is missing");
     } catch (Exception e) {
       e.printStackTrace();
-      CustomSoftAssert.s_assert.fail("Unable to click on portalAllPSLink ");
+      CustomSoftAssert.s_assert.fail("Unable to click on 'All Products and Services' link.");
     }
   }
 
@@ -290,23 +288,22 @@ public class PortalTestBase {
   }
 
   public void checkEmailVerificationPopupAndClick() {
-    Util.printInfo("Checking email popup...");
+    Util.printInfo("Checking Portal Products and Services dialog...");
     Util.sleep(5000);
     try {
-      if (portalPage.checkIfElementExistsInPage("portalEmailPopupYesButton", 10)) {
+      if (portalPage.checkIfElementExistsInPage("portalPSDialogGotItButton", 45)) {
         Util.sleep(15000);
-        Util.printInfo("HTML code - Before Clicking portalEmailPopupYesButton");
-        debugPageUrl("Clicking on portal email popup");
-        Util.printInfo("Clicking on portal email popup got it button...");
+        Util.printInfo("HTML code - Before clicking portalPSDialogGotItButton.");
+        debugPageUrl("Clicking on portal 'Got it' button.");
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript(BICECEConstants.ARGUMENTS_CLICK,
-            portalPage.getMultipleWebElementsfromField("portalEmailPopupYesButton").get(0));
-        Util.printInfo("HTML code - After Clicking portalEmailPopupYesButton");
-        Util.sleep(15000);
-        debugPageUrl("After Clicking portalEmailPopupYesButton");
+            portalPage.getMultipleWebElementsfromField("portalPSDialogGotItButton").get(0));
+        debugPageUrl("Clicked on portal 'Got it' button.");
+        Util.printInfo("HTML code - After clicking portalPSDialogGotItButton.");
+        BICTestBase.bicPage.waitForElementToDisappear("portalPSDialogGotItButton", 30);
       }
     } catch (Exception e) {
-      Util.printInfo("Email popup does not appeared on screen...");
+      Util.printInfo("Portal - Products and Services dialog does not appear on screen...");
     }
   }
 
