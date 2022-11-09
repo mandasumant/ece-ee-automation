@@ -23,10 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
+
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -1411,12 +1409,12 @@ public class BICOrderCreation extends ECETestBase {
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("localStorage.clear();sessionStorage.clear();");
     getBicTestBase().setStorageData();
-    Util.sleep(5000);
-    driver.get("chrome://settings/clearBrowserData");
-    Util.sleep(3000);
-    driver.findElement(By.xpath("//settings-ui")).sendKeys(Keys.ENTER);
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     Util.sleep(2000);
+    driver.get("chrome://settings/clearBrowserData");
+    Util.sleep(5000);
+    WebElement clearBtn = (WebElement) js.executeScript("return document.querySelector(\"body > settings-ui\").shadowRoot.querySelector(\"#main\").shadowRoot.querySelector(\"settings-basic-page\").shadowRoot.querySelector(\"#basicPage > settings-section:nth-child(9) > settings-privacy-page\").shadowRoot.querySelector(\"settings-clear-browsing-data-dialog\").shadowRoot.querySelector(\"#clearBrowsingDataConfirm\")");
+    clearBtn.click();
+    Util.sleep(5000);
   }
 
   private String getSAPOrderNumber(String orderNumber) {
