@@ -595,7 +595,9 @@ public class PortalTestBase {
       JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
       navigateToSubscriptionRow();
       try {
-        portalPage.checkIfElementExistsInPage("editSwitchTermButton", 60);
+        boolean editButtonFound = portalPage.checkIfElementExistsInPage("editSwitchTermButton", 60);
+        Util.printInfo("Edit button found: " + editButtonFound);
+        Util.printInfo("Current page: " + driver.getCurrentUrl());
         portalPage.clickUsingLowLevelActions("editSwitchTermButton");
       } catch (org.openqa.selenium.StaleElementReferenceException ex) {
         portalPage.clickUsingLowLevelActions("editSwitchTermButton");
@@ -634,6 +636,7 @@ public class PortalTestBase {
 
     } catch (Exception e) {
       e.printStackTrace();
+      AssertUtils.fail(e.getMessage());
     }
   }
 
