@@ -947,9 +947,13 @@ public class BICTestBase {
       if(bicPage.checkIfElementExistsInPage("paypalCheckoutFrame", 10)) {
         bicPage.selectFrame("paypalCheckoutFrame");
         Util.printInfo("Switched to Frame and clicking on Paypal checkout close button...");
-        if(bicPage.checkIfElementExistsInPage("paypalCheckOutClose", 10)) {
-          bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
-        }
+       try {
+         if (bicPage.checkFieldExistence("paypalCheckOutClose")) {
+           bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
+         }
+       }catch (Exception e ){
+         Util.printInfo("Can not find Close button. Continuing");
+       }
       }
       Util.sleep(5000);
 
