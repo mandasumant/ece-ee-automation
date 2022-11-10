@@ -1753,6 +1753,7 @@ public class PortalTestBase {
       openPortalURL(accountsPortalSubscriptionsUrl);
     }
     clickPortalClosePopup();
+    Util.sleep(2000);
     clickOnSubscriptionRow();
   }
 
