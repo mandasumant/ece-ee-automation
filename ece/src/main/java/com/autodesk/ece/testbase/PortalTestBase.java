@@ -12,6 +12,7 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.CustomSoftAssert;
 import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
+import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.qameta.allure.Step;
@@ -38,6 +39,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -255,6 +257,7 @@ public class PortalTestBase {
   @Step("Click on All Products & Services Link" + GlobalConstants.TAG_TESTINGHUB)
   public void clickALLPSLink() {
     driver.manage().window().maximize();
+
     try {
       openPortalURL(accountsPortalProductsServicesUrl);
       Util.sleep(5000);
@@ -262,6 +265,20 @@ public class PortalTestBase {
       checkEmailVerificationPopupAndClick();
 
       portalPage.waitForFieldPresent("portalPSSideNav", 60000);
+
+      WebElement getSideNav = driver.findElement(
+          By.xpath(portalPage.getFirstFieldLocator("portalSideNavMobile")));
+
+      if (getSideNav.isDisplayed()) {
+        Util.printInfo("Mobile nav is visible");
+        Actions act = new Actions(driver);
+        act.moveToElement(getSideNav).perform();
+        Util.sleep(5000);
+      } else {
+        Util.printInfo("Mobile nav not visible. Taking a screenshot.");
+        ScreenCapture.getInstance().captureFullScreenshot();
+      }
+
       AssertUtils.assertEquals(
           driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(), true,
           "All products and services link is missing");
