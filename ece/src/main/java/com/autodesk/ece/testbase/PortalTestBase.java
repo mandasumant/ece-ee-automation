@@ -1183,8 +1183,8 @@ public class PortalTestBase {
 
       Util.printInfo("Clicking on Paypal checkout button...");
       BICTestBase.bicPage.selectFrame("paypalCheckoutOptionFrame");
-      Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator("paypalCheckout"));
-      portalPage.clickUsingLowLevelActions("paypalCheckout");
+      Util.waitforPresenceOfElement(BICTestBase.bicPage.getFirstFieldLocator("paypalCheckoutBtn"));
+      BICTestBase.bicPage.clickUsingLowLevelActions("paypalCheckoutBtn");
 
       Set<String> windows = driver.getWindowHandles();
       for (String window : windows) {
