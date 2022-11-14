@@ -1665,6 +1665,9 @@ public class BICTestBase {
       Util.printInfo("Session Storage: set 'nonsensitiveHasNonLocalModalLaunched' to true.");
       js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
 
+      Util.printInfo("Local Storage: set 'nonsensitiveUserLocationModalViewed' to true.");
+      js.executeScript("window.localStorage.setItem(\"nonsensitiveUserLocationModalViewed\",\"true\");");
+
       driver.navigate().refresh();
     } catch (Exception e2) {
       // TODO Auto-generated catch block
@@ -2152,58 +2155,71 @@ public class BICTestBase {
   @Step("Guac: Test Trial Download  " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> testCjtTrialDownloadUI(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
-
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
     try {
-      Util.printInfo("Entering -> testCjtTrialDownloadUI -> " + data.get("trialDownloadUrl"));
-      getUrl(data.get("trialDownloadUrl"));
-
-      bicPage.clickUsingLowLevelActions("downloadFreeTrialLink");
-
-      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext1", 2000);
-      bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext1");
-
-      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext2", 2000);
-      bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext2");
-
-      bicPage.waitForFieldPresent("downloadFreeTrailBusinessUserOption", 2000);
-      bicPage.clickUsingLowLevelActions("downloadFreeTrailBusinessUserOption");
-
-      bicPage.waitForFieldPresent("downloadFreeTrialPopupNext3", 2000);
-      bicPage.clickUsingLowLevelActions("downloadFreeTrialPopupNext3");
-
-      bicPage.waitForFieldPresent(BICECEConstants.DOWNLOAD_FREE_TRIAL_LOGIN_FRAME, 1000);
-
-      // Checking if download is prompting for user sign in
-      if (bicPage.isFieldVisible(BICECEConstants.DOWNLOAD_FREE_TRIAL_LOGIN_FRAME)) {
-        bicPage.selectFrame(BICECEConstants.DOWNLOAD_FREE_TRIAL_LOGIN_FRAME);
-
-        bicPage.waitForFieldPresent("downloadFreeTrialUserName", 1000);
-        bicPage.populateField("downloadFreeTrialUserName",
-            System.getProperty(BICECEConstants.EMAIL));
-
-        bicPage.waitForFieldPresent("downloadFreeTrialVerifyUserButtonClick", 1000);
-        bicPage.clickUsingLowLevelActions("downloadFreeTrialVerifyUserButtonClick");
-
-        bicPage.waitForFieldPresent("downloadFreeTrialPassword", 1000);
-        bicPage.populateField("downloadFreeTrialPassword",
-            System.getProperty(BICECEConstants.PASSWORD));
-        Util.sleep(5000);
-        bicPage.waitForFieldPresent("downloadFreeTrialSignInButtonClick", 1000);
-        bicPage.clickUsingLowLevelActions("downloadFreeTrialSignInButtonClick");
-        bicPage.selectMainWindow();
-      }
-
+      String constructDotComURL = data.get("guacDotComBaseURL") + ".com/products/autocad/trial-intake";
+      Util.printInfo("constructDotComURL " + constructDotComURL);
+      bicPage.navigateToURL(constructDotComURL);
       Util.sleep(5000);
+      setStorageData();
+      Util.sleep(5000);
+
+      bicPage.waitForFieldPresent("freeTrialBusiness", 2000);
+      bicPage.clickUsingLowLevelActions("freeTrialBusiness");
+
+      bicPage.waitForFieldPresent("freeTrialNextButton1", 2000);
+      bicPage.clickUsingLowLevelActions("freeTrialNextButton1");
+
+      bicPage.waitForFieldPresent("freeTrialNextButton2", 2000);
+      bicPage.clickUsingLowLevelActions("freeTrialNextButton2");
+
+      createBICAccount(generateFirstAndLastNames(), generateUniqueEmailID(), password, true);
+
+      bicPage.waitForFieldPresent("objectiveOfTrial", 2000);
+      bicPage.clickUsingLowLevelActions("objectiveOfTrial");
+      bicPage.clickUsingLowLevelActions("selectFieldFromList");
+
+      bicPage.waitForFieldPresent("industriesField", 2000);
+      bicPage.clickUsingLowLevelActions("industriesField");
+      bicPage.clickUsingLowLevelActions("selectFieldFromList");
+
+      bicPage.waitForFieldPresent("roleField", 2000);
+      bicPage.clickUsingLowLevelActions("roleField");
+      bicPage.clickUsingLowLevelActions("selectFieldFromList");
+
+      bicPage.waitForFieldPresent("jobLevelField", 2000);
+      bicPage.clickUsingLowLevelActions("jobLevelField");
+      bicPage.clickUsingLowLevelActions("selectFieldFromList");
+
+      bicPage.waitForFieldPresent("freeTrialNextButton3", 2000);
+      bicPage.clickUsingLowLevelActions("freeTrialNextButton3");
+
       bicPage.waitForFieldPresent("downloadFreeTrialCompanyName", 1000);
       bicPage.populateField("downloadFreeTrialCompanyName", data.get("companyName"));
-      bicPage.clickUsingLowLevelActions("downloadFreeTrialState");
-      bicPage.populateField("downloadFreeTrialPostalCode", data.get("postalCode"));
-      bicPage.populateField("downloadFreeTrialPhoneNo", data.get("phoneNumber"));
-      bicPage.clickUsingLowLevelActions("downloadFreeTrialBeginDownloadLink");
+
+      bicPage.waitForFieldPresent("countryOfResidence", 1000);
+      bicPage.clickUsingLowLevelActions("countryOfResidence");
+      bicPage.clickUsingLowLevelActions("selectCountry");
+
+      bicPage.populateField("postalCode", data.get("postalCode"));
+      bicPage.populateField("phoneNumber", data.get("phoneNumber"));
+
+      bicPage.waitForFieldPresent("countryCode", 2000);
+      bicPage.clickUsingLowLevelActions("countryCode");
+      bicPage.clickUsingLowLevelActions("selectCode");
+
+      bicPage.waitForFieldPresent("freeTrialNextButton4", 2000);
+      bicPage.clickUsingLowLevelActions("freeTrialNextButton4");
+
+      bicPage.waitForFieldPresent("freeTrailDownloadBegins", 2000);
+      bicPage.clickUsingLowLevelActions("freeTrailDownloadBegins");
+
       Util.sleep(5000);
-      AssertUtils.assertTrue(driver.getCurrentUrl().contains(data.get("trialDownloadUrl")),
-          "SUCCESSFULLY STARTED DOWNLOAD");
+      bicPage.waitForFieldPresent("freeTrialDownloadStartedHeader", 2000);
+      String headerText =bicPage.getLinkText("freeTrialDownloadStartedHeader");
+      Assert.assertTrue("Free Trial Download not started.",headerText.equals("Your trial has started"));
       results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
+
     } catch (Exception e) {
       e.printStackTrace();
       Util.printInfo("Error " + e.getMessage());
