@@ -1183,8 +1183,8 @@ public class PortalTestBase {
 
       Util.printInfo("Clicking on Paypal checkout button...");
       BICTestBase.bicPage.selectFrame("paypalCheckoutOptionFrame");
-      Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator("paypalCheckout"));
-      portalPage.clickUsingLowLevelActions("paypalCheckout");
+      Util.waitforPresenceOfElement(BICTestBase.bicPage.getFirstFieldLocator("paypalCheckoutBtn"));
+      BICTestBase.bicPage.clickUsingLowLevelActions("paypalCheckoutBtn");
 
       Set<String> windows = driver.getWindowHandles();
       for (String window : windows) {
@@ -1536,6 +1536,23 @@ public class PortalTestBase {
     try {
       navigateToUpcomingPaymentsLink();
 
+      int attempts = 0;
+      while (attempts < 5) {
+        portalPage.waitForFieldPresent("alignBillingButton", 10000);
+        WebElement alignBillingButton = portalPage.getMultipleWebElementsfromField("alignBillingButton").get(0);
+        if (alignBillingButton.getAttribute("class").contains("disabled")) {
+          Util.sleep(15000);
+          portalLogoutLogin(portalUserName, portalPassword);
+          attempts++;
+        } else {
+          break;
+        }
+      }
+
+      if (attempts >= 5) {
+        AssertUtils.fail("Failed to find align billing button");
+      }
+
       // Click on "align billing"
       portalPage.clickUsingLowLevelActions("alignBillingButton");
     } catch (Exception e) {
@@ -1753,6 +1770,7 @@ public class PortalTestBase {
       openPortalURL(accountsPortalSubscriptionsUrl);
     }
     clickPortalClosePopup();
+    Util.sleep(2000);
     clickOnSubscriptionRow();
   }
 

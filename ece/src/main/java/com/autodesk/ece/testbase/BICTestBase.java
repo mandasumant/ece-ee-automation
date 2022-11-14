@@ -947,9 +947,13 @@ public class BICTestBase {
       if(bicPage.checkIfElementExistsInPage("paypalCheckoutFrame", 10)) {
         bicPage.selectFrame("paypalCheckoutFrame");
         Util.printInfo("Switched to Frame and clicking on Paypal checkout close button...");
-        if(bicPage.checkIfElementExistsInPage("paypalCheckOutClose", 10)) {
-          bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
-        }
+       try {
+         if (bicPage.checkFieldExistence("paypalCheckOutClose")) {
+           bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
+         }
+       }catch (Exception e ){
+         Util.printInfo("Can not find Close button. Continuing");
+       }
       }
       Util.sleep(5000);
 
@@ -2379,10 +2383,10 @@ public class BICTestBase {
   }
 
   public Boolean isLOCPresentInCart() throws MetadataException {
-    if (bicPage.checkFieldExistence("customerDetailsContinue")) {
-      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
-      Util.sleep(5000);
+    if (bicPage.waitForFieldPresent("customerDetailsContinue", 20000)) {
+      Util.printInfo("Found Continue button from Customer Details section. Clicking on it.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      bicPage.waitForElementToDisappear("customerDetailsContinue", 20);
     }
 
     return bicPage.waitForField("payByInvoiceTab", true, 30000);
