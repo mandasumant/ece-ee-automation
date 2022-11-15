@@ -234,11 +234,21 @@ public class PWSTestBase {
 
     Util.sleep(60000);
 
-    Response response = given()
-        .body(finalizeBody)
-        .headers(pwsRequestHeaders)
-        .patch("https://" + hostname + "/v1/quotes/finalize")
-        .then().extract().response();
+    //Thi is a temporary fix to pass INT tests as PWS has not deployed hte change to STG yet
+    Response response = null;
+    if (System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_INT)) {
+      response = given()
+          .body(finalizeBody)
+          .headers(pwsRequestHeaders)
+          .put("https://" + hostname + "/v1/quotes/finalize")
+          .then().extract().response();
+    } else {
+      response = given()
+          .body(finalizeBody)
+          .headers(pwsRequestHeaders)
+          .patch("https://" + hostname + "/v1/quotes/finalize")
+          .then().extract().response();
+    }
     Util.printInfo("The finalize response headers: " + response.getHeaders());
 
     if (response.getStatusCode() != 202) {

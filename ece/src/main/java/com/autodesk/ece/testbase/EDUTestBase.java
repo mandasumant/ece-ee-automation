@@ -38,6 +38,15 @@ public class EDUTestBase {
   private static final String EDU_GET_STARTED = "eduSignStarted";
   private static final String EDU_NEW_PASSWORD = "newPassword";
 
+  private static final HashMap<EDUUserType, String> EDU_USER_CHOICES = new HashMap<EDUUserType, String>() {
+    {
+      put(EDUUserType.STUDENT, "Student");
+      put(EDUUserType.EDUCATOR, "Educator");
+      put(EDUUserType.ADMIN, "ITAdmin");
+      put(EDUUserType.MENTOR, "Mentor");
+    }
+  };
+
   private final Page_ eduPage;
   private final WebDriver driver;
   private final Map<String, String> testData;
@@ -95,28 +104,7 @@ public class EDUTestBase {
 
     eduPage.click(BICECEConstants.EDU_SUBMIT);
 
-    // Generate a new user email, name, and password
-    String email = bicTestBase.generateUniqueEmailID();
-    results.put(BICConstants.emailid, email);
-    String randomString = RandomStringUtils.random(6, true, false);
-    String firstName = "FN" + randomString;
-    String lastName = "LN" + randomString;
-
-    eduPage.waitForField("firstname", true, 30000);
-    eduPage.populateField("firstname", firstName);
-    eduPage.populateField("lastname", lastName);
-    eduPage.populateField("newEmail", email);
-    eduPage.populateField("newConfirmEmail", email);
-
-    String password = ProtectedConfigFile.decrypt(testData.get(BICECEConstants.EDU_PASSWORD));
-    eduPage.populateField(EDU_NEW_PASSWORD, password);
-    results.put("firstName", firstName);
-    results.put("password", password);
-
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
-
-    eduPage.click(BICECEConstants.EDU_SUBMIT);
+    registerOxygenUser(results);
     Util.sleep(2500);
 
     if (userType != EDUUserType.MENTOR) {
@@ -157,6 +145,40 @@ public class EDUTestBase {
 
     eduPage.click("eduComplete");
     Util.sleep(2500);
+
+    return results;
+  }
+
+  @Step("Register EDU User" + GlobalConstants.TAG_TESTINGHUB)
+  public Map<String, String> registerUser2(EDUUserType userType) {
+    HashMap<String, String> results = new HashMap<>();
+    int currentYear = Year.now().getValue();
+
+    // Navigate to education site and click on "Get Started"
+    eduPage.navigateToURL(testData.get("eduLandingPage"));
+    eduPage.click("getStarted");
+
+    //pickSelectOption(BICECEConstants.EDU_ROLE, EDU_USER_CHOICES.get(userType));
+    String choiceName = EDU_USER_CHOICES.get(userType);
+    pickVSOS2Option("eduRoleSelection", choiceName);
+
+    if (userType == EDUUserType.STUDENT) {
+      // Fill out student date of birth
+      pickVSOS2Option("dobMonth2", "1");
+      pickVSOS2Option("dobDay2", "1");
+      // Mock a 16 year old student
+      pickVSOS2Option("dobYear2", Integer.toString(currentYear - 16));
+    }
+
+    eduPage.waitForField("eduRoleSubmit", true, 5000);
+    eduPage.click("eduRoleSubmit");
+
+    registerOxygenUser(results);
+
+    eduPage.waitForField(EDU_GET_STARTED, true, 5000);
+
+    String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
+    results.put(BICConstants.oxid, oxygenId);
 
     return results;
   }
@@ -222,71 +244,62 @@ public class EDUTestBase {
       eduPage.click(EDU_SIGNUP_SUBMIT);
       Util.sleep(3000);
 
-      String sheerUploadLocator = eduPage.getFirstFieldLocator("sheerUpload");
-      String signupSuccessLocator = eduPage.getFirstFieldLocator("eduSignSuccess");
+      validateSheerIDDocument(results, overviewPageHeader);
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+      AssertUtils.fail("Failed to sign VSOS terms");
+    }
+  }
 
-      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-      wait.until(ExpectedConditions.or(
-          ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(sheerUploadLocator)),
-          ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(signupSuccessLocator))
-      ));
 
-      // If we're requested to upload a document, upload the testing ID for SheerID
-      if (!driver.findElements(By.xpath(sheerUploadLocator)).isEmpty()) {
-        ClassLoader classLoader = this.getClass().getClassLoader();
-        String sheerIDImage = EISTestBase.getTestDataDir()
-            + EISTestBase.getTestManifest().getProperty("EDU_SHEER_ID_APPROVE");
-        URL resource = classLoader.getResource(sheerIDImage);
-        assert resource != null;
-        String sheerIDImagePath = Paths.get(resource.toURI()).toFile().getPath();
+  @Step("Accept VSOS terms" + GlobalConstants.TAG_TESTINGHUB)
+  public void acceptVSOSTerms2(HashMap<String, String> results, EDUUserType userType) {
+    try {
+      eduPage.waitForField(EDU_GET_STARTED, true, 5000);
+      WebElement overviewPageHeader = driver.findElement(
+          By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
+      AssertUtils.assertTrue(
+          overviewPageHeader.getText().contains("Unlock educational access to Autodesk products"));
+      eduPage.click(EDU_GET_STARTED);
+      eduPage.waitForField(EDU_SIGNUP_SUBMIT, true, 5000);
 
-        // Make the upload button interactable
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("document.getElementById('vsos-file-upload-input').style.opacity = 1");
+      pickVSOS2Option("vsosCountry", "GB");
 
-        // Upload the tesing ID file
-        WebElement sheerUpload = driver.findElement(By.xpath(sheerUploadLocator));
-        sheerUpload.sendKeys(sheerIDImagePath);
-        Util.sleep(5000);
-
-        // Assert that we are still in Overview page after upload
-        overviewPageHeader = driver.findElement(
-            By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
-        AssertUtils.assertTrue(
-            overviewPageHeader.getText().contains("Additional documentation needed"));
-
-        eduPage.isFieldPresent(EDU_SIGNUP_SUBMIT);
-        eduPage.click(EDU_SIGNUP_SUBMIT);
-        Util.sleep(3000);
-
-        WebElement landingPageHeader = driver.findElement(
-            By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
-
-        // Sometimes the Submit Action is not working, so retrying one last time
-        if (!(landingPageHeader.getText().contains("Thank you"))) {
-
-          overviewPageHeader = driver.findElement(
-              By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
-          AssertUtils.assertTrue(
-              overviewPageHeader.getText().contains("Additional documentation needed"));
-
-          eduPage.click(EDU_SIGNUP_SUBMIT);
-          Util.sleep(3000);
-
-          landingPageHeader = driver.findElement(
-              By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
-          AssertUtils.assertTrue(
-              landingPageHeader.getText().contains("Thank you"));
+      if (userType == EDUUserType.EDUCATOR || userType == EDUUserType.STUDENT) {
+        pickVSOS2Option("vsosInstitutionType", "secondary");
+        try {
+          eduPage.clickUsingLowLevelActions("vsosInstitutionName");
+          eduPage.populateField("vsosInstitutionName", "Saint");
+        } catch (MetadataException e) {
+          AssertUtils.fail("Could not click on role dropdown");
         }
-
-        eduPage.click("eduUploadClose");
-        Util.sleep(3000);
-
-        WebElement overviewHomeHeader = driver.findElement(
-            By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
-        AssertUtils.assertTrue(
-            overviewHomeHeader.getText().contains("Hi " + results.get("firstName")));
+        WebElement schoolOption = driver.findElement(
+            By.xpath("//ul[@class=\"vsos-option-list\"]/li[2]"));
+        schoolOption.click();
       }
+
+      if (userType == EDUUserType.STUDENT) {
+        int currentYear = Year.now().getValue();
+        pickVSOS2Option("vsosEnrollmentMonth", "8"); // August
+        pickVSOS2Option("vsosEnrollmentDay", "1");
+        pickVSOS2Option("vsosEnrollmentYear", Integer.toString(currentYear - 5));
+        pickVSOS2Option("vsosGraduationMonth", "6"); // June
+        pickVSOS2Option("vsosGraduationDay", "1");
+        pickVSOS2Option("vsosGraduationYear", Integer.toString(currentYear + 1));
+      }
+
+      eduPage.click(EDU_SIGNUP_SUBMIT);
+      if (userType != EDUUserType.MENTOR) {
+        eduPage.click(EDU_SIGNUP_SUBMIT);
+      }
+
+      Util.sleep(3000);
+
+      if (userType == EDUUserType.MENTOR) {
+        return;
+      }
+
+      validateSheerIDDocument(results, overviewPageHeader);
     } catch (URISyntaxException e) {
       e.printStackTrace();
       AssertUtils.fail("Failed to sign VSOS terms");
@@ -571,6 +584,120 @@ public class EDUTestBase {
     windowHandles.remove(currentTabHandle); // The new tab is the tab that isn't the current one
     String newTabHandle = windowHandles.iterator().next();
     driver.switchTo().window(newTabHandle);
+  }
+
+  private void registerOxygenUser(HashMap<String, String> results) {
+    // Generate a new user email, name, and password
+    String email = bicTestBase.generateUniqueEmailID();
+    results.put(BICConstants.emailid, email);
+    String randomString = RandomStringUtils.random(6, true, false);
+    String firstName = "FN" + randomString;
+    String lastName = "LN" + randomString;
+
+    eduPage.waitForField("firstname", true, 30000);
+    eduPage.populateField("firstname", firstName);
+    eduPage.populateField("lastname", lastName);
+    eduPage.populateField("newEmail", email);
+    eduPage.populateField("newConfirmEmail", email);
+
+    String password = ProtectedConfigFile.decrypt(testData.get(BICECEConstants.EDU_PASSWORD));
+    eduPage.populateField(EDU_NEW_PASSWORD, password);
+    results.put("firstName", firstName);
+    results.put("password", password);
+
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
+
+    eduPage.click(BICECEConstants.EDU_SUBMIT);
+  }
+
+  /**
+   * Automate selection of values in custom VSOS select dropdowns
+   *
+   * @param name  - Selector name of dropdown
+   * @param value - Value to select
+   */
+  private void pickVSOS2Option(String name, String value) {
+    try {
+      eduPage.clickUsingLowLevelActions(name);
+    } catch (MetadataException e) {
+      AssertUtils.fail("Could not click on role dropdown");
+    }
+    WebElement option = driver.findElement(
+        By.xpath("//ul[@class=\"vsos-option-list\"]/li[@data-name=\"" + value + "\"]"));
+    option.click();
+  }
+
+  /**
+   * Validate document upload for SheerID
+   */
+  private void validateSheerIDDocument(HashMap<String, String> results, WebElement overviewPageHeader)
+      throws URISyntaxException {
+    String sheerUploadLocator = eduPage.getFirstFieldLocator("sheerUpload");
+    String signupSuccessLocator = eduPage.getFirstFieldLocator("eduSignSuccess");
+
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+    wait.until(ExpectedConditions.or(
+        ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(sheerUploadLocator)),
+        ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(signupSuccessLocator))
+    ));
+
+    // If we're requested to upload a document, upload the testing ID for SheerID
+    if (!driver.findElements(By.xpath(sheerUploadLocator)).isEmpty()) {
+      ClassLoader classLoader = this.getClass().getClassLoader();
+      String sheerIDImage = EISTestBase.getTestDataDir()
+          + EISTestBase.getTestManifest().getProperty("EDU_SHEER_ID_APPROVE");
+      URL resource = classLoader.getResource(sheerIDImage);
+      assert resource != null;
+      String sheerIDImagePath = Paths.get(resource.toURI()).toFile().getPath();
+
+      // Make the upload button interactable
+      JavascriptExecutor js = (JavascriptExecutor) driver;
+      js.executeScript("document.getElementById('vsos-file-upload-input').style.opacity = 1");
+
+      // Upload the tesing ID file
+      WebElement sheerUpload = driver.findElement(By.xpath(sheerUploadLocator));
+      sheerUpload.sendKeys(sheerIDImagePath);
+      Util.sleep(5000);
+
+      // Assert that we are still in Overview page after upload
+      overviewPageHeader = driver.findElement(
+          By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+      AssertUtils.assertTrue(
+          overviewPageHeader.getText().contains("Additional documentation needed"));
+
+      eduPage.isFieldPresent(EDU_SIGNUP_SUBMIT);
+      eduPage.click(EDU_SIGNUP_SUBMIT);
+      Util.sleep(3000);
+
+      WebElement landingPageHeader = driver.findElement(
+          By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+
+      // Sometimes the Submit Action is not working, so retrying one last time
+      if (!(landingPageHeader.getText().contains("Thank you"))) {
+
+        overviewPageHeader = driver.findElement(
+            By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+        AssertUtils.assertTrue(
+            overviewPageHeader.getText().contains("Additional documentation needed"));
+
+        eduPage.click(EDU_SIGNUP_SUBMIT);
+        Util.sleep(3000);
+
+        landingPageHeader = driver.findElement(
+            By.xpath(eduPage.getFirstFieldLocator("eduPageHeader")));
+        AssertUtils.assertTrue(
+            landingPageHeader.getText().contains("Thank you"));
+      }
+
+      eduPage.click("eduUploadClose");
+      Util.sleep(3000);
+
+      WebElement overviewHomeHeader = driver.findElement(
+          By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
+      AssertUtils.assertTrue(
+          overviewHomeHeader.getText().contains("Hi " + results.get("firstName")));
+    }
   }
 
   public enum EDUUserType {

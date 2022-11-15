@@ -47,12 +47,12 @@ public class EDUUserFlows extends ECETestBase {
   public void validateNewStudentSubscription() {
     HashMap<String, String> results = new HashMap<>();
     EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
-
+    EDUUserType userType = EDUUserType.STUDENT;
     // Register a new Student account
-    results.putAll(edutb.registerUser(EDUUserType.STUDENT));
+    results.putAll(edutb.registerUser2(userType));
 
     // Accept VSOS terms
-    edutb.signUpUser(results);
+    edutb.acceptVSOSTerms2(results, userType);
 
     updateTestingHub(results);
 
@@ -77,10 +77,12 @@ public class EDUUserFlows extends ECETestBase {
   public void validateProductActivationByEducator() throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
-    // Create new user with Educator role
-    results.putAll(edutb.registerUser(EDUUserType.EDUCATOR));
+    EDUUserType userType = EDUUserType.EDUCATOR;
 
-    edutb.signUpUser(results);
+    // Create new user with Educator role
+    results.putAll(edutb.registerUser2(userType));
+
+    edutb.acceptVSOSTerms2(results, userType);
 
     updateTestingHub(results);
 
@@ -126,8 +128,12 @@ public class EDUUserFlows extends ECETestBase {
   public void validateMentorUser() {
     HashMap<String, String> results = new HashMap<>();
     EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
+    EDUUserType userType = EDUUserType.MENTOR;
+
     // Create new user with Mentor role
-    results.putAll(edutb.registerUser(EDUUserType.MENTOR));
+    results.putAll(edutb.registerUser2(userType));
+
+    edutb.acceptVSOSTerms2(results, userType);
 
     if (testProductKey.equals(FUSION_360_KEY)) {
       // Download Fusion 360
