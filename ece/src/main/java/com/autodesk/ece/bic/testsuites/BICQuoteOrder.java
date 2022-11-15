@@ -925,7 +925,6 @@ public class BICQuoteOrder extends ECETestBase {
   @Test(groups = {"bic-sus-quote-orders"}, description = "Validation of Create BIC SUS  Order and Quote orders")
   public void validateBicSUSAndQuoteOrders() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
-    testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, BICECEConstants.VISA);
     HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
