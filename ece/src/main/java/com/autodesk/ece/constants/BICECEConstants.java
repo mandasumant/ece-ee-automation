@@ -161,7 +161,6 @@ public class BICECEConstants extends BICConstants {
   public static final String BUNDLE_PROMO = "BUNDLE20";
   public static final String QUANTITY = "quantity";
   public static final String PRODUCT_NAME_2 = "multiProduct2";
-  public static final String PRICE_ID_2 = "multiProductPrice2";
   public static final String MULTI_LINE_ITEM_QUANTITY_1 = "3";
   public static final String MULTI_LINE_ITEM_QUANTITY_2 = "2";
   public static final String ENV_STG = "STG";

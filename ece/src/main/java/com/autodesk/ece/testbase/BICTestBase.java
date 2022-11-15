@@ -1443,7 +1443,6 @@ public class BICTestBase {
 
     data.put(BICECEConstants.QUANTITY, BICECEConstants.MULTI_LINE_ITEM_QUANTITY_1);
     data.put(BICECEConstants.PRODUCT_NAME, data.get(BICECEConstants.PRODUCT_NAME_2));
-    data.put(BICECEConstants.PRICE_ID, data.get(BICECEConstants.PRICE_ID_2));
 
     String orderNumber = createBICOrderDotCom(data, true);
 

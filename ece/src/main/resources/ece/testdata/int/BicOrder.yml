@@ -214,7 +214,7 @@ validateBicNativeFinancingCanceledOrder:
   bicNativePriceID: *bicNativePriceID
 
 validateMultiLineItemBicNativeOrder:
-  multiProductPrice2: "23756"
+  multiProduct2: "3ds-max"
   quantity: "3"
 
 validateFlexTokenEstimatorTool:
