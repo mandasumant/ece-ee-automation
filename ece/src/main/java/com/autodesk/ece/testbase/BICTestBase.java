@@ -1511,6 +1511,9 @@ public class BICTestBase {
 
       if (data.get("isReturningUser") == null) {
         enterBillingDetails(data, address, paymentMethod);
+      } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
+          paymentMethod = "LOC";
+          enterBillingDetails(data, address, paymentMethod);
       }
 
       if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {

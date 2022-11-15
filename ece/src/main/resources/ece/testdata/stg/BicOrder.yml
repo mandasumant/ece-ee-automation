@@ -299,8 +299,15 @@ validateExpiredTTRCertificate:
   existingUserEmail: "thubnameratvephramcfz@letscheck.pw"
   existingUserFirstname: "FNJFtOmR"
   existingUserLastname: "LNJFtOmR"
-  
+
 validateTTRCertificateDeclined:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
+
+validateBicSUSAndQuoteOrders:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "2"
+  term: "Annual"
+  accessModel: "Flex"
