@@ -1448,7 +1448,11 @@ public class MOETestBase {
         moePage.waitForPageToLoad();
 
         Util.printInfo("Page scroll down");
-        BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+        WebElement scrollToCheckbox = moePage.getMultipleWebElementsfromField("checkbox").get(0);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView(true);", scrollToCheckbox);
+        Util.sleep(2000);
+
         wait.until(ExpectedConditions.visibilityOfElementLocated(
             By.xpath(moePage.getFirstFieldLocator("checkbox"))));
         moePage.click("checkbox");

@@ -36,10 +36,10 @@ import java.util.TimeZone;
 import org.apache.commons.lang.RandomStringUtils;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -270,14 +270,15 @@ public class PortalTestBase {
           By.xpath(portalPage.getFirstFieldLocator("portalSideNavMobile")));
 
       if (getSideNav.isDisplayed()) {
-        Util.printInfo("Mobile nav is visible");
-        Actions act = new Actions(driver);
-        act.moveToElement(getSideNav).perform();
-        Util.sleep(5000);
+        Util.printInfo("Mobile nav is visible. Setting screen resolution.");
+        driver.manage().window().setSize(new Dimension(1280, 720));
+        Util.sleep(2000);
       } else {
-        Util.printInfo("Mobile nav not visible. Taking a screenshot.");
-        ScreenCapture.getInstance().captureFullScreenshot();
+        Util.printInfo("Mobile nav not visible.");
       }
+
+      Util.printInfo("Taking a screenshot.");
+      ScreenCapture.getInstance().captureFullScreenshot();
 
       AssertUtils.assertEquals(
           driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(), true,
