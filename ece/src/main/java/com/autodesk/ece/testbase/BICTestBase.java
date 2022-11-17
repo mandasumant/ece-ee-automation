@@ -2167,6 +2167,7 @@ public class BICTestBase {
       Util.sleep(5000);
       setStorageData();
       Util.sleep(5000);
+      ScreenCapture.getInstance().captureFullScreenshot();
 
       bicPage.waitForFieldPresent("freeTrialBusiness", 2000);
       bicPage.clickUsingLowLevelActions("freeTrialBusiness");
@@ -2178,6 +2179,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("freeTrialNextButton2");
 
       createBICAccount(generateFirstAndLastNames(), generateUniqueEmailID(), password, true);
+      ScreenCapture.getInstance().captureFullScreenshot();
 
       bicPage.waitForFieldPresent("objectiveOfTrial", 2000);
       bicPage.clickUsingLowLevelActions("objectiveOfTrial");
