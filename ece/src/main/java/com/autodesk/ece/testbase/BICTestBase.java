@@ -1189,7 +1189,7 @@ public class BICTestBase {
       debugPageUrl("Step 2: Wait for submit order button.");
       try {
         int countModal = 0;
-        while (bicPage.waitForFieldPresent("checkoutContinue", 5000)) {
+        while (bicPage.waitForFieldPresent("continueCheckout", 5000)) {
           Util.printInfo(" CONTINUE CHECKOUT Modal is present");
           driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).click();
           Util.sleep(5000);
