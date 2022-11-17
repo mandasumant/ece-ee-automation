@@ -2169,6 +2169,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("freeTrialNextButton2");
 
       createBICAccount(generateFirstAndLastNames(), generateUniqueEmailID(), password, true);
+      ScreenCapture.getInstance().captureFullScreenshot();
 
       bicPage.waitForFieldPresent("objectiveOfTrial", 2000);
       bicPage.clickUsingLowLevelActions("objectiveOfTrial");
@@ -2216,6 +2217,7 @@ public class BICTestBase {
       results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
 
     } catch (Exception e) {
+      ScreenCapture.getInstance().captureFullScreenshot();
       e.printStackTrace();
       Util.printInfo("Error " + e.getMessage());
       AssertUtils.fail("Unable to test trial Download");
