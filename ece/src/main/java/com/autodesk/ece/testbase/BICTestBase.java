@@ -1189,7 +1189,7 @@ public class BICTestBase {
       debugPageUrl("Step 2: Wait for submit order button.");
       try {
         int countModal = 0;
-        while (driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).isDisplayed()) {
+        while (bicPage.waitForFieldPresent("continueCheckout", 5000)) {
           Util.printInfo(" CONTINUE CHECKOUT Modal is present");
           driver.findElement(By.xpath("//*[text()='CONTINUE CHECKOUT']")).click();
           Util.sleep(5000);
@@ -1233,17 +1233,6 @@ public class BICTestBase {
         zipTestBase.zipPayCheckout();
       }
 
-      debugPageUrl("Step 3: Check order number is Null");
-      bicPage.waitForPageToLoad();
-
-      try {
-        if (driver.findElement(By.xpath("//*[(text()='Order Processing Problem')]")).isDisplayed()) {
-          Util.printInfo("Order Processing Problem");
-        }
-        AssertUtils.fail("Unable to place BIC order : " + "Order Processing Problem");
-      } catch (Exception e) {
-        Util.printInfo("Great! Export Compliance issue is not present");
-      }
     } catch (NoSuchElementException nSE) {
       ScreenCapture.getInstance().captureFullScreenshot();
       Util.printInfo("Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
