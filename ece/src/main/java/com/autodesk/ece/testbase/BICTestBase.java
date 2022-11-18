@@ -1842,6 +1842,7 @@ public class BICTestBase {
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+      waitForLoadingSpinnerToComplete("loadingSpinner");
       bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
     }
 
@@ -1849,6 +1850,7 @@ public class BICTestBase {
       if (bicPage.checkIfElementExistsInPage("customerDetailsAddress", 10)) {
         Util.printInfo("Two or more suggested addresses. Clicking on radio button to choose one.");
         bicPage.clickUsingLowLevelActions("customerDetailsAddress");
+        waitForLoadingSpinnerToComplete("loadingSpinner");
       }
 
       if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
