@@ -49,6 +49,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WindowType;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -2173,6 +2174,9 @@ public class BICTestBase {
       createBICAccount(generateFirstAndLastNames(), generateUniqueEmailID(), password, true);
       ScreenCapture.getInstance().captureFullScreenshot();
 
+      Util.sleep(3000);
+      scrollToTopOfThePage();
+
       bicPage.waitForFieldPresent("objectiveOfTrial", 2000);
       bicPage.clickUsingLowLevelActions("objectiveOfTrial");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
@@ -2551,5 +2555,15 @@ public class BICTestBase {
         put(BICECEConstants.LASTNAME, lastName);
       }};
     }
+  }
+
+  private void scrollToTopOfThePage() {
+    JavascriptExecutor js = ((JavascriptExecutor) driver);
+    js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+
+    Actions at = new Actions(driver);
+    at.sendKeys(Keys.PAGE_UP).build().perform();
+    at.sendKeys(Keys.PAGE_UP).build().perform();
+    at.sendKeys(Keys.PAGE_UP).build().perform();
   }
 }
