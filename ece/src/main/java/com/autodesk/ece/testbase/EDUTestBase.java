@@ -15,6 +15,7 @@ import io.qameta.allure.Step;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Year;
@@ -407,17 +408,6 @@ public class EDUTestBase {
     getProductButton.click();
     Util.sleep(2500);
 
-    File downloadDirectory = Paths.get(System.getProperty("user.home"), "Downloads").toFile();
-    if (!downloadDirectory.exists()) {
-      Util.printInfo("Creating downloads folder");
-      boolean result = downloadDirectory.mkdir();
-      if (!result) {
-        Util.printError("Failed to create download directory");
-      }
-    } else {
-      Util.printInfo("Downloads folder already exists");
-    }
-
     // Wait for the download button to appear
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id(websdk)));
@@ -448,6 +438,8 @@ public class EDUTestBase {
     // Wait a bit for downloads to start
     Util.sleep(1000);
 
+    Path downloadPath = Paths.get(GlobalConstants.DEFAULT_DOWNLOAD_FOLDER_PATH);
+    File downloadDirectory = downloadPath.toFile();
     try {
       int attempts = 0;
       File[] downloadingFiles = null;
@@ -459,7 +451,7 @@ public class EDUTestBase {
         Util.printInfo("Polling download directory for files, attempt " + (attempts + 1));
         attempts++;
         Util.sleep(2500);
-        downloadDirectory = Paths.get(System.getProperty("user.home"), "Downloads").toFile();
+        downloadDirectory = downloadPath.toFile();
       }
       AssertUtils.assertTrue(downloadingFiles != null && downloadingFiles.length > 0,
           "Ensure there are downloading files");

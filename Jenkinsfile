@@ -262,7 +262,8 @@ pipeline {
                                     params.APOLLO_FLEX == true ||
                                     params.APOLLO_FLEX_MOE == true ||
                                     params.APOLLO_TTR == true ||
-                                    params.APOLLO_PAY_INVOICE == true
+                                    params.APOLLO_PAY_INVOICE == true ||
+                                    params.EDU == true
                         }
                     }
                 }
@@ -433,7 +434,6 @@ pipeline {
         }
         stage('EDU Tests') {
             when {
-                branch 'master'
                 expression {
                     params.EDU == true
                 }
@@ -453,30 +453,52 @@ def generateEDUTests(product, plc) {
             '{"displayname":"Design Competition Mentor Flow - ' + product + '","testcasename":"validateMentorUser","description":"Design competition mentor flow","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"validate-mentor-user","testMethod":"validateMentorUser","parameters":{"application":"ece","store":"STORE-NAMER"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","externalKey":"' + plc + '"},"notsupportedenv":[],"wiki":"https://wiki.autodesk.com/pages/viewpage.action?spaceKey=EFDE&title=Automation+Command+Line"}'
 }
 
-def triggerTestingHub(servicesBuildHelper) {
-    println("Building Testing Hub API Input Map")
+def triggerTestingHub(serviceBuildHelper) {
+    def testcases = readJSON text: ('[' +
+        generateEDUTests("AutoCAD", "ACD") + ',' +
+        generateEDUTests("Revit", "RVT") + ',' +
+        generateEDUTests("Fusion 360", "F360") + ',' +
+        generateEDUTests("Inventor", "INVNTOR") + ',' +
+        generateEDUTests("3ds Max", "3DSMAX") + ',' +
+        generateEDUTests("Maya", "MAYA") + ',' +
+        generateEDUTests("Civil 3D", "CIV3D") + ',' +
+        generateEDUTests("AutoCAD LT", "ACDLT") + ',' +
+        generateEDUTests("Navisworks Manage", "NAVMAN") + ',' +
+        generateEDUTests("Robot Structural Analysis Professional", "RSAPRO") +
+    ']');
+
     def testingHubInputMap = [:]
     testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
     testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/edu/testcase'
-    testingHubInputMap.testingHubApiPayload = '{"env":"STG","executionname":"EDU Deploy Tests","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-            generateEDUTests("AutoCAD", "ACD") + ',' +
-            generateEDUTests("Revit", "RVT") + ',' +
-            generateEDUTests("Fusion 360", "F360") + ',' +
-            generateEDUTests("Inventor", "INVNTOR") + ',' +
-            generateEDUTests("3ds Max", "3DSMAX") + ',' +
-            generateEDUTests("Maya", "MAYA") + ',' +
-            generateEDUTests("Civil 3D", "CIV3D") + ',' +
-            generateEDUTests("AutoCAD LT", "ACDLT") + ',' +
-            generateEDUTests("Navisworks Manage", "NAVMAN") + ',' +
-            generateEDUTests("Robot Structural Analysis Professional", "RSAPRO") +
-            '],"workstreamname":"dclecjt"}'
-
-    println("Starting Testing Hub API Call")
-    if (servicesBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-        println('Testing Hub API called successfully')
+    testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"EDU Deploy Tests","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":' +
+                new JsonBuilder(testcases[0..2]).toPrettyString() +
+            ',"workstreamname":"dclecjt"}'
+    println("Starting Testing Hub API Call - estore - All")
+    execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
+    if (execution_id != null) {
+        println('Testing Hub API called successfully - estore - All')
     } else {
-        println('Testing Hub API call failed')
+        currentBuild.result = 'FAILURE'
+        println('Testing Hub API call failed - estore - All')
+    }
+
+    sh 'sleep 30'
+
+    for (int i = 1; i < testcases.size() / 3; i++) {
+        testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":' +
+                    new JsonBuilder(testcases[(i * 3)..Math.min(i*3 + 2, testcases.size() - 1)]).toPrettyString() +
+                ',"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - estore - All")
+        execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
+        if (execution_id != null) {
+            println('Testing Hub API called successfully - estore - All')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - estore - All')
+        }
+
+        sh 'sleep 30'
     }
 }
 
