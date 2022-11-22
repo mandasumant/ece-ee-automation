@@ -278,8 +278,7 @@ public class BICTestBase {
     Util.sleep(3000);
     try {
       int count = 0;
-      while (driver.findElement(By.xpath(elementXPath))
-          .isDisplayed()) {
+      while (bicPage.waitForFieldPresent(elementXPath, 5000)) {
         count++;
         Util.sleep(1000);
         if (count > 20) {
@@ -672,7 +671,7 @@ public class BICTestBase {
   @Step("Populate payment details")
   public void populatePaymentDetails(String[] paymentCardDetails) {
 
-    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
+    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 10000);
 
     try {
       WebElement creditCardNumberFrame = bicPage
@@ -684,22 +683,22 @@ public class BICTestBase {
 
       driver.switchTo().frame(creditCardNumberFrame);
       Util.printInfo("Entering card number : " + paymentCardDetails[0]);
-      Util.sleep(2000);
+      Util.sleep(1000);
       bicPage.populateField("CardNumber", paymentCardDetails[0]);
       driver.switchTo().defaultContent();
-      Util.sleep(2000);
+      Util.sleep(1000);
 
       driver.switchTo().frame(expiryDateFrame);
       Util.printInfo(
           "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
-      Util.sleep(2000);
+      Util.sleep(1000);
       bicPage.populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
       driver.switchTo().defaultContent();
-      Util.sleep(2000);
+      Util.sleep(1000);
 
       driver.switchTo().frame(securityCodeFrame);
       Util.printInfo("Entering security code : " + paymentCardDetails[3]);
-      Util.sleep(2000);
+      Util.sleep(1000);
       bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
       driver.switchTo().defaultContent();
     } catch (MetadataException e) {
@@ -945,23 +944,22 @@ public class BICTestBase {
 
       driver.switchTo().window(parentWindow);
 
-      if(bicPage.checkIfElementExistsInPage("paypalCheckoutFrame", 10)) {
+      if (bicPage.checkIfElementExistsInPage("paypalCheckoutFrame", 10)) {
         bicPage.selectFrame("paypalCheckoutFrame");
         Util.printInfo("Switched to Frame and clicking on Paypal checkout close button...");
-       try {
-         if (bicPage.checkFieldExistence("paypalCheckOutClose")) {
-           bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
-         }
-       }catch (Exception e ){
-         Util.printInfo("Can not find Close button. Continuing");
-       }
+        try {
+          if (bicPage.checkFieldExistence("paypalCheckOutClose")) {
+            bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
+          }
+        } catch (Exception e) {
+          Util.printInfo("Can not find Close button. Continuing");
+        }
       }
       Util.sleep(5000);
 
-
       if (bicPage.checkIfElementExistsInPage("paypalPaymentConfirmation", 10)) {
         Util.printInfo(
-                "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
+            "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
         Util.printInfo("Paypal Payment is successfully added...");
       } else {
         AssertUtils.fail("Failed to add paypal payment profile...");
@@ -1223,7 +1221,8 @@ public class BICTestBase {
           AssertUtils.fail("Failed to click on Submit button.");
         } else {
           ScreenCapture.getInstance().captureFullScreenshot();
-          Util.printInfo("Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
+          Util.printInfo(
+              "Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
           return;
         }
       }
@@ -1243,59 +1242,23 @@ public class BICTestBase {
   @Step("Retrieving Order Number")
   public String getOrderNumber(HashMap<String, String> data) {
     String orderNumber = null;
-
-    try {
-      debugPageUrl("Step 1: Get Purchase Order number for Confirmation page");
-      orderNumber = driver.findElement(By.xpath(
-              "//*[@data-testid='checkout--order-confirmation--invoice-details--order-number']"))
-          .getText();
-    } catch (Exception e) {
-      debugPageUrl("Step 2: Check order number is Null");
-    }
-
-    if (orderNumber == null) {
-      try {
-        if (driver.findElement(By.xpath(
-                "//*[@class='checkout--order-confirmation--invoice-details--export-compliance--label wd-uppercase']"))
-            .isDisplayed()) {
-          Util.printWarning(
-              "Export compliance issue is present. Checking for order number in the Pelican response");
-          JavascriptExecutor executor = (JavascriptExecutor) driver;
-          String response = (String) executor
-              .executeScript("return sessionStorage.getItem('purchase')");
-          JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
-          JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
-          orderNumber = purchaseOrder.get("id").toString();
-          if (orderNumber != null && !orderNumber.isEmpty()) {
-            Util.printInfo("Yay! Found the Order Number. Proceeding to next steps...");
-          }
-        }
-      } catch (Exception e) {
-        Util.printMessage("Great! Export Compliance issue is not present.");
-      }
-    }
-
-    if (orderNumber == null) {
-      try {
-        orderNumber = driver.findElement(By.xpath(BICECEConstants.JP_ORDER_NUMBER)).getText();
-      } catch (Exception e) {
-        debugPageUrl("Step 3: Check order number is Null for JP");
-      }
-    }
-
-    if (orderNumber == null) {
-      debugPageUrl("Step 3a: Check order number is Null");
+    Util.sleep(5000);
+    if (!bicPage.checkFieldExistence("orderNumberLabel")) {
+      Util.printInfo("Could not find the Order Number Label. So, Waiting for Page load completely.");
       bicPage.waitForPageToLoad();
-      try {
-        orderNumber = driver.findElement(By.xpath(
-                "//*[@data-testid='checkout--order-confirmation--invoice-details--order-number']"))
-            .getText();
-      } catch (Exception e) {
-        debugPageUrl("Step 4: Check order number is Null");
-      }
     }
 
-    if(null == orderNumber) {
+    JavascriptExecutor executor = (JavascriptExecutor) driver;
+    String response = (String) executor
+        .executeScript("return sessionStorage.getItem('purchase')");
+    JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
+    JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
+    orderNumber = purchaseOrder.get("id").toString();
+    if (orderNumber != null && !orderNumber.isEmpty()) {
+      Util.printInfo("Yay! Found the Order Number. Proceeding to next steps...");
+    }
+
+    if (null == orderNumber) {
       ScreenCapture.getInstance().captureFullScreenshot();
       Util.printInfo("Taking screenshot, failed to find Order Number. Dont worry we have retries");
       return null;
@@ -1802,7 +1765,7 @@ public class BICTestBase {
   public void enterCustomerDetails(Map<String, String> address)
       throws MetadataException {
 
-    bicPage.waitForFieldPresent("companyNameField", 10000);
+    bicPage.waitForFieldPresent("companyNameField", 5000);
     bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
 
     if (bicPage.checkIfElementExistsInPage("selectCountryField", 10)) {
@@ -1831,7 +1794,6 @@ public class BICTestBase {
     Util.sleep(2000);
 
     if (bicPage.checkIfElementExistsInPage("postalCodeField", 10)) {
-      bicPage.waitForFieldPresent("postalCodeField", 5000);
       bicPage.populateField("postalCodeField", address.get(BICECEConstants.ZIPCODE));
     }
     Util.sleep(2000);
@@ -1840,7 +1802,7 @@ public class BICTestBase {
 
     populateTaxIdForFlex();
 
-    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
       waitForLoadingSpinnerToComplete("loadingSpinner");
@@ -2161,7 +2123,6 @@ public class BICTestBase {
       Util.sleep(5000);
       setStorageData();
       Util.sleep(5000);
-
       bicPage.waitForFieldPresent("freeTrialBusiness", 2000);
       bicPage.clickUsingLowLevelActions("freeTrialBusiness");
 
