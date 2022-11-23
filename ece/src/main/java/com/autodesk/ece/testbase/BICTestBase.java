@@ -1863,7 +1863,7 @@ public class BICTestBase {
 
     Util.sleep(5000);
 
-    boolean isCustomerDetailsComplete = bicPage.waitForFieldPresent("customerDetailsComplete", 10);
+    boolean isCustomerDetailsComplete = bicPage.checkIfElementExistsInPage("customerDetailsComplete", 20);
     if (isCustomerDetailsComplete) {
       Util.printInfo("Customer details address saved successfully!");
     } else {
