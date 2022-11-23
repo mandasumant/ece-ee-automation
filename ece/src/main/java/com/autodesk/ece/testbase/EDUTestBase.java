@@ -264,7 +264,7 @@ public class EDUTestBase {
       eduPage.click(EDU_GET_STARTED);
       eduPage.waitForField(EDU_SIGNUP_SUBMIT, true, 5000);
 
-      pickVSOS2Option("vsosCountry", "GB");
+      pickVSOS2OptionByLabel("vsosCountry", "United Kingdom");
 
       if (userType == EDUUserType.EDUCATOR || userType == EDUUserType.STUDENT) {
         pickVSOS2Option("vsosInstitutionType", "secondary");
@@ -617,6 +617,17 @@ public class EDUTestBase {
     }
     WebElement option = driver.findElement(
         By.xpath("//ul[@class=\"vsos-option-list\"]/li[@data-name=\"" + value + "\"]"));
+    option.click();
+  }
+
+  private void pickVSOS2OptionByLabel(String name, String label) {
+    try {
+      eduPage.clickUsingLowLevelActions(name);
+    } catch (MetadataException e) {
+      AssertUtils.fail("Could not click on role dropdown");
+    }
+    WebElement option = driver.findElement(
+        By.xpath("//ul[@id=\"vsos-typeahead-ul\"]/li[text()=\"" + label + "\"]"));
     option.click();
   }
 
