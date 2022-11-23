@@ -27,20 +27,15 @@
 
     <repositories>
         <repository>
-            <id>central</id>
-            <name>ArtifactorySantaClara-releases</name>
-            <url>https://art-bobcat.autodesk.com/artifactory/team-eis-qa-maven</url>
-        </repository>
-
-        <repository>
             <id>central-mvn</id>
             <name>Maven Repository Switchboard</name>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
 
         <repository>
-            <id>redshift</id>
-            <url>https://redshift-maven-repository.s3-website-us-east-1.amazonaws.com/release</url>
+            <id>central</id>
+            <name>ArtifactorySantaClara-releases</name>
+            <url>https://art-bobcat.autodesk.com/artifactory/team-eis-qa-maven</url>
         </repository>
 
         <repository>
@@ -48,6 +43,12 @@
             <name>ArtifactoryPlatformAutomation-releases</name>
             <url>https://art-bobcat.autodesk.com/artifactory/team-dcle-platform-automation-release
             </url>
+        </repository>
+
+        <repository>
+            <id>splunk-artifactory</id>
+            <name>Splunk Releases</name>
+            <url>https://splunk.jfrog.io/splunk/ext-releases-local</url>
         </repository>
     </repositories>
 
