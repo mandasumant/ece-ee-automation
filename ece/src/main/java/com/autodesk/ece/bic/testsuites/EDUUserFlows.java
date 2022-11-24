@@ -109,7 +109,6 @@ public class EDUUserFlows extends ECETestBase {
 
     // Create new user with IT Admin role
     results.putAll(edutb.registerUser2(userType));
-    edutb.verifyUser(results.get(BICConstants.oxid));
 
     // Accept VSOS terms
     edutb.acceptVSOSTerms2(results, userType);

@@ -1,6 +1,5 @@
 package com.autodesk.ece.testbase;
 
-import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
@@ -182,19 +181,6 @@ public class EDUTestBase {
     results.put(BICConstants.oxid, oxygenId);
 
     return results;
-  }
-
-  /**
-   * Mark a user as an approved education user in the EDU database
-   *
-   * @param oxygenId - Oxygen ID of the user to approve
-   */
-  @Step("Mark user as approved" + GlobalConstants.TAG_TESTINGHUB)
-  public void verifyUser(String oxygenId) {
-    String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
-    given().auth().basic(testData.get("eduAEMUser"),
-            ProtectedConfigFile.decrypt(testData.get("eduAEMPassword"))).when()
-        .get(baseUrl);
   }
 
   /**
