@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -1074,8 +1075,8 @@ public class MOETestBase {
           .split("@");
 
       bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
-      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
+      Util.printInfo("Saving payment profile.");
       moePage.click("savePaymentProfile");
       bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
@@ -1430,6 +1431,13 @@ public class MOETestBase {
       if (StringUtils.isNotEmpty(plc)) {
         Util.printInfo("Associating Products to Opty: " + plc);
 
+        Dimension defaultDimension = driver.manage().window().getSize();
+        Util.printInfo("Default dimension: " + defaultDimension);
+
+        Dimension newDimension = new Dimension(1152, 864);
+        driver.manage().window().setSize(newDimension);
+        Util.printInfo("New dimension: " + newDimension);
+
         moePage.checkIfElementExistsInPage("manageProducts", 30);
         moePage.click("manageProducts");
         Util.sleep(10000);
@@ -1443,6 +1451,7 @@ public class MOETestBase {
         moePage.clickUsingLowLevelActions("productSearchButton");
         bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
 
+        Util.printInfo("Open product found.");
         WebElement openProductFound = moePage.getMultipleWebElementsfromField("openProductFound").get(0);
         moePage.waitForElementVisible(openProductFound, 20);
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -1507,6 +1516,9 @@ public class MOETestBase {
 
         moePage.clickUsingLowLevelActions("close");
         Util.printInfo("Clicked on Close");
+
+        driver.manage().window().setSize(defaultDimension);
+        Util.printInfo("Default dimension: " + defaultDimension);
 
         if (moePage.checkIfElementExistsInPage("subFrameError", 15)) {
           Util.printInfo("Failed to go back to opty view page. Manually navigating to it.");

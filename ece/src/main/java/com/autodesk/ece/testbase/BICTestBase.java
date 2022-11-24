@@ -148,6 +148,7 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("createNewUserGUAC", 30000);
       bicPage.clickUsingLowLevelActions("createNewUserGUAC");
       bicPage.waitForFieldPresent(BICECEConstants.BIC_FN, 30000);
+      bicPage.clickUsingLowLevelActions(BICECEConstants.BIC_FN);
       bicPage.populateField(BICECEConstants.BIC_FN, names.firstName);
       bicPage.waitForFieldPresent("bic_LN", 30000);
       bicPage.populateField("bic_LN", names.lastName);
@@ -2500,6 +2501,16 @@ public class BICTestBase {
     }
   }
 
+  private void scrollToTopOfThePage() {
+    JavascriptExecutor js = ((JavascriptExecutor) driver);
+    js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+
+    Actions at = new Actions(driver);
+    at.sendKeys(Keys.PAGE_UP).build().perform();
+    at.sendKeys(Keys.PAGE_UP).build().perform();
+    at.sendKeys(Keys.PAGE_UP).build().perform();
+  }
+
   public static class Names {
 
     public final String firstName;
@@ -2516,15 +2527,5 @@ public class BICTestBase {
         put(BICECEConstants.LASTNAME, lastName);
       }};
     }
-  }
-
-  private void scrollToTopOfThePage() {
-    JavascriptExecutor js = ((JavascriptExecutor) driver);
-    js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
-
-    Actions at = new Actions(driver);
-    at.sendKeys(Keys.PAGE_UP).build().perform();
-    at.sendKeys(Keys.PAGE_UP).build().perform();
-    at.sendKeys(Keys.PAGE_UP).build().perform();
   }
 }
