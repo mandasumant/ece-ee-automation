@@ -254,41 +254,6 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("Click on All Products & Services Link" + GlobalConstants.TAG_TESTINGHUB)
-  public void clickALLPSLink() {
-    driver.manage().window().maximize();
-
-    try {
-      openPortalURL(accountsPortalProductsServicesUrl);
-      Util.sleep(5000);
-
-      checkEmailVerificationPopupAndClick();
-
-      portalPage.waitForFieldPresent("portalPSSideNav", 60000);
-
-      WebElement getSideNav = driver.findElement(
-          By.xpath(portalPage.getFirstFieldLocator("portalSideNavMobile")));
-
-      if (getSideNav.isDisplayed()) {
-        Util.printInfo("Mobile nav is visible. Setting screen resolution.");
-        driver.manage().window().setSize(new Dimension(1280, 720));
-        Util.sleep(2000);
-      } else {
-        Util.printInfo("Mobile nav not visible.");
-      }
-
-      Util.printInfo("Taking a screenshot.");
-      ScreenCapture.getInstance().captureFullScreenshot();
-
-      AssertUtils.assertEquals(
-          driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(), true,
-          "All products and services link is missing");
-    } catch (Exception e) {
-      e.printStackTrace();
-      CustomSoftAssert.s_assert.fail("Unable to click on 'All Products and Services' link.");
-    }
-  }
-
   /**
    * Navigate to the "Upcoming Payments" section of portal
    */
@@ -335,7 +300,6 @@ public class PortalTestBase {
     }
 
     try {
-      clickALLPSLink();
       status = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
     } catch (Exception e) {
       e.printStackTrace();
@@ -606,7 +570,6 @@ public class PortalTestBase {
     }
 
     try {
-      clickALLPSLink();
       JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
       navigateToSubscriptionRow();
       try {
