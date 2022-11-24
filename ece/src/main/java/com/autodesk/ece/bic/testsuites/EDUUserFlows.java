@@ -56,6 +56,8 @@ public class EDUUserFlows extends ECETestBase {
 
     updateTestingHub(results);
 
+    edutb.dismissSuccessPopup();
+
     if (testProductKey.equals(FUSION_360_KEY)) {
       // Download Fusion 360
       edutb.downloadF360Product();

@@ -340,10 +340,10 @@ public class EDUTestBase {
   }
 
   @Step("Dismiss registration success message" + GlobalConstants.TAG_TESTINGHUB)
-  private void dismissSuccessPopup() {
+  public void dismissSuccessPopup() {
     try {
       eduPage.waitForField("eduSignSuccess", true, 5000);
-      if (eduPage.checkIfElementExistsInPage("eduSignSuccess", 1000)) {
+      if (eduPage.checkIfElementExistsInPage("eduSignSuccess", 10)) {
         eduPage.click("eduSignSuccess");
       }
     } catch (Exception e) {
