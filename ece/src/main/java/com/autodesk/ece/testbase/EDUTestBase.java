@@ -266,7 +266,7 @@ public class EDUTestBase {
 
       pickVSOS2OptionByLabel("vsosCountry", "United Kingdom");
 
-      if (userType == EDUUserType.EDUCATOR || userType == EDUUserType.STUDENT) {
+      if (userType == EDUUserType.EDUCATOR || userType == EDUUserType.STUDENT || userType == EDUUserType.ADMIN) {
         pickVSOS2Option("vsosInstitutionType", "secondary");
         try {
           eduPage.clickUsingLowLevelActions("vsosInstitutionName");
@@ -402,7 +402,7 @@ public class EDUTestBase {
   public void downloadProduct(String websdk) {
     // Activate the product
     WebElement getProductButton = driver.findElement(
-        By.xpath("//a[@websdk-plc=\"" + websdk + "\"]"));
+        By.xpath("//*[@style=\"display: flex;\"]/a[@websdk-plc=\"" + websdk + "\"]"));
     AssertUtils.assertTrue(getProductButton.isDisplayed() && getProductButton.isEnabled(),
         "Ensuring that Get Product button is interactable");
     getProductButton.click();
@@ -438,43 +438,12 @@ public class EDUTestBase {
     // Wait a bit for downloads to start
     Util.sleep(1000);
 
-    Path downloadPath = Paths.get(GlobalConstants.DEFAULT_DOWNLOAD_FOLDER_PATH);
-    File downloadDirectory = downloadPath.toFile();
-    try {
-      int attempts = 0;
-      File[] downloadingFiles = null;
-      while (attempts < 5) {
-        downloadingFiles = downloadDirectory.listFiles();
-        if (downloadingFiles != null && downloadingFiles.length > 0) {
-          break;
-        }
-        Util.printInfo("Polling download directory for files, attempt " + (attempts + 1));
-        attempts++;
-        Util.sleep(2500);
-        downloadDirectory = downloadPath.toFile();
-      }
-      AssertUtils.assertTrue(downloadingFiles != null && downloadingFiles.length > 0,
-          "Ensure there are downloading files");
-
-      Util.printInfo("Downloading files:");
-      for (int i = 0; i < Math.min(downloadingFiles.length, 10); i++) {
-        Util.printInfo("   " + downloadingFiles[i].getName());
-      }
-      if (downloadingFiles.length > 10) {
-        Util.printInfo("   ... and " + (downloadingFiles.length - 10) + " more file(s)");
-      }
-    } catch (NullPointerException exception) {
-      AssertUtils.fail("Failed to locate download directory");
-    }
+    validateDownload();
 
     WebElement overviewPageHeader = driver.findElement(
         By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
     AssertUtils.assertTrue(
         overviewPageHeader.getText().contains("Hi "));
-
-    WebElement cardsGrid =
-        driver.findElement(By.xpath(eduPage.getFirstFieldLocator("eduCardsGrid")));
-    AssertUtils.assertTrue(cardsGrid.getText().contains("Get product"));
   }
 
   /**
@@ -527,31 +496,18 @@ public class EDUTestBase {
     eduPage.clickUsingLowLevelActions("assignUsersButton");
   }
 
-  /**
-   * Get a license for Autocad
-   */
-  @Step("Verify Seibel Download" + GlobalConstants.TAG_TESTINGHUB)
-  public void verifySeibelDownload() {
-    try {
-      eduPage.clickUsingLowLevelActions("eduAutocadGet");
-    } catch (MetadataException e) {
-      e.printStackTrace();
-    }
-    eduPage.waitForField("eduLicenseType", true, 5000);
+  public void downloadF360LabPackage() {
+    // Activate the product
+    WebElement getProductButton = driver.findElement(
+        By.xpath("//*[@style=\"display: flex;\"]/a[@websdk-plc=\"websdk-fusion-360\"]"));
+    AssertUtils.assertTrue(getProductButton.isDisplayed() && getProductButton.isEnabled(),
+        "Ensuring that Get Product button is interactable");
+    getProductButton.click();
+    Util.sleep(2500);
 
-    // Configure the product for download
-    pickSelectOption("eduLicenseType", "network");
-    pickSelectOption("eduChooseVersion", "autocad-2022");
-    pickSelectOption("eduOperatingSystem", "Win64");
-    pickSelectOption("eduSeibelDownloadLanguage", "en-US");
+    eduPage.click("eduDownloadF360Lab");
 
-    try {
-      AssertUtils.assertTrue(!eduPage.checkIfElementExistsInPage("eduAdminError", 10),
-          "Assert that there are no errors on the admin download page");
-    } catch (MetadataException e) {
-      e.printStackTrace();
-    }
-
+    validateDownload();
   }
 
   /**
@@ -700,6 +656,37 @@ public class EDUTestBase {
           By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
       AssertUtils.assertTrue(
           overviewHomeHeader.getText().contains("Hi " + results.get("firstName")));
+    }
+  }
+
+  private void validateDownload() {
+    Path downloadPath = Paths.get(GlobalConstants.DEFAULT_DOWNLOAD_FOLDER_PATH);
+    File downloadDirectory = downloadPath.toFile();
+    try {
+      int attempts = 0;
+      File[] downloadingFiles = null;
+      while (attempts < 5) {
+        downloadingFiles = downloadDirectory.listFiles();
+        if (downloadingFiles != null && downloadingFiles.length > 0) {
+          break;
+        }
+        Util.printInfo("Polling download directory for files, attempt " + (attempts + 1));
+        attempts++;
+        Util.sleep(2500);
+        downloadDirectory = downloadPath.toFile();
+      }
+      AssertUtils.assertTrue(downloadingFiles != null && downloadingFiles.length > 0,
+          "Ensure there are downloading files");
+
+      Util.printInfo("Downloading files:");
+      for (int i = 0; i < Math.min(downloadingFiles.length, 10); i++) {
+        Util.printInfo("   " + downloadingFiles[i].getName());
+      }
+      if (downloadingFiles.length > 10) {
+        Util.printInfo("   ... and " + (downloadingFiles.length - 10) + " more file(s)");
+      }
+    } catch (NullPointerException exception) {
+      AssertUtils.fail("Failed to locate download directory");
     }
   }
 
