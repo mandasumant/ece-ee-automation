@@ -432,6 +432,48 @@ public class EDUTestBase {
         overviewPageHeader.getText().contains("Hi "));
   }
 
+  @Step("Activate an admin 3ds Max license " + GlobalConstants.TAG_TESTINGHUB)
+  public void activateAdmin3dsLicense() {
+    // Activate the product
+    WebElement getProductButton = driver.findElement(
+        By.xpath("//*[@style=\"display: flex;\"]/a[@websdk-plc=\"websdk-3ds-max\"]"));
+    AssertUtils.assertTrue(getProductButton.isDisplayed() && getProductButton.isEnabled(),
+        "Ensuring that Get Product button is interactable");
+    getProductButton.click();
+    Util.sleep(2500);
+
+    // Select 3dsMax 2021
+    eduPage.click("3dsMaxVersionButton");
+    eduPage.click("3dsMax2021");
+
+    // Click on the download button
+    WebElement downloadButton = driver.findElement(By.id("websdk-3ds-max"))
+        .findElement(By.cssSelector(".downloadWidget button.websdkButton"));
+    AssertUtils.assertTrue(downloadButton.isDisplayed() && downloadButton.isEnabled(),
+        "Ensuring that Download button is interactable");
+    downloadButton.click();
+
+    // Wait a bit for downloads to start
+    Util.sleep(1000);
+
+    validateDownload();
+  }
+
+  @Step("Validate admin license " + GlobalConstants.TAG_TESTINGHUB)
+  public void assertAdminLicense() {
+    try {
+      Util.sleep(5000);
+      eduPage.waitForFieldVisible("adminLicenseSerial", 5000);
+      String serialNumber = eduPage.getMultipleTextValuesfromField("adminLicenseSerial")[0];
+      String productKey = eduPage.getMultipleTextValuesfromField("adminProductKey")[0];
+
+      AssertUtils.assertFalse(serialNumber.trim().isEmpty(), "Serial number should be valid");
+      AssertUtils.assertFalse(productKey.trim().isEmpty(), "Product key should be valid");
+    } catch (MetadataException e) {
+      AssertUtils.fail("Failed to validate admin license");
+    }
+  }
+
   /**
    * Activate an educator subscription for a product and open the subscription in Portal. If the activation fails, it
    * will retry up to 5 times
