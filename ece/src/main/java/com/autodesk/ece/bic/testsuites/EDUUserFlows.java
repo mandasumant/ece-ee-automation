@@ -118,7 +118,7 @@ public class EDUUserFlows extends ECETestBase {
       edutb.downloadF360LabPackage();
     } else if (testProductKey.equals("3DSMAX")) {
       edutb.activateAdmin3dsLicense();
-      edutb.assertAdminLicense();
+      updateTestingHub(edutb.assertAdminLicense());
     } else {
       edutb.downloadProduct(testDataForProduct.get("websdkplc"));
     }

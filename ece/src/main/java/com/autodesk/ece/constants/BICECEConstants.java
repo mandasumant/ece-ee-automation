@@ -107,6 +107,8 @@ public class BICECEConstants extends BICConstants {
   public static final String EDU_ROLE = "eduRole";
   public static final String EDU_SUBMIT = "eduSubmit";
   public static final String EDU_PASSWORD = "eduAccountPassword";
+  public static final String EDU_SERIAL_NUMBER = "eduSerialNumber";
+  public static final String EDU_PRODUCT_KEY = "eduProductKey";
   public static final String MOE_LOGIN_PASSWORD_FIELD = "moeLoginPasswordField";
   public static final String GET_POREPONSE_SUBSCRIPTION_ID = "getPOReponse_subscriptionId";
   public static final String GETPRICEDETAILS_X_E2_PARTNER_ID = "getPelicanPartnerId";

@@ -460,7 +460,8 @@ public class EDUTestBase {
   }
 
   @Step("Validate admin license " + GlobalConstants.TAG_TESTINGHUB)
-  public void assertAdminLicense() {
+  public HashMap<String, String> assertAdminLicense() {
+    HashMap<String, String> results = new HashMap<>();
     try {
       Util.sleep(5000);
       eduPage.waitForFieldVisible("adminLicenseSerial", 5000);
@@ -469,9 +470,12 @@ public class EDUTestBase {
 
       AssertUtils.assertFalse(serialNumber.trim().isEmpty(), "Serial number should be valid");
       AssertUtils.assertFalse(productKey.trim().isEmpty(), "Product key should be valid");
+      results.put(BICECEConstants.EDU_SERIAL_NUMBER, serialNumber);
+      results.put(BICECEConstants.EDU_PRODUCT_KEY, productKey);
     } catch (MetadataException e) {
       AssertUtils.fail("Failed to validate admin license");
     }
+    return results;
   }
 
   /**
