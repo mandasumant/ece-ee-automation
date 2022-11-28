@@ -1453,7 +1453,7 @@ public class MOETestBase {
 
         Util.printInfo("Open product found.");
         WebElement openProductFound = moePage.getMultipleWebElementsfromField("openProductFound").get(0);
-        moePage.waitForElementVisible(openProductFound, 20);
+        moePage.waitForElementVisible(openProductFound, 60);
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", openProductFound);
         bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
@@ -1462,7 +1462,7 @@ public class MOETestBase {
         Util.printInfo("Select Flex checkbox");
         WebElement checkbox = driver.findElement(
             By.xpath(moePage.getFirstFieldLocator("checkbox")));
-        moePage.waitForElementVisible(checkbox, 30);
+        moePage.waitForElementVisible(checkbox, 60);
         checkbox.click();
         Util.sleep(2000);
 
