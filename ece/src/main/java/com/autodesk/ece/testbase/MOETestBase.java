@@ -1457,15 +1457,12 @@ public class MOETestBase {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", openProductFound);
         bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
-
-        Util.printInfo("Scroll to offering checkbox");
-        WebElement checkbox = driver.findElement(
-            By.xpath(moePage.getFirstFieldLocator("checkbox")));
-        js.executeScript("arguments[0].scrollIntoView(true);", checkbox);
-        Util.sleep(2000);
+        Util.sleep(5000);
 
         Util.printInfo("Select Flex checkbox");
-        moePage.waitForElementVisible(checkbox, 10);
+        WebElement checkbox = driver.findElement(
+            By.xpath(moePage.getFirstFieldLocator("checkbox")));
+        moePage.waitForElementVisible(checkbox, 30);
         checkbox.click();
         Util.sleep(2000);
 

@@ -282,7 +282,7 @@ public class BICTestBase {
       while (bicPage.waitForFieldPresent(elementXPath, 5000)) {
         count++;
         Util.sleep(1000);
-        if (count > 20) {
+        if (count > 25) {
           break;
         }
         Util.printInfo("Loading spinner visible: " + count + " second(s)");
