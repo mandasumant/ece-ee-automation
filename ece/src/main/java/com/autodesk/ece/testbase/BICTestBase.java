@@ -2137,7 +2137,6 @@ public class BICTestBase {
       ScreenCapture.getInstance().captureFullScreenshot();
 
       Util.sleep(3000);
-      scrollToTopOfThePage();
 
       bicPage.waitForFieldPresent("objectiveOfTrial", 2000);
       bicPage.clickUsingLowLevelActions("objectiveOfTrial");
