@@ -56,6 +56,8 @@ public class EDUUserFlows extends ECETestBase {
 
     updateTestingHub(results);
 
+    edutb.dismissSuccessPopup();
+
     if (testProductKey.equals(FUSION_360_KEY)) {
       // Download Fusion 360
       edutb.downloadF360Product();
@@ -103,15 +105,23 @@ public class EDUUserFlows extends ECETestBase {
   public void validateAdminUser() {
     HashMap<String, String> results = new HashMap<>();
     EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
+    EDUUserType userType = EDUUserType.ADMIN;
+
     // Create new user with IT Admin role
-    results.putAll(edutb.registerUser(EDUUserType.ADMIN));
-    edutb.verifyUser(results.get(BICConstants.oxid));
+    results.putAll(edutb.registerUser2(userType));
 
     // Accept VSOS terms
-    edutb.signUpUser(results);
+    edutb.acceptVSOSTerms2(results, userType);
 
-    // Configure a license to download
-    edutb.verifySeibelDownload();
+    if (testProductKey.equals(FUSION_360_KEY)) {
+      // Download Fusion 360
+      edutb.downloadF360LabPackage();
+    } else if (testProductKey.equals("3DSMAX")) {
+      edutb.activateAdmin3dsLicense();
+      updateTestingHub(edutb.assertAdminLicense());
+    } else {
+      edutb.downloadProduct(testDataForProduct.get("websdkplc"));
+    }
 
     HashMap<String, String> testResults = new HashMap<>();
     try {

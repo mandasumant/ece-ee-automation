@@ -12,24 +12,23 @@ import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.restassured.path.json.JsonPath;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.util.Strings;
 
-
 public class MOEOrderFlows extends ECETestBase {
 
   private static final String defaultLocale = "en_US";
   private static final String defaultTaxOption = "undefined";
   private static final String defaultPriceId = "24038";
+  public WebDriver driver;
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
@@ -261,7 +260,7 @@ public class MOEOrderFlows extends ECETestBase {
   @Test(groups = {
       "bic-basicFlowDtc-moe"}, description = "Customer submits an order via Copy cart link generated on DTC page")
   public void validateMoeDtcFlow()
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     HashMap<String, String> testResults = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
 
@@ -446,7 +445,7 @@ public class MOEOrderFlows extends ECETestBase {
   @Test(groups = {
       "bic-basicFlowOdmCustomer-moe"}, description = "Validation of OptyId creation with purchase flow from MOE ODM - Customer")
   public void validateMoeOdmOpportunityFlowCustomer()
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     HashMap<String, String> testResults = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
 
@@ -516,7 +515,7 @@ public class MOEOrderFlows extends ECETestBase {
   @Test(groups = {
       "bic-basicFlowOdmDtcCustomer-moe"}, description = "Validation of purchase flow from MOE ODM DTC")
   public void validateMoeOdmDtcFlowCustomer()
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     HashMap<String, String> testResults = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
 
@@ -574,7 +573,7 @@ public class MOEOrderFlows extends ECETestBase {
   @Test(groups = {
       "bic-returningUserOdmDtc-moe"}, description = "Validation of returning user purchase flow for MOE ODM DTC")
   public void validateMoeOdmDtcFlowReturningCustomer()
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     HashMap<String, String> testResults = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
 

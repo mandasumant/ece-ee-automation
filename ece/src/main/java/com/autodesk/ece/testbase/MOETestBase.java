@@ -12,11 +12,6 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -26,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -243,7 +239,7 @@ public class MOETestBase {
   @SuppressWarnings({"static-access", "unused"})
   @Step("Place order via Copy cart link generated on DTC page" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBicOrderMoeDTC(LinkedHashMap<String, String> data)
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     // TODO: Start from the Salesforce's LC Home page where there's a link for 'Direct to cart'.
 
     HashMap<String, String> results = new HashMap<>();
@@ -435,8 +431,11 @@ public class MOETestBase {
 
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
 
+    WebElement getMoeReLoginLink = driver.findElement(
+        By.xpath(moePage.getFirstFieldLocator("moeReLoginLink")));
+
     Util.printInfo("Re-Login");
-    if (moePage.isFieldVisible("moeReLoginLink")) {
+    if (getMoeReLoginLink.isDisplayed()) {
       try {
         moePage.clickUsingLowLevelActions("moeReLoginLink");
       } catch (Exception e) {
@@ -456,10 +455,10 @@ public class MOETestBase {
       moePage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
       moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, CommonConstants.serviceUserPw);
       moePage.click("moeLoginButton");
-      moePage.waitForPageToLoad();
     } else {
       bicTestBase.loginToOxygen(CommonConstants.serviceUser, CommonConstants.serviceUserPw);
     }
+    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     Util.printInfo("Successfully logged into MOE");
   }
 
@@ -787,13 +786,20 @@ public class MOETestBase {
   }
 
   @Step("Click on Copy Cart link and return the value from clipboard.")
-  private String copyCartLinkFromClipboard()
-      throws MetadataException, IOException, UnsupportedFlavorException {
+  public String copyCartLinkFromClipboard() throws Exception {
+    Util.printInfo("Clicking on 'Copy cart link'.");
+    moePage.checkIfElementExistsInPage("moeCopyCartLink", 10);
     moePage.clickUsingLowLevelActions("moeCopyCartLink");
-    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    String copyCartLink = (String) clipboard.getData(DataFlavor.stringFlavor);
-    Util.printInfo("Copied URL is " + copyCartLink);
-    return copyCartLink;
+    Util.sleep(2000);
+
+    Util.printInfo("Executing script to read clipboard contents.");
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    Object copiedCartLinkValue = js.executeScript(
+        "window.cb = navigator.clipboard.readText();return window.cb;");
+    Util.printInfo("Clipboard contents: " + copiedCartLinkValue);
+    Util.sleep(2000);
+
+    return copiedCartLinkValue.toString();
   }
 
   @Step("Login to Checkout page as a customer.")
@@ -1000,10 +1006,11 @@ public class MOETestBase {
 
   @Step("Place order on MOE ODM page" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBicOrderMoeOdmWithOptyDtc(LinkedHashMap<String, String> data)
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
-    String guacMoeOdmResourceURL = data.get("guacMoeOdmResourceURL") + data.get("guacMoeOptyId");
+    String guacMoeOdmResourceURL =
+        data.get("guacMoeOdmResourceURL") + data.get("guacMoeOptyId");
     String emailID = data.get("sfdcContactEmail");
     String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
     Util.printInfo("THE REGION " + data.get(BICECEConstants.LOCALE));
@@ -1020,7 +1027,7 @@ public class MOETestBase {
   @Step("Place order via Copy cart link generated on MOE ODM page" + GlobalConstants.TAG_TESTINGHUB)
   private HashMap<String, String> getBicOrderMoeOdmWithOptyDtc(LinkedHashMap<String, String> data, String emailID,
       String guacBaseURL, String guacMoeOdmResourceURL, String locale, String password)
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     HashMap<String, String> results = new HashMap<>();
     locale = locale.replace("_", "-");
     String constructGuacMoeOdmURL = guacBaseURL + locale + "/" + guacMoeOdmResourceURL;
@@ -1043,12 +1050,12 @@ public class MOETestBase {
 
     loginToMoe();
 
-    Util.sleep(5000);
-
-    Util.printInfo("Clicking on cta: Continue");
-    moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 30);
-    moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
+    if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
+      Util.printInfo("Customer details continue button found. Clicking on it.");
+      moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
+      moePage.waitForElementToDisappear("moeCustomerDetailsContinue", 10);
+      Util.printInfo("Customer details continue button no longer visible.");
+    }
 
     BICTestBase.bicPage.executeJavascript("window.scrollBy(0,800);");
 
@@ -1068,8 +1075,8 @@ public class MOETestBase {
           .split("@");
 
       bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
-      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
+      Util.printInfo("Saving payment profile.");
       moePage.click("savePaymentProfile");
       bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
@@ -1123,7 +1130,7 @@ public class MOETestBase {
 
   @Step("Place order via Copy cart link generated on MOE ODM DTC page" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBicOrderMoeOdmDtc(LinkedHashMap<String, String> data)
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     HashMap<String, String> results = new HashMap<>();
     Map<String, String> address = bicTestBase.getBillingAddress(data);
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
@@ -1207,7 +1214,7 @@ public class MOETestBase {
 
   @Step("Create BIC Existing User Order Creation via O2P Cart " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createBicOrderForReturningUserMoeOdmDtc(LinkedHashMap<String, String> data)
-      throws MetadataException, IOException, UnsupportedFlavorException {
+      throws Exception {
     HashMap<String, String> results = new HashMap<>();
     Map<String, String> address = bicTestBase.getBillingAddress(data);
     String emailID = data.get(BICConstants.emailid);
@@ -1422,41 +1429,42 @@ public class MOETestBase {
 
     try {
       if (StringUtils.isNotEmpty(plc)) {
-
         Util.printInfo("Associating Products to Opty: " + plc);
+
+        Dimension defaultDimension = driver.manage().window().getSize();
+        Util.printInfo("Default dimension: " + defaultDimension);
+
+        Dimension newDimension = new Dimension(1152, 864);
+        driver.manage().window().setSize(newDimension);
+        Util.printInfo("New dimension: " + newDimension);
 
         moePage.checkIfElementExistsInPage("manageProducts", 30);
         moePage.click("manageProducts");
         Util.sleep(10000);
 
+        Util.printInfo("Switch iFrame to click on Add Products Tab");
         switchToFrame("//li[@title='Add Products']/a");
-
         Util.sleep(5000);
-
-        Util.printInfo("Switched iFrame to click on Add Products Tab");
 
         moePage.populateField("productSearch", plc);
-        Util.sleep(5000);
 
         moePage.clickUsingLowLevelActions("productSearchButton");
-        moePage.waitForPageToLoad();
+        bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(90));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-            By.xpath(moePage.getFirstFieldLocator("openProductFound"))));
-        moePage.clickUsingLowLevelActions("openProductFound");
-        moePage.waitForPageToLoad();
-
-        Util.printInfo("Page scroll down");
-        WebElement scrollToCheckbox = moePage.getMultipleWebElementsfromField("checkbox").get(0);
+        Util.printInfo("Open product found.");
+        WebElement openProductFound = moePage.getMultipleWebElementsfromField("openProductFound").get(0);
+        moePage.waitForElementVisible(openProductFound, 60);
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].scrollIntoView(true);", scrollToCheckbox);
-        Util.sleep(2000);
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-            By.xpath(moePage.getFirstFieldLocator("checkbox"))));
-        moePage.click("checkbox");
+        js.executeScript("arguments[0].click();", openProductFound);
+        bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
         Util.sleep(5000);
+
+        Util.printInfo("Select Flex checkbox");
+        WebElement checkbox = driver.findElement(
+            By.xpath(moePage.getFirstFieldLocator("checkbox")));
+        moePage.waitForElementVisible(checkbox, 60);
+        checkbox.click();
+        Util.sleep(2000);
 
         try {
           Boolean isAlertModalVisible = true;
@@ -1505,6 +1513,9 @@ public class MOETestBase {
 
         moePage.clickUsingLowLevelActions("close");
         Util.printInfo("Clicked on Close");
+
+        driver.manage().window().setSize(defaultDimension);
+        Util.printInfo("Default dimension: " + defaultDimension);
 
         if (moePage.checkIfElementExistsInPage("subFrameError", 15)) {
           Util.printInfo("Failed to go back to opty view page. Manually navigating to it.");

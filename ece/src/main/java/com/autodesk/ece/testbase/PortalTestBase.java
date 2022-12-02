@@ -254,41 +254,6 @@ public class PortalTestBase {
     return status;
   }
 
-  @Step("Click on All Products & Services Link" + GlobalConstants.TAG_TESTINGHUB)
-  public void clickALLPSLink() {
-    driver.manage().window().maximize();
-
-    try {
-      openPortalURL(accountsPortalProductsServicesUrl);
-      Util.sleep(5000);
-
-      checkEmailVerificationPopupAndClick();
-
-      portalPage.waitForFieldPresent("portalPSSideNav", 60000);
-
-      WebElement getSideNav = driver.findElement(
-          By.xpath(portalPage.getFirstFieldLocator("portalSideNavMobile")));
-
-      if (getSideNav.isDisplayed()) {
-        Util.printInfo("Mobile nav is visible. Setting screen resolution.");
-        driver.manage().window().setSize(new Dimension(1280, 720));
-        Util.sleep(2000);
-      } else {
-        Util.printInfo("Mobile nav not visible.");
-      }
-
-      Util.printInfo("Taking a screenshot.");
-      ScreenCapture.getInstance().captureFullScreenshot();
-
-      AssertUtils.assertEquals(
-          driver.findElement(By.xpath("(//span[@class='PRODUCTS_AND_SERVICES']//a)[1]//span")).isDisplayed(), true,
-          "All products and services link is missing");
-    } catch (Exception e) {
-      e.printStackTrace();
-      CustomSoftAssert.s_assert.fail("Unable to click on 'All Products and Services' link.");
-    }
-  }
-
   /**
    * Navigate to the "Upcoming Payments" section of portal
    */
@@ -335,7 +300,6 @@ public class PortalTestBase {
     }
 
     try {
-      clickALLPSLink();
       status = isSubscriptionInPortal(subscriptionID, portalUserName, portalPassword);
     } catch (Exception e) {
       e.printStackTrace();
@@ -606,7 +570,6 @@ public class PortalTestBase {
     }
 
     try {
-      clickALLPSLink();
       JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
       navigateToSubscriptionRow();
       try {
@@ -2134,6 +2097,59 @@ public class PortalTestBase {
   public void verifyInvoiceTotalAfterPayment(double invoiceTotalBeforePayment) throws Exception {
     double invoiceTotalAfterPayment = getInvoiceTotalAfterPayment("invoiceAmountAfterPayment");
     AssertUtils.assertEquals(invoiceTotalBeforePayment, invoiceTotalAfterPayment);
+  }
+
+  @Step("Select invoice and credit memo validations with out PO Number" + GlobalConstants.TAG_TESTINGHUB)
+  public double selectInvoiceAndValidateCreditMemoWithoutPONumber(Boolean shouldWaitForInvoice) throws Exception {
+    openPortalURL(accountPortalBillingInvoicesUrl);
+    if (shouldWaitForInvoice) {
+      waitForInvoicePageLoadToVisible();
+    } else {
+      portalPage.waitForFieldPresent("invoicePageTableTitle", 60000);
+    }
+    String invoiceNumber = "More than One Invoice involved";
+    double invoiceAmount = 0.00;
+    int invoiceCount = Integer.parseInt(portalPage.getValueFromGUI("invoicePageTableTitle").replaceAll("[^0-9]", ""));
+    if (invoiceCount > 1) {
+      selectAllInvoicesPayButton();
+    } else {
+      invoiceNumber = portalPage.getMultipleWebElementsfromField("invoiceNumbers").get(0).getText().replaceAll("[^0-9.]", "");
+      portalPage.clickUsingLowLevelActions("invoiceNumbers");
+      Util.sleep(5000);
+      List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
+      invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+      portalPage.click("invoicePagePay");
+    }
+
+    Util.sleep(10000);
+    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
+    double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
+    AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
+    double creditMemoAmount = 0.00;
+
+    if (portalPage.isFieldVisible("creditMemoTab")) {
+      portalPage.clickUsingLowLevelActions("creditMemoTab");
+      Util.sleep(2000);
+
+      portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
+      Util.sleep(5000);
+
+      creditMemoAmount = Double.parseDouble(
+              portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
+
+      portalPage.clickUsingLowLevelActions("continueButton");
+      Util.sleep(5000);
+
+      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout(
+              "totalPaymentCheckoutWithCreditMemo");
+      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+    } else {
+      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
+      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+    }
+
+    Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
+    return invoiceAmount;
   }
 
 }

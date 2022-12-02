@@ -1,6 +1,5 @@
 package com.autodesk.ece.testbase;
 
-import static io.restassured.RestAssured.given;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
@@ -185,19 +184,6 @@ public class EDUTestBase {
   }
 
   /**
-   * Mark a user as an approved education user in the EDU database
-   *
-   * @param oxygenId - Oxygen ID of the user to approve
-   */
-  @Step("Mark user as approved" + GlobalConstants.TAG_TESTINGHUB)
-  public void verifyUser(String oxygenId) {
-    String baseUrl = testData.get("eduVerificationEndpoint").replace("{oxygenId}", oxygenId);
-    given().auth().basic(testData.get("eduAEMUser"),
-            ProtectedConfigFile.decrypt(testData.get("eduAEMPassword"))).when()
-        .get(baseUrl);
-  }
-
-  /**
    * From the main education landing page with a logged in user, click through the flow to accept VSOS (student
    * verification) terms
    */
@@ -264,9 +250,9 @@ public class EDUTestBase {
       eduPage.click(EDU_GET_STARTED);
       eduPage.waitForField(EDU_SIGNUP_SUBMIT, true, 5000);
 
-      pickVSOS2Option("vsosCountry", "GB");
+      pickVSOS2OptionByLabel("vsosCountry", "United Kingdom");
 
-      if (userType == EDUUserType.EDUCATOR || userType == EDUUserType.STUDENT) {
+      if (userType == EDUUserType.EDUCATOR || userType == EDUUserType.STUDENT || userType == EDUUserType.ADMIN) {
         pickVSOS2Option("vsosInstitutionType", "secondary");
         try {
           eduPage.clickUsingLowLevelActions("vsosInstitutionName");
@@ -340,10 +326,10 @@ public class EDUTestBase {
   }
 
   @Step("Dismiss registration success message" + GlobalConstants.TAG_TESTINGHUB)
-  private void dismissSuccessPopup() {
+  public void dismissSuccessPopup() {
     try {
       eduPage.waitForField("eduSignSuccess", true, 5000);
-      if (eduPage.checkIfElementExistsInPage("eduSignSuccess", 1000)) {
+      if (eduPage.checkIfElementExistsInPage("eduSignSuccess", 10)) {
         eduPage.click("eduSignSuccess");
       }
     } catch (Exception e) {
@@ -402,7 +388,7 @@ public class EDUTestBase {
   public void downloadProduct(String websdk) {
     // Activate the product
     WebElement getProductButton = driver.findElement(
-        By.xpath("//a[@websdk-plc=\"" + websdk + "\"]"));
+        By.xpath("//*[@style=\"display: flex;\"]/a[@websdk-plc=\"" + websdk + "\"]"));
     AssertUtils.assertTrue(getProductButton.isDisplayed() && getProductButton.isEnabled(),
         "Ensuring that Get Product button is interactable");
     getProductButton.click();
@@ -438,43 +424,58 @@ public class EDUTestBase {
     // Wait a bit for downloads to start
     Util.sleep(1000);
 
-    Path downloadPath = Paths.get(GlobalConstants.DEFAULT_DOWNLOAD_FOLDER_PATH);
-    File downloadDirectory = downloadPath.toFile();
-    try {
-      int attempts = 0;
-      File[] downloadingFiles = null;
-      while (attempts < 5) {
-        downloadingFiles = downloadDirectory.listFiles();
-        if (downloadingFiles != null && downloadingFiles.length > 0) {
-          break;
-        }
-        Util.printInfo("Polling download directory for files, attempt " + (attempts + 1));
-        attempts++;
-        Util.sleep(2500);
-        downloadDirectory = downloadPath.toFile();
-      }
-      AssertUtils.assertTrue(downloadingFiles != null && downloadingFiles.length > 0,
-          "Ensure there are downloading files");
-
-      Util.printInfo("Downloading files:");
-      for (int i = 0; i < Math.min(downloadingFiles.length, 10); i++) {
-        Util.printInfo("   " + downloadingFiles[i].getName());
-      }
-      if (downloadingFiles.length > 10) {
-        Util.printInfo("   ... and " + (downloadingFiles.length - 10) + " more file(s)");
-      }
-    } catch (NullPointerException exception) {
-      AssertUtils.fail("Failed to locate download directory");
-    }
+    validateDownload();
 
     WebElement overviewPageHeader = driver.findElement(
         By.xpath(eduPage.getFirstFieldLocator("eduWelcomeHeader")));
     AssertUtils.assertTrue(
         overviewPageHeader.getText().contains("Hi "));
+  }
 
-    WebElement cardsGrid =
-        driver.findElement(By.xpath(eduPage.getFirstFieldLocator("eduCardsGrid")));
-    AssertUtils.assertTrue(cardsGrid.getText().contains("Get product"));
+  @Step("Activate an admin 3ds Max license " + GlobalConstants.TAG_TESTINGHUB)
+  public void activateAdmin3dsLicense() {
+    // Activate the product
+    WebElement getProductButton = driver.findElement(
+        By.xpath("//*[@style=\"display: flex;\"]/a[@websdk-plc=\"websdk-3ds-max\"]"));
+    AssertUtils.assertTrue(getProductButton.isDisplayed() && getProductButton.isEnabled(),
+        "Ensuring that Get Product button is interactable");
+    getProductButton.click();
+    Util.sleep(2500);
+
+    // Select 3dsMax 2021
+    eduPage.click("3dsMaxVersionButton");
+    eduPage.click("3dsMax2021");
+
+    // Click on the download button
+    WebElement downloadButton = driver.findElement(By.id("websdk-3ds-max"))
+        .findElement(By.cssSelector(".downloadWidget button.websdkButton"));
+    AssertUtils.assertTrue(downloadButton.isDisplayed() && downloadButton.isEnabled(),
+        "Ensuring that Download button is interactable");
+    downloadButton.click();
+
+    // Wait a bit for downloads to start
+    Util.sleep(1000);
+
+    validateDownload();
+  }
+
+  @Step("Validate admin license " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> assertAdminLicense() {
+    HashMap<String, String> results = new HashMap<>();
+    try {
+      Util.sleep(5000);
+      eduPage.waitForFieldVisible("adminLicenseSerial", 5000);
+      String serialNumber = eduPage.getMultipleTextValuesfromField("adminLicenseSerial")[0];
+      String productKey = eduPage.getMultipleTextValuesfromField("adminProductKey")[0];
+
+      AssertUtils.assertFalse(serialNumber.trim().isEmpty(), "Serial number should be valid");
+      AssertUtils.assertFalse(productKey.trim().isEmpty(), "Product key should be valid");
+      results.put(BICECEConstants.EDU_SERIAL_NUMBER, serialNumber);
+      results.put(BICECEConstants.EDU_PRODUCT_KEY, productKey);
+    } catch (MetadataException e) {
+      AssertUtils.fail("Failed to validate admin license");
+    }
+    return results;
   }
 
   /**
@@ -527,31 +528,18 @@ public class EDUTestBase {
     eduPage.clickUsingLowLevelActions("assignUsersButton");
   }
 
-  /**
-   * Get a license for Autocad
-   */
-  @Step("Verify Seibel Download" + GlobalConstants.TAG_TESTINGHUB)
-  public void verifySeibelDownload() {
-    try {
-      eduPage.clickUsingLowLevelActions("eduAutocadGet");
-    } catch (MetadataException e) {
-      e.printStackTrace();
-    }
-    eduPage.waitForField("eduLicenseType", true, 5000);
+  public void downloadF360LabPackage() {
+    // Activate the product
+    WebElement getProductButton = driver.findElement(
+        By.xpath("//*[@style=\"display: flex;\"]/a[@websdk-plc=\"websdk-fusion-360\"]"));
+    AssertUtils.assertTrue(getProductButton.isDisplayed() && getProductButton.isEnabled(),
+        "Ensuring that Get Product button is interactable");
+    getProductButton.click();
+    Util.sleep(2500);
 
-    // Configure the product for download
-    pickSelectOption("eduLicenseType", "network");
-    pickSelectOption("eduChooseVersion", "autocad-2022");
-    pickSelectOption("eduOperatingSystem", "Win64");
-    pickSelectOption("eduSeibelDownloadLanguage", "en-US");
+    eduPage.click("eduDownloadF360Lab");
 
-    try {
-      AssertUtils.assertTrue(!eduPage.checkIfElementExistsInPage("eduAdminError", 10),
-          "Assert that there are no errors on the admin download page");
-    } catch (MetadataException e) {
-      e.printStackTrace();
-    }
-
+    validateDownload();
   }
 
   /**
@@ -617,6 +605,17 @@ public class EDUTestBase {
     }
     WebElement option = driver.findElement(
         By.xpath("//ul[@class=\"vsos-option-list\"]/li[@data-name=\"" + value + "\"]"));
+    option.click();
+  }
+
+  private void pickVSOS2OptionByLabel(String name, String label) {
+    try {
+      eduPage.clickUsingLowLevelActions(name);
+    } catch (MetadataException e) {
+      AssertUtils.fail("Could not click on role dropdown");
+    }
+    WebElement option = driver.findElement(
+        By.xpath("//ul[@id=\"vsos-typeahead-ul\"]/li[text()=\"" + label + "\"]"));
     option.click();
   }
 
@@ -689,6 +688,37 @@ public class EDUTestBase {
           By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
       AssertUtils.assertTrue(
           overviewHomeHeader.getText().contains("Hi " + results.get("firstName")));
+    }
+  }
+
+  private void validateDownload() {
+    Path downloadPath = Paths.get(GlobalConstants.DEFAULT_DOWNLOAD_FOLDER_PATH);
+    File downloadDirectory = downloadPath.toFile();
+    try {
+      int attempts = 0;
+      File[] downloadingFiles = null;
+      while (attempts < 5) {
+        downloadingFiles = downloadDirectory.listFiles();
+        if (downloadingFiles != null && downloadingFiles.length > 0) {
+          break;
+        }
+        Util.printInfo("Polling download directory for files, attempt " + (attempts + 1));
+        attempts++;
+        Util.sleep(2500);
+        downloadDirectory = downloadPath.toFile();
+      }
+      AssertUtils.assertTrue(downloadingFiles != null && downloadingFiles.length > 0,
+          "Ensure there are downloading files");
+
+      Util.printInfo("Downloading files:");
+      for (int i = 0; i < Math.min(downloadingFiles.length, 10); i++) {
+        Util.printInfo("   " + downloadingFiles[i].getName());
+      }
+      if (downloadingFiles.length > 10) {
+        Util.printInfo("   ... and " + (downloadingFiles.length - 10) + " more file(s)");
+      }
+    } catch (NullPointerException exception) {
+      AssertUtils.fail("Failed to locate download directory");
     }
   }
 
