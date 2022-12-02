@@ -2174,8 +2174,8 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("freeTrialNextButton4", 2000);
       bicPage.clickUsingLowLevelActions("freeTrialNextButton4");
 
-      if (bicPage.waitForFieldPresent("freeTrailDownloadBegins", 2000)) {
-        bicPage.clickUsingLowLevelActions("freeTrailDownloadBegins");
+      if (bicPage.waitForFieldPresent("freeTrialDownloadBegins", 2000)) {
+        bicPage.clickUsingLowLevelActions("freeTrialDownloadBegins");
       } else {
         Util.printInfo("Download from windows machine.");
         bicPage.waitForFieldPresent("caretButton", 2000);
