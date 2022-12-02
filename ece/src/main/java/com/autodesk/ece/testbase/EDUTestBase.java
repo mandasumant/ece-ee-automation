@@ -589,6 +589,14 @@ public class EDUTestBase {
     js.executeScript("document.getElementById('privacypolicy_checkbox').click()");
 
     eduPage.click(BICECEConstants.EDU_SUBMIT);
+
+    try {
+      if (eduPage.checkIfElementExistsInPage("eduRegisterComplete", 5)) {
+        eduPage.click("eduRegisterComplete");
+      }
+    } catch (MetadataException e) {
+      Util.printError("Failed to click on complete button: " + e.getMessage());
+    }
   }
 
   /**
