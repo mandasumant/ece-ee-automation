@@ -2170,12 +2170,11 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("countryCode", 2000);
       bicPage.clickUsingLowLevelActions("countryCode");
       bicPage.clickUsingLowLevelActions("selectCode");
-      Util.sleep(10000);
 
       bicPage.waitForFieldPresent("freeTrialNextButton4", 2000);
       bicPage.clickUsingLowLevelActions("freeTrialNextButton4");
 
-      Util.sleep(15000);
+      Util.sleep(150000);
       if (bicPage.checkIfElementExistsInPage("freeTrialDownloadBegins", 2000)) {
         bicPage.clickUsingLowLevelActions("freeTrialDownloadBegins");
       } else {
