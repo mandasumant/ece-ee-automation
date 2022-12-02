@@ -2138,6 +2138,10 @@ public class BICTestBase {
 
       Util.sleep(3000);
 
+      bicPage.waitForFieldPresent("jobLevelField", 2000);
+      bicPage.clickUsingLowLevelActions("jobLevelField");
+      bicPage.clickUsingLowLevelActions("selectFieldFromList");
+
       bicPage.waitForFieldPresent("objectiveOfTrial", 2000);
       bicPage.clickUsingLowLevelActions("objectiveOfTrial");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
@@ -2148,10 +2152,6 @@ public class BICTestBase {
 
       bicPage.waitForFieldPresent("roleField", 2000);
       bicPage.clickUsingLowLevelActions("roleField");
-      bicPage.clickUsingLowLevelActions("selectFieldFromList");
-
-      bicPage.waitForFieldPresent("jobLevelField", 2000);
-      bicPage.clickUsingLowLevelActions("jobLevelField");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
 
       bicPage.waitForFieldPresent("freeTrialNextButton3", 2000);
@@ -2174,8 +2174,16 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("freeTrialNextButton4", 2000);
       bicPage.clickUsingLowLevelActions("freeTrialNextButton4");
 
-      bicPage.waitForFieldPresent("freeTrailDownloadBegins", 2000);
-      bicPage.clickUsingLowLevelActions("freeTrailDownloadBegins");
+      if (bicPage.waitForFieldPresent("freeTrialDownloadBegins", 2000)) {
+        bicPage.clickUsingLowLevelActions("freeTrialDownloadBegins");
+      } else {
+        Util.printInfo("Download from windows machine.");
+        bicPage.waitForFieldPresent("caretButton", 2000);
+        bicPage.clickUsingLowLevelActions("caretButton");
+
+        bicPage.waitForFieldPresent("freeTrialDownLoad", 2000);
+        bicPage.clickUsingLowLevelActions("freeTrialDownLoad");
+      }
 
       Util.sleep(5000);
       bicPage.waitForFieldPresent("freeTrialDownloadStartedHeader", 2000);
