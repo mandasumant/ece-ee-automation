@@ -592,7 +592,10 @@ public class EDUTestBase {
 
     try {
       if (eduPage.checkIfElementExistsInPage("eduRegisterComplete", 5)) {
+        Util.printInfo("Registration Complete shown, clicking on done button");
         eduPage.click("eduRegisterComplete");
+      } else {
+        Util.printInfo("Registration Complete not shown");
       }
     } catch (MetadataException e) {
       Util.printError("Failed to click on complete button: " + e.getMessage());
