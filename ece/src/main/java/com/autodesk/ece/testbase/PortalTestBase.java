@@ -2111,6 +2111,8 @@ public class PortalTestBase {
     double invoiceAmount = 0.00;
     int invoiceCount = Integer.parseInt(portalPage.getValueFromGUI("invoicePageTableTitle").replaceAll("[^0-9]", ""));
     if (invoiceCount > 1) {
+      selectAllInvoiceCheckBox();
+      invoiceAmount = getInvoiceAmount(invoiceCount);
       selectAllInvoicesPayButton();
     } else {
       invoiceNumber = portalPage.getMultipleWebElementsfromField("invoiceNumbers").get(0).getText().replaceAll("[^0-9.]", "");
@@ -2149,6 +2151,15 @@ public class PortalTestBase {
     }
 
     Util.printInfo("Validated Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
+    return invoiceAmount;
+  }
+
+  public double getInvoiceAmount(int invoiceCount) throws MetadataException {
+    double invoiceAmount = 0.00;
+    List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
+    for (int i = 0; i < invoiceCount; i++) {
+      invoiceAmount = invoiceAmount + Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+    }
     return invoiceAmount;
   }
 
