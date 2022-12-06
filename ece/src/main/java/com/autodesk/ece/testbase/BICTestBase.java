@@ -2178,7 +2178,9 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("caretButton");
 
       bicPage.waitForFieldPresent("productDownload", 2000);
-      bicPage.clickUsingLowLevelActions("productDownload");
+      JavascriptExecutor js = (JavascriptExecutor) driver;
+      String productDownload = bicPage.getFirstFieldLocator("productDownload");
+      js.executeScript("arguments[0].click();", driver.findElement(By.xpath(productDownload)));
 
       Util.sleep(5000);
       bicPage.waitForFieldPresent("freeTrialDownloadStartedHeader", 2000);
