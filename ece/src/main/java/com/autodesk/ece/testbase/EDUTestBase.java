@@ -453,6 +453,21 @@ public class EDUTestBase {
         "Ensuring that Download button is interactable");
     downloadButton.click();
 
+    try {
+      if (eduPage.checkIfElementExistsInPage("eduDownloadAccept", 10)) {
+        Util.printInfo("Found the 'Accept' button during product download.");
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("document.getElementsByClassName('websdkButton agreeButton')[0].click();");
+
+        Util.printInfo("Clicked on 'Accept' button during product download.");
+      } else {
+        Util.printInfo("'Accept' button is NOT found during product download.");
+      }
+    } catch (Exception e) {
+      Util.printInfo(e.getMessage());
+    }
+
     // Wait a bit for downloads to start
     Util.sleep(1000);
 
