@@ -1466,8 +1466,8 @@ public class BICTestBase {
       if (data.get("isReturningUser") == null) {
         enterBillingDetails(data, address, paymentMethod);
       } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
-          paymentMethod = "LOC";
-          enterBillingDetails(data, address, paymentMethod);
+        paymentMethod = "LOC";
+        enterBillingDetails(data, address, paymentMethod);
       }
 
       if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
@@ -1475,7 +1475,7 @@ public class BICTestBase {
           submitOrder(data, false);
         }
         orderNumber = getOrderNumber(data);
-        if(null != orderNumber) {
+        if (null != orderNumber) {
           isOrderCaptured = true;
           printConsole(orderNumber, data, address);
           Util.printInfo("Placing Flex Order Attempt: " + attempt + " - Successful !");
@@ -2174,17 +2174,16 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("freeTrialNextButton4", 2000);
       bicPage.clickUsingLowLevelActions("freeTrialNextButton4");
 
-      bicPage.waitForFieldPresent("freeTrialDownloadBegins", 2000);
-      bicPage.clickUsingLowLevelActions("freeTrialDownloadBegins");
+      bicPage.waitForFieldPresent("caretButton", 2000);
+      bicPage.clickUsingLowLevelActions("caretButton");
 
-      if (bicPage.waitForFieldPresent("acceptButton", 2000)) {
-        bicPage.clickUsingLowLevelActions("acceptButton");
-      }
+      bicPage.waitForFieldPresent("productDownload", 2000);
+      bicPage.clickUsingLowLevelActions("productDownload");
 
       Util.sleep(5000);
       bicPage.waitForFieldPresent("freeTrialDownloadStartedHeader", 2000);
-      String headerText =bicPage.getLinkText("freeTrialDownloadStartedHeader");
-      Assert.assertTrue("Free Trial Download not started.",headerText.equals("Your trial has started"));
+      String headerText = bicPage.getLinkText("freeTrialDownloadStartedHeader");
+      Assert.assertEquals("Free Trial Download not started.", "Your trial has started", headerText);
       results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
 
     } catch (Exception e) {
