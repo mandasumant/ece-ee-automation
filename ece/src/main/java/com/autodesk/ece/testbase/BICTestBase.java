@@ -2178,9 +2178,7 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("caretButton");
 
       bicPage.waitForFieldPresent("productDownload", 2000);
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      String productDownload = bicPage.getFirstFieldLocator("productDownload");
-      js.executeScript("arguments[0].click();", driver.findElement(By.xpath(productDownload)));
+      bicPage.clickUsingLowLevelActions("productDownload");
 
       Util.sleep(5000);
       bicPage.waitForFieldPresent("freeTrialDownloadStartedHeader", 2000);
@@ -2192,7 +2190,7 @@ public class BICTestBase {
       ScreenCapture.getInstance().captureFullScreenshot();
       e.printStackTrace();
       Util.printInfo("Error " + e.getMessage());
-      AssertUtils.fail("Unable to test trial Download");
+      AssertUtils.fail("Unable to Download the product");
     }
     return results;
   }
