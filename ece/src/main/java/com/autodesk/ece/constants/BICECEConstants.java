@@ -66,6 +66,7 @@ public class BICECEConstants extends BICConstants {
   public static final String RESPONSE_OFFERING_TYPE = "response_offeringType";
   public static final String FIRSTNAME = "firstname";
   public static final String PAYPAL = "paypal";
+  public static final String PAYPAL_EMAIL = "paypalEmail";
   public static final String PAYMENT_BACS = "BACS";
   public static final String PAYMENT_ACH_LOWERCASE = "ach";
   public static final String ACCOUNT = "account";

@@ -12,7 +12,6 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.CustomSoftAssert;
 import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
-import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.qameta.allure.Step;
@@ -36,7 +35,6 @@ import java.util.TimeZone;
 import org.apache.commons.lang.RandomStringUtils;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -590,9 +588,15 @@ public class PortalTestBase {
       clickWithJavaScriptExecutor(javascriptExecutor, "//button[@data-wat-val=\"continue\"]");
 
       Util.sleep(5000);
-      AssertUtils.assertTrue(driver
-          .findElement(By.xpath("//*[contains(text(),\"Your term change is confirmed\")]"))
-          .isDisplayed());
+      if (System.getProperty("store").equals("STORE-JP")) {
+        AssertUtils.assertTrue(driver
+            .findElement(By.xpath("//*[contains(text(),\"期間の変更が確認されました\")]"))
+            .isDisplayed());
+      } else {
+        AssertUtils.assertTrue(driver
+            .findElement(By.xpath("//*[contains(text(),\"Your term change is confirmed\")]"))
+            .isDisplayed());
+      }
 
       Util.sleep(5000);
       portalPage.clickUsingLowLevelActions("switchTermDone");
@@ -603,9 +607,19 @@ public class PortalTestBase {
             .findElement(By.xpath("//*[starts-with(text(),\"Changes to 3-year term starting\")]"))
             .isDisplayed());
       } else {
-        AssertUtils.assertTrue(driver
-            .findElement(By.xpath("//*[starts-with(text(),\"Changes to 1-year term starting\")]"))
-            .isDisplayed());
+        if (System.getProperty("store").equals("STORE-JP")) {
+          AssertUtils.assertTrue(driver
+              .findElement(
+                  By.xpath(
+                      "//*[@id=\"renew-details-switch-term-label\"]//*[contains(text(),\"から期間を 1 年間 に変更\")]"))
+              .isDisplayed());
+        } else {
+          AssertUtils.assertTrue(driver
+              .findElement(
+                  By.xpath(
+                      "//*[@id=\"renew-details-switch-term-label\"]//*[contains(text(),\"Changes to 1-year term starting\")]"))
+              .isDisplayed());
+        }
       }
       clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
 
@@ -732,7 +746,12 @@ public class PortalTestBase {
           orderDetails.put(BICECEConstants.STATE_PROVINCE, state);
         }
 
-        String pin = portalPage.getTextFromLink("portalSubscriptionZipFromSubs");
+        String pin;
+        if (System.getProperty("store").equals("STORE-JP")) {
+          pin = portalPage.getTextFromLink("portalSubscriptionZipFromSubs").replace("〒 ", "");
+        } else {
+          pin = portalPage.getTextFromLink("portalSubscriptionZipFromSubs");
+        }
         Util.printInfo("Zip Code : " + pin);
 
         orderDetails.put(BICECEConstants.FULL_ADDRESS, streetAddress);
@@ -860,7 +879,9 @@ public class PortalTestBase {
       orderDetails.put("subtotalPrice", subtotalPrice);
 
       Util.printInfo("Clicking on Save button...");
-      clickOnContinueBtn();
+      if (!System.getProperty("store").equals("STORE-JP")) {
+        clickOnContinueBtn();
+      }
 
       // Zip Pay Verification
       if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
@@ -925,14 +946,23 @@ public class PortalTestBase {
       } else {
         Util.printInfo("Add Seat Order number can not be displayed due to Export Compliance.");
       }
-      Util.printInfo("Validating prorated amount on confirmation page...");
-      String confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
 
-      AssertUtils.assertEquals(
-          Double.valueOf(data.get("proratedFinalAmount")
-              .substring(data.get("proratedFinalAmount").indexOf("$") + 1).replace(",", "")),
-          Double.valueOf(confirmProratedAmount.substring(confirmProratedAmount.indexOf("$") + 1)
-              .replace(",", "")));
+      Util.printInfo("Validating prorated amount on confirmation page...");
+      String confirmProratedAmount;
+      if (System.getProperty("store").equals("STORE-JP")) {
+        confirmProratedAmount = driver.findElement(By.xpath("//p[.='日割計算']/../p[2]")).getText();
+        AssertUtils.assertEquals(
+            Double.valueOf(data.get("proratedFinalAmount")
+                .substring(data.get("proratedFinalAmount").indexOf("¥ ") + 1).replace(",", "")),
+            Double.valueOf(confirmProratedAmount.substring(confirmProratedAmount.indexOf("¥ ") + 1)
+                .replace(",", "")));
+      } else {
+        confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
+        AssertUtils.assertEquals(
+            Double.valueOf(data.get("proratedFinalAmount")
+                .substring(data.get("proratedFinalAmount").indexOf("$") + 1).replace(",", "")),
+            Double.valueOf(confirmProratedAmount.substring(confirmProratedAmount.indexOf("$") + 1).replace(",", "")));
+      }
 
       Util.printInfo("ZIP Pay subscription URL " + data.get("zipPaySubscriptionUrl"));
 
@@ -1056,17 +1086,28 @@ public class PortalTestBase {
   public void changePaymentMethodAndValidate(HashMap<String, String> data,
       String[] paymentCardDetails) {
     Util.printInfo("Changing the payment method from portal...");
+
     try {
       debugPageUrl("Step 1");
       data.putAll(navigateToSubscriptionAndOrdersTab());
       clickPortalClosePopup();
       Util.printInfo("Clicking on change payment option...");
-      portalPage.waitForFieldPresent("portalChangePaymentBtn", 10000);
+      portalPage.waitForFieldPresent("portalChangePaymentBtn", 15000);
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
-      Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
-              BICECEConstants.PORTAL_PAYMENT_METHOD)
-          .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
+
+      Util.sleep(10000);
+
+      if (System.getProperty("store").equals("STORE-JP")) {
+        Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
+                BICECEConstants.PORTAL_PAYMENT_METHOD)
+            .replaceAll(BICECEConstants.PAYMENTOPTION, "クレジット カード"));
+      } else {
+        Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
+                BICECEConstants.PORTAL_PAYMENT_METHOD)
+            .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card"));
+      }
+
       addPaymentDetails(data, paymentCardDetails);
       validatePaymentDetailsOnPortal(data);
     } catch (Exception e) {
@@ -1140,6 +1181,7 @@ public class PortalTestBase {
     String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
         .replaceAll(BICECEConstants.PAYMENTOPTION, "PayPal");
     Util.waitForElement(paymentMethod, "PayPal tab");
+    String paypalEmail = data.get(BICECEConstants.PAYPAL_EMAIL);
 
     try {
       Util.printInfo("Clicking on Paypal payments tab...");
@@ -1175,10 +1217,10 @@ public class PortalTestBase {
             .clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
       }
 
-      Util.printInfo("Entering paypal user name [" + data.get("paypalUser") + "]...");
+      Util.printInfo("Entering paypal user name [" + paypalEmail + "]...");
       BICTestBase.bicPage.waitForElementVisible(
           BICTestBase.bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
-      BICTestBase.bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
+      BICTestBase.bicPage.populateField("paypalUsernameField", paypalEmail);
 
       BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
@@ -1197,15 +1239,25 @@ public class PortalTestBase {
         BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
       }
 
-      Util.printInfo("Selecting paypal payment option " + data.get("paypalPaymentType"));
-      String paymentTypeXpath = BICTestBase.bicPage.getFirstFieldLocator("paypalPaymentOption")
-          .replace(BICECEConstants.PAYMENTOPTION, data.get("paypalPaymentType"));
+      String paymentTypeXpath = "";
+      if (System.getProperty("store").equals("STORE-JP")) {
+        paymentTypeXpath = BICTestBase.bicPage.getFirstFieldLocator("paypalPaymentOption")
+            .replace(BICECEConstants.PAYMENTOPTION, "Visa");
+      } else {
+        paymentTypeXpath = BICTestBase.bicPage.getFirstFieldLocator("paypalPaymentOption")
+            .replace(BICECEConstants.PAYMENTOPTION, data.get("paypalPaymentType"));
+      }
       driver.findElement(By.xpath(paymentTypeXpath)).click();
 
       BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
       try {
         Util.printInfo("Clicking on agree and continue button...");
-        BICTestBase.bicPage.clickUsingLowLevelActions("paypalAgreeAndContBtn");
+        BICTestBase.bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+        Util.printInfo("Clicked on agree and continue button.");
+        Util.sleep(2000);
+        BICTestBase.bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+        Util.printInfo("Clicked again on agree and continue button.");
+        Util.sleep(2000);
       } catch (Exception e) {
         Util.printInfo("Clicking on save and continue button...");
         portalPage.clickUsingLowLevelActions("portalPaypalSaveAndContinueBtn");
@@ -1213,9 +1265,18 @@ public class PortalTestBase {
       Util.sleep(10000);
 
       driver.switchTo().window(parentWindow);
+
       Util.sleep(5000);
-      AssertUtils.assertEquals(portalPage.getTextFromLink("portalPaypalConfirmationText"),
-          "PayPal is selected for payment.");
+      if (System.getProperty("store").equals("STORE-JP")) {
+        String paypalString = driver.findElement(By.xpath(
+                "//*[@data-testid=\"payment-section-add\"]//div[2]/div[2]/div[2]/p"))
+            .getText();
+        AssertUtils.assertEquals(paypalString,
+            "PayPal が支払い方法として選択されています。");
+      } else {
+        AssertUtils.assertEquals(portalPage.getTextFromLink("portalPaypalConfirmationText"),
+            "PayPal is selected for payment.");
+      }
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter paypal details to make payment...");
@@ -1258,10 +1319,19 @@ public class PortalTestBase {
   @Step("Populate credit card details" + GlobalConstants.TAG_TESTINGHUB)
   public void populateCreditCardDetails(String[] paymentCardDetails) {
     BICTestBase.bicPage.waitForField("creditCardNumberFrame", true, 30000);
-    String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
-        .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card");
-    Util.waitForElement(paymentMethod, "Credit card tab");
-    driver.findElement(By.xpath(paymentMethod)).click();
+
+    if (System.getProperty("store").equals("STORE-JP")) {
+      String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
+          .replaceAll(BICECEConstants.PAYMENTOPTION, "クレジット カード");
+      Util.waitForElement(paymentMethod, "Credit card tab");
+      driver.findElement(By.xpath(paymentMethod)).click();
+    } else {
+      String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
+          .replaceAll(BICECEConstants.PAYMENTOPTION, "Credit card");
+      Util.waitForElement(paymentMethod, "Credit card tab");
+      driver.findElement(By.xpath(paymentMethod)).click();
+    }
+
     try {
       // TODO Replace this with condition where we are reading from test class API whether credit card is available or not
       if (portalPage.checkIfElementExistsInPage("portalCreditCardAddLink", 10)) {
@@ -1536,6 +1606,7 @@ public class PortalTestBase {
       driver.switchTo().frame(creditCardNumberFrame);
       portalPage.clickUsingLowLevelActions("alignBillingContinue");
       checkPortalCheckbox("//input[@id='customCheckboxTerms']");
+      Util.sleep(3000);
       portalPage.clickUsingLowLevelActions("alignBillingSubmit");
       portalPage.waitForPageToLoad();
       portalPage.waitForFieldEnabled("alignBillingClose");
@@ -2089,7 +2160,7 @@ public class PortalTestBase {
 
   public double getInvoiceTotalAfterPayment(String elementXPath) throws Exception {
     String invoiceTotalAfterPayment = portalPage.getMultipleWebElementsfromField(elementXPath).get(0)
-            .getText().replaceAll("[^0-9.]", "").replace(".", "");
+        .getText().replaceAll("[^0-9.]", "").replace(".", "");
     Util.printInfo("Return Payment Total After Payment...." + invoiceTotalAfterPayment);
     return Double.parseDouble(invoiceTotalAfterPayment);
   }
@@ -2115,7 +2186,8 @@ public class PortalTestBase {
       invoiceAmount = getInvoiceAmount(invoiceCount);
       selectAllInvoicesPayButton();
     } else {
-      invoiceNumber = portalPage.getMultipleWebElementsfromField("invoiceNumbers").get(0).getText().replaceAll("[^0-9.]", "");
+      invoiceNumber = portalPage.getMultipleWebElementsfromField("invoiceNumbers").get(0).getText()
+          .replaceAll("[^0-9.]", "");
       portalPage.clickUsingLowLevelActions("invoiceNumbers");
       Util.sleep(5000);
       List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
@@ -2137,13 +2209,13 @@ public class PortalTestBase {
       Util.sleep(5000);
 
       creditMemoAmount = Double.parseDouble(
-              portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
+          portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
 
       portalPage.clickUsingLowLevelActions("continueButton");
       Util.sleep(5000);
 
       double afterAddCreditMemoAmount = getPaymentTotalFromCheckout(
-              "totalPaymentCheckoutWithCreditMemo");
+          "totalPaymentCheckoutWithCreditMemo");
       AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
     } else {
       double afterAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
@@ -2158,7 +2230,8 @@ public class PortalTestBase {
     double invoiceAmount = 0.00;
     List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
     for (int i = 0; i < invoiceCount; i++) {
-      invoiceAmount = invoiceAmount + Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+      invoiceAmount =
+          invoiceAmount + Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
     }
     return invoiceAmount;
   }

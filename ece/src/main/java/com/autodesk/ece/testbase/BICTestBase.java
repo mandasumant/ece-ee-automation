@@ -142,6 +142,7 @@ public class BICTestBase {
     if (!skipIframe) {
       switchToBICCartLoginPage();
     }
+    Util.sleep(5000);
     Util.printInfo("Url is loaded and we were able to switch to iFrame");
 
     try {
@@ -296,6 +297,7 @@ public class BICTestBase {
   @Step("Login to an existing BIC account")
   public void loginAccount(HashMap<String, String> data) {
     switchToBICCartLoginPage();
+    Util.sleep(5000);
 
     bicPage.waitForField(BICECEConstants.AUTODESK_ID, true, 30000);
 
@@ -581,7 +583,9 @@ public class BICTestBase {
         clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
         driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.ZIPCODE));
       }
+
       clearTextInputValue(driver.findElement(By.xpath(phoneXpath)));
+      Util.sleep(2000);
       driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
 
       if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address
@@ -873,18 +877,20 @@ public class BICTestBase {
   public void populatePaypalPaymentDetails(HashMap<String, String> data) {
     Util.printInfo("Switching to latest window...");
     String parentWindow = driver.getWindowHandle();
+    String paypalEmail = data.get(BICECEConstants.PAYPAL_EMAIL);
 
     try {
       Util.printInfo("Clicking on Paypal payments tab...");
       bicPage.clickUsingLowLevelActions("paypalPaymentTab");
+
       Util.printInfo("Clicking on Paypal checkout tab...");
       bicPage.waitForElementVisible(
           bicPage.getMultipleWebElementsfromField("paypalPaymentHead").get(0), 10);
+
       Util.printInfo("Clicking on Paypal checkout frame...");
-
       bicPage.selectFrame("paypalCheckoutOptionFrame");
-      Util.printInfo("Clicking on Paypal checkout button...");
 
+      Util.printInfo("Clicking on Paypal checkout button...");
       bicPage.clickUsingLowLevelActions("paypalCheckoutBtn");
 
       Set<String> windows = driver.getWindowHandles();
@@ -899,8 +905,13 @@ public class BICTestBase {
       Util.sleep(10000);
       String title = driver.getTitle();
 
-      AssertUtils.assertTrue(title.toUpperCase().contains("Log In".toUpperCase()),
-          "Current title [" + title + "] does not contains keyword : PayPal Login");
+      if (System.getProperty("store").equals("STORE-JP")) {
+        AssertUtils.assertTrue(title.toUpperCase().contains("アカウントへのログイン".toUpperCase()),
+            "Current title [" + title + "] does not contains keyword : PayPal Login");
+      } else {
+        AssertUtils.assertTrue(title.toUpperCase().contains("Log In".toUpperCase()),
+            "Current title [" + title + "] does not contains keyword : PayPal Login");
+      }
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
       if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
@@ -911,11 +922,11 @@ public class BICTestBase {
         bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
       }
 
-      Util.printInfo("Entering paypal user name [" + data.get("paypalUser") + "]...");
+      Util.printInfo("Entering paypal user name [" + paypalEmail + "]...");
       bicPage.waitForElementVisible(
           bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
+      bicPage.populateField("paypalUsernameField", paypalEmail);
 
-      bicPage.populateField("paypalUsernameField", data.get("paypalUser"));
       bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
@@ -925,45 +936,53 @@ public class BICTestBase {
       Util.printInfo("Clicking on login button...");
       bicPage.clickUsingLowLevelActions("paypalLoginBtn");
       bicPage.waitForElementToDisappear("paypalPageLoader", 30);
-      Util.sleep(5000);
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
-      if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
+      if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 15)) {
         bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
+        Util.sleep(5000);
+      } else {
+        Util.printInfo("Accept cookies button not present.");
       }
 
-      Util.printInfo("Selecting paypal payment option " + data.get("paypalPaymentType"));
-      String paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
-          .replace("<PAYMENTOPTION>",
-              data.get("paypalPaymentType"));
+      String paymentTypeXpath = "";
+      if (System.getProperty("store").equals("STORE-JP")) {
+        paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
+            .replace("<PAYMENTOPTION>", "Visa");
+      } else {
+        paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
+            .replace("<PAYMENTOPTION>", data.get("paypalPaymentType"));
+      }
       driver.findElement(By.xpath(paymentTypeXpath)).click();
+      Util.sleep(2000);
 
       bicPage.executeJavascript("window.scrollBy(0,1000);");
-      if (bicPage.checkFieldExistence("paypalContinueButton")) {
-        bicPage.clickUsingLowLevelActions("paypalContinueButton");
+      try {
+        Util.printInfo("Clicking on agree and continue button...");
+        bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+        Util.printInfo("Clicked on agree and continue button.");
+        Util.sleep(2000);
+        bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+        Util.printInfo("Clicked again on agree and continue button.");
+        Util.sleep(2000);
+      } catch (Exception e) {
+        Util.printInfo("Clicking on save and continue button...");
+        bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
       }
+      Util.sleep(10000);
 
       driver.switchTo().window(parentWindow);
-
-      if (bicPage.checkIfElementExistsInPage("paypalCheckoutFrame", 10)) {
-        bicPage.selectFrame("paypalCheckoutFrame");
-        Util.printInfo("Switched to Frame and clicking on Paypal checkout close button...");
-        try {
-          if (bicPage.checkFieldExistence("paypalCheckOutClose")) {
-            bicPage.clickUsingLowLevelActions("paypalCheckOutClose");
-          }
-        } catch (Exception e) {
-          Util.printInfo("Can not find Close button. Continuing");
-        }
-      }
       Util.sleep(5000);
 
-      if (bicPage.checkIfElementExistsInPage("paypalPaymentConfirmation", 10)) {
-        Util.printInfo(
-            "Paypal Payment success msg : " + bicPage.getTextFromLink("paypalPaymentConfirmation"));
-        Util.printInfo("Paypal Payment is successfully added...");
+      if (System.getProperty("store").equals("STORE-JP")) {
+        String paypalString = driver.findElement(By.xpath(
+                "//*[@data-testid=\"payment-section-add\"]//div[2]/div[2]/div[2]/p"))
+            .getText();
+        AssertUtils.assertEquals(paypalString,
+            "PayPal が支払い方法として選択されています。");
       } else {
-        AssertUtils.fail("Failed to add paypal payment profile...");
+        AssertUtils.assertEquals(bicPage.getTextFromLink("paypalConfirmationText"),
+            "PayPal is selected for payment.");
       }
     } catch (MetadataException e) {
       e.printStackTrace();
@@ -1606,6 +1625,7 @@ public class BICTestBase {
   }
 
   private void updateQuantity(String priceId, String quantity) {
+    Util.sleep(5000);
     String paymentTypeXpath = bicPage.getFirstFieldLocator("cartQuantity").replace("<PRICEID>", priceId);
     clearTextInputValue(driver.findElement(By.xpath(paymentTypeXpath)));
     driver.findElement(By.xpath(paymentTypeXpath)).sendKeys(quantity);
@@ -1839,16 +1859,23 @@ public class BICTestBase {
     String priceAfterPromo = null;
 
     try {
-      if (driver.findElement(By.xpath("//h2[contains(text(),\"just have a question\")]"))
-          .isDisplayed()) {
-        bicPage.clickUsingLowLevelActions("promoCodePopUpThanksButton");
+      if (System.getProperty("store").equals("STORE-JP")) {
+        if (driver.findElement(By.xpath("//h2[contains(text(),\"それともご質問がありますか\")]"))
+            .isDisplayed()) {
+          bicPage.clickUsingLowLevelActions("promoCodePopUpThanksButton");
+        }
+      } else {
+        if (driver.findElement(By.xpath("//h2[contains(text(),\"just have a question\")]"))
+            .isDisplayed()) {
+          bicPage.clickUsingLowLevelActions("promoCodePopUpThanksButton");
+        }
       }
 
       priceBeforePromo = bicPage.getValueFromGUI("promoCodeBeforeDiscountPrice").trim();
       Util.printInfo("Step : Entering promo code " + promoCode + "\n" + " priceBeforePromo : "
           + priceBeforePromo);
 
-      driver.findElement(By.linkText("Promotion code")).click();
+      driver.findElement(By.xpath("//*[@data-testid=\"promotion-details\"]/a")).click();
       bicPage.waitForFieldPresent("promoCodeInput", 10000);
       bicPage.clickUsingLowLevelActions("promoCodeInput");
       bicPage.populateField("promoCodeInput", promoCode);
@@ -1985,6 +2012,12 @@ public class BICTestBase {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
     String paymentMethod = data.get("paymentMethod");
+    String oxygenLogOutUrl = data.get("oxygenLogOut");
+
+    if (System.getProperty("store").equals("STORE-JP")) {
+      Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
+      getUrl(oxygenLogOutUrl);
+    }
 
     navigateToCart(data);
 
@@ -2023,6 +2056,12 @@ public class BICTestBase {
       LinkedHashMap<String, String> data) throws MetadataException {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
+    String oxygenLogOutUrl = data.get("oxygenLogOut");
+
+    if (System.getProperty("store").equals("STORE-JP")) {
+      Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
+      getUrl(oxygenLogOutUrl);
+    }
 
     navigateToCart(data);
 
@@ -2247,6 +2286,12 @@ public class BICTestBase {
 
     Util.printInfo("constructDotComURL " + constructDotComURL);
     getUrl(constructDotComURL);
+
+    if (System.getProperty("store").equals("STORE-JP") && productName.equals("autocad")) {
+      Select drpPlc = new Select(driver.findElement(By.className("buy-version-switcher")));
+      drpPlc.selectByValue("ACDIST");
+    }
+
     setStorageData();
   }
 
@@ -2270,8 +2315,13 @@ public class BICTestBase {
       Double pelicanAmount = Double.valueOf(pelicanTax);
       Util.printInfo("The total order amount in Cart " + cartAmount / 100);
       Util.printInfo("The total order amount in Pelican " + pelicanAmount);
-      AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
-          "Tax Amount in Pelican matches with the tax amount on Checkout page");
+      if (System.getProperty("store").equals("STORE-JP")) {
+        AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount / 100) == 0,
+            "Tax Amount in Pelican matches with the tax amount on Checkout page for JP store.");
+      } else {
+        AssertUtils.assertTrue(Double.compare(cartAmount / 100, pelicanAmount) == 0,
+            "Tax Amount in Pelican matches with the tax amount on Checkout page");
+      }
     }
   }
 

@@ -12,6 +12,7 @@ LocaleConfig:
     minAmountPBI: "1,000.00"
     maxAmountPBI: "100,000.00"
     ttrEnabled: "true"
+    paypalEmail: "Paypal-buyer-namer@ssttest.net"
 
   en_CA:
     region: "ENCA"
@@ -137,10 +138,11 @@ LocaleConfig:
     currencyStore: "YEN"
     countryDomain: ".co.jp"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@532-0003@Street@Osaka@81-6-6350-5223@Japan"
+    address: "Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@日本@東京都"
     isTaxed: "Y"
     minAmountPBI: "127,872"
     maxAmountPBI: "12,787,150"
+    paypalEmail: "Paypal-buyer-japan@ssttest.net"
 
   de_DE:
     region: "DEDE"
