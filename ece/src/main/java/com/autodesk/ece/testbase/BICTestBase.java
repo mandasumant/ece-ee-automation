@@ -1466,8 +1466,8 @@ public class BICTestBase {
       if (data.get("isReturningUser") == null) {
         enterBillingDetails(data, address, paymentMethod);
       } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
-          paymentMethod = "LOC";
-          enterBillingDetails(data, address, paymentMethod);
+        paymentMethod = "LOC";
+        enterBillingDetails(data, address, paymentMethod);
       }
 
       if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
@@ -1475,7 +1475,7 @@ public class BICTestBase {
           submitOrder(data, false);
         }
         orderNumber = getOrderNumber(data);
-        if(null != orderNumber) {
+        if (null != orderNumber) {
           isOrderCaptured = true;
           printConsole(orderNumber, data, address);
           Util.printInfo("Placing Flex Order Attempt: " + attempt + " - Successful !");
@@ -2138,6 +2138,10 @@ public class BICTestBase {
 
       Util.sleep(3000);
 
+      bicPage.waitForFieldPresent("jobLevelField", 2000);
+      bicPage.clickUsingLowLevelActions("jobLevelField");
+      bicPage.clickUsingLowLevelActions("selectFieldFromList");
+
       bicPage.waitForFieldPresent("objectiveOfTrial", 2000);
       bicPage.clickUsingLowLevelActions("objectiveOfTrial");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
@@ -2148,10 +2152,6 @@ public class BICTestBase {
 
       bicPage.waitForFieldPresent("roleField", 2000);
       bicPage.clickUsingLowLevelActions("roleField");
-      bicPage.clickUsingLowLevelActions("selectFieldFromList");
-
-      bicPage.waitForFieldPresent("jobLevelField", 2000);
-      bicPage.clickUsingLowLevelActions("jobLevelField");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
 
       bicPage.waitForFieldPresent("freeTrialNextButton3", 2000);
@@ -2174,20 +2174,23 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("freeTrialNextButton4", 2000);
       bicPage.clickUsingLowLevelActions("freeTrialNextButton4");
 
-      bicPage.waitForFieldPresent("freeTrailDownloadBegins", 2000);
-      bicPage.clickUsingLowLevelActions("freeTrailDownloadBegins");
+      bicPage.waitForFieldPresent("caretButton", 2000);
+      bicPage.clickUsingLowLevelActions("caretButton");
+
+      bicPage.waitForFieldPresent("productDownload", 2000);
+      bicPage.clickUsingLowLevelActions("productDownload");
 
       Util.sleep(5000);
       bicPage.waitForFieldPresent("freeTrialDownloadStartedHeader", 2000);
-      String headerText =bicPage.getLinkText("freeTrialDownloadStartedHeader");
-      Assert.assertTrue("Free Trial Download not started.",headerText.equals("Your trial has started"));
+      String headerText = bicPage.getLinkText("freeTrialDownloadStartedHeader");
+      Assert.assertEquals("Free Trial Download not started.", "Your trial has started", headerText);
       results.put(BICECEConstants.DOWNLOAD_STATUS, "Success. ");
 
     } catch (Exception e) {
       ScreenCapture.getInstance().captureFullScreenshot();
       e.printStackTrace();
       Util.printInfo("Error " + e.getMessage());
-      AssertUtils.fail("Unable to test trial Download");
+      AssertUtils.fail("Unable to Download the product");
     }
     return results;
   }
