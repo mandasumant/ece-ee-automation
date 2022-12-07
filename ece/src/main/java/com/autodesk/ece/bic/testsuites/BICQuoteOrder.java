@@ -278,6 +278,17 @@ public class BICQuoteOrder extends ECETestBase {
 
       coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
       testDataForEachMethod.put("taxOptionEnabled", "N");
+
+      try {
+        String flexCode = getDriver().getCurrentUrl().split("flexCode=")[1];
+        testDataForEachMethod.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
+        testResults.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
+        updateTestingHub(testResults);
+
+        return; // TODO: Remove when new TTR orders can be processed.
+      } catch (Exception ex) {
+        AssertUtils.fail("Failed to read flex code from checkout URL");
+      }
     }
 
     results = getBicTestBase().placeFlexOrder(testDataForEachMethod);

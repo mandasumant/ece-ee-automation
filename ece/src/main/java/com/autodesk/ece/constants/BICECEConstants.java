@@ -197,5 +197,6 @@ public class BICECEConstants extends BICConstants {
   public static final String SUBMIT_TAX_INFO = "submitTaxInfo";
   public static final String IS_TAX_EXCEMPT = "isTaxExempt";
   public static final String CREDIT_MEMO = "creditMemo";
+  public static final String TAX_FLEX_CODE = "flexCode";
 }
 
