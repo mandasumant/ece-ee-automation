@@ -2179,18 +2179,22 @@ public class BICTestBase {
 
       bicPage.waitForFieldPresent("jobLevelField", 2000);
       bicPage.clickUsingLowLevelActions("jobLevelField");
+      Util.PrintInfo("Selecting 'Business Owner/Entrepreneur' from 'Job level field'");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
 
       bicPage.waitForFieldPresent("objectiveOfTrial", 2000);
       bicPage.clickUsingLowLevelActions("objectiveOfTrial");
+      Util.PrintInfo("Selecting 'I want to try this product for the first time' from 'Objective of trial'");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
 
       bicPage.waitForFieldPresent("industriesField", 2000);
       bicPage.clickUsingLowLevelActions("industriesField");
+      Util.PrintInfo("Selecting 'Advertising, Publishing and Graphic Design' from 'Industry field'");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
 
       bicPage.waitForFieldPresent("roleField", 2000);
       bicPage.clickUsingLowLevelActions("roleField");
+      Util.PrintInfo("Selecting '3D Animator' from 'Role field'");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
 
       bicPage.waitForFieldPresent("freeTrialNextButton3", 2000);
@@ -2216,8 +2220,12 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("caretButton", 2000);
       bicPage.clickUsingLowLevelActions("caretButton");
 
-      bicPage.waitForFieldPresent("productDownload", 2000);
-      bicPage.clickUsingLowLevelActions("productDownload");
+      if (bicPage.waitForFieldPresent("productDownload", 3000)) {
+        bicPage.clickUsingLowLevelActions("productDownload");
+      } else {
+        Util.printInfo("productDownload not visible. Clicking on download instead.");
+        bicPage.clickUsingLowLevelActions("download");
+      }
 
       Util.sleep(5000);
       bicPage.waitForFieldPresent("freeTrialDownloadStartedHeader", 2000);
