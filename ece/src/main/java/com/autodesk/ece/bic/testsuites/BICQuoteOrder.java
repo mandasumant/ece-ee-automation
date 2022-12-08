@@ -8,6 +8,7 @@ import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -18,6 +19,7 @@ import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.restassured.path.json.JsonPath;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.util.Strings;
+import org.yaml.snakeyaml.Yaml;
 
 public class BICQuoteOrder extends ECETestBase {
 
@@ -279,16 +282,42 @@ public class BICQuoteOrder extends ECETestBase {
       coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
       testDataForEachMethod.put("taxOptionEnabled", "N");
 
+      String flexCode = null;
       try {
-        String flexCode = getDriver().getCurrentUrl().split("flexCode=")[1];
+        flexCode = getDriver().getCurrentUrl().split("flexCode=")[1];
         testDataForEachMethod.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
         testResults.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
         updateTestingHub(testResults);
-
-        return; // TODO: Remove when new TTR orders can be processed.
       } catch (Exception ex) {
         AssertUtils.fail("Failed to read flex code from checkout URL");
       }
+
+      Yaml yaml = new Yaml();
+      InputStream inputStream = this.getClass()
+          .getClassLoader()
+          .getResourceAsStream(
+              GlobalTestBase.getTestDataDir() + GlobalTestBase.getTestManifest().getProperty("TAX_EXEMPTION_MAPPINGS"));
+      Map<String, Object> taxMappings = (Map<String, Object>) yaml.load(inputStream);
+
+      Integer expectedCode = null;
+      switch (address.country) {
+        case "Canada":
+          String partialExemptionType =
+              Objects.nonNull(System.getProperty("partialExemptionType")) ? System.getProperty("partialExemptionType")
+                  : "full";
+          Map<String, Integer> taxOptions = (Map<String, Integer>) ((Map<String, Object>) taxMappings.get("CA")).get(
+              address.province);
+          expectedCode = taxOptions.get(partialExemptionType);
+          break;
+        case "United States":
+          expectedCode = ((Map<String, Integer>) taxMappings.get("US")).get("full");
+          break;
+      }
+
+      AssertUtils.assertEquals("FlexCode URL parameter should match expected code", flexCode,
+          String.valueOf(expectedCode));
+
+      return; // TODO: Remove when new TTR orders can be processed.
     }
 
     results = getBicTestBase().placeFlexOrder(testDataForEachMethod);

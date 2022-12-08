@@ -1,0 +1,37 @@
+CA:
+  AB:
+    full: 1
+  BC:
+    GST: 1
+    PST: 3
+    full: 5
+  MB:
+    GST: 1
+    PST: 3
+    full: 5
+  NB:
+    full: 2
+  NL:
+    full: 2
+  NT:
+    full: 1
+  NS:
+    full: 2
+  NU:
+    full: 1
+  ON:
+    full: 2
+  PE:
+    full: 2
+  QC:
+    GST: 1
+    QST: 4
+    full: 6
+  SK:
+    GST: 1
+    PST: 3
+    full: 5
+  YT:
+    full: 1
+US:
+  full: 9
