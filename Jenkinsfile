@@ -395,10 +395,9 @@ pipeline {
                 echo 'Initiating Apollo Flex MOE Order - All'
                 script {
                     println("Building Testing Hub API Input Map - All")
-
                     def testingHubInputMap = [:]
-                    testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-                    testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+                    def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+                    testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
                     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
                     testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: E-Commerce Flex MOE Orders on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                             '{"displayname":"MOE O2P Order USA - Agent - New","testcasename":"e2ea9875","description":"MOE O2P Order USA - Agent - New user","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdmAgent-moe","testMethod":"validateMoeOdmOpportunityFlowAgent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"' + params.INVOICE_VALIDATION + '","locale":"en_US"}},' +
@@ -469,8 +468,8 @@ def triggerTestingHub(serviceBuildHelper) {
     ']');
 
     def testingHubInputMap = [:]
-    testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-    testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+    def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+    testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
     testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/edu/testcase'
     testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"EDU Deploy Tests","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":' +
                 new JsonBuilder(testcases[0..2]).toPrettyString() +
@@ -647,8 +646,8 @@ def triggerApolloDirectFlexR2_2(def serviceBuildHelper) {
             ']');
 
         def testingHubInputMap = [:]
-        testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-        testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: E-Commerce Flex Orders on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":' +
                     new JsonBuilder(testcases[0..14]).toPrettyString() +
@@ -691,8 +690,8 @@ def triggerApolloR2_3(def serviceBuildHelper) {
         def addresses = readJSON file: "./testdata/addresses.json"
 
         def testingHubInputMap = [:]
-        testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-        testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: E-Commerce Quote 2 Orders on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","piyush.laddha@autodesk.com","Satish.Jupalli@autodesk.com"],"testcases":[' +
                 '{"displayname":"LOC Quote 2 Order Multi line item Order Same Purchaser & Paye","testcasename":"e803e4a4","description":"Quote 2 Order Multi line item Order","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"multiline-quoteorder","testMethod":"validateMultiLineItemQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"VISA","store":"STORE-NAMER","sku":"default:1","jiraTestCycle":"29623","jiraId":"APLR2PMO-12605","email":"","emailType":"biz","isTaxed":"Y","quantity1":"2000","quantity2":"4000","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@2300 Woodcrest Pl@Birmingham@35209@9916800100@United States@AL","timezone":"America/Los_Angeles"}},' +
@@ -800,8 +799,8 @@ def triggerApolloTTR(def serviceBuildHelper) {
         def addresses = readJSON file: "./testdata/addresses.json"
 
         def testingHubInputMap = [:]
-        testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-        testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: E-Commerce TTR Quote 2 Orders on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                 '{"displayname":"TTR Q2O Multi line item Order","testcasename":"e803e4a4","description":"Quote 2 Order Multi line item Order","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"multiline-quoteorder","testMethod":"validateMultiLineItemQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","newPaymentType":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","quantity1":"2000","quantity2":"4000","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@2300 Woodcrest Pl@Birmingham@35209@9916800100@United States@AL","timezone":"America/Los_Angeles"}},' +
@@ -893,8 +892,8 @@ def triggerApolloR2_3PayInvoice(def serviceBuildHelper) {
         def addresses = readJSON file: "./testdata/addresses.json"
 
         def testingHubInputMap = [:]
-        testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-        testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: Pay Invoice on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                 '{"displayname":"LOC Quote 2 Order Same Purchaser & Payer - Alabama(en_US)","testcasename":"9329504a","description":"Quote 2 Order US Alabama(en_US)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","prvexecutionid":"' + params.EXECUTION_ID + '","address":"Autodesk@2300 Woodcrest Pl@Birmingham@35209@9916800100@United States@AL","timezone":"America/New_York"}},' +
@@ -984,8 +983,8 @@ def triggerCJT(def serviceBuildHelper, String env) {
     script {
         println("Building Testing Hub API Input Map - estore")
         def testingHubInputMap = [:]
-        testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-        testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"CLT Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                 '{"displayname":"GUAC - BiC Native Multi line item Order","testcasename":"validateMultiLineItemBicNativeOrder","description":"BiC Native Multi line item Order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-multiline-bicorder","testMethod":"validateMultiLineItemBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","address":"Autodesk@2300 Woodcrest Pl@Birmingham@35209@9916800100@United States@Alabama", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
@@ -1015,8 +1014,8 @@ def triggerCJT(def serviceBuildHelper, String env) {
     script {
         println("Building Testing Hub API Input Map - accountportal")
         def testingHubInputMap = [:]
-        testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-        testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                 '{"displayname":"Account Portal - Add Seats","testcasename":"validateBicAddSeatNativeOrder","description":"Add Seats from Portal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-addseat-native","testMethod":"validateBicAddSeatNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"MASTERCARD","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
@@ -1038,8 +1037,8 @@ def triggerCJT(def serviceBuildHelper, String env) {
     script {
         println("Building Testing Hub API Input Map - estore")
         def testingHubInputMap = [:]
-        testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-        testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                 '{"displayname":"BiC order Flex","testcasename":"d27c5060","description":"BiC order new Flex","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
@@ -1060,8 +1059,8 @@ def triggerCJT(def serviceBuildHelper, String env) {
         if (env == "STG") {
             println("Building Testing Hub API Input Map - EDU")
             def testingHubInputMap = [:]
-            testingHubInputMap.authClientID = 'fSPZcP0OBXjFCtUW7nnAJFYJlXcWvUGe'
-            testingHubInputMap.authCredentialsID = 'testing-hub-creds-id'
+            def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+            testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
             testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/edu/testcase'
             testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                     '{"displayname":"EDU - Educator flow","testcasename":"validateProductActivationByEducator","description":"Activate Educator Product","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"activate-product-educator","testMethod":"validateProductActivationByEducator","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}},' +
