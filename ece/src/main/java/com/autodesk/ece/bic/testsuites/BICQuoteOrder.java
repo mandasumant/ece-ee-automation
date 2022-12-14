@@ -243,6 +243,7 @@ public class BICQuoteOrder extends ECETestBase {
           put(BICConstants.reasonForExempt, "Reseller");
           put(BICConstants.buyerAccountType, "Reseller");
           put(TestingHubConstants.state, address.provinceName);
+          put(TestingHubConstants.store, testDataForEachMethod.get("storeName"));
           put(BICConstants.registeredAs, "Retailer");
           put(BICConstants.salesTaxType, "State Sales Tax");
           put(BICConstants.businessType, "Construction");
@@ -263,7 +264,18 @@ public class BICQuoteOrder extends ECETestBase {
               dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
               break;
           }
-          dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
+
+          switch (System.getProperty("partialExemptionType")) {
+            case "GST":
+              dataForTTR.put(BICConstants.buyerAccountType, "Provincial Government");
+              break;
+            case "PST":
+              dataForTTR.put(BICConstants.canadianTaxType, "Provincial Sales Tax (PST)");
+              dataForTTR.put(BICConstants.certToSelect, "Canada Provincial Sales Tax Certificate");
+            default:
+              dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
+          }
+
           break;
         case "United States":
           switch (address.province) {
