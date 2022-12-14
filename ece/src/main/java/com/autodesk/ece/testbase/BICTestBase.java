@@ -979,7 +979,6 @@ public class BICTestBase {
         Util.printInfo("Clicking on save and continue button...");
         bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
       }
-      //   Util.sleep(10000);
 
       driver.switchTo().window(parentWindow);
       Util.sleep(5000);
