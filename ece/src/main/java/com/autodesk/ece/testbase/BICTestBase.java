@@ -887,6 +887,8 @@ public class BICTestBase {
       bicPage.waitForElementVisible(
           bicPage.getMultipleWebElementsfromField("paypalPaymentHead").get(0), 10);
 
+      bicPage.scrollToBottomOfPage();
+
       Util.printInfo("Clicking on Paypal checkout frame...");
       bicPage.selectFrame("paypalCheckoutOptionFrame");
 
@@ -907,6 +909,9 @@ public class BICTestBase {
 
       if (System.getProperty("store").equals("STORE-JP")) {
         AssertUtils.assertTrue(title.toUpperCase().contains("アカウントへのログイン".toUpperCase()),
+            "Current title [" + title + "] does not contains keyword : PayPal Login");
+      } else if (System.getProperty("store").equals("STORE-DK")) {
+        AssertUtils.assertTrue(title.toUpperCase().contains("Log på din PayPal-konto".toUpperCase()),
             "Current title [" + title + "] does not contains keyword : PayPal Login");
       } else {
         AssertUtils.assertTrue(title.toUpperCase().contains("Log In".toUpperCase()),
@@ -945,15 +950,19 @@ public class BICTestBase {
         Util.printInfo("Accept cookies button not present.");
       }
 
+      bicPage.scrollToBottomOfPage();
+
       String paymentTypeXpath = "";
       if (System.getProperty("store").equals("STORE-JP")) {
         paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
             .replace("<PAYMENTOPTION>", "Visa");
-      } else {
+        driver.findElement(By.xpath(paymentTypeXpath)).click();
+      } else if (System.getProperty("store").equals("STORE-NAMER")) {
         paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
             .replace("<PAYMENTOPTION>", data.get("paypalPaymentType"));
+        driver.findElement(By.xpath(paymentTypeXpath)).click();
       }
-      driver.findElement(By.xpath(paymentTypeXpath)).click();
+
       Util.sleep(2000);
 
       bicPage.executeJavascript("window.scrollBy(0,1000);");
@@ -964,12 +973,13 @@ public class BICTestBase {
         Util.sleep(2000);
         bicPage.clickUsingLowLevelActions("paypalReviewBtn");
         Util.printInfo("Clicked again on agree and continue button.");
+
         Util.sleep(2000);
       } catch (Exception e) {
         Util.printInfo("Clicking on save and continue button...");
         bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
       }
-      Util.sleep(10000);
+      //   Util.sleep(10000);
 
       driver.switchTo().window(parentWindow);
       Util.sleep(5000);
@@ -980,7 +990,7 @@ public class BICTestBase {
             .getText();
         AssertUtils.assertEquals(paypalString,
             "PayPal が支払い方法として選択されています。");
-      } else {
+      } else if (System.getProperty("store").equals("STORE-NAMER")) {
         AssertUtils.assertEquals(bicPage.getTextFromLink("paypalConfirmationText"),
             "PayPal is selected for payment.");
       }
