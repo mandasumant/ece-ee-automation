@@ -1037,10 +1037,10 @@ public class BICTestBase {
         try {
           bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10);
 
-          if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
-            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
-              Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get("orderNumber"));
-              bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
+          if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_ID)) {
+            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_ID).equals("")) {
+              Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
+              bicPage.populateField("purchaseOrderNumber", payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
             }
           } else {
             Util.printInfo("Selecting No PO Option in LOC flow");
