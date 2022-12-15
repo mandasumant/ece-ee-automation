@@ -910,11 +910,8 @@ public class BICTestBase {
       if (System.getProperty("store").equals("STORE-JP")) {
         AssertUtils.assertTrue(title.toUpperCase().contains("アカウントへのログイン".toUpperCase()),
             "Current title [" + title + "] does not contains keyword : PayPal Login");
-      } else if (System.getProperty("store").equals("STORE-DK")) {
-        AssertUtils.assertTrue(title.toUpperCase().contains("Log på din PayPal-konto".toUpperCase()),
-            "Current title [" + title + "] does not contains keyword : PayPal Login");
       } else {
-        AssertUtils.assertTrue(title.toUpperCase().contains("Log In".toUpperCase()),
+        AssertUtils.assertTrue(title.toUpperCase().contains("paypal".toUpperCase()),
             "Current title [" + title + "] does not contains keyword : PayPal Login");
       }
 
