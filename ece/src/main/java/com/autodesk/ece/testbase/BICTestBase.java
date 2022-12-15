@@ -2522,11 +2522,7 @@ public class BICTestBase {
    * @return boolean true/false
    */
   public boolean isSubmitOrderEnabled() {
-    try {
-      return bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10);
-    } catch (MetadataException e) {
-      return false;
-    }
+    return bicPage.waitForFieldEnabled(BICECEConstants.SUBMIT_ORDER_BUTTON, 15);
   }
 
   @Step("Validate Pay By Invoice Payment Tab presence" + GlobalConstants.TAG_TESTINGHUB)
@@ -2548,6 +2544,7 @@ public class BICTestBase {
   }
 
   public void verifyIncorrectPayerDetailsAlertMessage() {
+    Util.sleep(3000);
     WebElement alertInvalidMatch = driver.findElement(
         By.xpath(bicPage.getFirstFieldLocator("alertMessage")));
     AssertUtils.assertTrue(
