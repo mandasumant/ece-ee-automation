@@ -1043,10 +1043,10 @@ public class BICTestBase {
         try {
           bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10);
 
-          if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_NUMBER)) {
-            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_NUMBER).equals("")) {
-              Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get("orderNumber"));
-              bicPage.populateField("portalPurchaseOrder", payByInvoiceDetails.get("orderNumber"));
+          if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_ID)) {
+            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_ID).equals("")) {
+              Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
+              bicPage.populateField("purchaseOrderNumber", payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
             }
           } else {
             Util.printInfo("Selecting No PO Option in LOC flow");
@@ -1970,8 +1970,18 @@ public class BICTestBase {
       Util.printInfo("This state collects tax.");
       AssertUtils.assertTrue(taxValueAmount / 100 > 0, "Tax value is greater than zero");
     } else if (nonZeroTaxState.equals("N")) {
-      Util.printInfo("This state does not collect tax.");
-      AssertUtils.assertEquals(taxValueAmount / 100, 0.00, "Tax value is equal to zero");
+      if (data.containsKey("taxRate")) {
+        String subTotal = driver.findElement(
+            By.xpath(bicPage.getFirstFieldLocator("subtotalPrice"))).getText().replaceAll("[^0-9]", "");
+        int subTotalValue = Integer.parseInt(subTotal);
+        double taxRate = Double.parseDouble(data.get("taxRate"));
+        Util.printInfo("Asserting calculated tax rate");
+        AssertUtils.assertEquals(taxValueAmount, (double) Math.round(subTotalValue * taxRate),
+            "Tax matches calculated value");
+      } else {
+        Util.printInfo("This state does not collect tax.");
+        AssertUtils.assertEquals(taxValueAmount / 100, 0.00, "Tax value is equal to zero");
+      }
     } else {
       Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
@@ -2518,11 +2528,7 @@ public class BICTestBase {
    * @return boolean true/false
    */
   public boolean isSubmitOrderEnabled() {
-    try {
-      return bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10);
-    } catch (MetadataException e) {
-      return false;
-    }
+    return bicPage.waitForFieldEnabled(BICECEConstants.SUBMIT_ORDER_BUTTON, 15);
   }
 
   @Step("Validate Pay By Invoice Payment Tab presence" + GlobalConstants.TAG_TESTINGHUB)
@@ -2544,6 +2550,7 @@ public class BICTestBase {
   }
 
   public void verifyIncorrectPayerDetailsAlertMessage() {
+    Util.sleep(3000);
     WebElement alertInvalidMatch = driver.findElement(
         By.xpath(bicPage.getFirstFieldLocator("alertMessage")));
     AssertUtils.assertTrue(

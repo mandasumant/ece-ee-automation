@@ -1,37 +1,81 @@
 CA:
   AB:
-    full: 1
+    full:
+      code: 1
+      rate: 0
   BC:
-    GST: 1
-    PST: 3
-    full: 5
+    GST:
+      code: 1
+      rate: 0.07
+    PST:
+      code: 3
+      rate: 0.05
+    full:
+      code: 5
+      rate: 0
   MB:
-    GST: 1
-    PST: 3
-    full: 5
+    GST:
+      code: 1
+      rate: 0.07
+    PST:
+      code: 3
+      rate: 0.05
+    full:
+      code: 5
+      rate: 0
   NB:
-    full: 2
+    full:
+      code: 2
+      rate: 0
   NL:
-    full: 2
+    full:
+      code: 2
+      rate: 0
   NT:
-    full: 1
+    full:
+      code: 1
+      rate: 0
   NS:
-    full: 2
+    full:
+      code: 2
+      rate: 0
   NU:
-    full: 1
+    full:
+      code: 1
+      rate: 0
   ON:
-    full: 2
+    full:
+      code: 2
+      rate: 0
   PE:
-    full: 2
+    full:
+      code: 2
+      rate: 0
   QC:
-    GST: 1
-    QST: 4
-    full: 6
+    GST:
+      code: 1
+      rate: 0.09975
+    QST:
+      code: 4
+      rate: 5
+    full:
+      code: 6
+      rate: 0
   SK:
-    GST: 1
-    PST: 3
-    full: 5
+    GST:
+      code: 1
+      rate: 0.06
+    PST:
+      code: 3
+      rate: 0.05
+    full:
+      code: 5
+      rate: 0
   YT:
-    full: 1
+    full:
+      code: 1
+      rate: 0
 US:
-  full: 9
+  full:
+    code: 9
+    rate: 0

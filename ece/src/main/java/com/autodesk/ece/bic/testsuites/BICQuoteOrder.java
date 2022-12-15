@@ -7,6 +7,8 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.ece.utilities.Address;
+import com.autodesk.ece.utilities.TaxExemptionMappings;
+import com.autodesk.ece.utilities.TaxExemptionMappings.TaxOptions;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
@@ -18,6 +20,8 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.restassured.path.json.JsonPath;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -34,7 +38,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.util.Strings;
-import org.yaml.snakeyaml.Yaml;
 
 public class BICQuoteOrder extends ECETestBase {
 
@@ -232,6 +235,7 @@ public class BICQuoteOrder extends ECETestBase {
           "TTR button should not be present for this scenario");
     }
 
+    String flexCode = null;
     // Setup test base for Tax Exemption Document submission
     if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
       com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
@@ -265,7 +269,10 @@ public class BICQuoteOrder extends ECETestBase {
               break;
           }
 
-          switch (System.getProperty("partialExemptionType")) {
+          String partialExemptionType = System.getProperty("partialExemptionType");
+          partialExemptionType = partialExemptionType == null ? "" : partialExemptionType;
+
+          switch (partialExemptionType) {
             case "GST":
               dataForTTR.put(BICConstants.buyerAccountType, "Provincial Government");
               break;
@@ -290,11 +297,29 @@ public class BICQuoteOrder extends ECETestBase {
           dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
           break;
       }
-
       coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
       testDataForEachMethod.put("taxOptionEnabled", "N");
 
-      String flexCode = null;
+      InputStream inputStream = this.getClass().getClassLoader()
+          .getResourceAsStream(
+              GlobalTestBase.getTestDataDir() + GlobalTestBase.getTestManifest().getProperty("TAX_EXEMPTION_MAPPINGS"));
+      ObjectMapper mapper = new YAMLMapper();
+      TaxExemptionMappings taxMappings = mapper.readValue(inputStream, TaxExemptionMappings.class);
+
+      TaxOptions taxOptions = null;
+      switch (address.country) {
+        case "Canada":
+          String partialExemptionType =
+              Objects.nonNull(System.getProperty("partialExemptionType")) ? System.getProperty("partialExemptionType")
+                  : "full";
+          taxOptions = taxMappings.CA.get(address.province)
+              .get(partialExemptionType);
+          break;
+        case "United States":
+          taxOptions = taxMappings.US.get("full");
+          break;
+      }
+
       try {
         flexCode = getDriver().getCurrentUrl().split("flexCode=")[1];
         testDataForEachMethod.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
@@ -304,32 +329,9 @@ public class BICQuoteOrder extends ECETestBase {
         AssertUtils.fail("Failed to read flex code from checkout URL");
       }
 
-      Yaml yaml = new Yaml();
-      InputStream inputStream = this.getClass()
-          .getClassLoader()
-          .getResourceAsStream(
-              GlobalTestBase.getTestDataDir() + GlobalTestBase.getTestManifest().getProperty("TAX_EXEMPTION_MAPPINGS"));
-      Map<String, Object> taxMappings = (Map<String, Object>) yaml.load(inputStream);
-
-      Integer expectedCode = null;
-      switch (address.country) {
-        case "Canada":
-          String partialExemptionType =
-              Objects.nonNull(System.getProperty("partialExemptionType")) ? System.getProperty("partialExemptionType")
-                  : "full";
-          Map<String, Integer> taxOptions = (Map<String, Integer>) ((Map<String, Object>) taxMappings.get("CA")).get(
-              address.province);
-          expectedCode = taxOptions.get(partialExemptionType);
-          break;
-        case "United States":
-          expectedCode = ((Map<String, Integer>) taxMappings.get("US")).get("full");
-          break;
-      }
-
       AssertUtils.assertEquals("FlexCode URL parameter should match expected code", flexCode,
-          String.valueOf(expectedCode));
-
-      return; // TODO: Remove when new TTR orders can be processed.
+          String.valueOf(taxOptions.code));
+      testDataForEachMethod.put("taxRate", taxOptions.rate.toString());
     }
 
     results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
@@ -349,9 +351,12 @@ public class BICQuoteOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-    AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
-        Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
-        "Pelican 'Tax Exempt' flag didnt match with Test Param");
+    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      String expectedExemptCode =
+          Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)) ? flexCode : "null";
+      AssertUtils.assertEquals("Pelican 'Tax Exempt' flag didnt match with Test Param",
+          results.get(BICECEConstants.IS_TAX_EXCEMPT), expectedExemptCode);
+    }
 
     // Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
