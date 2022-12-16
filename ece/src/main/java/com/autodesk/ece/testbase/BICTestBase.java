@@ -892,6 +892,8 @@ public class BICTestBase {
       Util.printInfo("Clicking on Paypal checkout frame...");
       bicPage.selectFrame("paypalCheckoutOptionFrame");
 
+      bicPage.scrollToBottomOfPage();
+
       Util.printInfo("Clicking on Paypal checkout button...");
       bicPage.clickUsingLowLevelActions("paypalCheckoutBtn");
 
