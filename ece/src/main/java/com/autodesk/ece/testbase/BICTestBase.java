@@ -907,13 +907,8 @@ public class BICTestBase {
       Util.sleep(10000);
       String title = driver.getTitle();
 
-      if (System.getProperty("store").equals("STORE-JP")) {
-        AssertUtils.assertTrue(title.toUpperCase().contains("アカウントへのログイン".toUpperCase()),
-            "Current title [" + title + "] does not contains keyword : PayPal Login");
-      } else {
-        AssertUtils.assertTrue(title.toUpperCase().contains("paypal".toUpperCase()),
-            "Current title [" + title + "] does not contains keyword : PayPal Login");
-      }
+      bicPage.waitForElementVisible(
+          bicPage.getMultipleWebElementsfromField("paypalTitle").get(0), 30);
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
       if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
@@ -950,11 +945,7 @@ public class BICTestBase {
       bicPage.scrollToBottomOfPage();
 
       String paymentTypeXpath = "";
-      if (System.getProperty("store").equals("STORE-JP")) {
-        paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
-            .replace("<PAYMENTOPTION>", "Visa");
-        driver.findElement(By.xpath(paymentTypeXpath)).click();
-      } else if (System.getProperty("store").equals("STORE-NAMER")) {
+      if (System.getProperty("store").equals("STORE-NAMER")) {
         paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
             .replace("<PAYMENTOPTION>", data.get("paypalPaymentType"));
         driver.findElement(By.xpath(paymentTypeXpath)).click();
@@ -963,18 +954,14 @@ public class BICTestBase {
       Util.sleep(2000);
 
       bicPage.executeJavascript("window.scrollBy(0,1000);");
-      try {
-        Util.printInfo("Clicking on agree and continue button...");
-        bicPage.clickUsingLowLevelActions("paypalReviewBtn");
-        Util.printInfo("Clicked on agree and continue button.");
-        Util.sleep(2000);
-        bicPage.clickUsingLowLevelActions("paypalReviewBtn");
-        Util.printInfo("Clicked again on agree and continue button.");
 
+      if (bicPage.checkIfElementExistsInPage("paypalAgreeAndContinueBtn", 10)) {
+        String paypalBtn = driver.findElement(By.xpath(
+                "//*[contains(@class, \"reviewButton\")]//*[@type=\"submit\"]"))
+            .getText();
+        bicPage.clickUsingLowLevelActions("paypalAgreeAndContinueBtn");
+        Util.printInfo("Clicked on '" + paypalBtn + "' button.");
         Util.sleep(2000);
-      } catch (Exception e) {
-        Util.printInfo("Clicking on save and continue button...");
-        bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
       }
 
       driver.switchTo().window(parentWindow);
@@ -1557,7 +1544,8 @@ public class BICTestBase {
         .getText();
 
     String estimatedPrice = driver
-        .findElement(By.xpath("//*[@data-testid=\"fe-summary-price\"]/div[@class=\"fe-rec-totals-fadeIn\"]")).getText();
+        .findElement(By.xpath("//*[@data-testid=\"fe-summary-price\"]/div[@class=\"fe-rec-totals-fadeIn\"]"))
+        .getText();
     estimatedPrice = estimatedPrice.replaceAll("[^0-9 .]", "");
     double estimatedPriceDouble = Double.parseDouble(estimatedPrice);
 
@@ -1698,7 +1686,8 @@ public class BICTestBase {
     }
   }
 
-  private String createBICOrderDotCom(LinkedHashMap<String, String> data, Boolean isLoggedIn) throws MetadataException {
+  private String createBICOrderDotCom(LinkedHashMap<String, String> data, Boolean isLoggedIn) throws
+      MetadataException {
     String orderNumber = null;
     Map<String, String> address = null;
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
@@ -1983,7 +1972,8 @@ public class BICTestBase {
         AssertUtils.assertEquals(taxValueAmount / 100, 0.00, "Tax value is equal to zero");
       }
     } else {
-      Util.printInfo("Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
+      Util.printInfo(
+          "Entered isTaxed value is not valid. Can not assert if tax is displayed properly. Should be Y/N.");
     }
   }
 
@@ -2024,7 +2014,8 @@ public class BICTestBase {
 
   @SuppressWarnings("unused")
   @Step("Create BIC Existing User Order Creation via Cart " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createBICReturningUser(LinkedHashMap<String, String> data) throws MetadataException {
+  public HashMap<String, String> createBICReturningUser(LinkedHashMap<String, String> data) throws
+      MetadataException {
     String orderNumber;
     HashMap<String, String> results = new HashMap<>();
     String paymentMethod = data.get("paymentMethod");
