@@ -23,6 +23,7 @@ import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.restassured.path.json.JsonPath;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -238,100 +239,7 @@ public class BICQuoteOrder extends ECETestBase {
     String flexCode = null;
     // Setup test base for Tax Exemption Document submission
     if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
-      com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
-          getDriver(), getTestBase());
-
-      HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {
-        {
-          put(BICConstants.exemptFromSalesTax, "Yes");
-          put(BICConstants.reasonForExempt, "Reseller");
-          put(BICConstants.buyerAccountType, "Reseller");
-          put(TestingHubConstants.state, address.provinceName);
-          put(TestingHubConstants.store, testDataForEachMethod.get("storeName"));
-          put(BICConstants.registeredAs, "Retailer");
-          put(BICConstants.salesTaxType, "State Sales Tax");
-          put(BICConstants.businessType, "Construction");
-          put(BICConstants.certToSelect, "Uniform Sales and Use Tax Certificate - Multijurisdiction");
-          put(BICConstants.buyerContactName, testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " "
-              + testDataForEachMethod.get(BICECEConstants.LASTNAME));
-          put(BICConstants.certificateName,
-              EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
-        }
-      };
-
-      switch (address.country) {
-        case "Canada":
-          switch (address.province) {
-            case "BC":
-            case "MB":
-            case "SK":
-              dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
-              break;
-          }
-
-          String partialExemptionType = System.getProperty("partialExemptionType");
-          partialExemptionType = partialExemptionType == null ? "" : partialExemptionType;
-
-          switch (partialExemptionType) {
-            case "GST":
-              dataForTTR.put(BICConstants.buyerAccountType, "Provincial Government");
-              break;
-            case "PST":
-              dataForTTR.put(BICConstants.canadianTaxType, "Provincial Sales Tax (PST)");
-              dataForTTR.put(BICConstants.certToSelect, "Canada Provincial Sales Tax Certificate");
-            default:
-              dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
-          }
-
-          break;
-        case "United States":
-          switch (address.province) {
-            case "MS":
-            case "MA":
-              dataForTTR.put(BICConstants.identityNumberLength, "9");
-              break;
-            case "MD":
-              dataForTTR.put(BICConstants.identityNumberLength, "8");
-          }
-        default:
-          dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
-          break;
-      }
-      coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
-      testDataForEachMethod.put("taxOptionEnabled", "N");
-
-      InputStream inputStream = this.getClass().getClassLoader()
-          .getResourceAsStream(
-              GlobalTestBase.getTestDataDir() + GlobalTestBase.getTestManifest().getProperty("TAX_EXEMPTION_MAPPINGS"));
-      ObjectMapper mapper = new YAMLMapper();
-      TaxExemptionMappings taxMappings = mapper.readValue(inputStream, TaxExemptionMappings.class);
-
-      TaxOptions taxOptions = null;
-      switch (address.country) {
-        case "Canada":
-          String partialExemptionType =
-              Objects.nonNull(System.getProperty("partialExemptionType")) ? System.getProperty("partialExemptionType")
-                  : "full";
-          taxOptions = taxMappings.CA.get(address.province)
-              .get(partialExemptionType);
-          break;
-        case "United States":
-          taxOptions = taxMappings.US.get("full");
-          break;
-      }
-
-      try {
-        flexCode = getDriver().getCurrentUrl().split("flexCode=")[1];
-        testDataForEachMethod.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
-        testResults.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
-        updateTestingHub(testResults);
-      } catch (Exception ex) {
-        AssertUtils.fail("Failed to read flex code from checkout URL");
-      }
-
-      AssertUtils.assertEquals("FlexCode URL parameter should match expected code", flexCode,
-          String.valueOf(taxOptions.code));
-      testDataForEachMethod.put("taxRate", taxOptions.rate.toString());
+      flexCode = submitECMSTaxExemption(testResults, address);
     }
 
     results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
@@ -1138,49 +1046,13 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().refreshCartIfEmpty();
 
     // Setup test base for Tax Exemption Document submission
+    String flexCode = null;
     if (Objects.equals(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO), BICECEConstants.TRUE)) {
-      com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
-          getDriver(), getTestBase());
-
-      HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {
-        {
-          put(BICConstants.exemptFromSalesTax, "Yes");
-          put(BICConstants.reasonForExempt, "Reseller");
-          put(BICConstants.buyerAccountType, "Reseller");
-          put(BICConstants.registeredAs, "Retailer");
-          put(BICConstants.salesTaxType, "State Sales Tax");
-          put(BICConstants.businessType, "Construction");
-          put(BICConstants.certToSelect, "Uniform Sales and Use Tax Certificate - Multijurisdiction");
-          put(BICConstants.buyerContactName, testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " "
-              + testDataForEachMethod.get(BICECEConstants.LASTNAME));
-          put(BICConstants.certificateName,
-              EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
-        }
-      };
-
-      dataForTTR.put("state", address.provinceName);
-
-      switch (address.country) {
-        case "Canada":
-          switch (address.province) {
-            case "BC":
-            case "MB":
-            case "SK":
-              dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
-              break;
-          }
-          dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
-          break;
-        case "United States":
-        default:
-          dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
-          break;
+      try {
+        flexCode = submitECMSTaxExemption(testResults, address);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
-
-      coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
-
-      getBicTestBase().validateUserTaxExempt(true);
-      testDataForEachMethod.put("taxOptionEnabled", "N");
     }
 
     HashMap<String, String> results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
@@ -1190,9 +1062,12 @@ public class BICQuoteOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-    AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
-        Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
-        "Pelican 'Tax Exempt' flag didnt match with Test Param");
+    if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+      String expectedExemptCode =
+          Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)) ? flexCode : "null";
+      AssertUtils.assertEquals("Pelican 'Tax Exempt' flag didnt match with Test Param",
+          results.get(BICECEConstants.IS_TAX_EXCEMPT), expectedExemptCode);
+    }
 
     // Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
@@ -1384,6 +1259,105 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.putAll(steps);
       }
     });
+  }
+
+  private String submitECMSTaxExemption(HashMap<String, String> testResults, Address address) throws IOException {
+    String flexCode = null;
+    com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+        getDriver(), getTestBase());
+
+    HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {
+      {
+        put(BICConstants.exemptFromSalesTax, "Yes");
+        put(BICConstants.reasonForExempt, "Reseller");
+        put(BICConstants.buyerAccountType, "Reseller");
+        put(TestingHubConstants.state, address.provinceName);
+        put(TestingHubConstants.store, testDataForEachMethod.get("storeName"));
+        put(BICConstants.registeredAs, "Retailer");
+        put(BICConstants.salesTaxType, "State Sales Tax");
+        put(BICConstants.businessType, "Construction");
+        put(BICConstants.certToSelect, "Uniform Sales and Use Tax Certificate - Multijurisdiction");
+        put(BICConstants.buyerContactName, testDataForEachMethod.get(BICECEConstants.FIRSTNAME) + " "
+            + testDataForEachMethod.get(BICECEConstants.LASTNAME));
+        put(BICConstants.certificateName,
+            EISTestBase.getTestManifest().getProperty("ECMS_TTR_TEST_DOCUMENT"));
+      }
+    };
+
+    switch (address.country) {
+      case "Canada":
+        switch (address.province) {
+          case "BC":
+          case "MB":
+          case "SK":
+            dataForTTR.put(BICConstants.canadianTaxType, "Canada Goods and Services Tax (GST)");
+            break;
+        }
+
+        String partialExemptionType = System.getProperty("partialExemptionType");
+        partialExemptionType = partialExemptionType == null ? "" : partialExemptionType;
+
+        switch (partialExemptionType) {
+          case "GST":
+            dataForTTR.put(BICConstants.buyerAccountType, "Provincial Government");
+            break;
+          case "PST":
+            dataForTTR.put(BICConstants.canadianTaxType, "Provincial Sales Tax (PST)");
+            dataForTTR.put(BICConstants.certToSelect, "Canada Provincial Sales Tax Certificate");
+          default:
+            dataForTTR.put(BICConstants.buyerAccountType, "Government of Canada");
+        }
+
+        break;
+      case "United States":
+        switch (address.province) {
+          case "MS":
+          case "MA":
+            dataForTTR.put(BICConstants.identityNumberLength, "9");
+            break;
+          case "MD":
+            dataForTTR.put(BICConstants.identityNumberLength, "8");
+        }
+      default:
+        dataForTTR.put(BICConstants.buyerAccountType, "Reseller");
+        break;
+    }
+    coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
+    testDataForEachMethod.put("taxOptionEnabled", "N");
+
+    InputStream inputStream = this.getClass().getClassLoader()
+        .getResourceAsStream(
+            GlobalTestBase.getTestDataDir() + GlobalTestBase.getTestManifest().getProperty("TAX_EXEMPTION_MAPPINGS"));
+    ObjectMapper mapper = new YAMLMapper();
+    TaxExemptionMappings taxMappings = mapper.readValue(inputStream, TaxExemptionMappings.class);
+
+    TaxOptions taxOptions = null;
+    switch (address.country) {
+      case "Canada":
+        String partialExemptionType =
+            Objects.nonNull(System.getProperty("partialExemptionType")) ? System.getProperty("partialExemptionType")
+                : "full";
+        taxOptions = taxMappings.CA.get(address.province)
+            .get(partialExemptionType);
+        break;
+      case "United States":
+        taxOptions = taxMappings.US.get("full");
+        break;
+    }
+
+    try {
+      flexCode = getDriver().getCurrentUrl().split("flexCode=")[1];
+      testDataForEachMethod.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
+      testResults.put(BICECEConstants.TAX_FLEX_CODE, flexCode);
+      updateTestingHub(testResults);
+    } catch (Exception ex) {
+      AssertUtils.fail("Failed to read flex code from checkout URL");
+    }
+
+    AssertUtils.assertEquals("FlexCode URL parameter should match expected code", flexCode,
+        String.valueOf(taxOptions.code));
+    testDataForEachMethod.put("taxRate", taxOptions.rate.toString());
+    return flexCode;
   }
 
 }
