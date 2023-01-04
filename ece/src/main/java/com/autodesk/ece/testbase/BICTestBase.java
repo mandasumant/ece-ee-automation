@@ -921,7 +921,6 @@ public class BICTestBase {
         bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
       }
 
-      Util.printInfo("Entering paypal user name [" + paypalEmail + "]...");
       bicPage.waitForElementVisible(
           bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
       bicPage.populateField("paypalUsernameField", paypalEmail);
@@ -957,13 +956,25 @@ public class BICTestBase {
 
       bicPage.executeJavascript("window.scrollBy(0,1000);");
 
-      if (bicPage.checkIfElementExistsInPage("paypalAgreeAndContinueBtn", 10)) {
-        String paypalBtn = driver.findElement(By.xpath(
-                "//*[contains(@class, \"reviewButton\")]//*[@type=\"submit\"]"))
-            .getText();
-        bicPage.clickUsingLowLevelActions("paypalAgreeAndContinueBtn");
-        Util.printInfo("Clicked on '" + paypalBtn + "' button.");
-        Util.sleep(2000);
+      int count = 0;
+      while (bicPage.checkIfElementExistsInPage("paypalReviewBtn", 5)) {
+        count++;
+
+        if (count > 3) {
+          AssertUtils.fail("Unable to click on Continue button.");
+        } else {
+          String continueBtn = driver.findElement(
+              By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getText();
+
+          if (!Strings.isNotNullAndNotEmpty(continueBtn)) {
+            continueBtn = driver.findElement(
+                By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getAttribute("value");
+          }
+
+          Util.printInfo("Clicking on '" + continueBtn + "' button.");
+          bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+          Util.sleep(3000);
+        }
       }
 
       driver.switchTo().window(parentWindow);
