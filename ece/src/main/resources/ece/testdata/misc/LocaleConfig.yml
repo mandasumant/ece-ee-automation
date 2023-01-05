@@ -120,6 +120,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070259084@letscheck.email"
     minAmountPBI: "935.00"
     maxAmountPBI: "93,520.00"
+    paypalEmail: "paypal-buyer-emea@ssttest.net"
 
   fr_FR:
     region: "FRFR"
@@ -272,6 +273,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070188209@letscheck.email"
     minAmountPBI: "935.00"
     maxAmountPBI: "93,520.00"
+    paypalEmail: "paypal-buyer-emea@ssttest.net"
 
   no_NO:
     region: "NONO"
@@ -285,6 +287,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070055088@letscheck.email"
     minAmountPBI: "935.00"
     maxAmountPBI: "93,520.00"
+    paypalEmail: "paypal-buyer-emea@ssttest.net"
 
   da_DK:
     region: "DADK"
@@ -311,6 +314,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070267984@letscheck.email"
     minAmountPBI: "935.00"
     maxAmountPBI: "93,520.00"
+    paypalEmail: "paypal-buyer-emea@ssttest.net"
 
   de_CH:
     region: "DECH"
@@ -338,6 +342,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070001234@letscheck.email"
     minAmountPBI: "935.00"
     maxAmountPBI: "93,520.00"
+    paypalEmail: "paypal-buyer-emea@ssttest.net"
 
 
   it_CH:
