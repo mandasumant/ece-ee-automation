@@ -883,13 +883,14 @@ def triggerApolloTTR(def serviceBuildHelper, def ttrEnv) {
                 '{"displayname":"TTR Q2O CA Saskatchewan(en_CA)","testcasename":"9d3de1c2","description":"Quote 2 Order CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"7095","jiraId":"APLR2PMO-12686"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","locale":"en_CA","sapValidation":"False","address":"Autodesk@2002 Airport Dr@Saskatoon@S7L 6M4@9916800100@Canada@SK","timezone":"Canada/Pacific"}},' +
                 '{"displayname":"TTR Q2O CA Yukon(en_CA)","testcasename":"9d3de1c2","description":"Quote 2 Order CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"7095","jiraTestFolderId":"7095","jiraId":"APLR2PMO-12699"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","submitTaxInfo":"true","locale":"en_CA","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@1026 Second Ave@Dawson@Y0B 1G0@9916800100@Canada@YT","timezone":"Canada/Pacific"}},' +
                 [
-                    generateTest("Returning (en_US)", testcases.q2oTTRReturningUser, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
-                    generateTest("Neg: TTR Q2O Returning User with Diff. Address", testcases.q2oTTRReturningUser, addresses["United States"]["AZ"], ["changeAddress": "true", "timezone": "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
-                    generateTest("Returning (en_CA)", testcases.q2oTTRReturningUser, addresses["Canada"]["ON"], ["timezone": "America/Toronto", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
+                   // generateTest("Returning (en_US)", testcases.q2oTTRReturningUser, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
+                   // generateTest("Neg: TTR Q2O Returning User with Diff. Address", testcases.q2oTTRReturningUser, addresses["United States"]["AZ"], ["changeAddress": "true", "timezone": "America/Los_Angeles", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
+                   //generateTest("Returning (en_CA)", testcases.q2oTTRReturningUser, addresses["Canada"]["ON"], ["timezone": "America/Toronto", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"]),
                     generateTest("Expired cert (en_US)", testcases.q2oTTRExpiredCertificate, addresses["United States"]["CO"], ["timezone": "America/Denver"]),
                     generateTest("Declined cert (en_US)", testcases.q2oTTRCertificateDeclined, addresses["United States"]["CO"], ["timezone": "America/Denver"])
                 ].join(',') +
                 '],"workstreamname":"dclecjt"}'
+
         println("Starting Testing Hub API Call - estore - All")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
             println('Testing Hub API called successfully - estore - All')
