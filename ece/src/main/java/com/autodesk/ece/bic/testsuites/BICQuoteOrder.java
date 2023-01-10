@@ -3,6 +3,9 @@ package com.autodesk.ece.bic.testsuites;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.BICTestBase;
 import com.autodesk.ece.testbase.BICTestBase.Names;
+import com.autodesk.ece.testbase.DatastoreClient;
+import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
+import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
@@ -292,6 +295,23 @@ public class BICQuoteOrder extends ECETestBase {
       testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+    try {
+      DatastoreClient dsClient = new DatastoreClient();
+      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .name("QuoteOrder")
+          .tenant("PlatformAutomation")
+          .environment(GlobalConstants.getENV()).emailId(results.get(BICConstants.emailid))
+          .orderNumber(Integer.valueOf(results.get(BICECEConstants.ORDER_ID)))
+          .quoteId(quoteId)
+          .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+          .locale(locale)
+          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+      testResults.put("Stored order data ID", orderData.getId().toString());
+      updateTestingHub(testResults);
+    } catch (Exception e) {
+      Util.printWarning("Failed to push order data to data store");
     }
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
