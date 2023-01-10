@@ -309,7 +309,7 @@ LocaleConfig:
     currencyStore: "CZK"
     countryDomain: ".cz"
     paymentMethods: "CREDITCARD,PAYPAL"
-    address: "Autodesk@Hornoměcholupská 873@Praha 15@102 00@03230700940@Česká republika"
+    address: "Autodesk@Hornoměcholupská 873@Praha@102 00@03230700940@Česká republika"
     quoteAgentCsnAccount: "5070267984"
     agentContactEmail: "partneruser_da_int_5070267984@letscheck.email"
     minAmountPBI: "935.00"
