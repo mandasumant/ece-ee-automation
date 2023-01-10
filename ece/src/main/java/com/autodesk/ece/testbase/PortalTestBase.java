@@ -1863,7 +1863,7 @@ public class PortalTestBase {
 
   public void selectAllInvoicesPayButton() throws MetadataException {
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
-    portalPage.clickUsingLowLevelActions("allInvoicesPayButton");
+    portalPage.click("allInvoicesPayButton");
     Util.printInfo("Clicked on All Invoice Pay Button....");
   }
 
@@ -2196,7 +2196,7 @@ public class PortalTestBase {
     }
 
     Util.sleep(10000);
-    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number:" + invoiceNumber);
+    Util.printInfo("Validating Invoice Amount and Checkout Amount for Invoice Number: " + invoiceNumber);
     double beforeAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
     AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
     double creditMemoAmount = 0.00;
