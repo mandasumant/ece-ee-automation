@@ -151,7 +151,7 @@ LocaleConfig:
     storeName: "STORE-DE"
     currencyStore: "EUR"
     countryDomain: ".de"
-    paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY,SOFORT,LOC,MASTERCARD"
+    paymentMethods: "CREDITCARD,PAYPAL,SEPA,GIROPAY,SOFORT,LOC"
     address: "Autodesk@Viktualienmarkt 3@München@80331@65043235263@Deutschland"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5103293723"
