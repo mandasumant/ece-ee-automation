@@ -879,7 +879,7 @@ public class PortalTestBase {
       orderDetails.put("subtotalPrice", subtotalPrice);
 
       Util.printInfo("Clicking on Save button...");
-      if (!System.getProperty("store").equals("STORE-JP")) {
+      if (!System.getProperty("store").equals("STORE-JP") && !System.getProperty("store").equals("STORE-DE")) {
         clickOnContinueBtn();
       }
 
@@ -956,6 +956,10 @@ public class PortalTestBase {
                 .substring(data.get("proratedFinalAmount").indexOf("¥ ") + 1).replace(",", "")),
             Double.valueOf(confirmProratedAmount.substring(confirmProratedAmount.indexOf("¥ ") + 1)
                 .replace(",", "")));
+      } else if (System.getProperty("store").equals("STORE-DE")) {
+        confirmProratedAmount = portalPage.getLinkText("portalASConfirmProductLineValue");
+        AssertUtils.assertEquals(Double.valueOf(confirmProratedAmount.replaceAll("[^0-9.]", "")),
+            Double.valueOf(data.get("proratedFinalAmount").replaceAll("[^0-9.]", "")));
       } else {
         confirmProratedAmount = portalPage.getLinkText("portalASConfirmProratedPrice");
         AssertUtils.assertEquals(
