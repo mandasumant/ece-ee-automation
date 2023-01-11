@@ -446,7 +446,7 @@ public class BICOrderCreation extends ECETestBase {
   }
 
   @Test(groups = {
-      "bic-guac-addseats"}, description = "Validation Add Seats in GAUC with existing user")
+      "bic-guac-addseats"}, description = "Validation Add Seats in GUAC with existing user")
   public void validateBicAddSeats() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
