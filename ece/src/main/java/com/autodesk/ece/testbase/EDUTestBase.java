@@ -300,10 +300,13 @@ public class EDUTestBase {
    * @param password - User's password
    */
   @Step("Login EDU User" + GlobalConstants.TAG_TESTINGHUB)
-  private void loginUser(String username, String password) {
+  public void loginUser(String username, String password) {
     // Navigate to education site and click on "Get Started"
     eduPage.navigateToURL(testData.get("eduLandingPage"));
     eduPage.click("getStarted");
+
+    eduPage.waitForField("eduSignIn", true, 5000);
+    eduPage.click("eduSignIn");
 
     // Enter the username and password
     eduPage.waitForField("eduUsername", true, 5000);
@@ -338,7 +341,7 @@ public class EDUTestBase {
   }
 
   @Step("Verify Education Status" + GlobalConstants.TAG_TESTINGHUB)
-  private boolean verifyEducationStatus() {
+  public boolean verifyEducationStatus() {
     String xPath = eduPage.getFirstFieldLocator("eduStatus");
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
@@ -710,11 +713,15 @@ public class EDUTestBase {
       eduPage.click("eduUploadClose");
       Util.sleep(3000);
 
-      WebElement overviewHomeHeader = driver.findElement(
-          By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
-      AssertUtils.assertTrue(
-          overviewHomeHeader.getText().contains("Hi " + results.get("firstName")));
+      assertGreeting(results.get("firstName"));
     }
+  }
+
+  public void assertGreeting(String username) {
+    WebElement overviewHomeHeader = driver.findElement(
+        By.xpath(eduPage.getFirstFieldLocator("eduOverviewHomeHeader")));
+    AssertUtils.assertTrue(
+        overviewHomeHeader.getText().contains("Hi " + username));
   }
 
   private void validateDownload() {

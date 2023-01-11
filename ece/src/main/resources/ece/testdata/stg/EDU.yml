@@ -47,3 +47,21 @@ RSAPRO: # Robot Structural Analysis Professional
   websdkplc: "websdk-robot-structural-analysis"
   card: "#card-rsapro"
   nameTestId: "Robot Structural Analysis Professional"
+
+existingUserData:
+  student:
+    email: "thubnamerndhouvdvxjiq@letscheck.pw"
+    firstname: "FNRHceiU"
+    nameTestId: "AutoCAD"
+  educator:
+    email: "thubnamerumtdkgxcxldd@letscheck.pw"
+    firstname: "FNjMFNcT"
+    nameTestId: "AutoCAD"
+  mentor:
+    email: "thubnamerkejyvutvuuyy@letscheck.pw"
+    firstname: "FNqtsAOB"
+    nameTestId: "AutoCAD"
+  itAdmin:
+    email: "thubnamernjdtccdmstqn@letscheck.pw"
+    firstname: "FNcstHDR"
+    nameTestId: "3ds Max"

@@ -7,6 +7,8 @@ import com.autodesk.ece.testbase.EDUTestBase.EDUUserType;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
+import com.autodesk.testinghub.core.utils.AssertUtils;
+import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.lang.reflect.Method;
@@ -163,6 +165,32 @@ public class EDUUserFlows extends ECETestBase {
     portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_NAME_KEY));
 
     submitTestResults(results);
+  }
+
+  @Test(groups = {"validate-existing-user"}, description = "Verify Existing User EDU status")
+  public void validateExistingUser() {
+    String userType = System.getProperty("existingUserType");
+    LinkedHashMap<String, LinkedHashMap<String, String>> existingUserData = (LinkedHashMap<String, LinkedHashMap<String, String>>) loadYaml.get(
+        "existingUserData");
+    LinkedHashMap<String, String> userTypeData = existingUserData.get(userType);
+    String emailId = userTypeData.get("email");
+    String firstname = userTypeData.get("firstname");
+
+    HashMap<String, String> results = new HashMap<>();
+    EDUTestBase edutb = new EDUTestBase(this.getTestBase(), testDataForEachMethod);
+    String password = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.EDU_PASSWORD));
+    edutb.loginUser(emailId, password);
+    edutb.assertGreeting(firstname);
+
+    if (!userType.equals("mentor")) {
+      boolean validEDUAccount = edutb.verifyEducationStatus();
+      AssertUtils.assertTrue(validEDUAccount, "User should be shown valid EDU status banner");
+    }
+
+    if (!userType.equals("itAdmin")) {
+      portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
+      portaltb.verifyProductVisible(results, userTypeData.get(SUBSCRIPTION_NAME_KEY));
+    }
   }
 
   private void submitTestResults(HashMap<String, String> results) {
