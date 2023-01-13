@@ -1,3 +1,7 @@
+|   master |
+|----------|
+| [![Build Status](https://master-5.jenkins.autodesk.com/buildStatus/icon?job=/dpe/ece-ee-automation/master)](https://master-5.jenkins.autodesk.com/job/dpe/job/ece-ee-automation/job/master/)|
+
 # Autodesk ECE EE Automation Project
 
 This Repo will be used for Customer Journey Automation for ECE scoped services.
