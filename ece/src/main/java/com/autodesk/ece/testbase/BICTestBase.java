@@ -528,7 +528,7 @@ public class BICTestBase {
       Util.printInfo("Adding billing details...");
       Util.printInfo("Address Details :" + address);
       String isBusinessOrgNoSelection = "", orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
-          stateXpath = "";
+          stateXpath = "", vatXpath = "", abnXpath = "";
       String paymentTypeToken = null;
       switch (paymentType.toUpperCase()) {
         case BICConstants.paymentTypePayPal:
@@ -562,6 +562,10 @@ public class BICTestBase {
       countryXpath = bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
       stateXpath = bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      vatXpath = bicPage.getFirstFieldLocator(BICECEConstants.VAT_NUMBER)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      abnXpath = bicPage.getFirstFieldLocator(BICECEConstants.ABN_NUMBER)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
 
       bicPage.waitForFieldPresent(BICECEConstants.FULL_ADDRESS, 2000);
@@ -599,9 +603,9 @@ public class BICTestBase {
       if (taxId != null && !taxId.isEmpty()) {
         String numberKey;
         if ("STORE-AUS".equals(System.getProperty(BICECEConstants.STORE))) {
-          numberKey = BICECEConstants.ABN_NUMBER;
+          numberKey = abnXpath;
         } else {
-          numberKey = BICECEConstants.VAT_NUMBER;
+          numberKey = vatXpath;
         }
 
         try {
@@ -615,11 +619,11 @@ public class BICTestBase {
           Util.printInfo("Unable to locate: " + element + e.getMessage());
         }
 
-        if (bicPage.checkIfElementExistsInPage(numberKey, 5)) {
-          Util.printInfo("Populating" + numberKey + ": " + taxId);
-          bicPage.populateField(numberKey, taxId);
-          driver.findElement(By.xpath("//input[@name=\"" + numberKey + "\"]"))
-              .sendKeys(Keys.TAB);
+        if (driver.findElement(By.xpath(numberKey)).isDisplayed()) {
+          Util.printInfo("Populating " + numberKey + " field with " + taxId);
+          driver.findElement(By.xpath(numberKey))
+              .sendKeys(taxId);
+          driver.findElement(By.xpath(numberKey)).sendKeys(Keys.TAB);
           waitForLoadingSpinnerToComplete("loadingSpinner");
         }
       } else {

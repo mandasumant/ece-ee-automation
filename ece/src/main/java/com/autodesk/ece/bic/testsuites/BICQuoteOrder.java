@@ -6,6 +6,7 @@ import com.autodesk.ece.testbase.BICTestBase.Names;
 import com.autodesk.ece.testbase.DatastoreClient;
 import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
+import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
@@ -300,9 +301,7 @@ public class BICQuoteOrder extends ECETestBase {
     try {
       DatastoreClient dsClient = new DatastoreClient();
       OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
-          .name("QuoteOrder")
-          .tenant("PlatformAutomation")
-          .environment(GlobalConstants.getENV()).emailId(results.get(BICConstants.emailid))
+          .emailId(results.get(BICConstants.emailid))
           .orderNumber(Integer.valueOf(results.get(BICECEConstants.ORDER_ID)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
@@ -1260,25 +1259,44 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
   private void loadPrevTransactionOut() {
+    String previousTransactionId = System.getProperty("prvexecutionid");
 
-    String transactiondetails = TestinghubUtil.getTransactionOutput();
-    JsonPath js = new JsonPath(transactiondetails);
-    String currentTestName = js.getString("name");
-    String prvExecutionResponse = getTestingHubUtil().getAllTransactions(System.getProperty("prvexecutionid"));
+    if (!Objects.isNull(previousTransactionId) && !previousTransactionId.equals("")) {
+      String transactiondetails = TestinghubUtil.getTransactionOutput();
+      JsonPath js = new JsonPath(transactiondetails);
+      String currentTestName = js.getString("name");
+      String prvExecutionResponse = getTestingHubUtil().getAllTransactions(previousTransactionId);
 
-    JSONArray jsonObject = new JSONObject(prvExecutionResponse).getJSONArray("items");
+      JSONArray jsonObject = new JSONObject(prvExecutionResponse).getJSONArray("items");
 
-    jsonObject.forEach(item -> {
-      JSONObject transactionJson = (JSONObject) item;
-      if (transactionJson.get("name").equals(currentTestName)) {
-        Util.printInfo("Found the matching Test cases for : " + currentTestName);
-        HashMap<String, String> output = TestinghubUtil.getTransactionOutputObject(transactionJson.toString());
-        HashMap<String, String> steps = TestinghubUtil.getTransactionSteps(transactionJson.toString());
+      jsonObject.forEach(item -> {
+        JSONObject transactionJson = (JSONObject) item;
+        if (transactionJson.get("name").equals(currentTestName)) {
+          Util.printInfo("Found the matching Test cases for : " + currentTestName);
+          HashMap<String, String> output = TestinghubUtil.getTransactionOutputObject(transactionJson.toString());
+          HashMap<String, String> steps = TestinghubUtil.getTransactionSteps(transactionJson.toString());
 
-        testDataForEachMethod.putAll(output);
-        testDataForEachMethod.putAll(steps);
+          testDataForEachMethod.putAll(output);
+          testDataForEachMethod.putAll(steps);
+        }
+      });
+    } else {
+      DatastoreClient dsClient = new DatastoreClient();
+      OrderData order = dsClient.grabOrder(OrderFilters.builder()
+          .name("QuoteOrder")
+          .paymentType("LOC")
+          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+
+      try {
+        testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
+        testDataForEachMethod.put(BICECEConstants.ORDER_ID, order.getOrderNumber().toString());
+        testDataForEachMethod.put("Placing the Flex Order", "Passed");
+      } catch (Exception e) {
+        AssertUtils.fail("Failed to invoice to pay");
       }
-    });
+
+    }
+
   }
 
   private String submitECMSTaxExemption(HashMap<String, String> testResults, Address address) throws IOException {
