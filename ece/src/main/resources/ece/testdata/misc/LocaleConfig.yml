@@ -251,6 +251,7 @@ LocaleConfig:
     agentContactEmail: "partneruser_da_int_5070181351@letscheck.email"
     minAmountPBI: "935.00"
     maxAmountPBI: "93,520.00"
+    paypalEmail: "paypal-buyer-emea@ssttest.net"
 
   de_AT:
     region: "DEAT"

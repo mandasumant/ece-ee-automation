@@ -887,13 +887,13 @@ public class BICTestBase {
       Util.printInfo("Clicking on Paypal payments tab...");
       bicPage.clickUsingLowLevelActions("paypalPaymentTab");
 
-      Util.printInfo("Clicking on Paypal checkout tab...");
+      Util.printInfo("Validating Paypal checkout tab content is visible...");
       bicPage.waitForElementVisible(
           bicPage.getMultipleWebElementsfromField("paypalPaymentHead").get(0), 10);
 
       bicPage.scrollToBottomOfPage();
 
-      Util.printInfo("Clicking on Paypal checkout frame...");
+      Util.printInfo("Selecting Paypal checkout frame...");
       bicPage.selectFrame("paypalCheckoutOptionFrame");
 
       bicPage.scrollToBottomOfPage();
@@ -910,11 +910,8 @@ public class BICTestBase {
       bicPage.waitForPageToLoad();
       bicPage.waitForElementToDisappear("paypalPageLoader", 30);
 
-      Util.sleep(10000);
-      String title = driver.getTitle();
-
       bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("paypalTitle").get(0), 30);
+          bicPage.getMultipleWebElementsfromField("paypalTitle").get(0), 45);
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
       if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
