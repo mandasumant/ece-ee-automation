@@ -353,8 +353,11 @@ pipeline {
         stage('Apollo R2.0.4') {
             when {
                 branch 'master'
-                expression {
-                    params.APOLLO_R2_0_4 == true
+                anyOf {
+                    triggeredBy 'TimerTrigger'
+                    expression {
+                        params.APOLLO_R2_0_4 == true
+                    }
                 }
             }
             steps {
