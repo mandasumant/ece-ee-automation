@@ -513,10 +513,14 @@ public class EDUTestBase {
       eduPage.clickUsingLowLevelActions("subscriptionAcceptButton");
       Util.sleep(5000);
 
-      // Assign user
-      WebElement activateButton = driver.findElement(
-          By.cssSelector(".edu-activate-cta [href=\"" + productLink + "\"]"));
-      activateButton.click();
+      try {
+        // Assign user
+        WebElement activateButton = driver.findElement(
+            By.cssSelector(".edu-activate-cta [href=\"" + productLink + "\"]"));
+        activateButton.click();
+      } catch (Exception ex) {
+        Util.printWarning("Failed to click on activate, product already activated");
+      }
       eduPage.clickUsingLowLevelActions("educationConfirmButton");
 
       // Wait time because it takes up to 15 sec sometimes to load assignUsersButton
