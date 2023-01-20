@@ -2177,13 +2177,16 @@ public class BICTestBase {
   public HashMap<String, String> testCjtTrialDownloadUI(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
     String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+
     try {
       String constructDotComURL = data.get("guacDotComBaseURL") + ".com/products/autocad/trial-intake";
       Util.printInfo("constructDotComURL " + constructDotComURL);
       bicPage.navigateToURL(constructDotComURL);
       Util.sleep(5000);
+
       setStorageData();
       Util.sleep(5000);
+
       bicPage.waitForFieldPresent("freeTrialBusiness", 2000);
       bicPage.clickUsingLowLevelActions("freeTrialBusiness");
 
@@ -2198,7 +2201,19 @@ public class BICTestBase {
 
       Util.sleep(3000);
 
-      bicPage.waitForFieldPresent("jobLevelField", 2000);
+      bicPage.waitForFieldPresent("phoneVerificationCallingCode", 2000);
+      bicPage.clickUsingLowLevelActions("phoneVerificationCallingCode");
+      bicPage.clickUsingLowLevelActions("selectCodeFromList");
+
+      bicPage.waitForFieldPresent("phoneVerificationNumber", 2000);
+      bicPage.clickUsingLowLevelActions("phoneVerificationNumber");
+      bicPage.populateField("phoneVerificationNumber", "5555551234");
+
+      bicPage.waitForFieldEnabled("sendVerificationCode");
+      bicPage.clickUsingLowLevelActions("sendVerificationCode");
+      Util.sleep(2000);
+
+      bicPage.waitForFieldPresent("jobLevelField", 5000);
       bicPage.clickUsingLowLevelActions("jobLevelField");
       Util.PrintInfo("Selecting 'Business Owner/Entrepreneur' from 'Job level field'");
       bicPage.clickUsingLowLevelActions("selectFieldFromList");
