@@ -22,16 +22,8 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.*;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
@@ -2232,6 +2224,73 @@ public class PortalTestBase {
     for (int i = 0; i < invoiceCount; i++) {
       invoiceAmount =
           invoiceAmount + Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+    }
+    return invoiceAmount;
+  }
+
+  public void selectInvoiceCSN(int invoiceIndex) throws MetadataException {
+    portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
+    List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
+    if(csnList.size() >= 1){
+        portalPage.clickUsingLowLevelActions(csnList.get(invoiceIndex));
+    }
+    else{
+      portalPage.clickUsingLowLevelActions(csnList.get(0));
+    }
+  }
+
+  public void selectInvoiceUsingCSN(String csn) throws MetadataException {
+    portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
+    List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
+    if(csnList.size() >= 1){
+      csnList.stream().filter(c -> c.getText().contains(csn)).findFirst().get().click();
+    }
+    Util.sleep(180000);
+  }
+
+  public void selectMultipleInvoice(int invoiceIndex) throws MetadataException {
+    List<WebElement> invoiceList = portalPage.getMultipleWebElementsfromField("invoiceList");
+    if(invoiceList.size() > 5){
+      for (int i = 0; i < invoiceIndex; i++) {
+        portalPage.clickUsingLowLevelActions(invoiceList.get(i));
+      }
+    }
+    else if (invoiceList.size() > 3){
+      portalPage.clickUsingLowLevelActions(invoiceList.get(0));
+      portalPage.clickUsingLowLevelActions(invoiceList.get(1));
+    }
+    else {
+      portalPage.clickUsingLowLevelActions(invoiceList.get(0));
+    }
+  }
+
+  public void clickOnInvoiceBulkPayButton() throws MetadataException {
+    portalPage.clickUsingLowLevelActions("invoicePagePay");
+    portalPage.waitForPageToLoad();
+  }
+
+  public void openPortalInvoiceAndCreditMemoPage(LinkedHashMap<String, String> data){
+    openPortalURL(data.get("portalBillingInvoicesUrl"));
+    portalPage.waitForFieldPresent("invoicePageTableTitle", 60000);
+  }
+
+  public double selectInvoice(List<String> poNumbers) throws MetadataException {
+    double invoiceAmount = 0.00;
+    List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
+    List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("purchaseOrderNumbersList");
+    AssertUtils.assertFalse(purchaseNumbers.size() == 0, "FAILURE: No Invoices available in Invoices page to Pay");
+    for (int p=0; p < poNumbers.size(); p++){
+    for (int i = 0; i < purchaseNumbers.size(); i++) {
+        if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumbers.get(p).trim())) {
+          checkBoxes.get(i).click();
+          List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
+          invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+          break;
+        } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim()
+                .equalsIgnoreCase(poNumbers.get(p).trim())) {
+          AssertUtils.assertFalse(true, "unable to find the Invoice" + poNumbers);
+        }
+      }
     }
     return invoiceAmount;
   }

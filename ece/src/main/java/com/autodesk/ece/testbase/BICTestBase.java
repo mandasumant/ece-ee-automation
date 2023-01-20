@@ -886,6 +886,7 @@ public class BICTestBase {
     try {
       Util.printInfo("Clicking on Paypal payments tab...");
       bicPage.clickUsingLowLevelActions("paypalPaymentTab");
+      Util.sleep(10000);
 
       Util.printInfo("Validating Paypal checkout tab content is visible...");
       bicPage.waitForElementVisible(

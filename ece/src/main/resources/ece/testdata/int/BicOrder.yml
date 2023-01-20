@@ -312,4 +312,6 @@ validateBicSUSAndQuoteOrders:
   term: "Annual"
   accessModel: "Flex"
 
-
+validateMOABPayInvoice:
+  productType: "flex"
+  portalBillingInvoicesUrl: "https://int-manage.autodesk.com/billing/invoices-v2"

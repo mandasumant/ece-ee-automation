@@ -311,3 +311,7 @@ validateBicSUSAndQuoteOrders:
   quantity: "2"
   term: "Annual"
   accessModel: "Flex"
+
+validateMOABPayInvoice:
+  productType: "flex"
+  portalBillingInvoicesUrl: "https://stg-manage.autodesk.com/billing/invoices-v2"
