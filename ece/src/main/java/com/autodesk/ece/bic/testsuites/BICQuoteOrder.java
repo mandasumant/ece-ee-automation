@@ -439,6 +439,13 @@ public class BICQuoteOrder extends ECETestBase {
       if (getBicTestBase().shouldValidateSAP()) {
         portaltb.validateBICOrderTaxInvoice(results);
       }
+
+      if (testDataForEachMethod.containsKey("DS_ORDER_ID")) {
+        int orderId = Integer.parseInt(testDataForEachMethod.get("DS_ORDER_ID"));
+        DatastoreClient dsClient = new DatastoreClient();
+        dsClient.completeOrder(orderId);
+      }
+
       updateTestingHub(testResults);
     } else {
       Assert.fail("Pay By Invoice Step failed in the previous transaction, so failing Pay Invoice Testcase!!!");
@@ -1283,7 +1290,6 @@ public class BICQuoteOrder extends ECETestBase {
     } else {
       DatastoreClient dsClient = new DatastoreClient();
       OrderData order = dsClient.grabOrder(OrderFilters.builder()
-          .name("QuoteOrder")
           .paymentType("LOC")
           .address(System.getProperty(BICECEConstants.ADDRESS)).build());
 
@@ -1291,6 +1297,7 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
         testDataForEachMethod.put(BICECEConstants.ORDER_ID, order.getOrderNumber().toString());
         testDataForEachMethod.put("Placing the Flex Order", "Passed");
+        testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
       } catch (Exception e) {
         AssertUtils.fail("Failed to invoice to pay");
       }

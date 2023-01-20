@@ -7,9 +7,9 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.google.gson.Gson;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -51,19 +51,31 @@ public class DatastoreClient {
 
   public OrderData grabOrder(OrderFilters filters) {
     Response response = null;
-    try {
-      response = given()
-          .when()
-          .get(new URI("https", "//" + DS_ENDPOINT + "/grab?" + filters.toURLParameters(),
-              null))
-          .then()
-          .extract().response();
-    } catch (URISyntaxException e) {
-      throw new RuntimeException(e);
-    }
+    String getUrl = "https://" + DS_ENDPOINT + "/grab?" + filters.toURLParameters();
+    Util.printInfo("Requesting: " + getUrl);
+    response = given()
+        .when()
+        .get(getUrl)
+        .then()
+        .extract().response();
 
     Util.printInfo("Grab response: " + response.getBody().asString());
     return gson.fromJson(response.getBody().asString(), OrderData.class);
+  }
+
+  public boolean completeOrder(int orderId) {
+    CompleteRequest request = new CompleteRequest(orderId);
+    String body = gson.toJson(request);
+    Response response = given()
+        .header("Content-Type", "application/json")
+        .body(body)
+        .when()
+        .patch("https://" + DS_ENDPOINT + "/complete")
+        .then()
+        .extract().response();
+
+    Util.printInfo("Complete response: " + response.getBody().asString());
+    return gson.fromJson(response.getBody().asString(), Boolean.class);
   }
 
   public static @Builder
@@ -117,15 +129,25 @@ public class DatastoreClient {
         try {
           fieldValue = field.get(this);
           if (!Objects.isNull(fieldValue)) {
-
-            parameters.add(field.getName() + "=" + ((String) fieldValue));
+            String encodedString = URLEncoder.encode((String) fieldValue, "UTF-8").replaceAll("\\+", "%20");
+            parameters.add(field.getName() + "=" + encodedString);
           }
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | UnsupportedEncodingException e) {
           Util.printWarning("Failed to encode field: " + field.getName());
         }
       }
 
       return String.join("&", parameters);
+    }
+  }
+
+  public static class CompleteRequest {
+
+    public String tenant = TENANT;
+    public int id;
+
+    public CompleteRequest(int id) {
+      this.id = id;
     }
   }
 }
