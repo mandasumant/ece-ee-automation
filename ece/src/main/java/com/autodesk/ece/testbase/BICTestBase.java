@@ -1767,8 +1767,7 @@ public class BICTestBase {
     }
     Util.printInfo("Checking if Chat Popup Present. Done");
 
-    if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.PAYPAL)
-        && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
+    if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get("isNonQuoteFlexOrder") != null &&
         data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
