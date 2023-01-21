@@ -9,6 +9,9 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,7 +92,7 @@ public class DatastoreClient {
     @Builder.Default
     String tenant = TENANT;
     String emailId;
-    Integer orderNumber;
+    BigInteger orderNumber;
     String quoteId;
     String paymentType;
     String locale;
@@ -103,7 +106,7 @@ public class DatastoreClient {
     String createdAt;
     String status;
 
-    OrderData(String name, String tenant, String environment, String emailId, Integer orderNumber, String quoteId,
+    OrderData(String name, String tenant, String environment, String emailId, BigInteger orderNumber, String quoteId,
         String paymentType, String locale, String address) {
       super(name, tenant, environment, emailId, orderNumber, quoteId, paymentType, locale, address);
     }

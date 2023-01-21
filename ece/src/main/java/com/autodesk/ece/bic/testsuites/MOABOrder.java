@@ -97,8 +97,8 @@ public class MOABOrder extends ECETestBase {
     if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
       results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
     }
-    testDataForEachMethod.put(BICECEConstants.RESELLER_EMAIL, "portal.invoices.v2.test.100@letscheck.pw");
-    portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.RESELLER_EMAIL),
+    testDataForEachMethod.put(BICECEConstants.PURCHASER_EMAIL, "portal.invoices.v2.test.100@letscheck.pw");
+    portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PURCHASER_EMAIL),
             PASSWORD);
     portaltb.openPortalInvoiceAndCreditMemoPage(testDataForEachMethod);
     portaltb.selectInvoiceUsingCSN(CSN);

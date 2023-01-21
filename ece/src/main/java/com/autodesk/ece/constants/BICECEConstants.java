@@ -190,8 +190,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PURCHASE_ORDER_DOCUMENT_PATH = "purchaseOrderDocumentPath";
   public static final String INVOICE_NOTES = "invoiceNotes";
   public static final String PAYER_EMAIL = "payerEmail";
-
-  public static final String RESELLER_EMAIL = "payerEmail";
+  public static final String PURCHASER_EMAIL = "purchaserEmail";
   public static final String PAYER_CSN = "payerCSN";
   public static final String CREATE_PAYER = "createPayer";
   public static final String IS_SAME_PAYER = "isSamePayer";
@@ -201,5 +200,12 @@ public class BICECEConstants extends BICConstants {
   public static final String IS_TAX_EXCEMPT = "isTaxExempt";
   public static final String CREDIT_MEMO = "creditMemo";
   public static final String TAX_FLEX_CODE = "flexCode";
+  public static final String SOM_ORDER_NUMBER = "somOrderNumber";
+  public static final String SALES_ORG = "salesOrg";
+  public static final String RESELLER_CSN = "resellerCSN";
+  public static final String END_CUSTOMER_CSN = "endCustomerCSN";
+  public static final String SKU = "sku";
+  public static final String QTY = "qty";
+  public static final String TENANT = "tenant";
 }
 

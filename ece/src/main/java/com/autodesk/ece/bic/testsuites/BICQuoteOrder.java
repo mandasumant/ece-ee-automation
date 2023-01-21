@@ -30,6 +30,7 @@ import io.restassured.path.json.JsonPath;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -302,7 +303,7 @@ public class BICQuoteOrder extends ECETestBase {
       DatastoreClient dsClient = new DatastoreClient();
       OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
           .emailId(results.get(BICConstants.emailid))
-          .orderNumber(Integer.valueOf(results.get(BICECEConstants.ORDER_ID)))
+          .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
           .locale(locale)

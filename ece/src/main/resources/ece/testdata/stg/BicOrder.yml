@@ -312,6 +312,10 @@ validateBicSUSAndQuoteOrders:
   term: "Annual"
   accessModel: "Flex"
 
+createMOABOrder:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+
 validateMOABPayInvoice:
   productType: "flex"
   portalBillingInvoicesUrl: "https://stg-manage.autodesk.com/billing/invoices-v2"
