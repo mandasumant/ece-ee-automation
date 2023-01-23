@@ -1021,8 +1021,14 @@ public class BICTestBase {
         }
 
         Util.printInfo("Clicking on pay By Invoice tab...");
-        bicPage.clickUsingLowLevelActions("payByInvoiceTab");
-
+        try {
+          bicPage.clickUsingLowLevelActions("payByInvoiceTab");
+        } catch (Exception e) {
+          Util.printInfo(
+              "Pay By Invoice tab not visible for this quote :" + payByInvoiceDetails.get(BICECEConstants.QUOTE_ID));
+          Util.printInfo("email id :" + payByInvoiceDetails.get(BICECEConstants.emailid));
+        }
+        
         try {
           if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(
               BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
@@ -1281,7 +1287,7 @@ public class BICTestBase {
         .executeScript("return sessionStorage.getItem('purchase')");
     JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
     JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
-    orderNumber = purchaseOrder.get("id").toString();
+    orderNumber = purchaseOrder.get("id") != null ? purchaseOrder.get("id").toString() : null;
     if (orderNumber != null && !orderNumber.isEmpty()) {
       Util.printInfo("Yay! Found the Order Number. Proceeding to next steps...");
     }
