@@ -1028,7 +1028,7 @@ public class BICTestBase {
               "Pay By Invoice tab not visible for this quote :" + payByInvoiceDetails.get(BICECEConstants.QUOTE_ID));
           Util.printInfo("email id :" + payByInvoiceDetails.get(BICECEConstants.emailid));
         }
-        
+
         try {
           if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(
               BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
@@ -1285,11 +1285,17 @@ public class BICTestBase {
     JavascriptExecutor executor = (JavascriptExecutor) driver;
     String response = (String) executor
         .executeScript("return sessionStorage.getItem('purchase')");
-    JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
-    JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
-    orderNumber = purchaseOrder.get("id") != null ? purchaseOrder.get("id").toString() : null;
-    if (orderNumber != null && !orderNumber.isEmpty()) {
-      Util.printInfo("Yay! Found the Order Number. Proceeding to next steps...");
+
+    try {
+      JSONObject jsonObject = JsonParser.getJsonObjectFromJsonString(response);
+      JSONObject purchaseOrder = (JSONObject) jsonObject.get("purchaseOrder");
+      orderNumber = purchaseOrder.get("id") != null ? purchaseOrder.get("id").toString() : null;
+      if (orderNumber != null && !orderNumber.isEmpty()) {
+        Util.printInfo("Yay! Found the Order Number. Proceeding to next steps...");
+      }
+    } catch (Exception e) {
+      ScreenCapture.getInstance().captureFullScreenshot();
+      Util.printInfo("Taking screenshot, failed to find Order Number.");
     }
 
     if (null == orderNumber) {
