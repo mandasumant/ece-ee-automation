@@ -22,8 +22,16 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
-
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 import org.apache.commons.lang.RandomStringUtils;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
@@ -2184,7 +2192,12 @@ public class PortalTestBase {
       Util.sleep(5000);
       List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
       invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
-      portalPage.click("invoicePagePay");
+
+      if (portalPage.checkIfElementExistsInPage("invoicePagePay", 10)) {
+        portalPage.click("invoicePagePay");
+      } else {
+        portalPage.click("invoicePagePayButton");
+      }
     }
 
     Util.sleep(10000);

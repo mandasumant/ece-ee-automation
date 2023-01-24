@@ -1,6 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
+import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.testbase.TestinghubUtil;
 import com.autodesk.testinghub.core.utils.Util;
@@ -24,6 +25,7 @@ public class DatastoreClient {
 
   static final String TENANT = "PlatformAutomation";
   static final String DS_ENDPOINT = "615rpm126i.execute-api.us-west-2.amazonaws.com";
+  private static final String defaultLocale = "en_US";
   Gson gson = new Gson();
 
   public static String getTestName() {
@@ -36,6 +38,14 @@ public class DatastoreClient {
     }
 
     return displayName;
+  }
+
+  public static String getLocale() {
+    String locale = System.getProperty(BICECEConstants.LOCALE);
+    if (locale == null || locale.trim().isEmpty()) {
+      return defaultLocale;
+    }
+    return locale;
   }
 
   public OrderData queueOrder(NewQuoteOrder orderToQueue) {
@@ -95,7 +105,8 @@ public class DatastoreClient {
     BigInteger orderNumber;
     String quoteId;
     String paymentType;
-    String locale;
+    @Builder.Default
+    String locale = DatastoreClient.getLocale();
     String address;
   }
 
@@ -121,6 +132,7 @@ public class DatastoreClient {
     @Builder.Default
     public String environment = GlobalConstants.getENV();
     public String paymentType;
+    public String locale;
     public String address;
 
     public String toURLParameters() {

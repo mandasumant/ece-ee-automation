@@ -316,7 +316,6 @@ public class BICQuoteOrder extends ECETestBase {
           .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .locale(locale)
           .address(System.getProperty(BICECEConstants.ADDRESS)).build());
       testResults.put("Stored order data ID", orderData.getId().toString());
       updateTestingHub(testResults);
@@ -633,6 +632,21 @@ public class BICQuoteOrder extends ECETestBase {
     if (getBicTestBase().shouldValidateSAP()) {
       portaltb.validateBICOrderTaxInvoice(results);
     }
+
+    try {
+      DatastoreClient dsClient = new DatastoreClient();
+      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .emailId(results.get(BICConstants.emailid))
+          .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
+          .quoteId(quoteId)
+          .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+      testResults.put("Stored order data ID", orderData.getId().toString());
+      updateTestingHub(testResults);
+    } catch (Exception e) {
+      Util.printWarning("Failed to push order data to data store");
+    }
+
     updateTestingHub(testResults);
   }
 
@@ -924,6 +938,20 @@ public class BICQuoteOrder extends ECETestBase {
     multiOrders = multiOrders + "," + results.get(BICConstants.orderNumber);
     // Appending both the Purchase Orders for Multi Pay Invoice tests
     testResults.put(BICConstants.orderNumber, multiOrders);
+
+    try {
+      DatastoreClient dsClient = new DatastoreClient();
+      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .emailId(purchaser)
+          .orderNumber(new BigInteger(results.get(BICECEConstants.orderNumber)))
+          .quoteId(quoteId)
+          .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+      testResults.put("Stored order data ID", orderData.getId().toString());
+      updateTestingHub(testResults);
+    } catch (Exception e) {
+      Util.printWarning("Failed to push order data to data store" + e.getMessage());
+    }
 
     updateTestingHub(testResults);
   }
