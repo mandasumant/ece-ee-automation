@@ -361,7 +361,7 @@ pipeline {
                 }
             }
             steps {
-                triggerApolloR2_0_4(serviceBuildHelper, params.ENVIRONMENT)
+                triggerApolloR2_0_4(serviceBuildHelper, 'INT')
                 script {
                     sh 'sleep 600'
                 }

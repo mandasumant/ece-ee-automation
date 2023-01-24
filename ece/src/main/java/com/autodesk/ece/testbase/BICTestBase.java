@@ -1447,18 +1447,19 @@ public class BICTestBase {
 
   @Step("Quote2Order: Navigate to quote checkout " + GlobalConstants.TAG_TESTINGHUB)
   public void navigateToQuoteCheckout(LinkedHashMap<String, String> data) {
+    String url = data.get("quote2OrderCartURL");
+    Util.printInfo("Quote URL: " + url);
+    data.put("checkoutUrl", url);
+    getUrl(url);
+    setStorageData();
+  }
+
+  public String getQuote2OrderCartURL(LinkedHashMap<String, String> data) {
     String language = "?lang=" + data.get(BICECEConstants.LOCALE).substring(0, 2);
     String country = "&country=" + data.get(BICECEConstants.LOCALE).substring(3);
     String currency = "&currency=" + data.get(BICECEConstants.currencyStore);
-    String url = data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID) + language + country
+    return data.get("Quote2OrderBaseURL") + data.get(BICECEConstants.QUOTE_ID) + language + country
         + currency;
-
-    Util.printInfo("Quote URL: " + url);
-
-    data.put("checkoutUrl", url);
-
-    getUrl(url);
-    setStorageData();
   }
 
   @Step("Placing the Flex Order" + GlobalConstants.TAG_TESTINGHUB)

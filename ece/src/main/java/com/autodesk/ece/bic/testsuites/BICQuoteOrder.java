@@ -180,8 +180,13 @@ public class BICQuoteOrder extends ECETestBase {
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
 
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     HashMap<String, String> justQuoteDeails = new HashMap<String, String>();
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     justQuoteDeails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
     justQuoteDeails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
@@ -217,13 +222,18 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.putAll(testDataForEachMethod);
     updateTestingHub(testResults);
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
-
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
     // Re login during checkout
@@ -465,6 +475,11 @@ public class BICQuoteOrder extends ECETestBase {
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.putAll(testDataForEachMethod);
@@ -473,6 +488,7 @@ public class BICQuoteOrder extends ECETestBase {
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
     // Re login during checkout
@@ -551,11 +567,17 @@ public class BICQuoteOrder extends ECETestBase {
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, true);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
     // Re login during checkout
@@ -629,11 +651,17 @@ public class BICQuoteOrder extends ECETestBase {
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
     // Re login during checkout
@@ -713,6 +741,11 @@ public class BICQuoteOrder extends ECETestBase {
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
 
@@ -784,6 +817,11 @@ public class BICQuoteOrder extends ECETestBase {
     String quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress,
         testDataForEachMethod.get("quoteAgentCsnAccount"), testDataForEachMethod.get("agentContactEmail"),
         testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
@@ -792,6 +830,7 @@ public class BICQuoteOrder extends ECETestBase {
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     testDataForEachMethod.put(BICECEConstants.ORGANIZATION_NAME, firstAddress.company);
     // Re login during checkout
@@ -864,12 +903,18 @@ public class BICQuoteOrder extends ECETestBase {
 
     quoteId = pwsTestBase.createAndFinalizeQuote(firstAddress, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.put(BICECEConstants.emailid, secondUserEmail);
     updateTestingHub(testResults);
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testResults);
     // Re login during checkout
     getBicTestBase().loginToOxygen(testResults.get(BICECEConstants.emailid), PASSWORD);
@@ -902,8 +947,14 @@ public class BICQuoteOrder extends ECETestBase {
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
 
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     HashMap<String, String> justQuoteDetails = new HashMap<String, String>();
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     AssertUtils.assertFalse(getBicTestBase().isLOCPresentInCart(), "Bug: LOC Payment option should Not be seen");
 
@@ -981,6 +1032,11 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.putAll(testDataForEachMethod);
@@ -988,6 +1044,7 @@ public class BICQuoteOrder extends ECETestBase {
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
     // Re login during checkout
@@ -1062,11 +1119,18 @@ public class BICQuoteOrder extends ECETestBase {
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     updateTestingHub(testResults);
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
@@ -1132,8 +1196,14 @@ public class BICQuoteOrder extends ECETestBase {
 
     String quote2Id = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quote2Id);
 
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
@@ -1201,9 +1271,16 @@ public class BICQuoteOrder extends ECETestBase {
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     updateTestingHub(testResults);
+
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
     try {
@@ -1242,10 +1319,17 @@ public class BICQuoteOrder extends ECETestBase {
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"),
         testDataForEachMethod);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     updateTestingHub(testResults);
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
     try {
