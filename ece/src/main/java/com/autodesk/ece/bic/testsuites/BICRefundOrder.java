@@ -1,6 +1,7 @@
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.ece.testbase.DatastoreClient;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -152,5 +153,39 @@ public class BICRefundOrder extends ECETestBase {
       portaltb.validateBICOrderPDF(results, BICECEConstants.CREDIT_NOTE);
       updateTestingHub(testResults);
     }
+  }
+
+  @Test(groups = {"refundOrder-PSP"}, description = "Refund order PSP")
+  public void validateRefundOrderPSP() {
+    DatastoreClient dsClient = new DatastoreClient();
+    DatastoreClient.OrderData order = dsClient.grabOrder(DatastoreClient.OrderFilters.builder()
+            .paymentType(System.getProperty("payment"))
+            .name("REFUND_PSP")
+            .locale(locale).build());
+
+    testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
+    testDataForEachMethod.put(BICECEConstants.orderNumber, order.getOrderNumber().toString());
+
+    // Refund PurchaseOrder details from pelican
+    pelicantb.createRefundOrder(testDataForEachMethod);
+    Util.sleep(360000);
+
+    // Getting a PurchaseOrder details from pelican
+    testDataForEachMethod.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(testDataForEachMethod)));
+
+    // Get find Subscription ById
+    testDataForEachMethod.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testDataForEachMethod));
+
+    // Verify that Order status is Refunded
+    AssertUtils.assertEquals("Order status is NOT REFUNDED",
+            testDataForEachMethod.get(BICECEConstants.REFUND_ORDER_STATUS), "REFUNDED");
+
+    // Verify that Subscription status is Expired
+    AssertUtils
+            .assertEquals("Subscription Status is not Expired.", testDataForEachMethod.get(BICECEConstants.RESPONSE_STATUS),
+                    "EXPIRED");
+
+    updateTestingHub(testDataForEachMethod);
+
   }
 }

@@ -523,6 +523,7 @@ public class PelicanTestBase {
       results.put("getPOReponse_oxygenID", jp.get("content[0].buyerExternalKey").toString());
       results.put("language", jp.get("content[0].language").toString());
       results.put(BICConstants.emailid, jp.get("content[0].email").toString());
+      results.put("refund_orderState", jp.get("content[0].orderState").toString());
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service");
     }

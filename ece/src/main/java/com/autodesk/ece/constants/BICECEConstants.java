@@ -35,6 +35,7 @@ public class BICECEConstants extends BICConstants {
   public static final String RESPONSE_END_DATE = "response_endDate";
   public static final String STATUS = "status";
   public static final String RESPONSE_STATUS = "response_status";
+  public static final String REFUND_ORDER_STATUS = "refund_orderState";
   public static final String RESPONSE_AUTORENEW_ENABLED = "response_autoRenewEnabled";
   public static final String ORDER_STATE = "getPOReponse_orderState";
   public static final String FULFILLMENT_STATUS = "getPOReponse_fulfillmentStatus";

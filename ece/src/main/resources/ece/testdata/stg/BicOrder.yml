@@ -319,3 +319,6 @@ createMOABOrder:
 validateMOABPayInvoice:
   productType: "flex"
   portalBillingInvoicesUrl: "https://stg-manage.autodesk.com/billing/invoices-v2"
+
+validateRefundOrderPSP:
+  productType: "flex"
