@@ -12,7 +12,7 @@ LocaleConfig:
     minAmountPBI: "1,000.00"
     maxAmountPBI: "100,000.00"
     ttrEnabled: "true"
-    paypalEmail: "Paypal-buyer-namer@ssttest.net"
+    paypalEmail: "guac.paypal@ssttest.net"
 
   en_CA:
     region: "ENCA"

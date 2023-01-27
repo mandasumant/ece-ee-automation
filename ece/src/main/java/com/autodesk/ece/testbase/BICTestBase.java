@@ -2133,9 +2133,11 @@ public class BICTestBase {
     existingSubscriptionAddSeat(data);
     Util.printInfo("Successfully added seats.");
 
-    if (!System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
-      submitOrder(data);
+    if (System.getProperty(BICECEConstants.PAYMENT).equalsIgnoreCase(BICECEConstants.PAYPAL)) {
+      Map<String, String> address = getBillingAddress(data.get(BICECEConstants.ADDRESS));
+      enterBillingDetails(data, address, System.getProperty(BICECEConstants.PAYMENT));
     }
+    submitOrder(data);
     orderNumber = getOrderNumber(data);
     Util.printInfo(BICECEConstants.ORDER_NUMBER + orderNumber);
 
