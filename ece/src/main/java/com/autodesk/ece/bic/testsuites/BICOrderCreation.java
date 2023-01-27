@@ -5,8 +5,8 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.constants.PWSConstants;
+import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -1443,10 +1444,11 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
     Util.printInfo("Creating MOAB order for locale :" + testDataForEachMethod.get(BICECEConstants.LOCALE));
-    Map<String,String> address = getBicTestBase().getBillingAddress(testDataForEachMethod);
-    HashMap<String,String> data = new LinkedHashMap<>();
-    data.put(BICECEConstants.SKU, System.getProperty(BICECEConstants.SKU) != null ? System.getProperty(BICECEConstants.SKU) : "057M1-WWN886-L563");
-    data.put(BICECEConstants.QTY, System.getProperty(BICECEConstants.QUANTITY) != null ?  System.getProperty(BICECEConstants.QUANTITY) : "1");
+    Map<String, String> address = getBicTestBase().getBillingAddress(testDataForEachMethod);
+    HashMap<String, String> data = new LinkedHashMap<>();
+    data.put(BICECEConstants.SKU, System.getProperty(BICECEConstants.SKU));
+    data.put(BICECEConstants.QTY,
+        System.getProperty(BICECEConstants.QUANTITY) != null ? System.getProperty(BICECEConstants.QUANTITY) : "1");
     data.put(PWSConstants.salesOrg, System.getProperty(BICECEConstants.SALES_ORG));
     data.put(PWSConstants.shipToCSN, System.getProperty(BICECEConstants.RESELLER_CSN));
     data.put(TestingHubConstants.soldToParty, System.getProperty(BICECEConstants.RESELLER_CSN));
@@ -1455,17 +1457,24 @@ public class BICOrderCreation extends ECETestBase {
     data.put(TestingHubConstants.csn, System.getProperty(BICECEConstants.END_CUSTOMER_CSN));
     data.put(PWSConstants.endCustomerAddressLine1, address.get(BICECEConstants.FULL_ADDRESS));
     data.put(PWSConstants.endCustomerAddressLine2, "");
-    data.put(PWSConstants.endCustomerCity, address.get( BICECEConstants.CITY));
+    data.put(PWSConstants.endCustomerCity, address.get(BICECEConstants.CITY));
     data.put(PWSConstants.endCustomerCountryCode, address.get(BICECEConstants.COUNTRY));
     data.put(PWSConstants.endCustomerPostalCode, address.get(BICECEConstants.ZIPCODE));
     data.put(PWSConstants.endCustomerState, address.get(BICECEConstants.STATE_PROVINCE));
+
+    Date today = new Date();
+    SimpleDateFormat formattedDate = new SimpleDateFormat("MM/dd/yyyy");
+    Calendar c = Calendar.getInstance();
+    c.add(Calendar.DATE, 2);  // number of days to add
+    String date = formattedDate.format(c.getTime());
+    data.put("contractStartDate", date);
     String content = data.entrySet()
         .stream()
         .map(e -> e.getKey() + "=\"" + e.getValue() + "\"")
         .collect(Collectors.joining(",\n "));
     Util.printInfo("The Data being used to place MOAB order: " + content);
 
-    HashMap<String,String> orderResponse  = thutil.createPWSOrderAndValidateInS4(data);
+    HashMap<String, String> orderResponse = thutil.createPWSOrderAndValidateInS4(data);
     Util.printInfo("The SOM Order created" + orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
 
    /* try {
@@ -1485,6 +1494,7 @@ public class BICOrderCreation extends ECETestBase {
       e.printStackTrace();
       Util.printWarning("Failed to push order data to Project78 app.");
     }*/
+
   }
 
 }
