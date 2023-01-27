@@ -1821,7 +1821,11 @@ public class PortalTestBase {
 
   public void selectAllInvoiceCheckBox() throws MetadataException {
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
-    portalPage.clickUsingLowLevelActions("allInvoiceCheckBox");
+    if (portalPage.checkIfElementExistsInPage("allInvoiceCheckBox", 10)) {
+      portalPage.clickUsingLowLevelActions("allInvoiceCheckBox");
+    } else {
+      portalPage.clickUsingLowLevelActions("allInvoiceCheckBoxMulti");
+    }
     Util.printInfo("Clicked on All Invoice Check Box....");
   }
 
