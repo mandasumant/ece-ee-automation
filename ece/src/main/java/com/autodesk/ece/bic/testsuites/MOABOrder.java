@@ -5,23 +5,17 @@ import com.autodesk.ece.testbase.BICTestBase;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
-import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
-import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.util.Strings;
 
 public class MOABOrder extends ECETestBase {
 
@@ -92,14 +86,13 @@ public class MOABOrder extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
 
-
     results.putAll(testDataForEachMethod);
     if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
       results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
     }
-    testDataForEachMethod.put(BICECEConstants.PURCHASER_EMAIL, "portal.invoices.v2.test.100@letscheck.pw");
+    testDataForEachMethod.put(BICECEConstants.PURCHASER_EMAIL, System.getProperty(BICECEConstants.PURCHASER_EMAIL));
     portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PURCHASER_EMAIL),
-            PASSWORD);
+        PASSWORD);
     portaltb.openPortalInvoiceAndCreditMemoPage(testDataForEachMethod);
     portaltb.selectInvoiceUsingCSN(CSN);
     portaltb.selectMultipleInvoice(5);

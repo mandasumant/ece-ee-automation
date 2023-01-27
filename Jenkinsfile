@@ -174,6 +174,7 @@ pipeline {
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['STG', 'INT'], description: 'Choose Environment')
+        booleanParam(name: 'MOAB', defaultValue: false, description: 'Run MOAB')
         booleanParam(name: 'CJT', defaultValue: false, description: 'Run CJT Regression')
         booleanParam(name: 'APOLLO_TTR', defaultValue: false, description: 'Run Quote 2 Order TTR?')
         booleanParam(name: 'APOLLO_Q2O', defaultValue: false, description: 'Run Quote 2 Order with LOC?')
@@ -203,6 +204,7 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
+                              params.MOAB == true ||
                                     params.APOLLO_Q2O == true ||
                                     params.APOLLO_FLEX == true ||
                                     params.APOLLO_FLEX_MOE == true ||
@@ -230,6 +232,7 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
+                                    params.MOAB == true ||
                                     params.APOLLO_Q2O == true ||
                                     params.APOLLO_FLEX == true ||
                                     params.APOLLO_FLEX_MOE == true ||
@@ -262,6 +265,7 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
+                                    params.MOAB == true ||
                                     params.APOLLO_Q2O == true ||
                                     params.APOLLO_FLEX == true ||
                                     params.APOLLO_FLEX_MOE == true ||
@@ -309,6 +313,18 @@ pipeline {
             }
             steps {
                 triggerCJT(serviceBuildHelper, params.ENVIRONMENT)
+            }
+        }
+
+      stage('MOAB Tests') {
+            when {
+                branch 'master'
+                expression {
+                    params.MOAB == true
+                }
+            }
+            steps {
+                triggerMOABTests(serviceBuildHelper, params.ENVIRONMENT)
             }
         }
         stage('Nightly sleep') {
@@ -1127,6 +1143,46 @@ def triggerApolloR2_0_4(def serviceBuildHelper, String env) {
         } else {
             currentBuild.result = 'FAILURE'
             println('Testing Hub API call failed - flex')
+        }
+    }
+}
+
+def triggerMOABTests(def serviceBuildHelper, String env) {
+    echo 'Initiating Apollo MOAB Invoice Tests'
+    script {
+        println("Building Testing Hub API Input Map - estore")
+        def testingHubInputMap = [:]
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
+        testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: R2.0.4 MOAB orders on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"29733","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
+                '{"displayname":"MOAB - Reseller with Multi invoices CC- US","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices CC- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":7262"","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","purchaserEmail":"thpu7OwL5kk97h@letscheck.pw",sku":"default:1","email":"","locale":"en_US"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices CC & CM - CA","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices CC & CM - CA","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14312"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","purchaserEmail":"thpuXa8oSCwst0@letscheck.pw",sku":"default:1","email":"","locale":"en_CA"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices CC - AU","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices CC- AU","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14313"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","purchaserEmail":"thpugW4u0XZIYG@letscheck.pw",sku":"default:1","email":"","locale":"en_AU"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices CC - IT","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices CC- IT","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14314"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-IT","purchaserEmail":"thpuxzsJzkISws@letscheck.pw",sku":"default:1","email":"","locale":"it_IT"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices CC - CH","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices - CH","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14315"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CH","purchaserEmail":"thpumKS3sNxEpS@letscheck.pw",sku":"default:1","email":"","locale":"fr_CH"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - US","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14316"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","purchaserEmail":"thpu7OwL5kk97h@letscheck.pw",sku":"default:1","email":"","locale":"en_US"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - CA","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - CA","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14317"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","purchaserEmail":"thpuXa8oSCwst0@letscheck.pw",sku":"default:1","email":"","locale":"en_CA"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - AU","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - AU","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14318"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","purchaserEmail":"thpugW4u0XZIYG@letscheck.pw",sku":"default:1","email":"","locale":"en_AU"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - UK","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - UK","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14319"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","purchaserEmail":"thpumurxsSnXxe@letscheck.pw",sku":"default:1","email":"","locale":"en_GB"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - JP","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - JP","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14320"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","purchaserEmail":"thpumKS3sNxEpS@letscheck.pw",sku":"default:1","email":"","locale":"ja_JP"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - IT","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - IT","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14321"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-IT","purchaserEmail":"thpuxzsJzkISws@letscheck.pw",sku":"default:1","email":"","locale":"it_IT"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - CZ","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - CZ","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14322"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CH","purchaserEmail":"thpumKS3sNxEpS@letscheck.pw",sku":"default:1","email":"","locale":"fr_CH"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - PL","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - PL","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14323"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-PL","purchaserEmail":"thpudFwC5UV0bF@letscheck.pw",sku":"default:1","email":"","locale":"pl_PL"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - SE","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - SE","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14324"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-SE","purchaserEmail":"thpuWUHYF4eSxD@letscheck.pw",sku":"default:1","email":"","locale":"sv_SE"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - NO","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - NO","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14325"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-NO","purchaserEmail":"thpugtPrg2qM1S@letscheck.pw",sku":"default:1","email":"","locale":"no_NO"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - DK","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - DK","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14326"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-DK","purchaserEmail":"thpuikzhtfAbCm@letscheck.pw",sku":"default:1","email":"","locale":"da_DK"}},' +
+                '{"displayname":"MOAB - Reseller with Multi invoices Cash - CZ","testcasename":"9329504a","description":"MOAB - Reseller with Multi invoices Cash - CZ","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14327"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CZ","purchaserEmail":"thpuikzhtfAbCm@letscheck.pw",sku":"default:1","email":"","locale":"cs_CZ"}},' +
+                '{"displayname":"MOAB - Reseller with Multi Currency invoices Cash - US,CA","testcasename":"9329504a","description":"Reseller with Multi Currency invoices Cash - US,CA","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14328"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","purchaserEmail":"thpupViTEkKKZ0@letscheck.pw",sku":"default:1","email":"","locale":"en_US"}},' +
+                '{"displayname":"MOAB - Reseller with Multi Currency invoices Cash - US,CA,UK,JP","testcasename":"9329504a","description":"Reseller with Multi Currency invoices Cash - US,CA,UK,JP","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":7262"","jiraId":"APLR2PMO-14329"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","purchaserEmail":"thpuzpDwtXX8M5@letscheck.pw",sku":"default:1","email":"","locale":"en_US"}}' +
+           '],"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - estore")
+        execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
+        if (execution_id != null) {
+            println('Testing Hub API called successfully - estore')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - estore')
         }
     }
 }

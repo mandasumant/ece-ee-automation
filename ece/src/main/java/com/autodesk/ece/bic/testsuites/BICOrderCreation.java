@@ -1446,6 +1446,7 @@ public class BICOrderCreation extends ECETestBase {
     Util.printInfo("Creating MOAB order for locale :" + testDataForEachMethod.get(BICECEConstants.LOCALE));
     Map<String, String> address = getBicTestBase().getBillingAddress(testDataForEachMethod);
     HashMap<String, String> data = new LinkedHashMap<>();
+
     data.put(BICECEConstants.SKU, System.getProperty(BICECEConstants.SKU));
     data.put(BICECEConstants.QTY,
         System.getProperty(BICECEConstants.QUANTITY) != null ? System.getProperty(BICECEConstants.QUANTITY) : "1");
@@ -1476,7 +1477,8 @@ public class BICOrderCreation extends ECETestBase {
 
     HashMap<String, String> orderResponse = thutil.createPWSOrderAndValidateInS4(data);
     Util.printInfo("The SOM Order created" + orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
-
+    testResults.put("SOM Order:", orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
+    updateTestingHub(testResults);
    /* try {
       DatastoreClient dsClient = new DatastoreClient();
       OrderData orderDea = dsClient.queueOrder(NewQuoteOrder.builder()
@@ -1494,7 +1496,6 @@ public class BICOrderCreation extends ECETestBase {
       e.printStackTrace();
       Util.printWarning("Failed to push order data to Project78 app.");
     }*/
-
   }
 
 }
