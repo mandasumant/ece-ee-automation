@@ -90,7 +90,6 @@ public class BICFinancingOrder extends ECETestBase {
   public void validateBicNativeFinancingDeclinedOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    testDataForEachMethod.put("isDeclined", "true");
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
 
@@ -119,7 +118,6 @@ public class BICFinancingOrder extends ECETestBase {
   public void validateBicNativeFinancingCanceledOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
-    testDataForEachMethod.put("isCanceled", "true");
     HashMap<String, String> results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
 
@@ -146,17 +144,14 @@ public class BICFinancingOrder extends ECETestBase {
   @Test(groups = {
       "bic-addseats-financing"}, description = "Validation of BIC add seats with financing with changing payment method")
   public void validateBICAddSeatsFinancing() throws MetadataException {
-
-    String emailID = System.getProperty(BICECEConstants.EMAIL);
-    String password = System.getProperty(BICECEConstants.PASSWORD);
     HashMap<String, String> results = null;
     HashMap<String, String> testResults = new HashMap<String, String>();
     String paymentType = System.getProperty("payment");
 
     results = getBicTestBase()
         .createGUACBICOrderDotCom(testDataForEachMethod);
-    emailID = results.get(BICConstants.emailid);
-    password = ProtectedConfigFile.decrypt(PASSWORD);
+
+    String emailID = results.get(BICConstants.emailid);
 
     updateTestingHub(results);
     results.putAll(testDataForEachMethod);
@@ -182,7 +177,7 @@ public class BICFinancingOrder extends ECETestBase {
     portaltb.openPortalBICLaunch(testDataForEachMethod.get("cepURL"));
 
     if (!(Strings.isNullOrEmpty(EMAIL))) {
-      portaltb.portalLogin(emailID, password);
+      portaltb.portalLogin(emailID, PASSWORD);
     }
     String[] paymentCardDetails = getBicTestBase().getPaymentDetails(paymentType.toUpperCase())
         .split("@");

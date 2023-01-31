@@ -1046,7 +1046,7 @@ public class PortalTestBase {
     String renewingSeatsCount = portalPage
         .getTextFromLink("portalRenewingSeatsCount");
     String reducedSeatQty = renewingSeatsCount.split(" ")[0];
-    Util.printInfo("Recording new seats count.");
+    Util.printInfo("Recording new seats count -> " + reducedSeatQty);
     orderDetails.put("reducedSeatQty", reducedSeatQty);
     return orderDetails;
   }
@@ -1055,6 +1055,7 @@ public class PortalTestBase {
     portalPage.checkIfElementExistsInPage(BICECEConstants.PORTAL_REDUCE_SEATS_BUTTON, 10);
     String newSeatsTotal = data.get("reducedSeatQty");
     String initialOrderQty = data.get(BICECEConstants.INITIAL_ORDER_QTY);
+
     if (System.getProperty(BICECEConstants.PAYMENT)
         .equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       if (newSeatsTotal.equals(initialOrderQty)) {
@@ -2248,10 +2249,9 @@ public class PortalTestBase {
   public void selectInvoiceCSN(int invoiceIndex) throws MetadataException {
     portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
     List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
-    if(csnList.size() >= 1){
-        portalPage.clickUsingLowLevelActions(csnList.get(invoiceIndex));
-    }
-    else{
+    if (csnList.size() >= 1) {
+      portalPage.clickUsingLowLevelActions(csnList.get(invoiceIndex));
+    } else {
       portalPage.clickUsingLowLevelActions(csnList.get(0));
     }
   }
@@ -2259,7 +2259,7 @@ public class PortalTestBase {
   public void selectInvoiceUsingCSN(String csn) throws MetadataException {
     portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
     List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
-    if(csnList.size() >= 1){
+    if (csnList.size() >= 1) {
       csnList.stream().filter(c -> c.getText().contains(csn)).findFirst().get().click();
     }
     Util.sleep(180000);
@@ -2267,16 +2267,14 @@ public class PortalTestBase {
 
   public void selectMultipleInvoice(int invoiceIndex) throws MetadataException {
     List<WebElement> invoiceList = portalPage.getMultipleWebElementsfromField("invoiceList");
-    if(invoiceList.size() > 5){
+    if (invoiceList.size() > 5) {
       for (int i = 0; i < invoiceIndex; i++) {
         portalPage.clickUsingLowLevelActions(invoiceList.get(i));
       }
-    }
-    else if (invoiceList.size() > 3){
+    } else if (invoiceList.size() > 3) {
       portalPage.clickUsingLowLevelActions(invoiceList.get(0));
       portalPage.clickUsingLowLevelActions(invoiceList.get(1));
-    }
-    else {
+    } else {
       portalPage.clickUsingLowLevelActions(invoiceList.get(0));
     }
   }
@@ -2286,7 +2284,7 @@ public class PortalTestBase {
     portalPage.waitForPageToLoad();
   }
 
-  public void openPortalInvoiceAndCreditMemoPage(LinkedHashMap<String, String> data){
+  public void openPortalInvoiceAndCreditMemoPage(LinkedHashMap<String, String> data) {
     openPortalURL(data.get("portalBillingInvoicesUrl"));
     portalPage.waitForFieldPresent("invoicePageTableTitle", 60000);
   }
@@ -2296,15 +2294,15 @@ public class PortalTestBase {
     List<WebElement> checkBoxes = portalPage.getMultipleWebElementsfromField("invoiceCheckBoxes");
     List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("purchaseOrderNumbersList");
     AssertUtils.assertFalse(purchaseNumbers.size() == 0, "FAILURE: No Invoices available in Invoices page to Pay");
-    for (int p=0; p < poNumbers.size(); p++){
-    for (int i = 0; i < purchaseNumbers.size(); i++) {
+    for (int p = 0; p < poNumbers.size(); p++) {
+      for (int i = 0; i < purchaseNumbers.size(); i++) {
         if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumbers.get(p).trim())) {
           checkBoxes.get(i).click();
           List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
           invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
           break;
         } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim()
-                .equalsIgnoreCase(poNumbers.get(p).trim())) {
+            .equalsIgnoreCase(poNumbers.get(p).trim())) {
           AssertUtils.assertFalse(true, "unable to find the Invoice" + poNumbers);
         }
       }

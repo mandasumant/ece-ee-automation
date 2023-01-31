@@ -208,10 +208,12 @@ validateRenewBicOrder:
 validateBicNativeFinancingDeclinedOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
+  isFinancingDeclined: "true"
 
 validateBicNativeFinancingCanceledOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
+  isFinancingCanceled: "true"
 
 validateMultiLineItemBicNativeOrder:
   multiProduct2: "3ds-max"
@@ -313,8 +315,8 @@ validateBicSUSAndQuoteOrders:
   accessModel: "Flex"
 
 createMOABOrder:
-    productID: *NativeOrderPriceID
-    bicNativePriceID: *bicNativePriceID
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
 
 validateMOABPayInvoice:
   productType: "flex"

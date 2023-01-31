@@ -62,7 +62,6 @@ public class BICTestBase {
   ZipPayTestBase zipTestBase;
   FinancingTestBase financingTestBase;
 
-
   public BICTestBase(WebDriver driver, GlobalTestBase testbase) {
     Util.PrintInfo("BICTestBase from ece");
     this.driver = driver;
@@ -341,14 +340,8 @@ public class BICTestBase {
   @Step("Selecting Monthly Subscription")
   public void selectMonthlySubscription(WebDriver driver) {
     JavascriptExecutor executor = (JavascriptExecutor) driver;
-    WebElement element;
-    try {
-      element = driver
-          .findElement(By.xpath("//terms-container/div/div[3]/term-element[3]"));
-    } catch (Exception e) {
-      element = driver
-          .findElement(By.xpath("//terms-container/div/div[4]/term-element[3]"));
-    }
+    WebElement element = driver
+        .findElement(By.xpath("//term-element[contains(@automationid, \"buy-component-term-billing-plan-1-month\")]"));
     executor.executeScript("arguments[0].click();", element);
     Util.sleep(2000);
   }
@@ -357,7 +350,7 @@ public class BICTestBase {
   public void selectYearlySubscription(WebDriver driver) {
     JavascriptExecutor executor = (JavascriptExecutor) driver;
     WebElement element = driver
-        .findElement(By.xpath("//terms-container/div/div[4]/term-element[2]"));
+        .findElement(By.xpath("//term-element[contains(@automationid, \"buy-component-term-billing-plan-1-year\")]"));
     executor.executeScript("arguments[0].click();", element);
     Util.sleep(2000);
   }
@@ -417,6 +410,12 @@ public class BICTestBase {
         Util.sleep(20000);
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript(BICECEConstants.DOCUMENT_GETELEMENTBYID_MANDATE_AGREEMENT_CLICK);
+      }
+
+      if (data.get("isFinancingCanceled") != null) {
+        data.put(BICECEConstants.LASTNAME, "CANCELED");
+      } else if (data.get("isFinancingDeclined") != null) {
+        data.put(BICECEConstants.LASTNAME, "DECLINED");
       }
 
       String firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
