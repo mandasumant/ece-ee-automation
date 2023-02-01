@@ -157,6 +157,7 @@ public class BICRefundOrder extends ECETestBase {
 
   @Test(groups = {"refundOrder-PSP"}, description = "Refund order PSP")
   public void validateRefundOrderPSP() {
+    HashMap<String, String> results = new HashMap<>();
     DatastoreClient dsClient = new DatastoreClient();
     boolean flag = false;
     int count = 0;
@@ -166,22 +167,23 @@ public class BICRefundOrder extends ECETestBase {
               .name("REFUND_PSP")
               .locale(locale).build());
 
-      testDataForEachMethod.put(BICECEConstants.orderNumber, order.getOrderNumber().toString());
+      results.putAll(testDataForEachMethod);
+      results.put(BICECEConstants.orderNumber, order.getOrderNumber().toString());
 
       // Getting a PurchaseOrder details from pelican
-      testDataForEachMethod.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(testDataForEachMethod)));
-      flag = testDataForEachMethod.get(BICECEConstants.REFUND_ORDER_STATUS).equals("CHARGED");
+      results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.getPurchaseOrder(results)));
+      flag = results.get(BICECEConstants.REFUND_ORDER_STATUS).equals("CHARGED");
       count++;
       if (flag) {
         break;
       }
     }
     if (!flag) {
-      AssertUtils.assertTrue(flag, " Pelican Order Status is " + testDataForEachMethod.get(BICECEConstants.REFUND_ORDER_STATUS) + " for Order Number:" + testDataForEachMethod.get(BICECEConstants.orderNumber));
+      AssertUtils.assertTrue(flag, " Pelican Order Status is " + results.get(BICECEConstants.REFUND_ORDER_STATUS) + " for Order Number:" + testDataForEachMethod.get(BICECEConstants.orderNumber));
     }
 
     // Refund PurchaseOrder details from pelican
-    pelicantb.createRefundOrder(testDataForEachMethod);
+    pelicantb.createRefundOrder(results);
     Util.sleep(360000);
 
     // Getting a PurchaseOrder details from pelican
@@ -199,14 +201,14 @@ public class BICRefundOrder extends ECETestBase {
     AssertUtils.assertEquals("Order status is NOT REFUNDED", results.get("refund_orderState"), "REFUNDED");
 
     // Get Subscription Status ById
-    testDataForEachMethod.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testDataForEachMethod));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     // Verify that Subscription status is Expired
     AssertUtils
-            .assertEquals("Subscription Status is not Expired.", testDataForEachMethod.get(BICECEConstants.RESPONSE_STATUS),
+            .assertEquals("Subscription Status is not Expired.", results.get(BICECEConstants.RESPONSE_STATUS),
                     "EXPIRED");
 
-    updateTestingHub(testDataForEachMethod);
+    updateTestingHub(results);
 
   }
 }
