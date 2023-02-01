@@ -1402,9 +1402,16 @@ public class BICQuoteOrder extends ECETestBase {
       });
     } else {
       DatastoreClient dsClient = new DatastoreClient();
-      OrderData order = dsClient.grabOrder(OrderFilters.builder()
-          .paymentType("LOC")
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+      OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder()
+          .paymentType("LOC");
+
+      String address = System.getProperty(BICECEConstants.ADDRESS);
+      if (address != null) {
+        builder.address(address);
+      } else {
+        builder.locale(locale);
+      }
+      OrderData order = dsClient.grabOrder(builder.build());
 
       try {
         testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
