@@ -185,11 +185,18 @@ public class BICRefundOrder extends ECETestBase {
     Util.sleep(360000);
 
     // Getting a PurchaseOrder details from pelican
-    testDataForEachMethod.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(testDataForEachMethod)));
+    JsonPath jp = new JsonPath(pelicantb.getPurchaseOrder(results));
+    results.put("refund_orderState", jp.get("content[0].orderState").toString());
+    results.put("refund_fulfillmentStatus", jp.get("content[0].fulfillmentStatus"));
+    results.put("refund_paymentMethodType", jp.get("content[0].billingInfo.paymentMethodType"));
+    results.put("refund_uiInitiatedGetOrders",
+        jp.get("content[0].uiInitiatedGetOrders") != null ? Boolean.toString(jp.get("content[0].uiInitiatedGetOrders"))
+            : null);
+    results.put("refund_finalExportControlStatus", jp.get("content[0].finalExportControlStatus"));
+    results.put("refund_lineItemState", jp.get("content[0].lineItems[0].lineItemState"));
 
     // Verify that Order status is Refunded
-    AssertUtils.assertEquals("Order status is NOT REFUNDED",
-            testDataForEachMethod.get(BICECEConstants.REFUND_ORDER_STATUS), "REFUNDED");
+    AssertUtils.assertEquals("Order status is NOT REFUNDED", results.get("refund_orderState"), "REFUNDED");
 
     // Get Subscription Status ById
     testDataForEachMethod.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testDataForEachMethod));
