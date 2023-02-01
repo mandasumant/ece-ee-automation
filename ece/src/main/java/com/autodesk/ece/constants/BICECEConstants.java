@@ -193,6 +193,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYER_EMAIL = "payerEmail";
   public static final String PURCHASER_EMAIL = "purchaserEmail";
   public static final String PAYER_CSN = "payerCSN";
+  public static final String SOLD_TO_SSN = "soldToCSN";
   public static final String CREATE_PAYER = "createPayer";
   public static final String IS_SAME_PAYER = "isSamePayer";
   public static final String EXISTING_PAYER_CSN = "existingPayerCSN";

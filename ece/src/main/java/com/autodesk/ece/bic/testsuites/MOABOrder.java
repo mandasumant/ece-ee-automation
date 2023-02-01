@@ -13,9 +13,6 @@ import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -133,13 +130,6 @@ public class MOABOrder extends ECETestBase {
     data.put(PWSConstants.endCustomerCountryCode, address.get(BICECEConstants.COUNTRY));
     data.put(PWSConstants.endCustomerPostalCode, address.get(BICECEConstants.ZIPCODE));
     data.put(PWSConstants.endCustomerState, address.get(BICECEConstants.STATE_PROVINCE));
-
-    Date today = new Date();
-    SimpleDateFormat formattedDate = new SimpleDateFormat("MM/dd/yyyy");
-    Calendar c = Calendar.getInstance();
-    c.add(Calendar.DATE, 2);  // number of days to add
-    String date = formattedDate.format(c.getTime());
-    //data.put("contractStartDate", date);
     String content = data.entrySet()
         .stream()
         .map(e -> e.getKey() + "=\"" + e.getValue() + "\"")
@@ -148,24 +138,9 @@ public class MOABOrder extends ECETestBase {
 
     HashMap<String, String> orderResponse = thutil.createPWSOrderAndValidateInS4(data);
     Util.printInfo("The SOM Order created" + orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
-    testResults.put("somordernumber", orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
+    testResults.put(BICECEConstants.SOM_ORDER_NUMBER, orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
+    testResults.put(BICECEConstants.SOLD_TO_SSN, orderResponse.get(BICECEConstants.SOLD_TO_SSN));
     updateTestingHub(testResults);
-   /* try {
-      DatastoreClient dsClient = new DatastoreClient();
-      OrderData orderDea = dsClient.queueOrder(NewQuoteOrder.builder()
-          .name("MOAB_"+System.getProperty(BICECEConstants.TENANT)+"_"+ RandomStringUtils.randomNumeric(3))
-          .tenant(System.getProperty(BICECEConstants.TENANT))
-          .environment(GlobalConstants.getENV())
-          .emailId(System.getProperty(BICECEConstants.PURCHASER_EMAIL))
-          .orderNumber(new BigInteger(orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER)))
-          .quoteId("")
-          .paymentType(System.getProperty(BICECEConstants.PAYMENT_TYPE))
-          .locale(locale)
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
-      updateTestingHub(testResults);
-    } catch (Exception e) {
-      e.printStackTrace();
-      Util.printWarning("Failed to push order data to Project78 app.");
-    }*/
+
   }
 }
