@@ -13,6 +13,7 @@ import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -91,18 +92,15 @@ public class MOABOrder extends ECETestBase {
     HashMap<String, String> results = new HashMap<String, String>();
 
     results.putAll(testDataForEachMethod);
-    if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
-      results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
-    }
     testDataForEachMethod.put(BICECEConstants.PURCHASER_EMAIL, System.getProperty(BICECEConstants.PURCHASER_EMAIL));
     portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PURCHASER_EMAIL),
         PASSWORD);
     portaltb.openPortalInvoiceAndCreditMemoPage(testDataForEachMethod);
     portaltb.selectInvoiceUsingCSN(CSN);
-    portaltb.selectMultipleInvoice(5);
+    ArrayList<String> invoiceDetails = portaltb.selectMultipleInvoice(2);
     portaltb.selectAllInvoicesPayButton();
     portaltb.payInvoice(testDataForEachMethod);
-    portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
+    portaltb.verifyPaidInvoiceStatus(invoiceDetails);
     updateTestingHub(testResults);
   }
 
