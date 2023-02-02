@@ -122,7 +122,7 @@ public class BICRefundOrder extends ECETestBase {
 
     //Adyen delays in IPN response is causing test failures. Until the issue is resolved lets
     // add additional 6min sleep for the IPN message to come back.
-    Util.sleep(360000);
+    Util.sleep(660000);
 
     // Getting a PurchaseOrder details from pelican
     JsonPath jp = new JsonPath(pelicantb.getPurchaseOrder(results));
@@ -184,7 +184,7 @@ public class BICRefundOrder extends ECETestBase {
 
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrder(results);
-    Util.sleep(360000);
+    Util.sleep(660000);
 
     // Getting a PurchaseOrder details from pelican
     JsonPath jp = new JsonPath(pelicantb.getPurchaseOrder(results));
