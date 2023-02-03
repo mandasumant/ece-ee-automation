@@ -2,9 +2,11 @@ package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.BICTestBase;
+import com.autodesk.ece.testbase.DatastoreClient;
+import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
+import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.PWSConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -13,6 +15,7 @@ import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -140,5 +143,22 @@ public class MOABOrder extends ECETestBase {
     testResults.put(BICECEConstants.SOLD_TO_SSN, orderResponse.get(BICECEConstants.SOLD_TO_SSN));
     updateTestingHub(testResults);
 
+    if (System.getProperty(BICECEConstants.APPLY_CM).equals("Y")) {
+      try {
+        DatastoreClient dsClient = new DatastoreClient();
+        OrderData orderDea = dsClient.queueOrder(NewQuoteOrder.builder()
+            .name("CREDITMEMO_RESELLER_".concat(System.getProperty(BICECEConstants.CURRENCY)))
+            .tenant(System.getProperty(BICECEConstants.TENANT))
+            .emailId(System.getProperty(BICECEConstants.PURCHASER_EMAIL))
+            .orderNumber(new BigInteger(orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER)))
+            .paymentType(System.getProperty(BICECEConstants.PAYMENT_TYPE))
+            .locale(locale)
+            .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+        updateTestingHub(testResults);
+      } catch (Exception e) {
+        e.printStackTrace();
+        Util.printWarning("Failed to push order data to Project78 app.");
+      }
+    }
   }
 }

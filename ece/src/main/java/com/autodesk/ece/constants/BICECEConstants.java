@@ -209,6 +209,8 @@ public class BICECEConstants extends BICConstants {
   public static final String SKU = "sku";
   public static final String QTY = "qty";
   public static final String TENANT = "tenant";
-  public static final String APPLY_CM ="applyCM";
+  public static final String APPLY_CM = "applyCM";
+  public static final String CURRENCY = "currency";
+
 }
 
