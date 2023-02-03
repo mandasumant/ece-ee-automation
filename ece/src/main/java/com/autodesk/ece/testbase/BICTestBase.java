@@ -929,6 +929,8 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
+      bicPage.waitForElementVisible(
+          bicPage.getMultipleWebElementsfromField("paypalPasswordField").get(0), 10);
       bicPage.populateField("paypalPasswordField",
           ProtectedConfigFile.decrypt(data.get("paypalSsap")));
 
