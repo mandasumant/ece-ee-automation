@@ -22,8 +22,17 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 import org.apache.commons.lang.RandomStringUtils;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
@@ -1962,10 +1971,13 @@ public class PortalTestBase {
 
   @Step("CEP : Pay Invoice" + GlobalConstants.TAG_TESTINGHUB)
   public Boolean payInvoice(LinkedHashMap<String, String> data) throws Exception {
+    Util.printInfo("Paying the invoices.");
     if (portalPage.isFieldVisible("creditMemoTab")) {
       if (System.getProperty(BICECEConstants.APPLY_CM).equalsIgnoreCase("Y")) {
         portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
+        Util.printInfo("Applied credit memo successfully");
       }
+      Util.printInfo("Skipping the credit memo.");
       portalPage.clickUsingLowLevelActions("continueButton");
     }
     portalPage.waitForFieldPresent("clickOnPaymentTab", 20000);
@@ -1982,16 +1994,18 @@ public class PortalTestBase {
     }
     Util.sleep(5000);
 
-    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.CREDITCARD) || System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.VISA)) {
+    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.CREDITCARD) || System.getProperty(
+        BICECEConstants.PAYMENT).equals(BICECEConstants.VISA)) {
       portalPage.clickUsingLowLevelActions("creditCardPaymentTab");
       if (!portalPage.isFieldVisible("invoicePaymentEdit")) {
         bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
-                data.get(BICECEConstants.PAYMENT_TYPE));
+            data.get(BICECEConstants.PAYMENT_TYPE));
         if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)) {
           bicTestBase.clickMandateAgreementCheckbox();
         }
       }
       submitPayment();
+
 
     }
     return false;
@@ -1999,11 +2013,15 @@ public class PortalTestBase {
 
   @Step("CEP : Click Submit Payment Button" + GlobalConstants.TAG_TESTINGHUB)
   public void submitPayment() throws Exception {
-    portalPage.waitForFieldPresent("submitPaymentButton", 15000);
-    portalPage.clickUsingLowLevelActions("submitPaymentButton");
-    portalPage.waitForElementToDisappear("submitPaymentButton", 20);
-    Util.sleep(5000);
-    Util.printInfo("Payment for Invoice is successfully Completed");
+    try {
+      portalPage.waitForFieldPresent("submitPaymentButton", 15000);
+      portalPage.clickUsingLowLevelActions("submitPaymentButton");
+      portalPage.waitForElementToDisappear("submitPaymentButton", 20);
+      Util.sleep(5000);
+      Util.printInfo("Payment for Invoice is successfully Completed");
+    } catch (Exception e) {
+      AssertUtils.fail("Error while submitting the payment for Invoices");
+    }
   }
 
   public void waitForInvoicePageLoadToVisible() {
@@ -2335,7 +2353,8 @@ public class PortalTestBase {
           Util.PrintInfo(expectedInvoiceNumbersList.get(i) + " Invoice is Available under Paid Tab");
           System.out.println(expectedInvoiceNumbersList.get(i) + " Invoice is Available under Paid Tab");
           break;
-        } else if (!invoiceNumbers.get(j).getText().trim().equalsIgnoreCase(expectedInvoiceNumbersList.get(i)) && j == invoiceNumbers.size()) {
+        } else if (!invoiceNumbers.get(j).getText().trim().equalsIgnoreCase(expectedInvoiceNumbersList.get(i))
+            && j == invoiceNumbers.size()) {
           Util.PrintInfo(expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
           AssertUtils.assertTrue(false, expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
         }
