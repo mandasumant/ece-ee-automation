@@ -1418,6 +1418,7 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.put(BICECEConstants.ORDER_ID, order.getOrderNumber().toString());
         testDataForEachMethod.put("Placing the Flex Order", "Passed");
         testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
+        testDataForEachMethod.put(BICECEConstants.ADDRESS, order.getAddress().toString());
       } catch (Exception e) {
         AssertUtils.fail("Failed to invoice to pay");
       }
