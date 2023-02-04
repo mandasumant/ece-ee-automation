@@ -186,7 +186,6 @@ public class BICECEConstants extends BICConstants {
   public static final String PO_TO_INVOICE = "po2Inv";
   public static final String SAP_VALIDATION = "sapValidation";
   public static final Boolean DEFAULT_SAP_VALIDATION = false;
-
   public static final String LOC = "LOC";
   public static final String PURCHASE_ORDER_DOCUMENT_PATH = "purchaseOrderDocumentPath";
   public static final String INVOICE_NOTES = "invoiceNotes";
@@ -209,8 +208,8 @@ public class BICECEConstants extends BICConstants {
   public static final String SKU = "sku";
   public static final String QTY = "qty";
   public static final String TENANT = "tenant";
+  public static final String CASH = "CASH";
   public static final String APPLY_CM = "applyCM";
   public static final String CURRENCY = "currency";
-
 }
 

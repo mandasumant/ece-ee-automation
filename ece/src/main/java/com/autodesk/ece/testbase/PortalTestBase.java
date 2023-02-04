@@ -2005,8 +2005,12 @@ public class PortalTestBase {
         }
       }
       submitPayment();
-
-
+    }
+    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.CASH)) {
+      Util.printInfo("Clicking on cash Payment Tab...");
+      portalPage.clickUsingLowLevelActions("cashPaymentTab");
+      portalPage.clickUsingLowLevelActions("reviewCashPayment");
+      submitPayment();
     }
     return false;
   }
