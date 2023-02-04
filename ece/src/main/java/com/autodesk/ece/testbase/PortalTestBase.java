@@ -2290,7 +2290,7 @@ public class PortalTestBase {
     if (csnList.size() >= 1) {
       csnList.stream().filter(c -> c.getText().contains(csn)).findFirst().get().click();
     }
-    Util.sleep(180000);
+    Util.sleep(30000);
   }
 
   public ArrayList<String> selectMultipleInvoice(int invoiceIndex) throws MetadataException {
