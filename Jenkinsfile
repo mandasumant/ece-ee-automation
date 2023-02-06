@@ -324,7 +324,7 @@ pipeline {
                 }
             }
             steps {
-                triggerMOABTests(serviceBuildHelper, params.ENVIRONMENT)
+                triggerMOABTests(serviceBuildHelper, 'INT')
             }
         }
         stage('Nightly sleep') {
