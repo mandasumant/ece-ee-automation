@@ -204,13 +204,13 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                              params.MOAB == true ||
-                                    params.APOLLO_Q2O == true ||
-                                    params.APOLLO_FLEX == true ||
-                                    params.APOLLO_FLEX_MOE == true ||
-                                    params.APOLLO_R2_0_4 == true ||
-                                    params.APOLLO_TTR == true ||
-                                    params.APOLLO_PAY_INVOICE == true
+                            params.MOAB == true ||
+                            params.APOLLO_Q2O == true ||
+                            params.APOLLO_FLEX == true ||
+                            params.APOLLO_FLEX_MOE == true ||
+                            params.APOLLO_R2_0_4 == true ||
+                            params.APOLLO_TTR == true ||
+                            params.APOLLO_PAY_INVOICE == true
                         }
                     }
                 }
@@ -232,14 +232,14 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                                    params.MOAB == true ||
-                                    params.APOLLO_Q2O == true ||
-                                    params.APOLLO_FLEX == true ||
-                                    params.APOLLO_FLEX_MOE == true ||
-                                    params.APOLLO_R2_0_4 == true ||
-                                    params.EDU == true ||
-                                    params.APOLLO_TTR == true ||
-                                    params.APOLLO_PAY_INVOICE == true
+                            params.MOAB == true ||
+                            params.APOLLO_Q2O == true ||
+                            params.APOLLO_FLEX == true ||
+                            params.APOLLO_FLEX_MOE == true ||
+                            params.APOLLO_R2_0_4 == true ||
+                            params.EDU == true ||
+                            params.APOLLO_TTR == true ||
+                            params.APOLLO_PAY_INVOICE == true
                         }
                     }
                 }
@@ -265,14 +265,14 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                                    params.MOAB == true ||
-                                    params.APOLLO_Q2O == true ||
-                                    params.APOLLO_FLEX == true ||
-                                    params.APOLLO_FLEX_MOE == true ||
-                                    params.APOLLO_R2_0_4 == true ||
-                                    params.APOLLO_TTR == true ||
-                                    params.APOLLO_PAY_INVOICE == true ||
-                                    params.EDU == true
+                            params.MOAB == true ||
+                            params.APOLLO_Q2O == true ||
+                            params.APOLLO_FLEX == true ||
+                            params.APOLLO_FLEX_MOE == true ||
+                            params.APOLLO_R2_0_4 == true ||
+                            params.APOLLO_TTR == true ||
+                            params.APOLLO_PAY_INVOICE == true ||
+                            params.EDU == true
                         }
                     }
                 }
@@ -855,7 +855,7 @@ def triggerApolloTTR(def serviceBuildHelper, def ttrEnv) {
         def notificationEmail = '"ece.dcle.platform.automation@autodesk.com"'
 
         if (ttrEnv == 'INT') {
-            notificationEmail += ', "denny.harijanto@autodesk.com", "wai.fong.lee@autodesk.com", "ethan.ng@autodesk.com", "sushmitha.rao@autodesk.com", "selvakumar.subramanian@autodesk.com"'
+            notificationEmail += ', "wai.fong.lee@autodesk.com", "ethan.ng@autodesk.com", "sushmitha.rao@autodesk.com", "selvakumar.subramanian@autodesk.com"'
         }
 
         def testingHubInputMap = [:]

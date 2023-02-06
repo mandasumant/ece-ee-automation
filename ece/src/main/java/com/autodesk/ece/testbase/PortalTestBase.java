@@ -1868,6 +1868,7 @@ public class PortalTestBase {
   }
 
   public void selectAllInvoicesPayButton() throws MetadataException {
+    Util.printInfo("Selecting the invoices....");
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
     portalPage.click("allInvoicesPayButton");
     Util.printInfo("Clicked on All Invoice Pay Button....");
@@ -2020,11 +2021,14 @@ public class PortalTestBase {
     try {
       portalPage.waitForFieldPresent("submitPaymentButton", 15000);
       portalPage.clickUsingLowLevelActions("submitPaymentButton");
-      portalPage.waitForElementToDisappear("submitPaymentButton", 20);
-      Util.sleep(5000);
-      Util.printInfo("Payment for Invoice is successfully Completed");
+      if (portalPage.checkIfElementExistsInPage("paymentSuccessMessage", 10)) {
+        Util.printInfo("Payment for Invoice is successfully Completed");
+      } else {
+        AssertUtils.fail("Error while submitting payment for invoices");
+      }
     } catch (Exception e) {
       AssertUtils.fail("Error while submitting the payment for Invoices");
+
     }
   }
 
@@ -2285,6 +2289,7 @@ public class PortalTestBase {
   }
 
   public void selectInvoiceUsingCSN(String csn) throws MetadataException {
+    Util.printInfo("Selecting the CSN :" + csn);
     portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
     List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
     if (csnList.size() >= 1) {
@@ -2293,13 +2298,14 @@ public class PortalTestBase {
     Util.sleep(30000);
   }
 
-  public ArrayList<String> selectMultipleInvoice(int invoiceIndex) throws MetadataException {
+  public ArrayList<String> selectMultipleInvoice(int noOfInvoices) throws MetadataException {
+    Util.printInfo("Selecting " + noOfInvoices + " invoices....");
     List<WebElement> invoiceList = portalPage.getMultipleWebElementsfromField("invoiceList");
     List<WebElement> invoiceNumbers = portalPage.getMultipleWebElementsfromField("invoiceNumbersList");
     ArrayList<String> numbers = new ArrayList<>();
 
     if (invoiceList.size() > 5) {
-      for (int i = 0; i < invoiceIndex; i++) {
+      for (int i = 0; i < noOfInvoices; i++) {
         portalPage.clickUsingJavaScriptExecutor(invoiceList.get(i));
         numbers.add(invoiceNumbers.get(i).getText().trim());
       }
@@ -2312,6 +2318,7 @@ public class PortalTestBase {
       portalPage.clickUsingJavaScriptExecutor(invoiceList.get(0));
       numbers.add(invoiceNumbers.get(0).getText().trim());
     }
+    Util.printInfo("Invoice selected" + numbers.toString());
     return numbers;
   }
 
