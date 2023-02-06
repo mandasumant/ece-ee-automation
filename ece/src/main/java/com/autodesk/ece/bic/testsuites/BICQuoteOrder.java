@@ -311,12 +311,19 @@ public class BICQuoteOrder extends ECETestBase {
 
     try {
       DatastoreClient dsClient = new DatastoreClient();
-      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+      NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
+          .name(BICECEConstants.LOC_TEST_NAME)
           .emailId(results.get(BICConstants.emailid))
           .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+          .address(System.getProperty(BICECEConstants.ADDRESS));
+
+      if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+        builder.scenario("Different Payer");
+      }
+
+      OrderData orderData = dsClient.queueOrder(builder.build());
       testResults.put("Stored order data ID", orderData.getId().toString());
       updateTestingHub(testResults);
     } catch (Exception e) {
@@ -636,11 +643,13 @@ public class BICQuoteOrder extends ECETestBase {
     try {
       DatastoreClient dsClient = new DatastoreClient();
       OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .name(BICECEConstants.LOC_TEST_NAME)
           .emailId(results.get(BICConstants.emailid))
           .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+          .address(System.getProperty(BICECEConstants.ADDRESS))
+          .scenario("Multi Line Item").build());
       testResults.put("Stored order data ID", orderData.getId().toString());
       updateTestingHub(testResults);
     } catch (Exception e) {
@@ -942,11 +951,13 @@ public class BICQuoteOrder extends ECETestBase {
     try {
       DatastoreClient dsClient = new DatastoreClient();
       OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .name(BICECEConstants.LOC_TEST_NAME)
           .emailId(purchaser)
           .orderNumber(new BigInteger(results.get(BICECEConstants.orderNumber)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+          .address(System.getProperty(BICECEConstants.ADDRESS))
+          .scenario("Multi Invoice").build());
       testResults.put("Stored order data ID", orderData.getId().toString());
       updateTestingHub(testResults);
     } catch (Exception e) {
@@ -1403,6 +1414,7 @@ public class BICQuoteOrder extends ECETestBase {
     } else {
       DatastoreClient dsClient = new DatastoreClient();
       OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder()
+          .name(BICECEConstants.LOC_TEST_NAME)
           .paymentType("LOC");
 
       String address = System.getProperty(BICECEConstants.ADDRESS);
@@ -1411,6 +1423,12 @@ public class BICQuoteOrder extends ECETestBase {
       } else {
         builder.locale(locale);
       }
+
+      String scenario = System.getProperty("scenario");
+      if (scenario != null) {
+        builder.scenario(scenario);
+      }
+
       OrderData order = dsClient.grabOrder(builder.build());
 
       try {
