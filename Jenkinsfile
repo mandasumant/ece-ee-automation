@@ -735,9 +735,9 @@ def triggerApolloDirectFlexR2_2(def serviceBuildHelper) {
 }
 
 def triggerApolloR2_3(def serviceBuildHelper) {
-    echo 'Initiating Apollo Quote 2 Order - All'
+    echo 'Initiating Apollo Quote 2 Order flex - All'
     script {
-        println("Building Testing Hub API Input Map - All")
+        println("Building Testing Hub API Input Map flex - All")
 
         def addresses = readJSON file: "./testdata/addresses.json"
 
@@ -835,12 +835,12 @@ def triggerApolloR2_3(def serviceBuildHelper) {
                         generateTest("Q2O TTR (en_US)", testcases.quoteToOrder, addresses["United States"]["CO"], ["timezone": "America/Denver", sapValidation: params.INVOICE_VALIDATION, submitTaxInfo: "true"])
                 ].join(',') +
                 '],"workstreamname":"dclecjt"}'
-        println("Starting Testing Hub API Call - estore - All")
+        println("Starting Testing Hub API Call - flex - All")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-            println('Testing Hub API called successfully - estore - All')
+            println('Testing Hub API called successfully - flex - All')
         } else {
             currentBuild.result = 'FAILURE'
-            println('Testing Hub API call failed - estore - All')
+            println('Testing Hub API call failed - flex - All')
         }
     }
 }
@@ -935,12 +935,12 @@ def triggerApolloTTR(def serviceBuildHelper, def ttrEnv) {
                 ].join(',') +
                 '],"workstreamname":"dclecjt"}'
 
-        println("Starting Testing Hub API Call - estore - All")
+        println("Starting Testing Hub API Call - flex - All")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-            println('Testing Hub API called successfully - estore - All')
+            println('Testing Hub API called successfully - flex - All')
         } else {
             currentBuild.result = 'FAILURE'
-            println('Testing Hub API call failed - estore - All')
+            println('Testing Hub API call failed - flex - All')
         }
     }
 }
@@ -1029,12 +1029,12 @@ def triggerApolloR2_3PayInvoice(def serviceBuildHelper) {
                 '{"displayname":"LOC Q2O Pay Invoice Existing Payer - AUS Northern Territory(en_AU) - Multi-Invoices","testcasename":"9329504a","description":"LOC Quote 2 Order  pay invoice with existing payer - AUS(en_AU)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoicer","testMethod":"validateLocPayInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_AU","prvexecutionid":"' + params.EXECUTION_ID + '","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","timezone":"Australia/Sydney", "scenario": "Multi Invoice"}},' +
                 '{"displayname":"LOC Q2O Pay Invoice Existing Payer - UK(en_GB) - Multi-Invoices","testcasename":"9329504a","description":"LOC Quote 2 Order  pay invoice with existing payer - UK(en_GB)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_GB","prvexecutionid":"' + params.EXECUTION_ID + '","timezone":"Europe/London", "scenario": "Multi Invoice"}}' +
                 '],"workstreamname":"dclecjt"}'
-        println("Starting Testing Hub API Call - estore - All")
+        println("Starting Testing Hub API Call - flex - All")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-            println('Testing Hub API called successfully - estore - All')
+            println('Testing Hub API called successfully - flex - All')
         } else {
             currentBuild.result = 'FAILURE'
-            println('Testing Hub API call failed - estore - All')
+            println('Testing Hub API call failed - flex - All')
         }
     }
 }
@@ -1147,7 +1147,7 @@ def triggerApolloR2_0_4(def serviceBuildHelper, String env) {
 def triggerMOABTests(def serviceBuildHelper, String env) {
     echo 'Initiating Apollo MOAB Invoice Tests'
     script {
-        println("Building Testing Hub API Input Map - estore")
+        println("Building Testing Hub API Input Map - moab")
         def testingHubInputMap = [:]
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
@@ -1164,26 +1164,27 @@ def triggerMOABTests(def serviceBuildHelper, String env) {
                 '{"displayname":"MOAB - Reseller with Multi invoices Cash - UK","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - UK","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14319"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-UK","purchaserEmail":"thpumurxsSnXxe@letscheck.pw","csn":"5501308790","sku":"default:1","email":"","locale":"en_GB"}},' +
                 '{"displayname":"MOAB - Reseller with Multi invoices Cash - JP","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - JP","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14320"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-JP","purchaserEmail":"thpups12AyXAKH@letscheck.pw","csn":"5501308816","sku":"default:1","email":"","locale":"ja_JP"}},' +
                 '{"displayname":"MOAB - Reseller with Multi invoices Cash - IT","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - IT","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14321"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-IT","purchaserEmail":"thpuxzsJzkISws@letscheck.pw","csn":"5501308820","sku":"default:1","email":"","locale":"it_IT"}},' +
-                '{"displayname":"MOAB - Reseller with Multi invoices Cash - CZ","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - CZ","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14322"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-CH","purchaserEmail":"thpuN7NgbCeMhf@letscheck.pw","csn":"5501276966","sku":"default:1","email":"","locale":"fr_CH"}},' +
+                /* '{"displayname":"MOAB - Reseller with Multi invoices Cash - CZ","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - CZ","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14322"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-CH","purchaserEmail":"thpuN7NgbCeMhf@letscheck.pw","csn":"5501276966","sku":"default:1","email":"","locale":"fr_CH"}},' +
                 '{"displayname":"MOAB - Reseller with Multi invoices Cash - PL","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - PL","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14323"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-PL","purchaserEmail":"thpudFwC5UV0bF@letscheck.pw","csn":"5501308821","sku":"default:1","email":"","locale":"pl_PL"}},' +
                 '{"displayname":"MOAB - Reseller with Multi invoices Cash - SE","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - SE","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14324"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-SE","purchaserEmail":"thpuWUHYF4eSxD@letscheck.pw","csn":"5501308825","sku":"default:1","email":"","locale":"sv_SE"}},' +
                 '{"displayname":"MOAB - Reseller with Multi invoices Cash - NO","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - NO","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14325"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NO","purchaserEmail":"thpugtPrg2qM1S@letscheck.pw","csn":"5501308823","sku":"default:1","email":"","locale":"no_NO"}},' +
                 '{"displayname":"MOAB - Reseller with Multi invoices Cash - DK","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - DK","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14326"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-DK","purchaserEmail":"thpuikzhtfAbCm@letscheck.pw","csn":"5501308819","sku":"default:1","email":"","locale":"da_DK"}},' +
-                '{"displayname":"MOAB - Reseller with Multi invoices Cash - CZ","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - CZ","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14327"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-CZ","purchaserEmail":"thpuawJJCWI45f@letscheck.pw","csn":"5501308817","sku":"default:1","email":"","locale":"cs_CZ"}},' +
+                '{" displayname":"MOAB - Reseller with Multi invoices Cash - CZ","testcasename":"faf86494","description":"MOAB - Reseller with Multi invoices Cash - CZ","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14327"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-CZ","purchaserEmail":"thpuawJJCWI45f@letscheck.pw","csn":"5501308817","sku":"default:1","email":"","locale":"cs_CZ"}},' +
+                */
                 '{"displayname":"MOAB - Reseller with Multi Currency invoices Cash - US,CA","testcasename":"faf86494","description":"Reseller with Multi Currency invoices Cash - US,CA","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14328"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"thpuzPeVAFzG3G@letscheck.pw","csn":"5501276837","sku":"default:1","email":"","locale":"en_US"}},' +
                 '{"displayname":"MOAB - Reseller with Multi Currency invoices Cash - US,CA,UK,JP","testcasename":"faf86494","description":"Reseller with Multi Currency invoices Cash - US,CA,UK,JP","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14329"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"thpuzPeVAFzG3G@letscheck.pw","csn":"5501276837","sku":"default:1","email":"","locale":"en_US"}}' +
            '],"workstreamname":"dclecjt"}'
-        println("Starting Testing Hub API Call - estore")
+        println("Starting Testing Hub API Call - moab")
         execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
         if (execution_id != null) {
-            println('Testing Hub API called successfully - estore')
+            println('Testing Hub API called successfully - moab')
         } else {
             currentBuild.result = 'FAILURE'
-            println('Testing Hub API call failed - estore')
+            println('Testing Hub API call failed - moab')
         }
     }
     script {
-        println("Building Testing Hub API Input Map - estore")
+        println("Building Testing Hub API Input Map - flex")
         def testingHubInputMap = [:]
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
@@ -1203,13 +1204,13 @@ def triggerMOABTests(def serviceBuildHelper, String env) {
                 '{"displayname":"LOC PayInvoice diff Payer - EURO","testcasename":"9329504a","description":"LOC PayInvoice diff Payer - EURO","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13868"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-DE","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"de_DE","timezone":"Europe/Berlin"}},' +
                 '{"displayname":"LOC PayInvoice diff Payer - AUS","testcasename":"9329504a","description":"LOC PayInvoice diff Payer - AUS","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13868"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_AU","timezone":"Australia/Sydney"}}' +
            '],"workstreamname":"dclecjt"}'
-        println("Starting Testing Hub API Call - estore")
+        println("Starting Testing Hub API Call - flex")
         execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
         if (execution_id != null) {
-            println('Testing Hub API called successfully - estore')
+            println('Testing Hub API called successfully - flex')
         } else {
             currentBuild.result = 'FAILURE'
-            println('Testing Hub API call failed - estore')
+            println('Testing Hub API call failed - flex')
         }
     }
 }
@@ -1272,7 +1273,7 @@ def triggerCJT(def serviceBuildHelper, String env) {
         }
     }
     script {
-        println("Building Testing Hub API Input Map - estore")
+        println("Building Testing Hub API Input Map - flex")
         def testingHubInputMap = [:]
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
@@ -1284,12 +1285,12 @@ def triggerCJT(def serviceBuildHelper, String env) {
                 '{"displayname":"Quote 2 Order AUS New South Wales(en_AU)","testcasename":"9d3de1c2","description":"Quote 2 Order AUS(en_AU)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","isTaxed":"Y","locale":"en_AU","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"AutodeskAU@114 Darlinghurst Rd@Darlinghurst@2010@397202088@Australia@NSW","timezone":"Australia/Sydney"}},' +
                 '{"displayname":"Quote 2 Order SUS and Quote Orders CA (en_CA)","testcasename":"c5558739","description":"Quote 2 Order SUS and Quote Orders CA (en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-sus-quote-orders","testMethod":"validateBicSUSAndQuoteOrders","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","isTaxed":"Y","locale":"en_CA","sapValidation":"' + params.INVOICE_VALIDATION + '","emailType":"biz","address":"AutodeskCA@2379 Kelly Cir SW@Edmonton@T6W 4G3@397202088@Canada@AB","timezone":"Canada/Pacific"}}' +
                 '],"workstreamname":"dclecjt"}'
-        println("Starting Testing Hub API Call - estore")
+        println("Starting Testing Hub API Call - flex")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-            println('Testing Hub API called successfully - estore')
+            println('Testing Hub API called successfully - flex')
         } else {
             currentBuild.result = 'FAILURE'
-            println('Testing Hub API call failed - estore')
+            println('Testing Hub API call failed - flex')
         }
     }
     script {
@@ -1326,7 +1327,6 @@ def triggerCJT(def serviceBuildHelper, String env) {
                 '{"displayname":"LOC Q2O CJT - UK(en_GB)","testcasename":"9d3de1c2","description":"LOC Quote 2 Order Same Purchaser & Payer - UK(en_GB)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13869"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_GB","timezone":"Europe/London"}},' +
                 '{"displayname":"LOC Q2O CJT - Germany(de_DE)","testcasename":"9d3de1c2","description":"LOC Quote 2 Order Same Purchaser & Payer - DE(de_DE)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13868"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-DE","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"de_DE","address":"Autodesk@Viktualienmarkt 3@Munchen@80331@65043235263@Deutschland","timezone":"Europe/Berlin"}},' +
                 '{"displayname":"LOC Q2O CJT - AUS Northern Territory(en_AU)","testcasename":"9d3de1c2","description":"LOC Quote 2 Order Same Purchaser & Payer - AUS(en_AU)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13868"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","timezone":"Australia/Sydney"}},' +
-
                 '{"displayname":"LOC Q2O CJT Pay Invoice - Alabama(en_US)","testcasename":"9329504a","description":"Quote 2 Order US Alabama(en_US)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7094","jiraId":"APLR2PMO-12671"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","address":"Autodesk@2300 Woodcrest Pl@Birmingham@35209@9916800100@United States@AL","timezone":"America/New_York"}},' +
                 '{"displayname":"LOC Q2O CJT Pay Invoice - CA Ontario(en_CA)","testcasename":"9329504a","description":"LOC Quote 2 Order Same Purchaser & Payer - CA(en_CA)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7094","jiraId":"APLR2PMO-12566"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-CA","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_CA","sapValidation":"False","address":"Autodesk@246 Lynden Road@Vineland@L0R 2E0@9055624155@Canada@ON","timezone":"Canada/Pacific"}},' +
                 '{"displayname":"LOC Q2O CJT Pay Invoice - UK(en_GB)","testcasename":"9329504a","description":"LOC Quote 2 Order Same Purchaser & Payer - UK(en_GB)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13869"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_GB","timezone":"Europe/London"}},' +

@@ -143,7 +143,8 @@ public class MOABOrder extends ECETestBase {
     testResults.put(BICECEConstants.SOLD_TO_SSN, orderResponse.get(BICECEConstants.SOLD_TO_SSN));
     updateTestingHub(testResults);
 
-    if (System.getProperty(BICECEConstants.APPLY_CM).equals("Y")) {
+    if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+        .equals("Y")) {
       try {
         DatastoreClient dsClient = new DatastoreClient();
         OrderData orderDea = dsClient.queueOrder(NewQuoteOrder.builder()
