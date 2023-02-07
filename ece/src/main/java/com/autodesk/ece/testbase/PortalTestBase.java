@@ -1994,25 +1994,12 @@ public class PortalTestBase {
       }
     }
     Util.sleep(5000);
-
-    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.CREDITCARD) || System.getProperty(
-        BICECEConstants.PAYMENT).equals(BICECEConstants.VISA)) {
-      portalPage.clickUsingLowLevelActions("creditCardPaymentTab");
-      if (!portalPage.isFieldVisible("invoicePaymentEdit")) {
-        bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
+    bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
             data.get(BICECEConstants.PAYMENT_TYPE));
-        if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)) {
-          bicTestBase.clickMandateAgreementCheckbox();
-        }
-      }
-      submitPayment();
+    if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)) {
+      bicTestBase.clickMandateAgreementCheckbox();
     }
-    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.CASH)) {
-      Util.printInfo("Clicking on cash Payment Tab...");
-      portalPage.clickUsingLowLevelActions("cashPaymentTab");
-      portalPage.clickUsingLowLevelActions("reviewCashPayment");
-      submitPayment();
-    }
+    submitPayment();
     return false;
   }
 

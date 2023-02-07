@@ -212,5 +212,7 @@ public class BICECEConstants extends BICConstants {
   public static final String APPLY_CM = "applyCM";
   public static final String CURRENCY = "currency";
   public static final String LOC_TEST_NAME = "Q2O LOC Order";
+  public static final String SUBMIT_PAYMENT_BUTTON = "submitPaymentButton";
+
 }
 
