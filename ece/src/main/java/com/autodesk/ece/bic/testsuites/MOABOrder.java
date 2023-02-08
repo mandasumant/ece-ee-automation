@@ -150,7 +150,7 @@ public class MOABOrder extends ECETestBase {
     Util.printInfo("The Data being used to place MOAB order: " + content);
 
     HashMap<String, String> orderResponse = thutil.createPWSOrderAndValidateInS4(data);
-    Util.printInfo("The SOM Order created" + orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
+    Util.printInfo("The SOM Order created :" + orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
     testResults.put(BICECEConstants.SOM_ORDER_NUMBER, orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
     testResults.put(BICECEConstants.SOLD_TO_SSN, orderResponse.get(BICECEConstants.SOLD_TO_SSN));
     updateTestingHub(testResults);
@@ -158,6 +158,7 @@ public class MOABOrder extends ECETestBase {
     if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
         .equals("Y")) {
       try {
+        Util.printInfo("Inserting the datata into project78.");
         DatastoreClient dsClient = new DatastoreClient();
         OrderData orderDea = dsClient.queueOrder(NewQuoteOrder.builder()
             .name("RESELLER_ORDER")
@@ -167,10 +168,11 @@ public class MOABOrder extends ECETestBase {
             .paymentType(System.getProperty(BICECEConstants.PAYMENT_TYPE))
             .locale(locale)
             .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+        Util.printInfo("Inserted the datata into project78 successfully");
         updateTestingHub(testResults);
       } catch (Exception e) {
         e.printStackTrace();
-        Util.printWarning("Failed to push order data to Project78 app.");
+        AssertUtils.fail("Failed to push order data to Project78.");
       }
     }
   }
