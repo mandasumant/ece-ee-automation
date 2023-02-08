@@ -148,7 +148,7 @@ public class MOABOrder extends ECETestBase {
       try {
         DatastoreClient dsClient = new DatastoreClient();
         OrderData orderDea = dsClient.queueOrder(NewQuoteOrder.builder()
-            .name("CREDITMEMO_RESELLER_".concat(System.getProperty(BICECEConstants.CURRENCY)))
+            .name("RESELLER_ORDER")
             .tenant(System.getProperty(BICECEConstants.TENANT))
             .emailId(System.getProperty(BICECEConstants.PURCHASER_EMAIL))
             .orderNumber(new BigInteger(orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER)))
