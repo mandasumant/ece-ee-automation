@@ -687,11 +687,11 @@ public class BICTestBase {
       bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 10000);
       try {
         WebElement creditCardNumberFrame = bicPage
-                .getMultipleWebElementsfromField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME).get(0);
+            .getMultipleWebElementsfromField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME).get(0);
         WebElement expiryDateFrame = bicPage.getMultipleWebElementsfromField("expiryDateFrame")
-                .get(0);
+            .get(0);
         WebElement securityCodeFrame = bicPage.getMultipleWebElementsfromField("securityCodeFrame")
-                .get(0);
+            .get(0);
 
         driver.switchTo().frame(creditCardNumberFrame);
         Util.printInfo("Entering card number : " + paymentCardDetails[0]);
@@ -702,7 +702,7 @@ public class BICTestBase {
 
         driver.switchTo().frame(expiryDateFrame);
         Util.printInfo(
-                "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
+            "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
         Util.sleep(1000);
         bicPage.populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
         driver.switchTo().defaultContent();
@@ -1807,12 +1807,12 @@ public class BICTestBase {
   }
 
   public void enterPayInvoiceBillingDetails(LinkedHashMap<String, String> data,
-      Map<String, String> address, String paymentMethod) {
+      Map<String, String> address, String paymentMethod) throws MetadataException {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     selectPaymentProfile(data, paymentCardDetails, address);
-    List<WebElement> submitPaymentButton = driver.findElements(By.xpath(
-            BICECEConstants.SUBMIT_PAYMENT_BUTTON));
-    if (submitPaymentButton.size() > 0 && !submitPaymentButton.get(0).isEnabled()) {
+
+    WebElement submitPaymentButton = bicPage.getMultipleWebElementsfromField("submitPaymentButton").get(0);
+    if (submitPaymentButton.getAttribute("class").contains("disabled")) {
       populateBillingAddress(address, data);
       debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
@@ -2632,6 +2632,12 @@ public class BICTestBase {
     at.sendKeys(Keys.PAGE_UP).build().perform();
   }
 
+  public void selectCashPayment() throws MetadataException {
+    Util.printInfo("Clicking on cash Payment Tab...");
+    bicPage.clickUsingLowLevelActions("cashPaymentTab");
+    bicPage.clickUsingLowLevelActions("reviewCashPayment");
+  }
+
   public static class Names {
 
     public final String firstName;
@@ -2648,11 +2654,5 @@ public class BICTestBase {
         put(BICECEConstants.LASTNAME, lastName);
       }};
     }
-  }
-
-  public void selectCashPayment() throws MetadataException {
-    Util.printInfo("Clicking on cash Payment Tab...");
-    bicPage.clickUsingLowLevelActions("cashPaymentTab");
-    bicPage.clickUsingLowLevelActions("reviewCashPayment");
   }
 }

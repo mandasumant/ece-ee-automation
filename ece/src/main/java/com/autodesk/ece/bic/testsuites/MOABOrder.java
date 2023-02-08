@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -93,17 +94,28 @@ public class MOABOrder extends ECETestBase {
   public void validateMOABPayInvoice() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
+    Boolean isLoggedOut = true;
+    Integer attempt = 0;
 
     results.putAll(testDataForEachMethod);
-    testDataForEachMethod.put(BICECEConstants.PURCHASER_EMAIL, System.getProperty(BICECEConstants.PURCHASER_EMAIL));
-    portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PURCHASER_EMAIL),
-        PASSWORD);
-    portaltb.openPortalInvoiceAndCreditMemoPage(testDataForEachMethod);
-    portaltb.selectInvoiceUsingCSN(CSN);
-    ArrayList<String> invoiceDetails = portaltb.selectMultipleInvoice(2);
-    portaltb.selectAllInvoicesPayButton();
-    portaltb.payInvoice(testDataForEachMethod);
-    portaltb.verifyPaidInvoiceStatus(invoiceDetails);
+    while (isLoggedOut) {
+      attempt++;
+      if (attempt > 5) {
+        Assert.fail("Retries Exhausted: Payment of Invoice failed because Session issues. Check Screenshots!");
+      }
+
+      testDataForEachMethod.put(BICECEConstants.PURCHASER_EMAIL, System.getProperty(BICECEConstants.PURCHASER_EMAIL));
+      portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PURCHASER_EMAIL),
+          PASSWORD);
+      portaltb.openPortalInvoiceAndCreditMemoPage(testDataForEachMethod);
+      portaltb.selectInvoiceUsingCSN(CSN);
+      ArrayList<String> invoiceDetails = portaltb.selectMultipleInvoice(2);
+      portaltb.selectAllInvoicesPayButton();
+      isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
+      if (isLoggedOut == false) {
+        portaltb.verifyPaidInvoiceStatus(invoiceDetails);
+      }
+    }
     updateTestingHub(testResults);
   }
 

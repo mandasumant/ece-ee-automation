@@ -294,6 +294,9 @@ validateWrongPayerCSNForExistingLOC:
 validateLocPayInvoice:
   productType: "flex"
 
+validateLocCreateCreditMemo:
+  productType: "flex"
+
 validateExpiredTTRCertificate:
   term: "Annual"
   accessModel: "Flex"

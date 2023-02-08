@@ -167,7 +167,7 @@ LocaleConfig:
     currencyStore: "EUR"
     countryDomain: ".it"
     paymentMethods: "CREDITCARD,PAYPAL,SEPA,LOC,CASH"
-    address: "Autodesk@Via Medina 19@Napoli@80133@0323 0700940@Italia"
+    address: "Autodesk@Viale delle Province 131@San Michele Di Ganzaria@95040@0367 5117952@Italy@Catania"
     isTaxed: "Y"
     quoteAgentCsnAccount: "5070375036"
     agentContactEmail: "partneruser_da_int_5070375036@letscheck.email"
