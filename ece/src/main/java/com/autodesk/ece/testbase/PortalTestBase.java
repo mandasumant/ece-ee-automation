@@ -1974,7 +1974,8 @@ public class PortalTestBase {
   public Boolean payInvoice(LinkedHashMap<String, String> data) throws Exception {
     Util.printInfo("Paying the invoices.");
     if (portalPage.isFieldVisible("creditMemoTab")) {
-      if (System.getProperty(BICECEConstants.APPLY_CM).equalsIgnoreCase("Y")) {
+      if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+          .equalsIgnoreCase("Y")) {
         portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
         Util.printInfo("Applied credit memo successfully");
       }
