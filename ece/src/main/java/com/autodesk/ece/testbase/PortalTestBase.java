@@ -2277,6 +2277,7 @@ public class PortalTestBase {
 
   public void selectInvoiceUsingCSN(String csn) throws MetadataException {
     Util.printInfo("Selecting the CSN :" + csn);
+    Util.sleep(10000);
     portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
     List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
     if (csnList.size() >= 1) {
