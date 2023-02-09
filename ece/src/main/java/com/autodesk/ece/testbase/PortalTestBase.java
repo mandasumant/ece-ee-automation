@@ -1973,15 +1973,15 @@ public class PortalTestBase {
   @Step("CEP : Pay Invoice" + GlobalConstants.TAG_TESTINGHUB)
   public Boolean payInvoice(LinkedHashMap<String, String> data) throws Exception {
     Util.printInfo("Paying the invoices.");
+    if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+            .equalsIgnoreCase("Y")) {
+      portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
+      Util.printInfo("Applied credit memo successfully");
+    } else {
+      Util.printInfo("Skipping the credit memo.");
+    }
     if (portalPage.isFieldVisible("creditMemoTab")) {
-      if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
-          .equalsIgnoreCase("Y")) {
-        portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
-        Util.printInfo("Applied credit memo successfully");
-      }
-      if (portalPage.isFieldVisible("continueButton")) {
-        portalPage.clickUsingLowLevelActions("continueButton");
-      }
+      portalPage.clickUsingLowLevelActions("continueButton");
     }
     Util.sleep(2000);
 
@@ -2298,6 +2298,8 @@ public class PortalTestBase {
   }
 
   public ArrayList<String> selectMultipleInvoice(int noOfInvoices) throws MetadataException {
+    portalPage.waitForFieldPresent("paymentDue");
+    portalPage.clickUsingLowLevelActions("paymentDue");
     Util.printInfo("Selecting " + noOfInvoices + " invoices....");
     List<WebElement> invoiceList = portalPage.getMultipleWebElementsfromField("invoiceList");
     List<WebElement> invoiceNumbers = portalPage.getMultipleWebElementsfromField("invoiceNumbersList");
