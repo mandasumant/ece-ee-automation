@@ -969,8 +969,8 @@ public class BICQuoteOrder extends ECETestBase {
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
-    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
-    getBicTestBase().navigateToQuoteCheckout(testResults);
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testResults));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     // Re login during checkout
     getBicTestBase().loginToOxygen(testResults.get(BICECEConstants.emailid), PASSWORD);
     getBicTestBase().refreshCartIfEmpty();
