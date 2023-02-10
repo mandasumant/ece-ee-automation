@@ -1974,13 +1974,13 @@ public class PortalTestBase {
   public Boolean payInvoice(LinkedHashMap<String, String> data) throws Exception {
     Util.printInfo("Paying the invoices.");
     if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
-            .equalsIgnoreCase("Y")) {
+        .equalsIgnoreCase("Y")) {
       portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
       Util.printInfo("Applied credit memo successfully");
     } else {
       Util.printInfo("Skipping the credit memo.");
     }
-    if (portalPage.isFieldVisible("creditMemoTab")) {
+    if (portalPage.isFieldVisible("creditMemoTab") && portalPage.isFieldVisible("continueButton")) {
       portalPage.clickUsingLowLevelActions("continueButton");
     }
     Util.sleep(2000);
