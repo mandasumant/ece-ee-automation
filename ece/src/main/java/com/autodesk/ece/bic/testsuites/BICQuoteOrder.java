@@ -424,9 +424,7 @@ public class BICQuoteOrder extends ECETestBase {
     loadPrevTransactionOut();
     results.putAll(testDataForEachMethod);
 
-    if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
-      results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
-    } else if (!Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
+    if (!Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
       AssertUtils.fail("Please provide the initial order. Order number is null or empty");
     }
 

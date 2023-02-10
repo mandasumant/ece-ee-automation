@@ -321,6 +321,10 @@ createMOABOrder:
   productID: *NativeOrderPriceID
   bicNativePriceID: *bicNativePriceID
 
+createCreditMemoReseller:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+
 validateMOABPayInvoice:
   productType: "flex"
   portalBillingInvoicesUrl: "https://int-manage.autodesk.com/billing/invoices"
