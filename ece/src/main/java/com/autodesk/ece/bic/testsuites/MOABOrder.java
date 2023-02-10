@@ -143,6 +143,7 @@ public class MOABOrder extends ECETestBase {
     data.put(PWSConstants.endCustomerCountryCode, address.get(BICECEConstants.COUNTRY));
     data.put(PWSConstants.endCustomerPostalCode, address.get(BICECEConstants.ZIPCODE));
     data.put(PWSConstants.endCustomerState, address.get(BICECEConstants.STATE_PROVINCE));
+    data.put("PWSConstants.poNumber","PO" + (int) Util.randomNumber(999999));
     String content = data.entrySet()
         .stream()
         .map(e -> e.getKey() + "=\"" + e.getValue() + "\"")
