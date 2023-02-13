@@ -2225,9 +2225,8 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("freeTrialNextButton2");
 
       createBICAccount(generateFirstAndLastNames(), generateUniqueEmailID(), password, true);
-      ScreenCapture.getInstance().captureFullScreenshot();
 
-      Util.sleep(3000);
+      Util.sleep(5000);
 
       bicPage.waitForFieldPresent("phoneVerificationCallingCode", 2000);
       bicPage.clickUsingLowLevelActions("phoneVerificationCallingCode");
@@ -2270,6 +2269,10 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("countryOfResidence", 1000);
       bicPage.clickUsingLowLevelActions("countryOfResidence");
       bicPage.clickUsingLowLevelActions("selectCountry");
+
+      bicPage.waitForFieldPresent("stateOrProvince", 1000);
+      bicPage.clickUsingLowLevelActions("stateOrProvince");
+      bicPage.clickUsingLowLevelActions("selectState");
 
       bicPage.populateField("postalCode", data.get("postalCode"));
       bicPage.populateField("phoneNumber", data.get("phoneNumber"));
