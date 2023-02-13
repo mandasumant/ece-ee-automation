@@ -323,8 +323,11 @@ pipeline {
         stage('MOAB Tests') {
             when {
                 branch 'master'
-                expression {
-                    params.MOAB == true
+                anyOf {
+                    triggeredBy 'TimerTrigger'
+                    expression {
+                        params.MOAB == true
+                    }
                 }
             }
             steps {
