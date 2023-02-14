@@ -2204,7 +2204,9 @@ public class PortalTestBase {
     if (shouldWaitForInvoice) {
       waitForInvoicePageLoadToVisible();
     } else {
-      portalPage.waitForFieldPresent("invoicePageTableTitle", 60000);
+      if (!portalPage.waitForFieldPresent("invoicePageTableTitle", 60000)) {
+        AssertUtils.fail("No Open Invoices were Found");
+      }
     }
     String invoiceNumber = "More than One Invoice involved";
     double invoiceAmount = 0.00;
