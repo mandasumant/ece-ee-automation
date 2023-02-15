@@ -2358,22 +2358,28 @@ public class PortalTestBase {
 
   public void verifyPaidInvoiceStatus(ArrayList<String> expectedInvoiceNumbersList) throws Exception {
     viewAllInvoices();
-    portalPage.clickUsingLowLevelActions("invoicePaidTab");
-    Util.sleep(2000);
-    List<WebElement> invoiceNumbers = portalPage.getMultipleWebElementsfromField("paidInvoiceNumbersList");
-    for (int i = 0; i < expectedInvoiceNumbersList.size(); i++) {
-      for (int j = 0; j < invoiceNumbers.size(); j++) {
-        if (invoiceNumbers.get(j).getText().trim().equalsIgnoreCase(expectedInvoiceNumbersList.get(i))) {
-          Util.PrintInfo(expectedInvoiceNumbersList.get(i) + " Invoice is Available under Paid Tab");
-          System.out.println(expectedInvoiceNumbersList.get(i) + " Invoice is Available under Paid Tab");
-          break;
-        } else if (!invoiceNumbers.get(j).getText().trim().equalsIgnoreCase(expectedInvoiceNumbersList.get(i))
-            && j == invoiceNumbers.size()) {
-          Util.PrintInfo(expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
-          AssertUtils.assertTrue(false, expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
+    try {
+      Util.sleep(5000);
+      portalPage.clickUsingLowLevelActions("invoicePaidTab");
+      Util.sleep(2000);
+      List<WebElement> invoiceNumbers = portalPage.getMultipleWebElementsfromField("paidInvoiceNumbersList");
+      for (int i = 0; i < expectedInvoiceNumbersList.size(); i++) {
+        for (int j = 0; j < invoiceNumbers.size(); j++) {
+          if (invoiceNumbers.get(j).getText().trim().equalsIgnoreCase(expectedInvoiceNumbersList.get(i))) {
+            Util.PrintInfo(expectedInvoiceNumbersList.get(i) + " Invoice is Available under Paid Tab");
+            System.out.println(expectedInvoiceNumbersList.get(i) + " Invoice is Available under Paid Tab");
+            break;
+          } else if (!invoiceNumbers.get(j).getText().trim().equalsIgnoreCase(expectedInvoiceNumbersList.get(i))
+              && j == invoiceNumbers.size()) {
+            Util.PrintInfo(expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
+            AssertUtils.assertTrue(false,
+                expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
+          }
         }
       }
+    } catch (Exception e) {
+      e.printStackTrace();
+      AssertUtils.fail("Unable to find the paid invoices tab");
     }
   }
-
 }
