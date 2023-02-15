@@ -1841,7 +1841,7 @@ public class PortalTestBase {
       if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumber.trim())) {
         checkBoxes.get(i).click();
         List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
-        invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+        invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
         break;
       } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim()
           .equalsIgnoreCase(poNumber.trim())) {
@@ -1868,6 +1868,7 @@ public class PortalTestBase {
   }
 
   public void selectAllInvoicesPayButton() throws MetadataException {
+    Util.printInfo("Selecting the invoices....");
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
     portalPage.click("allInvoicesPayButton");
     Util.printInfo("Clicked on All Invoice Pay Button....");
@@ -1878,7 +1879,7 @@ public class PortalTestBase {
     portalPage.checkIfElementExistsInPage("invoicesTab", 30);
     Util.printInfo("Getting Invoices Payment Totals...");
     List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
-    String amount = amounts.stream().findFirst().get().getText().replaceAll("[^0-9.]", "");
+    String amount = amounts.stream().findFirst().get().getText().replaceAll("[^0-9]", "");
     double amountValue = Double.parseDouble(amount);
     Util.printInfo("Return Invoice Total...." + amountValue);
     return amountValue;
@@ -1898,7 +1899,7 @@ public class PortalTestBase {
 
   public double getPaymentTotalFromCheckout(String elementXPath) throws Exception {
     String paymentTotalAmount = portalPage.getMultipleWebElementsfromField(elementXPath).get(0)
-        .getText().replaceAll("[^0-9.]", "").replace(".", "");
+        .getText().replaceAll("[^0-9]", "");
     Util.printInfo("Return Check out page Payment Total...." + paymentTotalAmount);
     return Double.parseDouble(paymentTotalAmount);
   }
@@ -1924,7 +1925,7 @@ public class PortalTestBase {
     } else {
       clickOnInvoice(poNumbers[0]);
       List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
-      invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+      invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
 
       portalPage.click("invoicePagePay");
     }
@@ -1972,14 +1973,18 @@ public class PortalTestBase {
   @Step("CEP : Pay Invoice" + GlobalConstants.TAG_TESTINGHUB)
   public Boolean payInvoice(LinkedHashMap<String, String> data) throws Exception {
     Util.printInfo("Paying the invoices.");
-    if (portalPage.isFieldVisible("creditMemoTab")) {
-      if (System.getProperty(BICECEConstants.APPLY_CM).equalsIgnoreCase("Y")) {
-        portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
-        Util.printInfo("Applied credit memo successfully");
-      }
+    if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+        .equalsIgnoreCase("Y")) {
+      portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
+      Util.printInfo("Applied credit memo successfully");
+    } else {
       Util.printInfo("Skipping the credit memo.");
+    }
+    if (portalPage.isFieldVisible("creditMemoTab") && portalPage.isFieldVisible("continueButton")) {
       portalPage.clickUsingLowLevelActions("continueButton");
     }
+    Util.sleep(2000);
+
     portalPage.waitForFieldPresent("clickOnPaymentTab", 20000);
     try {
       portalPage.clickUsingLowLevelActions("clickOnPaymentTab");
@@ -1992,26 +1997,14 @@ public class PortalTestBase {
         Assert.fail("Failed to Click on Payment section in Pay Invoice.");
       }
     }
-    Util.sleep(5000);
 
-    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.CREDITCARD) || System.getProperty(
-        BICECEConstants.PAYMENT).equals(BICECEConstants.VISA)) {
-      portalPage.clickUsingLowLevelActions("creditCardPaymentTab");
-      if (!portalPage.isFieldVisible("invoicePaymentEdit")) {
-        bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
-            data.get(BICECEConstants.PAYMENT_TYPE));
-        if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)) {
-          bicTestBase.clickMandateAgreementCheckbox();
-        }
-      }
-      submitPayment();
+    Util.sleep(5000);
+    bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
+        data.get(BICECEConstants.PAYMENT_TYPE));
+    if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)) {
+      bicTestBase.clickMandateAgreementCheckbox();
     }
-    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.CASH)) {
-      Util.printInfo("Clicking on cash Payment Tab...");
-      portalPage.clickUsingLowLevelActions("cashPaymentTab");
-      portalPage.clickUsingLowLevelActions("reviewCashPayment");
-      submitPayment();
-    }
+    submitPayment();
     return false;
   }
 
@@ -2020,11 +2013,14 @@ public class PortalTestBase {
     try {
       portalPage.waitForFieldPresent("submitPaymentButton", 15000);
       portalPage.clickUsingLowLevelActions("submitPaymentButton");
-      portalPage.waitForElementToDisappear("submitPaymentButton", 20);
-      Util.sleep(5000);
-      Util.printInfo("Payment for Invoice is successfully Completed");
+      if (portalPage.checkIfElementExistsInPage("paymentSuccessMessage", 10)) {
+        Util.printInfo("Payment for Invoice is successfully Completed");
+      } else {
+        AssertUtils.fail("Error while submitting payment for invoices");
+      }
     } catch (Exception e) {
       AssertUtils.fail("Error while submitting the payment for Invoices");
+
     }
   }
 
@@ -2069,7 +2065,6 @@ public class PortalTestBase {
       if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumbers[i])
           && invoiceStatus.get(i).getText().length() > 0) {
         Util.PrintInfo("Invoice Status is updated as PAID for PO Number " + poNumber);
-        Util.printInfo("TEST paid tag :: " + invoiceStatus.get(i).getText());
         break;
       } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim()
           .equalsIgnoreCase(poNumbers[i]) && invoiceStatus.get(i).getText().length() > 0) {
@@ -2193,7 +2188,7 @@ public class PortalTestBase {
 
   public double getInvoiceTotalAfterPayment(String elementXPath) throws Exception {
     String invoiceTotalAfterPayment = portalPage.getMultipleWebElementsfromField(elementXPath).get(0)
-        .getText().replaceAll("[^0-9.]", "").replace(".", "");
+        .getText().replaceAll("[^0-9]", "");
     Util.printInfo("Return Payment Total After Payment...." + invoiceTotalAfterPayment);
     return Double.parseDouble(invoiceTotalAfterPayment);
   }
@@ -2203,13 +2198,15 @@ public class PortalTestBase {
     AssertUtils.assertEquals(invoiceTotalBeforePayment, invoiceTotalAfterPayment);
   }
 
-  @Step("Select invoice and credit memo validations with out PO Number" + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Select invoice and credit memo validations without PO Number" + GlobalConstants.TAG_TESTINGHUB)
   public double selectInvoiceAndValidateCreditMemoWithoutPONumber(Boolean shouldWaitForInvoice) throws Exception {
     openPortalURL(accountPortalBillingInvoicesUrl);
     if (shouldWaitForInvoice) {
       waitForInvoicePageLoadToVisible();
     } else {
-      portalPage.waitForFieldPresent("invoicePageTableTitle", 60000);
+      if (!portalPage.waitForFieldPresent("invoicePageTableTitle", 60000)) {
+        AssertUtils.fail("No Open Invoices were Found");
+      }
     }
     String invoiceNumber = "More than One Invoice involved";
     double invoiceAmount = 0.00;
@@ -2224,7 +2221,7 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("invoiceNumbers");
       Util.sleep(5000);
       List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
-      invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+      invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
 
       if (portalPage.checkIfElementExistsInPage("invoicePagePay", 10)) {
         portalPage.click("invoicePagePay");
@@ -2239,22 +2236,29 @@ public class PortalTestBase {
     AssertUtils.assertEquals(invoiceAmount, beforeAddCreditMemoAmount);
     double creditMemoAmount = 0.00;
 
-    if (portalPage.isFieldVisible("creditMemoTab")) {
-      portalPage.clickUsingLowLevelActions("creditMemoTab");
-      Util.sleep(2000);
+    if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+        .equalsIgnoreCase("LOC")) {
+      try {
+        portalPage.clickUsingLowLevelActions("creditMemoTab");
+        Util.sleep(2000);
 
-      portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
-      Util.sleep(5000);
+        portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
+        Util.sleep(5000);
 
-      creditMemoAmount = Double.parseDouble(
-          portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9.]", ""));
+        creditMemoAmount = Double.parseDouble(
+            portalPage.getMultipleWebElementsfromField("creditMemoPrice").get(0).getText().replaceAll("[^0-9]", ""));
 
-      portalPage.clickUsingLowLevelActions("continueButton");
-      Util.sleep(5000);
+        portalPage.clickUsingLowLevelActions("continueButton");
+        Util.sleep(5000);
 
-      double afterAddCreditMemoAmount = getPaymentTotalFromCheckout(
-          "totalPaymentCheckoutWithCreditMemo");
-      AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+        double afterAddCreditMemoAmount = getPaymentTotalFromCheckout(
+            "totalPaymentCheckoutWithCreditMemo");
+        AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
+        invoiceAmount = afterAddCreditMemoAmount;
+      } catch (Exception e) {
+        e.printStackTrace();
+        AssertUtils.fail("Unable to add credit memo.");
+      }
     } else {
       double afterAddCreditMemoAmount = getPaymentTotalFromCheckout("totalPaymentCheckout");
       AssertUtils.assertEquals(invoiceAmount, creditMemoAmount + afterAddCreditMemoAmount);
@@ -2269,7 +2273,7 @@ public class PortalTestBase {
     List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
     for (int i = 0; i < invoiceCount; i++) {
       invoiceAmount =
-          invoiceAmount + Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+          invoiceAmount + Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
     }
     return invoiceAmount;
   }
@@ -2285,6 +2289,8 @@ public class PortalTestBase {
   }
 
   public void selectInvoiceUsingCSN(String csn) throws MetadataException {
+    Util.printInfo("Selecting the CSN :" + csn);
+    Util.sleep(10000);
     portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
     List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
     if (csnList.size() >= 1) {
@@ -2293,13 +2299,16 @@ public class PortalTestBase {
     Util.sleep(30000);
   }
 
-  public ArrayList<String> selectMultipleInvoice(int invoiceIndex) throws MetadataException {
+  public ArrayList<String> selectMultipleInvoice(int noOfInvoices) throws MetadataException {
+    portalPage.waitForFieldPresent("paymentDue");
+    portalPage.clickUsingLowLevelActions("paymentDue");
+    Util.printInfo("Selecting " + noOfInvoices + " invoices....");
     List<WebElement> invoiceList = portalPage.getMultipleWebElementsfromField("invoiceList");
     List<WebElement> invoiceNumbers = portalPage.getMultipleWebElementsfromField("invoiceNumbersList");
     ArrayList<String> numbers = new ArrayList<>();
 
     if (invoiceList.size() > 5) {
-      for (int i = 0; i < invoiceIndex; i++) {
+      for (int i = 0; i < noOfInvoices; i++) {
         portalPage.clickUsingJavaScriptExecutor(invoiceList.get(i));
         numbers.add(invoiceNumbers.get(i).getText().trim());
       }
@@ -2312,6 +2321,7 @@ public class PortalTestBase {
       portalPage.clickUsingJavaScriptExecutor(invoiceList.get(0));
       numbers.add(invoiceNumbers.get(0).getText().trim());
     }
+    Util.printInfo("Invoice selected" + numbers.toString());
     return numbers;
   }
 
@@ -2335,7 +2345,7 @@ public class PortalTestBase {
         if (purchaseNumbers.get(i).getText().trim().equalsIgnoreCase(poNumbers.get(p).trim())) {
           checkBoxes.get(i).click();
           List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
-          invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9.]", "").replace(".", ""));
+          invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
           break;
         } else if (i == purchaseNumbers.size() - 1 && purchaseNumbers.get(i).getText().trim()
             .equalsIgnoreCase(poNumbers.get(p).trim())) {

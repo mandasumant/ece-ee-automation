@@ -11,8 +11,6 @@ import io.restassured.response.Response;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,6 +106,7 @@ public class DatastoreClient {
     @Builder.Default
     String locale = DatastoreClient.getLocale();
     String address;
+    String scenario;
   }
 
   public static class OrderData extends NewQuoteOrder {
@@ -118,15 +117,14 @@ public class DatastoreClient {
     String status;
 
     OrderData(String name, String tenant, String environment, String emailId, BigInteger orderNumber, String quoteId,
-        String paymentType, String locale, String address) {
-      super(name, tenant, environment, emailId, orderNumber, quoteId, paymentType, locale, address);
+        String paymentType, String locale, String address, String scenario) {
+      super(name, tenant, environment, emailId, orderNumber, quoteId, paymentType, locale, address, scenario);
     }
   }
 
   public static @Builder class OrderFilters {
 
-    @Builder.Default
-    public String name = DatastoreClient.getTestName();
+    public String name;
     @Builder.Default
     public String tenant = TENANT;
     @Builder.Default
@@ -134,6 +132,7 @@ public class DatastoreClient {
     public String paymentType;
     public String locale;
     public String address;
+    public String scenario;
 
     public String toURLParameters() {
 

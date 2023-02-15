@@ -278,7 +278,7 @@ public class BICQuoteOrder extends ECETestBase {
       String expectedExemptCode =
           Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)) ? flexCode : "null";
       AssertUtils.assertEquals("Pelican 'Tax Exempt' flag didnt match with Test Param",
-          results.get(BICECEConstants.IS_TAX_EXCEMPT), expectedExemptCode);
+          results.get(BICECEConstants.IS_TAX_EXEMPT), expectedExemptCode);
     }
 
     // Compare tax in Checkout and Pelican
@@ -311,12 +311,19 @@ public class BICQuoteOrder extends ECETestBase {
 
     try {
       DatastoreClient dsClient = new DatastoreClient();
-      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+      NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
+          .name(BICECEConstants.LOC_TEST_NAME)
           .emailId(results.get(BICConstants.emailid))
           .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+          .address(System.getProperty(BICECEConstants.ADDRESS));
+
+      if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+        builder.scenario("Different Payer");
+      }
+
+      OrderData orderData = dsClient.queueOrder(builder.build());
       testResults.put("Stored order data ID", orderData.getId().toString());
       updateTestingHub(testResults);
     } catch (Exception e) {
@@ -338,13 +345,11 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateLocPayInvoice() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
-    Boolean isLoggedIn = true;
+    Boolean isLoggedOut = true;
     Integer attempt = 0;
 
-    String creditMemoAmount = testDataForEachMethod.get("creditMemo");
-    Util.printInfo("The Credit Memo amount is: " + creditMemoAmount);
-
     loadPrevTransactionOut();
+
     results.putAll(testDataForEachMethod);
     if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
       results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
@@ -365,7 +370,7 @@ public class BICQuoteOrder extends ECETestBase {
             || testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
           testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, testDataForEachMethod.get(BICConstants.emailid));
         }
-        while (isLoggedIn) {
+        while (isLoggedOut) {
           attempt++;
           if (attempt > 5) {
             Assert.fail("Retries Exhausted: Payment of Invoice failed because Session issues. Check Screenshots!");
@@ -374,71 +379,17 @@ public class BICQuoteOrder extends ECETestBase {
           portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
               PASSWORD);
 
-          if (System.getProperty("issueCreditMemo") != null) {
-            portaltb.navigateToInvoiceCreditMemos();
-            portaltb.waitForInvoicePageLoadToVisible();
-
-            // Issue Credit Memo to order before Refund
-            if (Strings.isNotNullAndNotEmpty(creditMemoAmount)) {
-              testDataForEachMethod.put(TestingHubConstants.creditMemoAmount, creditMemoAmount);
-            }
-
-            if (Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
-              String somOrderNumber = getSOMOrderNumber(results.get(BICECEConstants.ORDER_ID));
-              Util.printInfo("SOM order number found - " + somOrderNumber);
-
-              HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTableUsingSOM(
-                  somOrderNumber);
-              if (invoiceDetails.size() == 0) {
-                AssertUtils.fail("Failed to get invoice details from SAP for the initial order : " + results.get(
-                    BICECEConstants.ORDER_ID));
-              }
-
-              Util.printInfo("Found invoice details " + invoiceDetails);
-
-              // Get credit memo invoice numbers list if credit memo is available from S4
-              HashMap<String, LinkedList<String>> creditMemoDetails = saptb.sapConnector.getCMInvDetailsFromTableUsingSOM(
-                  somOrderNumber);
-              int cmInvB4Order = creditMemoDetails.size();
-              Util.printInfo("Total credit memos available in S4 : " + cmInvB4Order);
-              if (cmInvB4Order == 0) {
-                Util.printInfo("There are no credit memo invoices in S4 yet.");
-              }
-
-              sapfioritb.loginToSAPFiori();
-              String invoiceNumber = invoiceDetails.get(TestingHubConstants.invoiceNumber);
-              String creditMemo = sapfioritb.createCreditMemoOrder(invoiceNumber, results.get(BICECEConstants.ORDER_ID),
-                  creditMemoAmount);
-              results.put(TestingHubConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
-              results.put(TestingHubConstants.creditMemoOrderNumber, creditMemo);
-              Util.printInfo("creditMemo return value :: " + creditMemo);
-              results.put(TestingHubConstants.invoiceNumber, invoiceNumber);
-              results.put(TestingHubConstants.somOrderNumber, somOrderNumber);
-
-              // Get new credit memo invoice number (Below step often fail to return cm within 10min.)
-              String creditMemoInvoiceNo = saptb.sapConnector.getCMInvNoForNewCMOrderUsingSOM(
-                  results.get(BICECEConstants.ORDER_ID), somOrderNumber,
-                  cmInvB4Order);
-              results.put(TestingHubConstants.creditMemoInvoiceNumber, creditMemoInvoiceNo);
-              updateTestingHub(results);
-              Util.printInfo("creditMemoInvoiceNo return value :: " + creditMemoInvoiceNo);
-
-              // Portal Validations of credit memo
-              portaltb.validateNewCreditMemoInPortal(
-                  results.get(TestingHubConstants.creditMemoInvoiceNumber));
-
-            } else {
-              AssertUtils.fail("Please provide the initial order. Order number is null or empty");
-            }
+          double invoiceTotalBeforePayment = portaltb.selectInvoiceAndValidateCreditMemoWithoutPONumber(false);
+          isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
+          if (isLoggedOut == false) {
+            portaltb.verifyInvoiceTotalAfterPayment(invoiceTotalBeforePayment);
           }
 
-          double invoiceTotalBeforePayment = portaltb.selectInvoiceAndValidateCreditMemoWithoutPONumber(false);
-          isLoggedIn = portaltb.payInvoice(testDataForEachMethod);
-          portaltb.verifyInvoiceTotalAfterPayment(invoiceTotalBeforePayment);
         }
         portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
 
-        if (System.getProperty("issueCreditMemo") != null) {
+        if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+            .equalsIgnoreCase("LOC")) {
           portaltb.verifyCreditMemoStatus("//*[@data-testid=\"credit-memo-list-empty-container\"]");
         }
 
@@ -460,6 +411,92 @@ public class BICQuoteOrder extends ECETestBase {
     } else {
       Assert.fail("Pay By Invoice Step failed in the previous transaction, so failing Pay Invoice Testcase!!!");
     }
+  }
+
+  @Test(groups = {"bic-loc-create-credit-memo"}, description = "Create Credit Memo for Pay Invoice")
+  public void validateLocCreateCreditMemo() throws Exception {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> results = new HashMap<String, String>();
+
+    String creditMemoAmount = testDataForEachMethod.get("creditMemo");
+    Util.printInfo("The Credit Memo amount is: " + creditMemoAmount);
+
+    loadPrevTransactionOut();
+    results.putAll(testDataForEachMethod);
+
+    if (!Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
+      AssertUtils.fail("Please provide the initial order. Order number is null or empty");
+    }
+
+    //For purchaser as Payer test cases we need to update the Payer email address for login.
+    if (!testDataForEachMethod.containsKey(BICECEConstants.PAYER_EMAIL)
+        || testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
+      testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, testDataForEachMethod.get(BICConstants.emailid));
+    }
+
+    portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
+        PASSWORD);
+
+    portaltb.navigateToInvoiceCreditMemos();
+    portaltb.waitForInvoicePageLoadToVisible();
+
+    // Issue Credit Memo to order before Refund
+    if (Strings.isNotNullAndNotEmpty(creditMemoAmount)) {
+      testDataForEachMethod.put(TestingHubConstants.creditMemoAmount, creditMemoAmount);
+    }
+
+    String somOrderNumber = getSOMOrderNumber(results.get(BICECEConstants.ORDER_ID));
+    Util.printInfo("SOM order number found - " + somOrderNumber);
+
+    HashMap<String, String> invoiceDetails = saptb.sapConnector.getInvoiceDetailsFromTableUsingSOM(
+        somOrderNumber);
+    if (invoiceDetails.size() == 0) {
+      AssertUtils.fail("Failed to get invoice details from SAP for the initial order : " + results.get(
+          BICECEConstants.ORDER_ID));
+    }
+
+    Util.printInfo("Found invoice details " + invoiceDetails);
+
+    // Get credit memo invoice numbers list if credit memo is available from S4
+    HashMap<String, LinkedList<String>> creditMemoDetails = saptb.sapConnector.getCMInvDetailsFromTableUsingSOM(
+        somOrderNumber);
+    int cmInvB4Order = creditMemoDetails.size();
+    Util.printInfo("Total credit memos available in S4 : " + cmInvB4Order);
+    if (cmInvB4Order == 0) {
+      Util.printInfo("There are no credit memo invoices in S4 yet.");
+    }
+
+    sapfioritb.loginToSAPFiori();
+    String invoiceNumber = invoiceDetails.get(TestingHubConstants.invoiceNumber);
+    String creditMemo = sapfioritb.createCreditMemoOrder(invoiceNumber, results.get(BICECEConstants.ORDER_ID),
+        creditMemoAmount);
+    results.put(TestingHubConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+    results.put(TestingHubConstants.creditMemoOrderNumber, creditMemo);
+    Util.printInfo("creditMemo return value :: " + creditMemo);
+    results.put(TestingHubConstants.invoiceNumber, invoiceNumber);
+    results.put(TestingHubConstants.somOrderNumber, somOrderNumber);
+
+    if (testDataForEachMethod.containsKey("DS_ORDER_ID")) {
+      int orderId = Integer.parseInt(testDataForEachMethod.get("DS_ORDER_ID"));
+      DatastoreClient dsClient = new DatastoreClient();
+      dsClient.completeOrder(orderId);
+    }
+
+    try {
+      DatastoreClient dsClient = new DatastoreClient();
+      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .name("LOC_CREDITMEMO")
+          .emailId(results.get(BICConstants.emailid))
+          .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
+          .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+      testResults.put("Stored order data ID", orderData.getId().toString());
+      updateTestingHub(testResults);
+    } catch (Exception e) {
+      Util.printWarning("Failed to push order data to data store");
+    }
+
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {"bic-invoicenonpayment"}, description = "Validate Quote Invoice Non payment")
@@ -636,11 +673,13 @@ public class BICQuoteOrder extends ECETestBase {
     try {
       DatastoreClient dsClient = new DatastoreClient();
       OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .name(BICECEConstants.LOC_TEST_NAME)
           .emailId(results.get(BICConstants.emailid))
           .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+          .address(System.getProperty(BICECEConstants.ADDRESS))
+          .scenario("Multi Line Item").build());
       testResults.put("Stored order data ID", orderData.getId().toString());
       updateTestingHub(testResults);
     } catch (Exception e) {
@@ -928,8 +967,8 @@ public class BICQuoteOrder extends ECETestBase {
     // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
-    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
-    getBicTestBase().navigateToQuoteCheckout(testResults);
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testResults));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     // Re login during checkout
     getBicTestBase().loginToOxygen(testResults.get(BICECEConstants.emailid), PASSWORD);
     getBicTestBase().refreshCartIfEmpty();
@@ -942,11 +981,13 @@ public class BICQuoteOrder extends ECETestBase {
     try {
       DatastoreClient dsClient = new DatastoreClient();
       OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .name(BICECEConstants.LOC_TEST_NAME)
           .emailId(purchaser)
           .orderNumber(new BigInteger(results.get(BICECEConstants.orderNumber)))
           .quoteId(quoteId)
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+          .address(System.getProperty(BICECEConstants.ADDRESS))
+          .scenario("Multi Invoice").build());
       testResults.put("Stored order data ID", orderData.getId().toString());
       updateTestingHub(testResults);
     } catch (Exception e) {
@@ -1089,7 +1130,7 @@ public class BICQuoteOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-    AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
+    AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXEMPT)),
         Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)),
         "Pelican 'Tax Exempt' flag didnt match with Test Param");
 
@@ -1185,7 +1226,7 @@ public class BICQuoteOrder extends ECETestBase {
       String expectedExemptCode =
           Boolean.valueOf(System.getProperty(BICECEConstants.SUBMIT_TAX_INFO)) ? flexCode : "null";
       AssertUtils.assertEquals("Pelican 'Tax Exempt' flag didnt match with Test Param",
-          results.get(BICECEConstants.IS_TAX_EXCEMPT), expectedExemptCode);
+          results.get(BICECEConstants.IS_TAX_EXEMPT), expectedExemptCode);
     }
 
     // Compare tax in Checkout and Pelican
@@ -1249,10 +1290,10 @@ public class BICQuoteOrder extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
     if (submitTaxInfo && !changeAddress) {
-      AssertUtils.assertTrue(Objects.equals(results.get(BICECEConstants.IS_TAX_EXCEMPT), "null"),
+      AssertUtils.assertTrue(Objects.equals(results.get(BICECEConstants.IS_TAX_EXEMPT), "null"),
           "Pelican 'Tax Exempt' flag should be null for returning tax exempt users");
     } else {
-      AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXCEMPT)),
+      AssertUtils.assertEquals(Boolean.valueOf(results.get(BICECEConstants.IS_TAX_EXEMPT)),
           false, "Pelican 'Tax Exempt' flag didnt match with Test Param");
     }
 
@@ -1402,23 +1443,39 @@ public class BICQuoteOrder extends ECETestBase {
       });
     } else {
       DatastoreClient dsClient = new DatastoreClient();
-      OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder()
-          .paymentType("LOC");
-
+      OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder();
       String address = System.getProperty(BICECEConstants.ADDRESS);
-      if (address != null) {
-        builder.address(address);
-      } else {
-        builder.locale(locale);
-      }
-      OrderData order = dsClient.grabOrder(builder.build());
 
+      if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+          .equalsIgnoreCase("LOC")) {
+        builder
+            .name("LOC_CREDITMEMO")
+            .address(address)
+            .locale(locale);
+
+      } else {
+        builder.name(BICECEConstants.LOC_TEST_NAME)
+            .paymentType("LOC");
+
+        if (address != null) {
+          builder.address(address);
+        } else {
+          builder.locale(locale);
+        }
+
+        String scenario = System.getProperty("scenario");
+        if (scenario != null) {
+          builder.scenario(scenario);
+        }
+      }
+
+      OrderData order = dsClient.grabOrder(builder.build());
       try {
         testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
         testDataForEachMethod.put(BICECEConstants.ORDER_ID, order.getOrderNumber().toString());
         testDataForEachMethod.put("Placing the Flex Order", "Passed");
         testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
-        testDataForEachMethod.put(BICECEConstants.ADDRESS, order.getAddress().toString());
+        testDataForEachMethod.put(BICECEConstants.ADDRESS, order.getAddress());
       } catch (Exception e) {
         AssertUtils.fail("Failed to invoice to pay");
       }

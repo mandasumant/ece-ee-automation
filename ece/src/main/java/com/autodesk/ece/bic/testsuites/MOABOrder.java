@@ -5,8 +5,11 @@ import com.autodesk.ece.testbase.BICTestBase;
 import com.autodesk.ece.testbase.DatastoreClient;
 import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
+import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.testinghub.core.common.CommonConstants;
+import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.PWSConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -21,9 +24,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.util.Strings;
 
 public class MOABOrder extends ECETestBase {
 
@@ -93,17 +98,28 @@ public class MOABOrder extends ECETestBase {
   public void validateMOABPayInvoice() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
+    Boolean isLoggedOut = true;
+    Integer attempt = 0;
 
     results.putAll(testDataForEachMethod);
-    testDataForEachMethod.put(BICECEConstants.PURCHASER_EMAIL, System.getProperty(BICECEConstants.PURCHASER_EMAIL));
-    portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PURCHASER_EMAIL),
-        PASSWORD);
-    portaltb.openPortalInvoiceAndCreditMemoPage(testDataForEachMethod);
-    portaltb.selectInvoiceUsingCSN(CSN);
-    ArrayList<String> invoiceDetails = portaltb.selectMultipleInvoice(2);
-    portaltb.selectAllInvoicesPayButton();
-    portaltb.payInvoice(testDataForEachMethod);
-    portaltb.verifyPaidInvoiceStatus(invoiceDetails);
+    while (isLoggedOut) {
+      attempt++;
+      if (attempt > 5) {
+        Assert.fail("Retries Exhausted: Payment of Invoice failed because Session issues. Check Screenshots!");
+      }
+
+      testDataForEachMethod.put(BICECEConstants.PURCHASER_EMAIL, System.getProperty(BICECEConstants.PURCHASER_EMAIL));
+      portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PURCHASER_EMAIL),
+          PASSWORD);
+      portaltb.openPortalInvoiceAndCreditMemoPage(testDataForEachMethod);
+      portaltb.selectInvoiceUsingCSN(CSN);
+      ArrayList<String> invoiceDetails = portaltb.selectMultipleInvoice(2);
+      portaltb.selectAllInvoicesPayButton();
+      isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
+      if (isLoggedOut == false) {
+        portaltb.verifyPaidInvoiceStatus(invoiceDetails);
+      }
+    }
     updateTestingHub(testResults);
   }
 
@@ -131,34 +147,126 @@ public class MOABOrder extends ECETestBase {
     data.put(PWSConstants.endCustomerCountryCode, address.get(BICECEConstants.COUNTRY));
     data.put(PWSConstants.endCustomerPostalCode, address.get(BICECEConstants.ZIPCODE));
     data.put(PWSConstants.endCustomerState, address.get(BICECEConstants.STATE_PROVINCE));
+    data.put(PWSConstants.poNumber, "PO" + (int) Util.randomNumber(999999));
+    data.put(PWSConstants.accountType, "existing");
     String content = data.entrySet()
         .stream()
         .map(e -> e.getKey() + "=\"" + e.getValue() + "\"")
         .collect(Collectors.joining(",\n "));
     Util.printInfo("The Data being used to place MOAB order: " + content);
-
+    
     HashMap<String, String> orderResponse = thutil.createPWSOrderAndValidateInS4(data);
-    Util.printInfo("The SOM Order created" + orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
+    Util.printInfo("The SOM Order created :" + orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
     testResults.put(BICECEConstants.SOM_ORDER_NUMBER, orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
     testResults.put(BICECEConstants.SOLD_TO_SSN, orderResponse.get(BICECEConstants.SOLD_TO_SSN));
     updateTestingHub(testResults);
 
-    if (System.getProperty(BICECEConstants.APPLY_CM).equals("Y")) {
+    if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+        .equals("Y")) {
       try {
+        Util.printInfo("Inserting the data into project78.");
         DatastoreClient dsClient = new DatastoreClient();
         OrderData orderDea = dsClient.queueOrder(NewQuoteOrder.builder()
-            .name("CREDITMEMO_RESELLER_".concat(System.getProperty(BICECEConstants.CURRENCY)))
+            .name("RESELLER_ORDER")
             .tenant(System.getProperty(BICECEConstants.TENANT))
             .emailId(System.getProperty(BICECEConstants.PURCHASER_EMAIL))
             .orderNumber(new BigInteger(orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER)))
             .paymentType(System.getProperty(BICECEConstants.PAYMENT_TYPE))
             .locale(locale)
             .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+        Util.printInfo("Inserted the data into project78 successfully");
         updateTestingHub(testResults);
       } catch (Exception e) {
         e.printStackTrace();
-        Util.printWarning("Failed to push order data to Project78 app.");
+        AssertUtils.fail("Failed to push order data to Project78.");
       }
+    }
+  }
+
+  @Test(groups = {"create-credit-memo-reseller"}, description = "Create Credit Memo for Reseller")
+  public void createCreditMemoReseller() throws Exception {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> results = new HashMap<String, String>();
+
+    loadResellerPrevTransactionOut();
+    results.putAll(testDataForEachMethod);
+
+    String orderNumber, reasonCode;
+
+    orderNumber = results.get(BICECEConstants.ORDER_ID);
+    Util.printInfo("Print orderNumber -> " + orderNumber);
+    reasonCode = "111";
+
+    if (Strings.isNotNullAndNotEmpty(orderNumber)) {
+      testDataForEachMethod.put(TestingHubConstants.orderNumber, orderNumber);
+      testDataForEachMethod.put("reason", reasonCode);
+      saptb.logonSAP(CommonConstants.sapServer, CommonConstants.sapSystemNumber, CommonConstants.sapClient,
+          CommonConstants.sapLang);
+      orderNumber = saptb.createReturnOrder(testDataForEachMethod);
+      HashMap<String, String> initialOrderDetails = new HashMap<String, String>();
+      initialOrderDetails.put("ordernumber", orderNumber);
+      updateTestingHub(initialOrderDetails);
+    } else {
+      AssertUtils.fail("Please provide initial order number");
+    }
+
+    try {
+      DatastoreClient dsClient = new DatastoreClient();
+      int orderId = Integer.parseInt(testDataForEachMethod.get("DS_ORDER_ID"));
+      dsClient.completeOrder(orderId);
+
+      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+          .name("RESELLER_CREDITMEMO")
+          .emailId(results.get(BICConstants.emailid))
+          .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
+          .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+      testResults.put("Stored order data ID", orderData.getId().toString());
+      updateTestingHub(testResults);
+    } catch (Exception e) {
+      Util.printWarning("Failed to push order data to data store");
+    }
+
+    updateTestingHub(testResults);
+  }
+
+  private void loadResellerPrevTransactionOut() {
+
+    DatastoreClient dsClient = new DatastoreClient();
+    OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder();
+    String address = System.getProperty(BICECEConstants.ADDRESS);
+
+    if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+        .equalsIgnoreCase("Y")) {
+      builder
+          .name("RESELLER_CREDITMEMO")
+          .address(address)
+          .locale(locale);
+
+    } else {
+      builder.name(BICECEConstants.RESELLER_TEST_NAME)
+          .paymentType("CASH");
+
+      if (address != null) {
+        builder.address(address);
+      } else {
+        builder.locale(locale);
+      }
+
+      String scenario = System.getProperty("scenario");
+      if (scenario != null) {
+        builder.scenario(scenario);
+      }
+    }
+
+    OrderData order = dsClient.grabOrder(builder.build());
+    try {
+      testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
+      testDataForEachMethod.put(BICECEConstants.ORDER_ID, order.getOrderNumber().toString());
+      testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
+      testDataForEachMethod.put(BICECEConstants.ADDRESS, order.getAddress());
+    } catch (Exception e) {
+      AssertUtils.fail("Failed to load order from Project 78");
     }
   }
 }

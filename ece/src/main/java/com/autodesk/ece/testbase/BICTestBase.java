@@ -678,40 +678,45 @@ public class BICTestBase {
 
   @Step("Populate payment details")
   public void populatePaymentDetails(String[] paymentCardDetails) {
-
-    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 10000);
-
     try {
-      WebElement creditCardNumberFrame = bicPage
-          .getMultipleWebElementsfromField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME).get(0);
-      WebElement expiryDateFrame = bicPage.getMultipleWebElementsfromField("expiryDateFrame")
-          .get(0);
-      WebElement securityCodeFrame = bicPage.getMultipleWebElementsfromField("securityCodeFrame")
-          .get(0);
-
-      driver.switchTo().frame(creditCardNumberFrame);
-      Util.printInfo("Entering card number : " + paymentCardDetails[0]);
-      Util.sleep(1000);
-      bicPage.populateField("CardNumber", paymentCardDetails[0]);
-      driver.switchTo().defaultContent();
-      Util.sleep(1000);
-
-      driver.switchTo().frame(expiryDateFrame);
-      Util.printInfo(
-          "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
-      Util.sleep(1000);
-      bicPage.populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
-      driver.switchTo().defaultContent();
-      Util.sleep(1000);
-
-      driver.switchTo().frame(securityCodeFrame);
-      Util.printInfo("Entering security code : " + paymentCardDetails[3]);
-      Util.sleep(1000);
-      bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
-      driver.switchTo().defaultContent();
+      bicPage.clickUsingLowLevelActions("creditCardPaymentTab");
     } catch (MetadataException e) {
       e.printStackTrace();
-      AssertUtils.fail("Unable to enter Card details to make payment");
+    }
+    if (!bicPage.isFieldVisible("invoicePaymentEdit")) {
+      bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 10000);
+      try {
+        WebElement creditCardNumberFrame = bicPage
+            .getMultipleWebElementsfromField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME).get(0);
+        WebElement expiryDateFrame = bicPage.getMultipleWebElementsfromField("expiryDateFrame")
+            .get(0);
+        WebElement securityCodeFrame = bicPage.getMultipleWebElementsfromField("securityCodeFrame")
+            .get(0);
+
+        driver.switchTo().frame(creditCardNumberFrame);
+        Util.printInfo("Entering card number : " + paymentCardDetails[0]);
+        Util.sleep(1000);
+        bicPage.populateField("CardNumber", paymentCardDetails[0]);
+        driver.switchTo().defaultContent();
+        Util.sleep(1000);
+
+        driver.switchTo().frame(expiryDateFrame);
+        Util.printInfo(
+            "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
+        Util.sleep(1000);
+        bicPage.populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
+        driver.switchTo().defaultContent();
+        Util.sleep(1000);
+
+        driver.switchTo().frame(securityCodeFrame);
+        Util.printInfo("Entering security code : " + paymentCardDetails[3]);
+        Util.sleep(1000);
+        bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
+        driver.switchTo().defaultContent();
+      } catch (MetadataException e) {
+        e.printStackTrace();
+        AssertUtils.fail("Unable to enter Card details to make payment");
+      }
     }
   }
 
@@ -1174,6 +1179,9 @@ public class BICTestBase {
             break;
           case BICECEConstants.LOC:
             populatePayByInvoiceDetails(data, address);
+            break;
+          case BICECEConstants.CASH:
+            selectCashPayment();
             break;
           default:
             populatePaymentDetails(paymentCardDetails);
@@ -1799,11 +1807,15 @@ public class BICTestBase {
   }
 
   public void enterPayInvoiceBillingDetails(LinkedHashMap<String, String> data,
-      Map<String, String> address, String paymentMethod) {
+      Map<String, String> address, String paymentMethod) throws MetadataException {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     selectPaymentProfile(data, paymentCardDetails, address);
-    populateBillingAddress(address, data);
-    debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
+
+    WebElement submitPaymentButton = bicPage.getMultipleWebElementsfromField("submitPaymentButton").get(0);
+    if (submitPaymentButton.getAttribute("class").contains("disabled")) {
+      populateBillingAddress(address, data);
+      debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
+    }
   }
 
   public void enterCustomerDetails(Map<String, String> address)
@@ -2213,9 +2225,8 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("freeTrialNextButton2");
 
       createBICAccount(generateFirstAndLastNames(), generateUniqueEmailID(), password, true);
-      ScreenCapture.getInstance().captureFullScreenshot();
 
-      Util.sleep(3000);
+      Util.sleep(5000);
 
       bicPage.waitForFieldPresent("phoneVerificationCallingCode", 2000);
       bicPage.clickUsingLowLevelActions("phoneVerificationCallingCode");
@@ -2258,6 +2269,10 @@ public class BICTestBase {
       bicPage.waitForFieldPresent("countryOfResidence", 1000);
       bicPage.clickUsingLowLevelActions("countryOfResidence");
       bicPage.clickUsingLowLevelActions("selectCountry");
+
+      bicPage.waitForFieldPresent("stateOrProvince", 1000);
+      bicPage.clickUsingLowLevelActions("stateOrProvince");
+      bicPage.clickUsingLowLevelActions("selectState");
 
       bicPage.populateField("postalCode", data.get("postalCode"));
       bicPage.populateField("phoneNumber", data.get("phoneNumber"));
@@ -2618,6 +2633,12 @@ public class BICTestBase {
     at.sendKeys(Keys.PAGE_UP).build().perform();
     at.sendKeys(Keys.PAGE_UP).build().perform();
     at.sendKeys(Keys.PAGE_UP).build().perform();
+  }
+
+  public void selectCashPayment() throws MetadataException {
+    Util.printInfo("Clicking on cash Payment Tab...");
+    bicPage.clickUsingLowLevelActions("cashPaymentTab");
+    bicPage.clickUsingLowLevelActions("reviewCashPayment");
   }
 
   public static class Names {

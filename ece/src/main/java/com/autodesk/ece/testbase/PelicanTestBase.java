@@ -547,7 +547,7 @@ public class PelicanTestBase {
 
       results.put("getPOResponse_storedPaymentProfileId",
           jp.get("payment.paymentProfileId") != null ? jp.get("payment.paymentProfileId").toString() : "");
-      results.put(BICECEConstants.IS_TAX_EXCEMPT,
+      results.put(BICECEConstants.IS_TAX_EXEMPT,
           jp.get("payment.isTaxExempt") != null ? jp.get("payment.isTaxExempt").toString() : "null");
       results.put("getPOResponse_productType", jp.get("lineItems[0].offering.name").toString());
       results.put("getPOResponse_quantity", jp.get("lineItems[0].quantity").toString());

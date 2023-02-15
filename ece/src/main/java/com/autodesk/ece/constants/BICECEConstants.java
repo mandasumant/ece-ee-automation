@@ -198,7 +198,7 @@ public class BICECEConstants extends BICConstants {
   public static final String EXISTING_PAYER_CSN = "existingPayerCSN";
   public static final String EXISTING_PAYER_EMAIL = "existingPayerEmail";
   public static final String SUBMIT_TAX_INFO = "submitTaxInfo";
-  public static final String IS_TAX_EXCEMPT = "isTaxExempt";
+  public static final String IS_TAX_EXEMPT = "isTaxExempt";
   public static final String CREDIT_MEMO = "creditMemo";
   public static final String TAX_FLEX_CODE = "flexCode";
   public static final String SOM_ORDER_NUMBER = "somOrderNumber";
@@ -211,5 +211,7 @@ public class BICECEConstants extends BICConstants {
   public static final String CASH = "CASH";
   public static final String APPLY_CM = "applyCM";
   public static final String CURRENCY = "currency";
+  public static final String SUBMIT_PAYMENT_BUTTON = "submitPaymentButton";
+  public static final String LOC_TEST_NAME = "LOC_ORDER";
+  public static final String RESELLER_TEST_NAME = "RESELLER_ORDER";
 }
-
