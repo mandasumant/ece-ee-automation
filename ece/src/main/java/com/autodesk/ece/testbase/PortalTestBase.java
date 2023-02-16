@@ -334,7 +334,12 @@ public class PortalTestBase {
   public void validateBICOrderTotal(String orderTotal) {
     try {
       openPortalURL(accountsPortalOrderHistoryUrl);
-      portalPage.waitForFieldPresent("portalOrderHistoryPrice");
+      boolean historyPrice = portalPage.waitForFieldPresent("portalOrderHistoryPrice");
+      if (!historyPrice) {
+        portalPage.waitForFieldPresent("portalOrderHistory");
+        portalPage.clickUsingLowLevelActions("portalOrderHistory");
+        Util.sleep(5000);
+      }
       String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
       AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
           "Validate order total in history matches order total on checkout");
@@ -2321,7 +2326,7 @@ public class PortalTestBase {
       portalPage.clickUsingJavaScriptExecutor(invoiceList.get(0));
       numbers.add(invoiceNumbers.get(0).getText().trim());
     }
-    Util.printInfo("Invoice selected" + numbers.toString());
+    Util.printInfo("Invoice selected" + numbers);
     return numbers;
   }
 
