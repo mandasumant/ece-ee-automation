@@ -1389,4 +1389,23 @@ def triggerCJT(def serviceBuildHelper, String env) {
             println('Testing Hub API call failed - LOC Tests')
         }
     }
+    script {
+            if (env == "INT") {
+                println("Building Testing Hub API Input Map - estore")
+                def testingHubInputMap = [:]
+                def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+                testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+                testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/edu/testcase'
+                testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                '{"displayname":"DotCom - BiC Trial Download","testcasename":"validateTrialDownloadUI","description":"BiC Trial Download","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"trialDownload-UI","testMethod":"validateTrialDownloadUI","parameters":{"application":"ece"},"testdata":{"usertype":"new","payment":"VISA","store":"STORE-NAMER","sku":"default:1"}}' +
+                '],"workstreamname":"dclecjt"}'
+                println("Starting Testing Hub API Call - estore")
+                if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+                    println('Testing Hub API called successfully - estore')
+                } else {
+                    currentBuild.result = 'FAILURE'
+                    println('Testing Hub API call failed - estore')
+                }
+            }
+        }
 }
