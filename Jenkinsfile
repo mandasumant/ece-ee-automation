@@ -1390,7 +1390,7 @@ def triggerCJT(def serviceBuildHelper, String env) {
         }
     }
     script {
-            if (env == "INT") {
+            if (env == "STG") {
                 println("Building Testing Hub API Input Map - estore")
                 def testingHubInputMap = [:]
                 def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
