@@ -1579,7 +1579,7 @@ public class PortalTestBase {
 
       int attempts = 0;
       while (attempts < 5) {
-        portalPage.waitForFieldPresent("alignBillingButton", 10000);
+        portalPage.waitForFieldPresent("alignBillingButton", 30000);
         WebElement alignBillingButton = portalPage.getMultipleWebElementsfromField("alignBillingButton").get(0);
         if (alignBillingButton.getAttribute("class").contains("disabled")) {
           Util.sleep(15000);
@@ -2059,7 +2059,7 @@ public class PortalTestBase {
 
     verifyPaidInvoicesFromOpenTab();
 
-    List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("paidPurchaseOrderNumbersList");
+    List<WebElement> purchaseNumbers = portalPage.getMultipleWebElementsfromField("paidInvoiceNumbersList");
     List<WebElement> invoiceStatus = portalPage.getMultipleWebElementsfromField("paidInvoiceStatus");
 
     String[] poNumbers = poNumber.replaceAll("^\"|\"$", "").split(",");
