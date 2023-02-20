@@ -1028,7 +1028,13 @@ public class BICTestBase {
 
         Util.printInfo("Clicking on pay By Invoice tab...");
         try {
-          bicPage.clickUsingLowLevelActions("payByInvoiceTab");
+          if (bicPage.waitForFieldPresent("payByInvoiceTab", 5000)) {
+            bicPage.clickUsingLowLevelActions("payByInvoiceTab");
+          } else {
+            bicPage.scrollToBottomOfPage();
+            bicPage.clickUsingLowLevelActions("payByInvoiceRadioButton");
+            Util.sleep(5000);
+          }
         } catch (Exception e) {
           Util.printInfo(
               "Pay By Invoice tab not visible for this quote :" + payByInvoiceDetails.get(BICECEConstants.QUOTE_ID));
