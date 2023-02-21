@@ -1285,7 +1285,6 @@ def triggerCJT(def serviceBuildHelper, String env) {
                 '{"displayname":"GUAC - BiC order with existing user","testcasename":"validateBicReturningUser","description":"BiC order with existing user","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-returningUser","testMethod":"validateBicReturningUser","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"GUAC - BiC renew order","testcasename":"validateRenewBicOrder","description":"BiC renew recurring order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"renew-bic-order","testMethod":"validateRenewBicOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","address":"Autodesk@1245 Alpine Ave@Boulder@80304@9916800100@United States@CO", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"GUAC - BiC PromoCode order","testcasename":"promocodeBicOrder","description":"BiC Order with PromoCoder","testClass":"com.autodesk.ece.bic.testsuites.BICOrderPromoCode","testGroup":"bic-promocode-order","testMethod":"promocodeBicOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
-                '{"displayname":"DotCom - BiC Trial Download","testcasename":"validateTrialDownloadUI","description":"BiC Trial Download","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"trialDownload-UI","testMethod":"validateTrialDownloadUI","parameters":{"application":"ece"},"testdata":{"usertype":"new","payment":"VISA","store":"STORE-NAMER","sku":"default:1"}},' +
                 '{"displayname":"GUAC - BiC refund order UK","testcasename":"validateBicRefundOrder","description":"BiC refund order - UK","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","locale":"en_GB","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore")
@@ -1390,22 +1389,22 @@ def triggerCJT(def serviceBuildHelper, String env) {
         }
     }
     script {
-            if (env == "STG") {
-                println("Building Testing Hub API Input Map - estore")
-                def testingHubInputMap = [:]
-                def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
-                testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
-                testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-                testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-                '{"displayname":"DotCom - BiC Trial Download","testcasename":"validateTrialDownloadUI","description":"BiC Trial Download","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"trialDownload-UI","testMethod":"validateTrialDownloadUI","parameters":{"application":"ece"},"testdata":{"usertype":"new","payment":"VISA","store":"STORE-NAMER","sku":"default:1"}}' +
-                '],"workstreamname":"dclecjt"}'
-                println("Starting Testing Hub API Call - estore")
-                if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-                    println('Testing Hub API called successfully - estore')
-                } else {
-                    currentBuild.result = 'FAILURE'
-                    println('Testing Hub API call failed - estore')
-                }
+        if (env == "STG") {
+            println("Building Testing Hub API Input Map - estore")
+            def testingHubInputMap = [:]
+            def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+            testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+            testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                    '{"displayname":"DotCom - BiC Trial Download","testcasename":"validateTrialDownloadUI","description":"BiC Trial Download","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"trialDownload-UI","testMethod":"validateTrialDownloadUI","parameters":{"application":"ece"},"testdata":{"usertype":"new","payment":"VISA","store":"STORE-NAMER","sku":"default:1"}}' +
+                    '],"workstreamname":"dclecjt"}'
+            println("Starting Testing Hub API Call - estore")
+            if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+                println('Testing Hub API called successfully - estore')
+            } else {
+                currentBuild.result = 'FAILURE'
+                println('Testing Hub API call failed - estore')
             }
         }
+    }
 }
