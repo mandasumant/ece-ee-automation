@@ -363,7 +363,6 @@ pipeline {
         stage('Apollo Quote 2 Order - TTR - Regression') {
             when {
                 branch 'master'
-                triggeredBy 'TimerTrigger'
             }
             steps {
                 triggerApolloTTR(serviceBuildHelper, 'INT')
@@ -384,7 +383,7 @@ pipeline {
                 }
             }
             steps {
-                triggerApolloR2_0_4(serviceBuildHelper, 'INT')
+                triggerApolloR2_0_4(serviceBuildHelper)
                 script {
                     sh 'sleep 600'
                 }
@@ -451,7 +450,6 @@ pipeline {
             when {
                 branch 'master'
                 anyOf {
-                    triggeredBy 'TimerTrigger'
                     expression {
                         params.APOLLO_FLEX_MOE == true
                     }
@@ -1089,7 +1087,7 @@ def triggerApolloR2_3PayInvoice(def serviceBuildHelper) {
     }
 }
 
-def triggerApolloR2_0_4(def serviceBuildHelper, String env) {
+def triggerApolloR2_0_4(def serviceBuildHelper) {
     echo 'Initiating Apollo R2.0.4'
     script {
         println("Building Testing Hub API Input Map - estore")
@@ -1097,7 +1095,7 @@ def triggerApolloR2_0_4(def serviceBuildHelper, String env) {
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionname":"Apollo: R2.0.4 PSP SSS orders on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","Sally.Gillespie@autodesk.com","harman.preet@autodesk.com","sai.saripalli@autodesk.com","piyush.laddha@autodesk.com","Satish.Jupalli@autodesk.com","manoj.t.l@autodesk.com","keshav.prasad.kuruva@autodesk.com","Ameko.Chen@autodesk.com","pavan.venkatesh.malyala@autodesk.com","ramanathan.kasiviswanathan@autodesk.com","arivuchelvan.pandian@autodesk.com","nimit.shah@autodesk.com","roshan.nampeli@autodesk.com","Joe.Mcqueeney@autodesk.com","gaurav.bains@autodesk.com","rohit.rana@autodesk.com","chris.gouldy@autodesk.com","tanner.hirakida@autodesk.com","mahija.sarma@autodesk.com","jeong.sohn@autodesk.com","Cherry.ngo@autodesk.com","erik.batz@autodesk.com"],"jiraTestCycleId":"29733","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionname":"Apollo: R2.0.4 PSP SSS orders on ' + params.ENVIRONMENT + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","Sally.Gillespie@autodesk.com","harman.preet@autodesk.com","sai.saripalli@autodesk.com","piyush.laddha@autodesk.com","Satish.Jupalli@autodesk.com","manoj.t.l@autodesk.com","keshav.prasad.kuruva@autodesk.com","Ameko.Chen@autodesk.com","pavan.venkatesh.malyala@autodesk.com","ramanathan.kasiviswanathan@autodesk.com","arivuchelvan.pandian@autodesk.com","nimit.shah@autodesk.com","roshan.nampeli@autodesk.com","Joe.Mcqueeney@autodesk.com","gaurav.bains@autodesk.com","rohit.rana@autodesk.com","chris.gouldy@autodesk.com","tanner.hirakida@autodesk.com","mahija.sarma@autodesk.com","jeong.sohn@autodesk.com","Cherry.ngo@autodesk.com","erik.batz@autodesk.com"],"jiraTestCycleId":"29733","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
                 '{"displayname":"GUAC - BiC Native Order UK","testcasename":"validateBicNativeOrder","description":"BiC Native Order - UK","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13812"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","locale":"en_GB"}},' +
                 '{"displayname":"GUAC - BiC Native Order UK PAYPAL","testcasename":"validateBicNativeOrder","description":"BiC Native Order - UK","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13820"},"testdata":{"usertype":"new","password":"","payment":"PAYPAL","store":"STORE-UK","sku":"default:1","email":"","locale":"en_GB"}},' +
                 '{"displayname":"GUAC - BiC Native Order NL","testcasename":"validateBicNativeOrder","description":"BiC Native Order - NL","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13811"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-EU","sku":"default:1","email":"","locale":"nl_NL"}},' +
@@ -1148,7 +1146,7 @@ def triggerApolloR2_0_4(def serviceBuildHelper, String env) {
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionid":"' + execution_id + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"29733","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionid":"' + execution_id + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"29733","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
                 '{"displayname":"Flex Direct Order UK CC","testcasename":"d27c5060","description":"Flex Direct Order UK CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13845"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","sku":"default:1","email":"","isTaxed":"Y","locale":"en_GB"}},' +
                 '{"displayname":"Flex Direct Order UK Paypal","testcasename":"d27c5060","description":"Flex Direct Order UK Paypal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13853"},"testdata":{"usertype":"new","password":"","payment":"PAYPAL","store":"STORE-UK","sku":"default:1","email":"","isTaxed":"Y","locale":"en_GB"}},' +
                 '{"displayname":"Flex Direct Order Sweden CC","testcasename":"d27c5060","description":"Flex Direct Order SE CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13851"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-SE","sku":"default:1","email":"","isTaxed":"Y","locale":"sv_SE"}},' +
