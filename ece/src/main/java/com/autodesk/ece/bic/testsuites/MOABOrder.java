@@ -139,22 +139,25 @@ public class MOABOrder extends ECETestBase {
     data.put(PWSConstants.shipToCSN, System.getProperty(BICECEConstants.RESELLER_CSN));
     data.put(TestingHubConstants.soldToParty, System.getProperty(BICECEConstants.RESELLER_CSN));
     data.put(PWSConstants.resellerCSN, System.getProperty(BICECEConstants.RESELLER_CSN));
+/*
     data.put(TestingHubConstants.enduserCSN, System.getProperty(BICECEConstants.END_CUSTOMER_CSN));
     data.put(TestingHubConstants.csn, System.getProperty(BICECEConstants.END_CUSTOMER_CSN));
+*/
     data.put(PWSConstants.endCustomerAddressLine1, address.get(BICECEConstants.FULL_ADDRESS));
     data.put(PWSConstants.endCustomerAddressLine2, "");
+    data.put(PWSConstants.endCustomerAddressLine3, "");
     data.put(PWSConstants.endCustomerCity, address.get(BICECEConstants.CITY));
     data.put(PWSConstants.endCustomerCountryCode, address.get(BICECEConstants.COUNTRY));
     data.put(PWSConstants.endCustomerPostalCode, address.get(BICECEConstants.ZIPCODE));
     data.put(PWSConstants.endCustomerState, address.get(BICECEConstants.STATE_PROVINCE));
-    data.put(PWSConstants.poNumber, "PO" + (int) Util.randomNumber(999999));
-    data.put(PWSConstants.accountType, "existing");
+    data.put(PWSConstants.poNumber, "DCLEPO" + (int) Util.randomNumber(999999));
+    data.put(PWSConstants.accountType, "new");
     String content = data.entrySet()
         .stream()
         .map(e -> e.getKey() + "=\"" + e.getValue() + "\"")
         .collect(Collectors.joining(",\n "));
     Util.printInfo("The Data being used to place MOAB order: " + content);
-    
+
     HashMap<String, String> orderResponse = thutil.createPWSOrderAndValidateInS4(data);
     Util.printInfo("The SOM Order created :" + orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
     testResults.put(BICECEConstants.SOM_ORDER_NUMBER, orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
