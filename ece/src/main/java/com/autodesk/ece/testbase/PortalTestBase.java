@@ -2285,7 +2285,7 @@ public class PortalTestBase {
 
   public void selectInvoiceCSN(int invoiceIndex) throws MetadataException {
     portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
-    List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
+    List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("selectorDropdownList");
     if (csnList.size() >= 1) {
       portalPage.clickUsingLowLevelActions(csnList.get(invoiceIndex));
     } else {
@@ -2297,7 +2297,7 @@ public class PortalTestBase {
     Util.printInfo("Selecting the CSN :" + csn);
     Util.sleep(10000);
     portalPage.clickUsingLowLevelActions("invoiceCSNSelectorDropdown");
-    List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("invoiceCSNSelectorDropdownList");
+    List<WebElement> csnList = portalPage.getMultipleWebElementsfromField("selectorDropdownList");
     if (csnList.size() >= 1) {
       csnList.stream().filter(c -> c.getText().contains(csn)).findFirst().get().click();
     }
@@ -2386,5 +2386,16 @@ public class PortalTestBase {
       e.printStackTrace();
       AssertUtils.fail("Unable to find the paid invoices tab");
     }
+  }
+
+  public void selectCurrency(String currency) throws MetadataException {
+    Util.printInfo("Selecting the Currency :" + currency);
+    Util.sleep(5000);
+    portalPage.clickUsingLowLevelActions("currencySelectorDropdown");
+    List<WebElement> currencyList = portalPage.getMultipleWebElementsfromField("selectorDropdownList");
+    if (currencyList.size() >= 1) {
+      currencyList.stream().filter(c -> c.getText().contains(currency)).findFirst().get().click();
+    }
+    Util.sleep(10000);
   }
 }

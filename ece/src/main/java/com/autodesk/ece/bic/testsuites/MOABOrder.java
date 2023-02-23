@@ -113,6 +113,9 @@ public class MOABOrder extends ECETestBase {
           PASSWORD);
       portaltb.openPortalInvoiceAndCreditMemoPage(testDataForEachMethod);
       portaltb.selectInvoiceUsingCSN(CSN);
+      if(System.getProperty(BICECEConstants.STORE).equals("STORE-UK")){
+        portaltb.selectCurrency("GBP");
+      }
       ArrayList<String> invoiceDetails = portaltb.selectMultipleInvoice(2);
       portaltb.selectAllInvoicesPayButton();
       isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
