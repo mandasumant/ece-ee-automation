@@ -2389,13 +2389,16 @@ public class PortalTestBase {
   }
 
   public void selectCurrency(String currency) throws MetadataException {
-    Util.printInfo("Selecting the Currency :" + currency);
-    Util.sleep(5000);
-    portalPage.clickUsingLowLevelActions("currencySelectorDropdown");
-    List<WebElement> currencyList = portalPage.getMultipleWebElementsfromField("selectorDropdownList");
-    if (currencyList.size() >= 1) {
-      currencyList.stream().filter(c -> c.getText().contains(currency)).findFirst().get().click();
+    if (portalPage.checkIfElementExistsInPage("currencySelectorDropdown", 10)) {
+      Util.printInfo("Selecting the Currency :" + currency);
+      portalPage.clickUsingLowLevelActions("currencySelectorDropdown");
+      List<WebElement> currencyList = portalPage.getMultipleWebElementsfromField("selectorDropdownList");
+      if (currencyList.size() >= 1) {
+        currencyList.stream().filter(c -> c.getText().contains(currency)).findFirst().get().click();
+        Util.sleep(10000);
+      }
+    } else {
+      Util.printInfo("No Currency is Available to Select");
     }
-    Util.sleep(10000);
   }
 }
