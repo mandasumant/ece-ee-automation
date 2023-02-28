@@ -19,7 +19,9 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -153,7 +155,9 @@ public class MOABOrder extends ECETestBase {
     data.put(PWSConstants.endCustomerCountryCode, address.get(BICECEConstants.COUNTRY));
     data.put(PWSConstants.endCustomerPostalCode, address.get(BICECEConstants.ZIPCODE));
     data.put(PWSConstants.endCustomerState, address.get(BICECEConstants.STATE_PROVINCE));
-    data.put(PWSConstants.poNumber, "DCLEPO" + (int) Util.randomNumber(999999));
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm");
+    String dateTime = dateFormat.format(Calendar.getInstance().getTime());
+    data.put(PWSConstants.poNumber, "DCLE" + dateTime.replaceAll("[^0-9]", ""));
     data.put(PWSConstants.accountType, "new");
     String content = data.entrySet()
         .stream()
