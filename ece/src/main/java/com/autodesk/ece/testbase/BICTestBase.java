@@ -906,6 +906,9 @@ public class BICTestBase {
       Util.printInfo("Clicking on Paypal checkout button...");
       bicPage.clickUsingLowLevelActions("paypalCheckoutBtn");
 
+      Util.printInfo("Wait for Paypal checkout page to be load");
+      Util.sleep(3000);
+
       Set<String> windows = driver.getWindowHandles();
       for (String window : windows) {
         driver.switchTo().window(window);
@@ -965,22 +968,22 @@ public class BICTestBase {
       bicPage.executeJavascript("window.scrollBy(0,1000);");
 
       int count = 0;
-      while (bicPage.checkIfElementExistsInPage("paypalReviewBtn", 5)) {
+      while (bicPage.checkIfElementExistsInPage("paypalSaveAndContinueBtn", 5)) {
         count++;
 
         if (count > 3) {
           AssertUtils.fail("Unable to click on Continue button.");
         } else {
           String continueBtn = driver.findElement(
-              By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getText();
+              By.xpath(bicPage.getFirstFieldLocator("paypalSaveAndContinueBtn"))).getText();
 
           if (!Strings.isNotNullAndNotEmpty(continueBtn)) {
             continueBtn = driver.findElement(
-                By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getAttribute("value");
+                By.xpath(bicPage.getFirstFieldLocator("paypalSaveAndContinueBtn"))).getAttribute("value");
           }
 
           Util.printInfo("Clicking on '" + continueBtn + "' button.");
-          bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+          bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
           Util.sleep(3000);
         }
       }
