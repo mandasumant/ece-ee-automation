@@ -263,6 +263,56 @@ public class PelicanTestBase {
     return patchRestResponse(getPurchaseOrderDetailsUrl, header, inputPayload);
   }
 
+  @Step("Update next billing cycle with before date " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> forwardNextBillingCycleForFinancingRenewal(HashMap<String, String> data) {
+    //Temporary sleep until we pick up story to address the retry logic to wait for Order charge.
+    Util.sleep(240000);
+
+    String getPurchaseOrderDetailsUrl = data.get("getSubscriptionByIdUrl");
+    getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
+        data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
+    Util.printInfo("getPriceDetails baseURL : " + getPurchaseOrderDetailsUrl);
+
+    PelicanSignature signature = requestSigner.generateSignature();
+
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
+    String accept = BICECEConstants.APPLICATION_VNDAPI_JSON;
+    HashMap<String, String> header = new HashMap<>();
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, signature.xE2HMACSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, signature.xE2PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, signature.xE2AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
+    header.put("X-Request-Ref", UUID.randomUUID().toString());
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.ACCEPT, accept);
+
+    String nextBillingDate;
+    String endDate;
+    String expirationDate;
+
+    nextBillingDate = Util.customDate("MM/dd/yyyy", 0, +1, 0) + " 20:13:28 UTC";
+    endDate = Util.customDate("MM/dd/yyyy", 0, +1, 0) + " 20:13:28 UTC";
+    expirationDate = Util.customDate("MM/dd/yyyy", +1, +1, 0) + " 20:13:28 UTC";
+
+    String path = Util.getCorePayloadPath() + "BIC_Update_NextBilling.json";
+    File rawPayload = new File(path);
+    UpdateNextBilling nextBillingJson;
+    ObjectMapper om = new ObjectMapper();
+    String inputPayload = "";
+    try {
+      nextBillingJson = om.readValue(rawPayload, UpdateNextBilling.class);
+      nextBillingJson.getData().setNextBillingDate(nextBillingDate);
+      nextBillingJson.getData().setEndDate(endDate);
+      nextBillingJson.getData().setExpirationDate(expirationDate);
+      inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(nextBillingJson);
+      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
+    } catch (IOException e1) {
+      e1.printStackTrace();
+      AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
+    }
+    return patchRestResponse(getPurchaseOrderDetailsUrl, header, inputPayload);
+  }
+
   @Step("Sending Patch Response")
   public HashMap<String, String> patchRestResponse(String baseUrl, HashMap<String, String> header,
       String body) {
@@ -778,7 +828,7 @@ public class PelicanTestBase {
       Date pelicanDate = pelicanFormat.parse(pelicanResponseMap.get("getPOResponse_subscriptionPeriodStartDate"));
       sdfQuote.setTimeZone(TimeZone.getTimeZone(System.getProperty("timezone")));
       String pelicanSubDate = sdfQuote.format(pelicanDate);
-      //AssertUtils.assertEquals("Subscription Start Date should should match.", quoteSubDate, pelicanSubDate);
+      //AssertUtils.assertEquals("Subscription Start Date should match.", quoteSubDate, pelicanSubDate);
 
     } catch (Exception e) {
       Util.printInfo("Exception in validating subscription start date . " + e.getMessage());

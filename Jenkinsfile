@@ -185,6 +185,7 @@ pipeline {
         booleanParam(name: 'APOLLO_FLEX_MOE', defaultValue: false, description: 'Run FLEX MOE Order?')
         booleanParam(name: 'APOLLO_R2_0_4', defaultValue: false, description: 'Run Apollo R2.0.4?')
         booleanParam(name: 'EDU', defaultValue: false, description: 'Run all EDU tests?')
+        booleanParam(name: 'FINANCING', defaultValue: false, description: 'Run Financing Regression')
         choice(name: 'INVOICE_VALIDATION', choices: ['False', 'True'], description: 'Run Invoice Validation ?')
         string(name: 'JIRAPAT', defaultValue: 'NjI2Mjk1Mzg1MDU0OjmbRT/D/UpHMhc92q4uPBIPhwYo')
     }
@@ -197,7 +198,6 @@ pipeline {
                 }
             }
         }
-
         stage('Prepare environment') {
             when {
                 not {
@@ -212,7 +212,8 @@ pipeline {
                                     params.APOLLO_R2_0_4 == true ||
                                     params.APOLLO_TTR == true ||
                                     params.APOLLO_PAY_INVOICE == true ||
-                                    params.APOLLO_CREDIT_MEMO == true
+                                    params.APOLLO_CREDIT_MEMO == true ||
+                                    params.FINANCING == true
                         }
                     }
                 }
@@ -226,7 +227,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build Maven Project') {
             when {
                 not {
@@ -239,10 +239,11 @@ pipeline {
                                     params.APOLLO_FLEX == true ||
                                     params.APOLLO_FLEX_MOE == true ||
                                     params.APOLLO_R2_0_4 == true ||
-                                    params.EDU == true ||
                                     params.APOLLO_TTR == true ||
                                     params.APOLLO_PAY_INVOICE == true ||
-                                    params.APOLLO_CREDIT_MEMO == true
+                                    params.APOLLO_CREDIT_MEMO == true ||
+                                    params.EDU == true ||
+                                    params.FINANCING == true
                         }
                     }
                 }
@@ -260,7 +261,6 @@ pipeline {
                 }
             }
         }
-
         stage('SonarQube code quality scan') {
             when {
                 not {
@@ -276,7 +276,8 @@ pipeline {
                                     params.APOLLO_TTR == true ||
                                     params.APOLLO_PAY_INVOICE == true ||
                                     params.APOLLO_CREDIT_MEMO == true ||
-                                    params.EDU == true
+                                    params.EDU == true ||
+                                    params.FINANCING == true
                         }
                     }
                 }
@@ -319,7 +320,6 @@ pipeline {
                 triggerCJT(serviceBuildHelper, params.ENVIRONMENT)
             }
         }
-
         stage('MOAB Tests') {
             when {
                 branch 'master'
@@ -360,18 +360,6 @@ pipeline {
                 }
             }
         }
-        stage('Apollo Quote 2 Order - TTR - Regression') {
-            when {
-                branch 'master'
-            }
-            steps {
-                triggerApolloTTR(serviceBuildHelper, 'INT')
-                script {
-                    sh 'sleep 600'
-                }
-            }
-        }
-
         stage('Apollo R2.0.4') {
             when {
                 branch 'master'
@@ -445,7 +433,6 @@ pipeline {
                 }
             }
         }
-
         stage('Apollo Flex MOE Order New Suite') {
             when {
                 branch 'master'
@@ -505,6 +492,17 @@ pipeline {
                 script {
                     triggerTestingHub(serviceBuildHelper)
                 }
+            }
+        }
+        stage('Financing Tests') {
+            when {
+                branch 'master'
+                expression {
+                    params.FINANCING == true
+                }
+            }
+            steps {
+                triggerFinancing(serviceBuildHelper, params.ENVIRONMENT)
             }
         }
     }
@@ -1400,6 +1398,29 @@ def triggerCJT(def serviceBuildHelper, String env) {
                 currentBuild.result = 'FAILURE'
                 println('Testing Hub API call failed - estore')
             }
+        }
+    }
+}
+
+def triggerFinancing(def serviceBuildHelper, String env) {
+    echo 'Initiating Financing Tests'
+    script {
+        println("Building Testing Hub API Input Map - estore")
+        def testingHubInputMap = [:]
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Financing Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com"],"testcases":[' +
+                '{"displayname":"BiC Financing Canceled Order","testcasename":"validateBicNativeFinancingCanceledOrder","description":"BiC Financing Order Canceled","testClass":"com.autodesk.ece.bic.testsuites.BICFinancingOrder","testGroup":"bic-financing-canceled","testMethod":"validateBicNativeFinancingCanceledOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""}},' +
+                '{"displayname":"BiC Financing Declined Order","testcasename":"validateBicNativeFinancingDeclinedOrder","description":"BiC Financing Order Declined","testClass":"com.autodesk.ece.bic.testsuites.BICFinancingOrder","testGroup":"bic-financing-declined","testMethod":"validateBicNativeFinancingDeclinedOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""}},' +
+                '{"displayname":"BiC Financing Renew Order","testcasename":"783c495f","description":"BiC Financing Renew Order","testClass":"com.autodesk.ece.bic.testsuites.BICFinancingOrder","testGroup":"bic-financing-renew-order","testMethod":"validateBicNativeFinancingRenewalOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""}}' +
+                '],"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - estore")
+        if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+            println('Testing Hub API called successfully - estore - Financing')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - estore - Financing')
         }
     }
 }

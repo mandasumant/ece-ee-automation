@@ -215,6 +215,11 @@ validateBicNativeFinancingCanceledOrder:
   bicNativePriceID: *bicNativePriceID
   isFinancingCanceled: "true"
 
+validateBicNativeFinancingRenewalOrder:
+  productID: *NativeOrderPriceID
+  bicNativePriceID: *bicNativePriceID
+  quantity: "2"
+
 validateMultiLineItemBicNativeOrder:
   multiProduct2: "3ds-max"
   quantity: "3"

@@ -12,11 +12,15 @@ import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.google.common.base.Strings;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -139,6 +143,104 @@ public class BICFinancingOrder extends ECETestBase {
 
     updateTestingHub(testResults);
 
+  }
+
+  @Test(groups = {"bic-financing-renew-order"}, description = "Validation of BIC Financing Renewal Order")
+  public void validateBicNativeFinancingRenewalOrder() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    startTime = System.nanoTime();
+    HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(
+        testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    Util.sleep(120000);
+
+    // Getting a PurchaseOrder details
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+
+    // Update the subscription NBD so that the current data become 15 days before the next billing date.
+    pelicantb.forwardNextBillingCycleForFinancingRenewal(results);
+
+    // Lookup the subscription in pelican to confirm its renewal date
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    try {
+      String originalBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
+      Util.printInfo("Original Billing Date: " + originalBillingDateString);
+      Date originalBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+          originalBillingDateString);
+      Date date = new Date();
+      Assert.assertTrue(originalBillingDate.before(new Date(date.getTime() + (1000 * 60 * 60 * 24))),
+          "Check that the subscription is ready to be renewed");
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    portaltb.renewFinancingSubscription(results.get(BICConstants.emailid), PASSWORD);
+
+    results = getBicTestBase().renewFinancingOrder(
+        testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+
+    Util.sleep(120000);
+
+    // Getting a PurchaseOrder details
+    results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
+
+    // Get the subscription in pelican to check if it has renewed
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    try {
+      // Ensure that the subscription renews in the future
+      String nextBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
+      Util.printInfo("New Billing Date: " + nextBillingDateString);
+      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+          nextBillingDateString);
+      Date date = new Date();
+      Assert.assertTrue(newBillingDate.after(new Date(date.getTime() + (1000 * 60 * 60 * 24))),
+          "Check that the subscription has been renewed");
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put("renewalOrderNumber", results.get("response_renewalOrderNo"));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {

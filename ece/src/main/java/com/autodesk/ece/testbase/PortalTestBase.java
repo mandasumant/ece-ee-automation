@@ -2401,4 +2401,38 @@ public class PortalTestBase {
       Util.printInfo("No Currency is Available to Select");
     }
   }
+
+  @Step("Portal : Renew Financing subscription" + GlobalConstants.TAG_TESTINGHUB)
+  public void renewFinancingSubscription(String portalUserName, String portalPassword)
+      throws MetadataException {
+    openPortalURL(accountsPortalSubscriptionsUrl);
+
+    if (isPortalLoginPageVisible()) {
+      portalLogin(portalUserName, portalPassword);
+    }
+
+    clickOnSubscriptionRow();
+
+    int attempts = 0;
+
+    while (attempts < 11) {
+      try {
+        portalPage.waitForFieldPresent("portalRenewingSubscription", 10000);
+        portalPage.clickUsingLowLevelActions("portalRenewingSubscription");
+        Util.printInfo("Redirecting to checkout page...");
+        Util.sleep(20000);
+        break;
+      } catch (Exception e) {
+        if (attempts == 10) {
+          AssertUtils.fail("Unable to renew Financing Subscription. \n" + e);
+        }
+
+        Util.printInfo("Unable to click on Renew cta. Retrying. \n" + e);
+        portalPage.refresh();
+        attempts++;
+        Util.sleep(60000);
+      }
+    }
+  }
+
 }

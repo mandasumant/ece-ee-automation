@@ -1416,7 +1416,7 @@ public class BICTestBase {
     if (data.get(BICECEConstants.PAYMENT_TYPE)
         .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       financingTestBase.setTestData(data);
-      financingTestBase.completeFinancingApplication();
+      financingTestBase.completeFinancingApplication(data);
     }
 
     results.put(BICConstants.emailid, data.get(BICECEConstants.emailid));
@@ -1457,7 +1457,7 @@ public class BICTestBase {
     if (data.get(BICECEConstants.PAYMENT_TYPE)
         .equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       financingTestBase.setTestData(data);
-      financingTestBase.completeFinancingApplication();
+      financingTestBase.completeFinancingApplication(data);
     }
 
     results.put(BICConstants.emailid, emailID);
@@ -2645,6 +2645,45 @@ public class BICTestBase {
     Util.printInfo("Clicking on cash Payment Tab...");
     bicPage.clickUsingLowLevelActions("cashPaymentTab");
     bicPage.clickUsingLowLevelActions("reviewCashPayment");
+  }
+
+  @SuppressWarnings({"static-access", "unused"})
+  @Step("Guac: Renew Financing Subscription " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> renewFinancingOrder(LinkedHashMap<String, String> data) {
+    HashMap<String, String> results = new HashMap<>();
+
+    WebElement continueButton = driver
+        .findElement(By.cssSelector("[data-wat-value=\"submit order\"]"));
+
+    int attempts = 0;
+
+    while (attempts < 5) {
+      try {
+        continueButton.click();
+        waitForLoadingSpinnerToComplete("loadingSpinner");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.invisibilityOf(continueButton));
+
+        Util.printInfo("Save button no longer present");
+        break;
+      } catch (TimeoutException e) {
+        e.printStackTrace();
+        Util.printInfo("Save button still present, retrying");
+        attempts++;
+        if (attempts == 5) {
+          AssertUtils.fail("Failed to click on Save button on billing details page...");
+        }
+        Util.sleep(2000);
+      }
+    }
+
+    data.put("isFinancingRenewal", "true");
+
+    financingTestBase.setTestData(data);
+    financingTestBase.completeFinancingApplication(data);
+
+    return results;
   }
 
   public static class Names {
