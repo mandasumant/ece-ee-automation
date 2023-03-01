@@ -2665,14 +2665,14 @@ public class BICTestBase {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         wait.until(ExpectedConditions.invisibilityOf(continueButton));
 
-        Util.printInfo("Save button no longer present");
+        Util.printInfo("Submit order button no longer present.");
         break;
       } catch (TimeoutException e) {
         e.printStackTrace();
-        Util.printInfo("Save button still present, retrying");
+        Util.printInfo("Submit order button still present. Retrying!");
         attempts++;
         if (attempts == 5) {
-          AssertUtils.fail("Failed to click on Save button on billing details page...");
+          AssertUtils.fail("Failed to click on Submit order button.");
         }
         Util.sleep(2000);
       }

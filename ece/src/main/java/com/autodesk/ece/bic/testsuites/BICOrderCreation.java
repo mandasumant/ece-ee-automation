@@ -1,6 +1,9 @@
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.ece.testbase.DatastoreClient;
+import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
+import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
@@ -14,6 +17,7 @@ import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.google.common.base.Strings;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -229,6 +233,25 @@ public class BICOrderCreation extends ECETestBase {
             .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
       } catch (Exception e) {
         Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
+
+      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        try {
+          DatastoreClient dsClient = new DatastoreClient();
+          NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
+              .name(BICECEConstants.BIC_TEST_NAME)
+              .emailId(results.get(BICConstants.emailid))
+              .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
+              .quoteId(results.get(BICECEConstants.SUBSCRIPTION_ID))
+              .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+              .address(System.getProperty(BICECEConstants.ADDRESS));
+
+          OrderData orderData = dsClient.queueOrder(builder.build());
+          testResults.put("Stored order data ID", orderData.getId().toString());
+          updateTestingHub(testResults);
+        } catch (Exception e) {
+          Util.printWarning("Failed to push order data to data store");
+        }
       }
 
       updateTestingHub(testResults);

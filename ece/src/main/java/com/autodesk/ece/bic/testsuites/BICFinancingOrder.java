@@ -173,7 +173,7 @@ public class BICFinancingOrder extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
-    // Update the subscription NBD so that the current data become 15 days before the next billing date.
+    // Update the subscription NBD so that the current data become 2 days before the next billing date.
     pelicantb.forwardNextBillingCycleForFinancingRenewal(results);
 
     // Lookup the subscription in pelican to confirm its renewal date
@@ -185,7 +185,7 @@ public class BICFinancingOrder extends ECETestBase {
       Date originalBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
           originalBillingDateString);
       Date date = new Date();
-      Assert.assertTrue(originalBillingDate.before(new Date(date.getTime() + (1000 * 60 * 60 * 24))),
+      Assert.assertTrue(originalBillingDate.before(new Date(date.getTime() + (1000 * 60 * 60 * 72))),
           "Check that the subscription is ready to be renewed");
     } catch (ParseException e) {
       e.printStackTrace();
@@ -214,8 +214,7 @@ public class BICFinancingOrder extends ECETestBase {
       Util.printInfo("New Billing Date: " + nextBillingDateString);
       Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
           nextBillingDateString);
-      Date date = new Date();
-      Assert.assertTrue(newBillingDate.after(new Date(date.getTime() + (1000 * 60 * 60 * 24))),
+      Assert.assertTrue(newBillingDate.after(new Date()),
           "Check that the subscription has been renewed");
     } catch (ParseException e) {
       e.printStackTrace();

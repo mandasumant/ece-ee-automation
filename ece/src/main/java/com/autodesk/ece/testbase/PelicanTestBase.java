@@ -290,9 +290,9 @@ public class PelicanTestBase {
     String endDate;
     String expirationDate;
 
-    nextBillingDate = Util.customDate("MM/dd/yyyy", 0, +1, 0) + " 20:13:28 UTC";
-    endDate = Util.customDate("MM/dd/yyyy", 0, +1, 0) + " 20:13:28 UTC";
-    expirationDate = Util.customDate("MM/dd/yyyy", +1, +1, 0) + " 20:13:28 UTC";
+    nextBillingDate = Util.customDate("MM/dd/yyyy", 0, +2, 0) + " 20:13:28 UTC";
+    endDate = Util.customDate("MM/dd/yyyy", 0, +2, 0) + " 20:13:28 UTC";
+    expirationDate = Util.customDate("MM/dd/yyyy", +1, +2, 0) + " 20:13:28 UTC";
 
     String path = Util.getCorePayloadPath() + "BIC_Update_NextBilling.json";
     File rawPayload = new File(path);
