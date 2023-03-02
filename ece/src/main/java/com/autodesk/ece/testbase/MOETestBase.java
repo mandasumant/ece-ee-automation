@@ -1251,8 +1251,13 @@ public class MOETestBase {
 
     bicTestBase.loginAccount(data);
 
-    bicTestBase.enterCustomerDetails(address);
-    Util.sleep(5000);
+    if (!moePage.checkIfElementExistsInPage("moeCustomerDetailsComplete", 10)) {
+      Util.printInfo("Entering customer details information.");
+      bicTestBase.enterCustomerDetails(address);
+      Util.sleep(5000);
+    } else {
+      Util.printInfo("Data sync successful. Customer details section complete.");
+    }
 
     // In case address suggestion is returned, continue button will be displayed.
     if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
