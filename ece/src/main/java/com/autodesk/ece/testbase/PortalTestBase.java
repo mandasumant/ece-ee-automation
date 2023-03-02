@@ -1980,6 +1980,9 @@ public class PortalTestBase {
     Util.printInfo("Paying the invoices.");
     if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
         .equalsIgnoreCase("Y")) {
+      if (!portalPage.checkIfElementExistsInPage("creditMemoCheckBox", 60)) {
+        AssertUtils.fail("Credit Memo not found. Please add Credit Memo.");
+      }
       portalPage.clickUsingLowLevelActions("creditMemoCheckBox");
       Util.printInfo("Applied credit memo successfully");
     } else {

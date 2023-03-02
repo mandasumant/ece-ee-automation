@@ -405,6 +405,9 @@ public class BICTestBase {
           break;
       }
 
+      if (dataPaymentType.equals(BICECEConstants.PAYMENT_BACS)) {
+        clickOnAddBACSProfileLink();
+      }
       // Temporary solution because currently it does not allow to submit an order with the address from Customer details section
       if (data.get("isNonQuoteFlexOrder") != null) {
         Util.sleep(20000);
@@ -763,6 +766,7 @@ public class BICTestBase {
       bicPage.populateField("bacsAccSortCode", paymentCardDetails[1]);
 
       bicPage.clickUsingLowLevelActions("bacsAgreementCheckbox1");
+      Util.sleep(2000);
       bicPage.clickUsingLowLevelActions("bacsAgreementCheckbox2");
 
     } catch (MetadataException e) {
@@ -1819,12 +1823,15 @@ public class BICTestBase {
       Map<String, String> address, String paymentMethod) throws MetadataException {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     selectPaymentProfile(data, paymentCardDetails, address);
-
+    Util.sleep(2000);
+    Util.printInfo("Checking if submit payment button enabled or not");
     WebElement submitPaymentButton = bicPage.getMultipleWebElementsfromField("submitPaymentButton").get(0);
     if (submitPaymentButton.getAttribute("class").contains("disabled")) {
+      Util.printInfo("Submit payment button disabled");
       populateBillingAddress(address, data);
       debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
+    Util.printInfo("Submit payment button enabled");
   }
 
   public void enterCustomerDetails(Map<String, String> address)
@@ -2621,6 +2628,13 @@ public class BICTestBase {
   @Step("Navigate back to checkout" + GlobalConstants.TAG_TESTINGHUB)
   public void exitECMS() {
     bicPage.click("ttrReturnToCheckout");
+  }
+
+  public void clickOnAddBACSProfileLink() {
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    WebElement element = driver
+        .findElement(By.xpath("//*[@data-wat-linkname=\"add new bacs\"]"));
+    js.executeScript("arguments[0].click();", element);
   }
 
   @Step("Validate user is not tax exempt" + GlobalConstants.TAG_TESTINGHUB)
