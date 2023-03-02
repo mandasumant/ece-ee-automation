@@ -1523,6 +1523,10 @@ public class BICTestBase {
         bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
       }
 
+      if (bicPage.checkIfElementExistsInPage("paymentEditBtn", 5)) {
+        bicPage.clickUsingLowLevelActions("paymentEditBtn");
+      }
+
       String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
       if (data.get("isReturningUser") == null) {
