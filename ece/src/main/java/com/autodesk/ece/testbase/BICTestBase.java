@@ -972,22 +972,22 @@ public class BICTestBase {
       bicPage.executeJavascript("window.scrollBy(0,1000);");
 
       int count = 0;
-      while (bicPage.checkIfElementExistsInPage("paypalSaveAndContinueBtn", 5)) {
+      while (bicPage.checkIfElementExistsInPage("paypalReviewBtn", 5)) {
         count++;
 
         if (count > 3) {
           AssertUtils.fail("Unable to click on Continue button.");
         } else {
           String continueBtn = driver.findElement(
-              By.xpath(bicPage.getFirstFieldLocator("paypalSaveAndContinueBtn"))).getText();
+              By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getText();
 
           if (!Strings.isNotNullAndNotEmpty(continueBtn)) {
             continueBtn = driver.findElement(
-                By.xpath(bicPage.getFirstFieldLocator("paypalSaveAndContinueBtn"))).getAttribute("value");
+                By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getAttribute("value");
           }
 
           Util.printInfo("Clicking on '" + continueBtn + "' button.");
-          bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
+          bicPage.clickUsingLowLevelActions("paypalReviewBtn");
           Util.sleep(3000);
         }
       }
