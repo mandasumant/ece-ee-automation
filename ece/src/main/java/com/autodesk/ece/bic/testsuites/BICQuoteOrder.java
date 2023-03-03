@@ -165,6 +165,9 @@ public class BICQuoteOrder extends ECETestBase {
   @Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
   public void validateBicQuote() {
     String locale = "en_US";
+    Boolean shouldPushToDataStore = !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_FLAG)) ? Boolean.valueOf(
+        System.getProperty(BICECEConstants.PROJECT78_FLAG)) : false;
+
     if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
       locale = System.getProperty("locale");
     }
@@ -190,6 +193,33 @@ public class BICQuoteOrder extends ECETestBase {
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
     justQuoteDeails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
     justQuoteDeails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
+
+    if(shouldPushToDataStore) {
+      try {
+        DatastoreClient dsClient = new DatastoreClient();
+        NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
+            .name(BICECEConstants.QUOTE_TEST_NAME)
+            .emailId(testDataForEachMethod.get(BICECEConstants.emailid))
+            .quoteId(quoteId)
+            .orderNumber(BigInteger.valueOf(0))
+            .paymentType("")
+            .scenario("Same Payer")
+            .locale(locale)
+            .address(System.getProperty(BICECEConstants.ADDRESS));
+
+        if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+          builder.scenario("Different Payer");
+        }
+
+        if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
+          builder.tenant(System.getProperty(BICECEConstants.TENANT));
+        }
+
+        OrderData orderData = dsClient.queueOrder(builder.build());
+      } catch (Exception e) {
+        Util.printWarning("Failed to push order data to data store");
+      }
+    }
 
     updateTestingHub(justQuoteDeails);
     Util.printInfo("Final List " + justQuoteDeails);
