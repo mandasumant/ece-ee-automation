@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -51,12 +54,14 @@ public class EDUTestBase {
   private final WebDriver driver;
   private final Map<String, String> testData;
   BICTestBase bicTestBase;
+  MailosaurAPIClient mailosaurAPIClient;
 
   public EDUTestBase(GlobalTestBase testbase, LinkedHashMap<String, String> testData) {
     Util.PrintInfo("EDUTestBase from ece");
     eduPage = testbase.createPage("PAGE_EDU");
     driver = testbase.getdriver();
     bicTestBase = new BICTestBase(driver, testbase);
+    mailosaurAPIClient = new MailosaurAPIClient();
     this.testData = testData;
   }
 
@@ -174,6 +179,7 @@ public class EDUTestBase {
     eduPage.click("eduRoleSubmit");
 
     registerOxygenUser(results);
+    verifyRegistrationEmail(results.get(BICConstants.emailid));
 
     eduPage.waitForField(EDU_GET_STARTED, true, 5000);
 
@@ -590,7 +596,7 @@ public class EDUTestBase {
 
   private void registerOxygenUser(HashMap<String, String> results) {
     // Generate a new user email, name, and password
-    String email = bicTestBase.generateUniqueEmailID();
+    String email = bicTestBase.generateMailosaurEmailID();
     results.put(BICConstants.emailid, email);
     String randomString = RandomStringUtils.random(6, true, false);
     String firstName = "FN" + randomString;
@@ -614,6 +620,8 @@ public class EDUTestBase {
 
     try {
       if (eduPage.checkIfElementExistsInPage("eduRegisterComplete", 5)) {
+        // Opt out of marketing emails to avoid clogging up the mailosaur server
+        eduPage.clickUsingLowLevelActions("eduCommunicationOptIn");
         Util.printInfo("Registration Complete shown, clicking on done button");
         eduPage.click("eduRegisterComplete");
       } else {
@@ -622,6 +630,21 @@ public class EDUTestBase {
     } catch (MetadataException e) {
       Util.printError("Failed to click on complete button: " + e.getMessage());
     }
+  }
+
+  /**
+   * Find in mailosaur the account registration email sent to a specific user and click on the verification link
+   *
+   * @param email - Recipient email
+   */
+  private void verifyRegistrationEmail(String email) {
+    String verifyAccountEmailBody = mailosaurAPIClient.getMessageBody(email);
+    Document doc = Jsoup.parse(verifyAccountEmailBody);
+    Element verifyButton = doc.body().select("a:contains(Verify email)").get(0);
+    String verifyLink = verifyButton.attr("href");
+    AssertUtils.assertTrue(verifyLink != null, "Email verification link must be defined");
+    driver.navigate().to(verifyLink);
+    eduPage.click("eduRegisterComplete");
   }
 
   /**

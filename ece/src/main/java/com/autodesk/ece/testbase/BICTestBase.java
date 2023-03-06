@@ -91,11 +91,18 @@ public class BICTestBase {
 
   @Step("Generate email id")
   public static String generateUniqueEmailID() {
+    return generateUniqueEmailID("letscheck.pw");
+  }
+
+  public static String generateMailosaurEmailID() {
+    return generateUniqueEmailID("csu62mgs.mailosaur.net");
+  }
+
+  public static String generateUniqueEmailID(String emailDomain) {
     String storeKey = System.getProperty("store").replace("-", "");
     String emailType = System.getProperty("emailType");
 
     String sourceName = "thub";
-    String emailDomain = "letscheck.pw";
     if (emailType != null && !emailType.isEmpty()) {
       if (Arrays.asList("biz", "edu", "gov", "org").contains(emailType)) {
         sourceName = emailType + "-" + sourceName;
