@@ -2438,4 +2438,8 @@ public class PortalTestBase {
     }
   }
 
+
+  public void openAutoDeskHomePage(LinkedHashMap<String, String> data) {
+    openPortalURL(data.get("autodeskHomePageUrl"));
+  }
 }

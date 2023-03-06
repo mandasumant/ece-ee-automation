@@ -217,4 +217,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PROJECT78_FLAG = "pushToDataStore";
   public static final String BIC_TEST_NAME = "BIC_ORDER";
   public static final String RESELLER_TEST_NAME = "RESELLER_ORDER";
+  public static final String GOOGLE_ANALYTICS = "https://google-analytics.com/";
+  public static final String ADOBE_ANALYTICS = "https://smetrics.autodesk.com/";
+  public static final String TEALIUM_ANALYTICS = "https://tags.tiqcdn.com/utag/autodesk/global-sites/prod/utag.js";
 }

@@ -336,3 +336,6 @@ validateMOABPayInvoice:
 
 validateRefundOrderPSP:
   productType: "flex"
+
+validateTealiumNetworkLogs:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
