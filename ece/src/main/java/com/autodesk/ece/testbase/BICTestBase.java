@@ -978,6 +978,11 @@ public class BICTestBase {
 
       bicPage.executeJavascript("window.scrollBy(0,1000);");
 
+      if (bicPage.checkIfElementExistsInPage("paypalSaveAndContinueBtn", 5)) {
+        Util.printInfo("Clicking on Save And Continue button.");
+        bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
+      }
+
       int count = 0;
       while (bicPage.checkIfElementExistsInPage("paypalReviewBtn", 5)) {
         count++;
