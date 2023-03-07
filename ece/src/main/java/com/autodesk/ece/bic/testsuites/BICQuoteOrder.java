@@ -11,6 +11,7 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.ece.utilities.Address;
+import com.autodesk.ece.utilities.NetworkLogs;
 import com.autodesk.ece.utilities.TaxExemptionMappings;
 import com.autodesk.ece.utilities.TaxExemptionMappings.TaxOptions;
 import com.autodesk.testinghub.core.base.GlobalConstants;
@@ -62,6 +63,7 @@ public class BICQuoteOrder extends ECETestBase {
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
+    NetworkLogs.getObject().fetchLogs();
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String localeConfigFile = "LOCALE_CONFIG";

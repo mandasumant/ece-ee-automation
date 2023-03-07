@@ -1,6 +1,7 @@
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.testbase.ECETestBase;
+import com.autodesk.ece.utilities.NetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.util.HashMap;
@@ -14,8 +15,6 @@ import com.autodesk.ece.constants.BICECEConstants;
 
 import java.lang.reflect.Method;
 
-import static com.autodesk.ece.utilities.NetworkLogs.fetchTealiumNetworkLogs;
-import static com.autodesk.ece.utilities.NetworkLogs.filterTealiumLogs;
 
 
 public class TealiumNetworkLogs extends ECETestBase {
@@ -47,10 +46,11 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<String, String>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
-        List<String> logs = fetchTealiumNetworkLogs(this.getDriver());
-        results.put("Google", filterTealiumLogs(logs, BICECEConstants.GOOGLE_ANALYTICS));
-        results.put("Adobe", filterTealiumLogs(logs, BICECEConstants.ADOBE_ANALYTICS));
-        results.put("Tealium", filterTealiumLogs(logs, BICECEConstants.TEALIUM_ANALYTICS));
+        List<String> logs = NetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
+        results.put("Google", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.GOOGLE_ANALYTICS));
+        results.put("Adobe", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.ADOBE_ANALYTICS));
+        results.put("Adobe", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.ADOBE_ANALYTICS));
+        results.put("Tealium", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS));
         updateTestingHub(results);
     }
 }

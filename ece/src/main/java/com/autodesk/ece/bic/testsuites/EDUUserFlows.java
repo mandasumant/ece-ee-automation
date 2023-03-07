@@ -4,6 +4,7 @@ import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.EDUTestBase;
 import com.autodesk.ece.testbase.EDUTestBase.EDUUserType;
+import com.autodesk.ece.utilities.NetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -30,6 +31,7 @@ public class EDUUserFlows extends ECETestBase {
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
+    NetworkLogs.getObject().fetchLogs();
     String testFileKey = "EDU_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
   }

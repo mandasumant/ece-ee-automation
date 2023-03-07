@@ -7,6 +7,7 @@ import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
 import com.autodesk.ece.testbase.ECETestBase;
+import com.autodesk.ece.utilities.NetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.common.CommonConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
@@ -49,6 +50,7 @@ public class MOABOrder extends ECETestBase {
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
+    NetworkLogs.getObject().fetchLogs();
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String localeConfigFile = "LOCALE_CONFIG";

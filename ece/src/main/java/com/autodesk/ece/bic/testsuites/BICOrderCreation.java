@@ -6,6 +6,7 @@ import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
+import com.autodesk.ece.utilities.NetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -50,6 +51,7 @@ public class BICOrderCreation extends ECETestBase {
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
+    NetworkLogs.getObject().fetchLogs();
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String localeConfigFile = "LOCALE_CONFIG";
