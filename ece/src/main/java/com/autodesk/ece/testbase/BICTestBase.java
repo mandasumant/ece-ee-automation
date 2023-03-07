@@ -412,7 +412,8 @@ public class BICTestBase {
           break;
       }
 
-      if (dataPaymentType.equals(BICECEConstants.PAYMENT_BACS)) {
+      if (dataPaymentType.equals(BICECEConstants.PAYMENT_BACS) && Strings.isNotNullAndNotEmpty(
+          System.getProperty(BICECEConstants.CSN))) {
         clickOnAddBACSProfileLink();
       }
       // Temporary solution because currently it does not allow to submit an order with the address from Customer details section

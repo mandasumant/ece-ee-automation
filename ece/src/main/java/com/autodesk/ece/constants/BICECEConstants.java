@@ -205,6 +205,8 @@ public class BICECEConstants extends BICConstants {
   public static final String SALES_ORG = "salesOrg";
   public static final String RESELLER_CSN = "resellerCSN";
   public static final String END_CUSTOMER_CSN = "endCustomerCSN";
+
+  public static final String CSN = "csn";
   public static final String SKU = "sku";
   public static final String QTY = "qty";
   public static final String TENANT = "tenant";
