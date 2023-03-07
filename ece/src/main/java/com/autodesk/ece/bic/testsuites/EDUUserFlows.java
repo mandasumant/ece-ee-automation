@@ -94,7 +94,6 @@ public class EDUUserFlows extends ECETestBase {
     edutb.activateProductAndAssignUsers(testDataForProduct.get("card"));
 
     // Check that we can see the product in portal
-    edutb.switchToNextTab();
     portaltb.validateProductByName(testDataForEachMethod.get(BICConstants.cepURL));
     portaltb.verifyProductVisible(results, testDataForProduct.get(SUBSCRIPTION_NAME_KEY));
 

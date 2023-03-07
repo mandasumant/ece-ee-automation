@@ -534,6 +534,15 @@ public class EDUTestBase {
       wait.until(
           ExpectedConditions.invisibilityOfElementLocated(By.className("model-body--loading")));
 
+      if (eduPage.checkIfElementExistsInPage("eduAssignmentPending", 10)) {
+        WebElement modalPendingMessage = eduPage.getMultipleWebElementsfromField("eduAssignmentPending").get(0);
+        if (modalPendingMessage.getText().contains("It may take some time to complete this request")) {
+          eduPage.clickUsingLowLevelActions("pendingConfirm");
+          driver.navigate().to("https://stg-manage.autodesk.com/user-access/products/product-list");
+          return;
+        }
+      }
+
       // Check if there was an error assigning users, and attempt to click on the retry button
       List<WebElement> errorModal = driver.findElements(
           By.xpath(eduPage.getFirstFieldLocator("eduAssignmentError")));
@@ -553,6 +562,7 @@ public class EDUTestBase {
       }
     }
 
+    switchToNextTab();
     eduPage.clickUsingLowLevelActions("assignUsersButton");
   }
 
