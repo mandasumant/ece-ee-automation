@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -159,7 +160,8 @@ public class MOABOrder extends ECETestBase {
     data.put(PWSConstants.endCustomerState, address.get(BICECEConstants.STATE_PROVINCE));
     SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm");
     String dateTime = dateFormat.format(Calendar.getInstance().getTime());
-    data.put(PWSConstants.poNumber, "DCLE" + dateTime.replaceAll("[^0-9]", ""));
+    data.put(PWSConstants.poNumber,
+        "DCLE" + RandomStringUtils.randomAlphabetic(4).toUpperCase() + dateTime.replaceAll("[^0-9]", ""));
     data.put(PWSConstants.accountType, "new");
     String content = data.entrySet()
         .stream()
@@ -172,6 +174,7 @@ public class MOABOrder extends ECETestBase {
     testResults.put(BICECEConstants.SOM_ORDER_NUMBER, orderResponse.get(BICECEConstants.SOM_ORDER_NUMBER));
     testResults.put(BICECEConstants.SOLD_TO_SSN, orderResponse.get(BICECEConstants.SOLD_TO_SSN));
     testResults.put(PWSConstants.poNumber, data.get(PWSConstants.poNumber));
+    testResults.put(PWSConstants.orderNumber, orderResponse.get(PWSConstants.orderNumber));
     updateTestingHub(testResults);
 
     if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
