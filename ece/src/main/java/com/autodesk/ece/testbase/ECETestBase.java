@@ -1,7 +1,6 @@
 package com.autodesk.ece.testbase;
 
-import com.autodesk.ece.constants.BICECEConstants;
-import com.autodesk.ece.utilities.NetworkLogs;
+import com.autodesk.ece.utilities.NetworkLogsTestListener;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -14,17 +13,16 @@ import com.autodesk.testinghub.core.testbase.SOAPTestBase;
 import com.autodesk.testinghub.core.testbase.TestinghubUtil;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.openqa.selenium.WebDriver;
-import org.testng.ITestResult;
 import org.testng.annotations.AfterTest;
-import org.testng.internal.TestResult;
+import org.testng.annotations.Listeners;
 import org.testng.util.Strings;
 
-public class ECETestBase extends TestResult {
+@Listeners({NetworkLogsTestListener.class})
+public class ECETestBase {
 
   protected static DBValidations dbValtb = null;
   protected static TestinghubUtil thutil = null;
@@ -139,11 +137,8 @@ public class ECETestBase extends TestResult {
   }
 
   @AfterTest(alwaysRun = true)
-  public void afterTest(ITestResult result) {
+  public void afterTest() {
     try {
-      if (result.getStatus() == ITestResult.FAILURE) {
-        updateTestingHub((HashMap<String, String>) NetworkLogs.getValueFromObjectStore("NetworkLogs"));
-      }
       Util.printInfo("Closing Webdriver after the end of the test");
       testbase.closeBrowser();
     } catch (Exception e) {
