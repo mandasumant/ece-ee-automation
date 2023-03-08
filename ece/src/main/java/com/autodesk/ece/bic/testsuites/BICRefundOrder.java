@@ -37,7 +37,7 @@ public class BICRefundOrder extends ECETestBase {
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
-    NetworkLogs.getObject().fetchLogs();
+    NetworkLogs.getObject().fetchLogs(getDriver());
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String localeConfigFile = "LOCALE_CONFIG";

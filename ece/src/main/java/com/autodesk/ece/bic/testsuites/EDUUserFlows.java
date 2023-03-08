@@ -31,7 +31,7 @@ public class EDUUserFlows extends ECETestBase {
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
-    NetworkLogs.getObject().fetchLogs();
+    NetworkLogs.getObject().fetchLogs(getDriver());
     String testFileKey = "EDU_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
   }

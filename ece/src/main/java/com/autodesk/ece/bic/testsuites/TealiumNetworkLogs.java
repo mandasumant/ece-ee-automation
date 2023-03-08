@@ -49,7 +49,6 @@ public class TealiumNetworkLogs extends ECETestBase {
         List<String> logs = NetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
         results.put("Google", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.GOOGLE_ANALYTICS));
         results.put("Adobe", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.ADOBE_ANALYTICS));
-        results.put("Adobe", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.ADOBE_ANALYTICS));
         results.put("Tealium", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS));
         updateTestingHub(results);
     }

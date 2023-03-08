@@ -1,7 +1,6 @@
 package com.autodesk.ece.utilities;
 
 import com.autodesk.ece.constants.BICECEConstants;
-import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import org.openqa.selenium.devtools.v107.network.Network;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 
-public class NetworkLogs extends ECETestBase {
+public class NetworkLogs {
     private static NetworkLogs instance = null;
 
     private NetworkLogs() {
@@ -71,9 +70,9 @@ public class NetworkLogs extends ECETestBase {
         return details;
     }
 
-    public HashMap<String, String> fetchLogs() {
+    public HashMap<String, String> fetchLogs(WebDriver driver) {
         HashMap<String, String> logs = new HashMap<>();
-        DevTools devTools = ((ChromeDriver) getTestBase().getdriver()).getDevTools();
+        DevTools devTools = ((ChromeDriver) driver).getDevTools();
         devTools.createSession();
         devTools.send(Network.clearBrowserCache());
         devTools.send(Network.setCacheDisabled(true));

@@ -25,7 +25,7 @@ public class IndirectOrderCreation extends ECETestBase {
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
-    NetworkLogs.getObject().fetchLogs();
+    NetworkLogs.getObject().fetchLogs(getDriver());
     String testFileKey = "SAP_ORDER_" + GlobalConstants.ENV.toUpperCase();
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
   }
