@@ -2372,6 +2372,7 @@ public class BICTestBase {
     }
 
     JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("document.cookie=\"OPTOUTMULTI_TYPE=A\";");
     Util.printInfo("Set session storage data 'nonsensitiveHasNonLocalModalLaunched' from 'loginToOxygen'.");
     js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
     driver.navigate().refresh();
