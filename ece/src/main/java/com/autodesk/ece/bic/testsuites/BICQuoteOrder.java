@@ -205,12 +205,13 @@ public class BICQuoteOrder extends ECETestBase {
             .quoteId(quoteId)
             .orderNumber(BigInteger.valueOf(0))
             .paymentType("")
-            .scenario("Same Payer")
             .locale(locale)
             .address(System.getProperty(BICECEConstants.ADDRESS));
 
         if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-          builder.scenario("Different Payer");
+          builder.scenario(BICECEConstants.DIFFERENT_PAYER);
+        } else {
+          builder.scenario(BICECEConstants.SAME_PAYER);
         }
 
         if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
