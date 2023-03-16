@@ -221,8 +221,8 @@ public class BICECEConstants extends BICConstants {
   public static final String PROJECT78_FLAG = "pushToDataStore";
   public static final String BIC_TEST_NAME = "BIC_ORDER";
   public static final String RESELLER_TEST_NAME = "RESELLER_ORDER";
-  public static final String GOOGLE_ANALYTICS = "https://google-analytics.com/";
-  public static final String ADOBE_ANALYTICS = "https://smetrics.autodesk.com/";
+  public static final String GOOGLE_ANALYTICS = "https://google-analytics.com/collect";
+  public static final String ADOBE_ANALYTICS = "https://smetrics.autodesk.com/b/ss/autodesk-new-gl";
   public static final String TEALIUM_ANALYTICS_INT = "https://tags.tiqcdn.com/utag/autodesk/global-sites/prod/utag.js";
   public static final String TEALIUM_ANALYTICS_STG = "https://tags.tiqcdn.com/utag/autodesk/global-sites-qa/qa/utag.js";
   public static final String LOG_STATUS = "status";
@@ -236,4 +236,20 @@ public class BICECEConstants extends BICConstants {
   public static final String PAGE_NAME = "pageName";
   public static final String EVENTS = "events";
   public static final String PEV2 = "pev2";
+  public static final String GDPR_ADOBE_ANALYTICS = "GdprAdobeAnalytics";
+  public static final String GDPR_FACEBOOK_ANALYTICS = "GdprFacebook";
+  public static final String GDPR_TWITTER_ANALYTICS = "GdprTwitterAnalytics";
+  public static final String GDPR_OPT_OUT_MULTI = "OPTOUTMULTI";
+  public static final String GDPR_OPT_OUT_MULTI_GEO = "OPTOUTMULTI_GEO";
+  public static final String GDPR_OPT_OUT_MULTI_TYPE = "OPTOUTMULTI_TYPE";
+  public static final String EA = "ea";
+  public static final String EC = "ec";
+  public static final String EL = "el";
+  public static final String CD1 = "cd1";
+  public static final String CD2 = "cd2";
+  public static final String CD5 = "cd5";
+  public static final String CD6 = "cd6";
+  public static final String CD7 = "cd7";
+  public static final String CD8 = "cd8";
+  public static final String CD9 = "cd9";
 }

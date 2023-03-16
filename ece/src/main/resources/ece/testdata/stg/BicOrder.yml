@@ -348,7 +348,33 @@ validateGoogleNetworkLogsAndTags:
   dt: "adsk%3Aen%3Ahome"
 
 validateAdobeNetworkLogsAndTags:
-  autodeskHomePageUrl: "https://www.autodesk.com/"
+  autodeskHomePageUrl: "https://www-pt.autodesk.com/"
   pageName: "adsk%3Aen%3Ahome"
   events: "event1%2Cevent89%2Cevent150"
   pev2: "[WAF] pageview"
+
+validateGdprMandatoryTags:
+  autodeskHomePageUrl: "https://www-pt.autodesk.co.uk/"
+  GdprFacebook: "https://connect.facebook.net/en_US/fbevents.js"
+  GdprAdobeAnalytics: "smetrics.autodesk.com/b/ss"
+  GdprTwitterAnalytics: "https://static.ads-twitter.com/uwt.js"
+
+validateGDPRCookies:
+  autodeskHomePageUrl: "https://www-pt.autodesk.co.uk/"
+  gdprOptOutMulti: "c7:1,c8:1,c9:1"
+  gdprOptOutMultiGeo: "US"
+  gdprOptOutMultiType: "Not Yet Set"
+
+validateGDPRGoogleNetworkTags:
+  autodeskHomePageUrl: "https://www-pt.autodesk.co.uk/"
+  tid: "UA-60717701-16"
+  ea: "Preferences%20Window%20Displayed"
+  ec: "Privacy%20Management"
+  el: "Rules%20Triggered"
+  cd1: "privacy-options-displayed-rules"
+  cd2: "na"
+  cd5: "true"
+  cd6: "true"
+  cd7: "true"
+  cd8: "global-sites"
+  cd9: "US"

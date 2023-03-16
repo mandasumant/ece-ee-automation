@@ -9,8 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.devtools.DevTools;
@@ -44,6 +46,18 @@ public class NetworkLogs {
         }
         AssertUtils.fail("Not Able to find log entry for URL: " + expectedURL);
         return "";
+    }
+
+    public  boolean isGdprTagsFired(List<String> logs, String expectedURL) {
+        boolean tagFired = false;
+        for (int i = 0; i < logs.size(); i++) {
+            if (logs.get(i).contains(expectedURL)) {
+                tagFired = true;
+                break;
+            }
+        }
+        Util.PrintInfo("Not able to find URL: " + expectedURL );
+        return tagFired;
     }
 
     public  List<String> fetchNetworkLogs(WebDriver driver) throws InterruptedException {
@@ -155,6 +169,24 @@ public class NetworkLogs {
             AssertUtils.fail("Not Able to find URL: " + url + " under log entry urls: " + list);
             return null;
         }
+    }
+
+    public Set<Cookie> getCookies(WebDriver driver) {
+        return driver.manage().getCookies();
+    }
+
+    public String getCookie(Set<Cookie> cookies, String cookieName) {
+        String cookie = "Not Yet Set";
+        Iterator<Cookie> itr = cookies.iterator();
+        while (itr.hasNext()) {
+            Cookie c = itr.next();
+            if (c.getName().equalsIgnoreCase(cookieName)) {
+                cookie = c.getValue();
+                break;
+            }
+
+        }
+        return cookie;
     }
 
 }
