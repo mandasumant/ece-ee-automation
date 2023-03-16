@@ -339,3 +339,16 @@ validateRefundOrderPSP:
 
 validateTealiumNetworkLogs:
   autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+
+validateGoogleNetworkLogsAndTags:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+  tid: "UA-60717701-17"
+  dh: "www-int.autodesk.co.uk"
+  dp: "%2F"
+  dt: "adsk%3Aen_gb%3Ahome"
+
+validateAdobeNetworkLogsAndTags:
+  autodeskHomePageUrl: "https://www.autodesk.com/"
+  pageName: "adsk%3Aen%3Ahome"
+  events: "event1%2Cevent89%2Cevent150"
+  pev2: "[WAF] pageview"

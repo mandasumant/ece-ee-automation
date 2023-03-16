@@ -17,6 +17,7 @@ import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v107.network.Network;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
 
 public class NetworkLogs {
     private static NetworkLogs instance = null;
@@ -105,6 +106,55 @@ public class NetworkLogs {
 
     public static Object getValueFromObjectStore(String key) {
         return objectStore.get(key + Thread.currentThread().getId());
+    }
+
+    public static HashMap<String, String> getReqLogsParameters(WebDriver driver, String url) throws InterruptedException {
+        HashMap<String, String> reqPostData = new HashMap<>();
+        ArrayList<String> list = new ArrayList<>();
+        Thread.sleep(20000);
+        List<LogEntry> entries = driver.manage().logs().get(LogType.PERFORMANCE).getAll();
+        for (LogEntry entry : entries) {
+            JSONObject json = new JSONObject(entry.getMessage());
+            JSONObject message = json.getJSONObject("message");
+            String method = message.getString("method");
+            if (method.equalsIgnoreCase("Network.requestWillBeSent")) {
+                JSONObject params = message.getJSONObject("params");
+                JSONObject request = params.getJSONObject("request");
+                String messageUrl = request.getString("url");
+                list.add(messageUrl);
+                if (messageUrl.contains(url)) {
+                    Util.PrintInfo("Request URL: " + url + " matches with " + messageUrl);
+                    if (request.getString("method").equalsIgnoreCase("POST")) {
+                        String[] postData = request.getString("postData").split("&");
+                        for (String name : postData) {
+                            if (name.split("=").length > 1) {
+                                String key = name.split("=")[0];
+                                String value = name.split("=")[1];
+                                reqPostData.put(key, value);
+                            }
+                        }
+                    } else {
+                        String urls = messageUrl.split("\\?")[1];
+                        String[] paramsData = urls.split("&");
+                        for (String name : paramsData) {
+                            if (name.split("=").length > 1) {
+                                String key = name.split("=")[0];
+                                String value = name.split("=")[1];
+                                reqPostData.put(key, value);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+        if (!reqPostData.isEmpty()) {
+            return reqPostData;
+        } else {
+            AssertUtils.fail("Not Able to find URL: " + url + " under log entry urls: " + list);
+            return null;
+        }
     }
 
 }

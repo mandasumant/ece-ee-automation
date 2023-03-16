@@ -229,4 +229,11 @@ public class BICECEConstants extends BICConstants {
   public static final String LOG_URL = "url";
   public static final String LOG_BODY = "body";
   public static final String LOG_HEADERS = "headers";
+  public static final String TID = "tid";
+  public static final String DH = "dh";
+  public static final String DP = "dp";
+  public static final String DT = "dt";
+  public static final String PAGE_NAME = "pageName";
+  public static final String EVENTS = "events";
+  public static final String PEV2 = "pev2";
 }
