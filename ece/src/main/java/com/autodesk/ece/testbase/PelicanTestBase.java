@@ -177,7 +177,6 @@ public class PelicanTestBase {
             result.getData().getLastBillingInfo().getPurchaseOrderId() != null ? String.valueOf(
                 result.getData().getLastBillingInfo().getPurchaseOrderId()) : null);
         results.put("response_nextBillingDate", result.getData().getNextBillingDate());
-        results.put("response_offeringType", String.valueOf(result.getData().getOfferingType()));
         results.put("response_subscriptionQuantity",
             String.valueOf(result.getData().getQuantity()));
         results.put("response_quantityToReduce",

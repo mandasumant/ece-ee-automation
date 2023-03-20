@@ -46,7 +46,6 @@ public class SubscriptionServiceV4TestBase {
             signature.xRequestRef);
         Util.PrintInfo(BICECEConstants.RESULT + result);
         results.put("response_nextBillingDate", result.getNextBillingDate());
-        results.put("response_offeringType", String.valueOf(result.getOfferingType()));
         results.put("response_subscriptionQuantity",
             String.valueOf(result.getQuantity()));
         results.put("response_quantityToReduce",

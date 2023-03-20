@@ -57,7 +57,6 @@ default:
   priceIDNativeOrder: &NativeOrderPriceID "1573"
   priceIDFlexOrder: &FlexOrderPriceID "31498"
   bicNativePriceID: &bicNativePriceID "27239"
-  bicMetaPriceID: &bicMetaPriceID "27209"
   trialDownloadUrl: "https://www-pt.autodesk.com/products/3ds-max/overview"
 
   account: "FntestEnUs LntestEnUs"
@@ -97,13 +96,6 @@ validateBicFlexOrder:
   productType: "flex"
   priceId: "26865"
 
-validateBicMetaOrder:
-  productID: *bicMetaPriceID
-  bicNativePriceID: *bicMetaPriceID
-  productName: "INFRAWORKS"
-  offeringType: "META"
-  priceId: "24423"
-
 validateTrialDownloadUI:
   nullTest: "1"
   companyName: "Autodesk Inc"
@@ -111,19 +103,16 @@ validateTrialDownloadUI:
   phoneNumber: "1888938000"
 
 validateBicReturningUser:
-  metaproductID: *bicMetaPriceID
   productID: *NativeOrderPriceID
 
 validateBicAddSeats:
   productID: *NativeOrderPriceID
 
 validateBicAddSeatNativeOrder:
-  metaproductID: *bicMetaPriceID
   nativeproductID: *bicNativePriceID
   addSeatQty: "2"
 
 validateBICAddSeatsFinancing:
-  metaproductID: *bicMetaPriceID
   nativeproductID: *bicNativePriceID
   addSeatQty: "2"
 
