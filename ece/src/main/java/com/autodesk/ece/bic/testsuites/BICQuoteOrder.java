@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -167,8 +168,9 @@ public class BICQuoteOrder extends ECETestBase {
   @Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
   public void validateBicQuote() {
     String locale = "en_US";
-    Boolean shouldPushToDataStore = !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_FLAG)) ? Boolean.valueOf(
-        System.getProperty(BICECEConstants.PROJECT78_FLAG)) : false;
+    Boolean shouldPushToDataStore =
+        !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_FLAG)) ? Boolean.valueOf(
+            System.getProperty(BICECEConstants.PROJECT78_FLAG)) : false;
 
     if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
       locale = System.getProperty("locale");
@@ -206,7 +208,8 @@ public class BICQuoteOrder extends ECETestBase {
             .orderNumber(BigInteger.valueOf(0))
             .paymentType("")
             .locale(locale)
-            .address(System.getProperty(BICECEConstants.ADDRESS));
+            .address(System.getProperty(BICECEConstants.ADDRESS))
+            .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
 
         if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
           builder.scenario(BICECEConstants.DIFFERENT_PAYER);
@@ -342,25 +345,28 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
 
-    try {
-      DatastoreClient dsClient = new DatastoreClient();
-      NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
-          .name(BICECEConstants.LOC_TEST_NAME)
-          .emailId(results.get(BICConstants.emailid))
-          .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
-          .quoteId(quoteId)
-          .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS));
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+      try {
+        DatastoreClient dsClient = new DatastoreClient();
+        NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
+            .name(BICECEConstants.LOC_TEST_NAME)
+            .emailId(results.get(BICConstants.emailid))
+            .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
+            .quoteId(quoteId)
+            .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+            .address(System.getProperty(BICECEConstants.ADDRESS))
+            .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
 
-      if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-        builder.scenario("Different Payer");
+        if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+          builder.scenario("Different Payer");
+        }
+
+        OrderData orderData = dsClient.queueOrder(builder.build());
+        testResults.put("Stored order data ID", orderData.getId().toString());
+        updateTestingHub(testResults);
+      } catch (Exception e) {
+        Util.printWarning("Failed to push order data to data store");
       }
-
-      OrderData orderData = dsClient.queueOrder(builder.build());
-      testResults.put("Stored order data ID", orderData.getId().toString());
-      updateTestingHub(testResults);
-    } catch (Exception e) {
-      Util.printWarning("Failed to push order data to data store");
     }
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
@@ -703,20 +709,22 @@ public class BICQuoteOrder extends ECETestBase {
       portaltb.validateBICOrderTaxInvoice(results);
     }
 
-    try {
-      DatastoreClient dsClient = new DatastoreClient();
-      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
-          .name(BICECEConstants.LOC_TEST_NAME)
-          .emailId(results.get(BICConstants.emailid))
-          .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
-          .quoteId(quoteId)
-          .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS))
-          .scenario("Multi Line Item").build());
-      testResults.put("Stored order data ID", orderData.getId().toString());
-      updateTestingHub(testResults);
-    } catch (Exception e) {
-      Util.printWarning("Failed to push order data to data store");
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+      try {
+        DatastoreClient dsClient = new DatastoreClient();
+        OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+            .name(BICECEConstants.LOC_TEST_NAME)
+            .emailId(results.get(BICConstants.emailid))
+            .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
+            .quoteId(quoteId)
+            .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+            .address(System.getProperty(BICECEConstants.ADDRESS))
+            .scenario("Multi Line Item").build());
+        testResults.put("Stored order data ID", orderData.getId().toString());
+        updateTestingHub(testResults);
+      } catch (Exception e) {
+        Util.printWarning("Failed to push order data to data store");
+      }
     }
 
     updateTestingHub(testResults);
@@ -1011,20 +1019,23 @@ public class BICQuoteOrder extends ECETestBase {
     // Appending both the Purchase Orders for Multi Pay Invoice tests
     testResults.put(BICConstants.orderNumber, multiOrders);
 
-    try {
-      DatastoreClient dsClient = new DatastoreClient();
-      OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
-          .name(BICECEConstants.LOC_TEST_NAME)
-          .emailId(purchaser)
-          .orderNumber(new BigInteger(results.get(BICECEConstants.orderNumber)))
-          .quoteId(quoteId)
-          .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS))
-          .scenario("Multi Invoice").build());
-      testResults.put("Stored order data ID", orderData.getId().toString());
-      updateTestingHub(testResults);
-    } catch (Exception e) {
-      Util.printWarning("Failed to push order data to data store" + e.getMessage());
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+      try {
+        DatastoreClient dsClient = new DatastoreClient();
+        OrderData orderData = dsClient.queueOrder(NewQuoteOrder.builder()
+            .name(BICECEConstants.LOC_TEST_NAME)
+            .emailId(purchaser)
+            .orderNumber(new BigInteger(results.get(BICECEConstants.orderNumber)))
+            .quoteId(quoteId)
+            .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+            .address(System.getProperty(BICECEConstants.ADDRESS))
+            .scenario("Multi Invoice")
+            .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString()).build());
+        testResults.put("Stored order data ID", orderData.getId().toString());
+        updateTestingHub(testResults);
+      } catch (Exception e) {
+        Util.printWarning("Failed to push order data to data store" + e.getMessage());
+      }
     }
 
     updateTestingHub(testResults);

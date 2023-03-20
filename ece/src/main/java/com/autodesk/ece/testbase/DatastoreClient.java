@@ -106,6 +106,7 @@ public class DatastoreClient {
     @Builder.Default
     String locale = DatastoreClient.getLocale();
     String address;
+    String expiry;
     String scenario;
   }
 
@@ -117,8 +118,8 @@ public class DatastoreClient {
     String status;
 
     OrderData(String name, String tenant, String environment, String emailId, BigInteger orderNumber, String quoteId,
-        String paymentType, String locale, String address, String scenario) {
-      super(name, tenant, environment, emailId, orderNumber, quoteId, paymentType, locale, address, scenario);
+        String paymentType, String locale, String address, String expiry, String scenario) {
+      super(name, tenant, environment, emailId, orderNumber, quoteId, paymentType, locale, address, expiry, scenario);
     }
   }
 
