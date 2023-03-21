@@ -223,18 +223,18 @@ public class PortalTestBase {
     boolean status = false;
     int attempts = 0;
     WebElement element = null;
-    openPortalURL(accountsPortalSubscriptionsUrl);
+
     while (attempts < 5) {
       try {
+        openPortalURL(accountsPortalSubscriptionsUrl);
         String productXpath = portalPage
             .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
         element = driver.findElement(By.xpath(productXpath));
       } catch (Exception e) {
         //Do nothing here.
       }
-
       if (isNull(element)) {
-        if (attempts >= 4) {
+        if (attempts == 4) {
           AssertUtils.fail("All retries exhausted: Couldn't find subscription/agreement productXpath element");
         }
 
