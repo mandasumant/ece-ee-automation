@@ -2,11 +2,12 @@ package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.utilities.NetworkLogs;
+import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.testbase.SAPTestBase;
+import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.lang.reflect.Method;

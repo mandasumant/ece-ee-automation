@@ -1,6 +1,5 @@
 package com.autodesk.ece.testbase;
 
-import com.autodesk.ece.utilities.NetworkLogsTestListener;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -18,10 +17,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.Listeners;
 import org.testng.util.Strings;
 
-@Listeners({NetworkLogsTestListener.class})
 public class ECETestBase {
 
   protected static DBValidations dbValtb = null;

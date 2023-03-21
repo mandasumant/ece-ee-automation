@@ -1,7 +1,7 @@
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.utilities.NetworkLogs;
+import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.YamlUtil;
@@ -49,10 +49,11 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<String, String>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
-        List<String> logs = NetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
-        results.put("Tealium", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS_INT));
-        if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG)){
-            results.put("Tealium", NetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS_STG));
+        List<String> logs = AnalyticsNetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
+        if (System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_STG)) {
+            results.put("Tealium", AnalyticsNetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS_STG));
+        } else {
+            results.put("Tealium", AnalyticsNetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS_INT));
         }
         updateTestingHub(results);
     }
@@ -62,7 +63,7 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<String, String>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
-        HashMap<String, String> googleAnalyticsLogs = NetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.GOOGLE_ANALYTICS);
+        HashMap<String, String> googleAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.GOOGLE_ANALYTICS);
         if (googleAnalyticsLogs != null) {
             AssertUtils.assertEquals("Unable to find Parameter: tid of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.TID), testDataForEachMethod.get(BICECEConstants.TID));
             AssertUtils.assertEquals("Unable to find Parameter: dh of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.DH), testDataForEachMethod.get(BICECEConstants.DH));
@@ -78,7 +79,7 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<String, String>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
-        HashMap<String, String> adobeAnalyticsLogs = NetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.ADOBE_ANALYTICS);
+        HashMap<String, String> adobeAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.ADOBE_ANALYTICS);
         if (adobeAnalyticsLogs != null) {
             AssertUtils.assertEquals("Unable to find Parameter: pageName of URL: " + BICECEConstants.ADOBE_ANALYTICS, adobeAnalyticsLogs.get(BICECEConstants.PAGE_NAME), testDataForEachMethod.get(BICECEConstants.PAGE_NAME));
             AssertUtils.assertEquals("Unable to find Parameter: events of URL: " + BICECEConstants.ADOBE_ANALYTICS, adobeAnalyticsLogs.get(BICECEConstants.EVENTS), testDataForEachMethod.get(BICECEConstants.EVENTS));
@@ -91,10 +92,10 @@ public class TealiumNetworkLogs extends ECETestBase {
     @Test(groups = {"GDPR-mandatory-tags"}, description = "Validate GDPR mandatory tags")
     public void validateGdprMandatoryTags() throws InterruptedException {
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
-        List<String> logs = NetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
-        AssertUtils.assertFalse(NetworkLogs.getObject().isGdprTagsFired(logs, testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS)), "Able to find " + testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS));
-        AssertUtils.assertFalse(NetworkLogs.getObject().isGdprTagsFired(logs, testDataForEachMethod.get(BICECEConstants.GDPR_FACEBOOK_ANALYTICS)), "Able to find " + testDataForEachMethod.get(BICECEConstants.GDPR_FACEBOOK_ANALYTICS));
-        AssertUtils.assertFalse(NetworkLogs.getObject().isGdprTagsFired(logs, testDataForEachMethod.get(BICECEConstants.GDPR_TWITTER_ANALYTICS)), "Able to find " + testDataForEachMethod.get(BICECEConstants.GDPR_TWITTER_ANALYTICS));
+        List<String> logs = AnalyticsNetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
+        AssertUtils.assertFalse(AnalyticsNetworkLogs.getObject().isGdprTagsFired(logs, testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS)), "Able to find " + testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS));
+        AssertUtils.assertFalse(AnalyticsNetworkLogs.getObject().isGdprTagsFired(logs, testDataForEachMethod.get(BICECEConstants.GDPR_FACEBOOK_ANALYTICS)), "Able to find " + testDataForEachMethod.get(BICECEConstants.GDPR_FACEBOOK_ANALYTICS));
+        AssertUtils.assertFalse(AnalyticsNetworkLogs.getObject().isGdprTagsFired(logs, testDataForEachMethod.get(BICECEConstants.GDPR_TWITTER_ANALYTICS)), "Able to find " + testDataForEachMethod.get(BICECEConstants.GDPR_TWITTER_ANALYTICS));
     }
 
     @Test(groups = {"GDPR-cookies"}, description = "Validate GDPR Cookies present on page load before consent")
@@ -103,18 +104,18 @@ public class TealiumNetworkLogs extends ECETestBase {
         String cookie;
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
-        Set<Cookie> cookies = NetworkLogs.getObject().getCookies(this.getDriver());
-        cookie = NetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI);
+        Set<Cookie> cookies = AnalyticsNetworkLogs.getObject().getCookies(this.getDriver());
+        cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI, cookie);
         AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[0]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + "under cookie value " + cookie);
         AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[1]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + "under cookie value " + cookie);
         AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[2]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + "under cookie value " + cookie);
 
-        cookie = NetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_GEO);
+        cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_GEO);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI_GEO, cookie);
         AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiGeo").split(",")[0]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_GEO + "under cookie value " + cookie);
 
-        cookie = NetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE);
+        cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE, cookie);
         AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiType").split(",")[0]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE + "under cookie value " + cookie);
 
@@ -126,7 +127,7 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<String, String>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
-        HashMap<String, String> googleAnalyticsGdprLogs = NetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.GOOGLE_ANALYTICS);
+        HashMap<String, String> googleAnalyticsGdprLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.GOOGLE_ANALYTICS);
         if (googleAnalyticsGdprLogs != null) {
             AssertUtils.assertEquals("Unable to find Parameter: tid of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.TID), testDataForEachMethod.get(BICECEConstants.TID));
             AssertUtils.assertEquals("Unable to find Parameter: EA of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.EA), testDataForEachMethod.get(BICECEConstants.EA));

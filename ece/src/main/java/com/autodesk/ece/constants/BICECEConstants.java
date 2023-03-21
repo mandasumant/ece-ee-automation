@@ -221,10 +221,6 @@ public class BICECEConstants extends BICConstants {
   public static final String ADOBE_ANALYTICS = "https://smetrics.autodesk.com/b/ss/autodesk-new-gl";
   public static final String TEALIUM_ANALYTICS_INT = "https://tags.tiqcdn.com/utag/autodesk/global-sites/prod/utag.js";
   public static final String TEALIUM_ANALYTICS_STG = "https://tags.tiqcdn.com/utag/autodesk/global-sites-qa/qa/utag.js";
-  public static final String LOG_STATUS = "status";
-  public static final String LOG_URL = "url";
-  public static final String LOG_BODY = "body";
-  public static final String LOG_HEADERS = "headers";
   public static final String TID = "tid";
   public static final String DH = "dh";
   public static final String DP = "dp";
