@@ -9,9 +9,9 @@ import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.CustomSoftAssert;
 import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
+import com.autodesk.testinghub.core.utils.SoftAssertUtil;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.qameta.allure.Step;
@@ -264,7 +264,7 @@ public class PortalTestBase {
       checkEmailVerificationPopupAndClick();
     } catch (Exception e) {
       e.printStackTrace();
-      CustomSoftAssert.s_assert.fail("Unable to open upcoming payments section");
+      SoftAssertUtil.fail("Unable to open upcoming payments section");
     }
     portalPage.waitForPageToLoad();
   }
