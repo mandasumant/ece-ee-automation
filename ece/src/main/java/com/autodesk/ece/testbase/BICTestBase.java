@@ -95,7 +95,7 @@ public class BICTestBase {
   }
 
   public static String generateMailosaurEmailID() {
-    return generateUniqueEmailID("csu62mgs.mailosaur.net");
+    return generateUniqueEmailID("loxrkaci.mailosaur.net");
   }
 
   public static String generateUniqueEmailID(String emailDomain) {
