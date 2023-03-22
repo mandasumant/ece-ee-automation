@@ -2396,11 +2396,6 @@ public class BICTestBase {
     Util.printInfo("constructDotComURL " + constructDotComURL);
     getUrl(constructDotComURL);
 
-    if (System.getProperty("store").equals("STORE-JP") && productName.equals("autocad")) {
-      Select drpPlc = new Select(driver.findElement(By.className("buy-version-switcher")));
-      drpPlc.selectByValue("ACDIST");
-    }
-
     setStorageData();
   }
 
