@@ -691,7 +691,8 @@ public class BICTestBase {
   public void populatePaymentDetails(String[] paymentCardDetails) {
     try {
       bicPage.clickUsingLowLevelActions("creditCardPaymentTab");
-    } catch (MetadataException e) {
+    } catch (Exception e) {
+      Util.printWarning("Failed to click on CC tab, it is possibly already selected");
       e.printStackTrace();
     }
     if (!bicPage.isFieldVisible("invoicePaymentEdit")) {
@@ -1820,7 +1821,16 @@ public class BICTestBase {
     }
     Util.printInfo("Checking if Chat Popup Present. Done");
 
-    if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
+    if (data.get("productType").equals("flex") && (paymentMethod.equalsIgnoreCase(BICECEConstants.CREDITCARD)
+        || paymentMethod.equals(BICECEConstants.VISA)) && (
+        System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_INT) || data.get("locale")
+            .equals("en_CA"))) {
+      try {
+        bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+      } catch (MetadataException e) {
+        throw new RuntimeException(e);
+      }
+    } else if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     } else if (data.get("isNonQuoteFlexOrder") != null &&
         data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
