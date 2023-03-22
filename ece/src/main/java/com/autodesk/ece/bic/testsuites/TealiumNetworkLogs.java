@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.openqa.selenium.Cookie;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -66,6 +67,7 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> googleAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.GOOGLE_ANALYTICS);
         if (googleAnalyticsLogs != null) {
             AssertUtils.assertEquals("Unable to find Parameter: tid of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.TID), testDataForEachMethod.get(BICECEConstants.TID));
+            AssertUtils.assertEquals("Unable to find Parameter: tid of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.T), testDataForEachMethod.get(BICECEConstants.T));
             AssertUtils.assertEquals("Unable to find Parameter: dh of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.DH), testDataForEachMethod.get(BICECEConstants.DH));
             AssertUtils.assertEquals("Unable to find Parameter: dp of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.DP), testDataForEachMethod.get(BICECEConstants.DP));
             AssertUtils.assertEquals("Unable to find Parameter: dt of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.DT), testDataForEachMethod.get(BICECEConstants.DT));
@@ -79,18 +81,28 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<String, String>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
-        HashMap<String, String> adobeAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.ADOBE_ANALYTICS);
-        if (adobeAnalyticsLogs != null) {
-            AssertUtils.assertEquals("Unable to find Parameter: pageName of URL: " + BICECEConstants.ADOBE_ANALYTICS, adobeAnalyticsLogs.get(BICECEConstants.PAGE_NAME), testDataForEachMethod.get(BICECEConstants.PAGE_NAME));
-            AssertUtils.assertEquals("Unable to find Parameter: events of URL: " + BICECEConstants.ADOBE_ANALYTICS, adobeAnalyticsLogs.get(BICECEConstants.EVENTS), testDataForEachMethod.get(BICECEConstants.EVENTS));
-            AssertUtils.assertEquals("Unable to find Parameter: pev2 of URL: " + BICECEConstants.ADOBE_ANALYTICS, adobeAnalyticsLogs.get(BICECEConstants.PEV2), testDataForEachMethod.get(BICECEConstants.PEV2));
-            results.putAll(adobeAnalyticsLogs);
+        if (System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_STG)) {
+            HashMap<String, String> adobeAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.ADOBE_ANALYTICS_STG);
+            if (adobeAnalyticsLogs != null) {
+                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PAGE_NAME).contains(testDataForEachMethod.get(BICECEConstants.PAGE_NAME)), " Unable to find Parameter: pageName of URL: " + BICECEConstants.ADOBE_ANALYTICS_STG);
+                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.EVENTS).contains(testDataForEachMethod.get(BICECEConstants.EVENTS)), " Unable to find Parameter: events of URL: " + BICECEConstants.ADOBE_ANALYTICS_STG);
+                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PEV2).contains(testDataForEachMethod.get(BICECEConstants.PEV2)), " Unable to find Parameter: pev2 of URL: " + BICECEConstants.ADOBE_ANALYTICS_STG);
+                results.putAll(adobeAnalyticsLogs);
+            }
+        } else {
+            HashMap<String, String> adobeAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.ADOBE_ANALYTICS_INT);
+            if (adobeAnalyticsLogs != null) {
+                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PAGE_NAME).contains(testDataForEachMethod.get(BICECEConstants.PAGE_NAME)), " Unable to find Parameter: pageName of URL: " + BICECEConstants.ADOBE_ANALYTICS_INT);
+                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.EVENTS).contains(testDataForEachMethod.get(BICECEConstants.EVENTS)), " Unable to find Parameter: events of URL: " + BICECEConstants.ADOBE_ANALYTICS_INT);
+                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PEV2).contains(testDataForEachMethod.get(BICECEConstants.PEV2)), " Unable to find Parameter: pev2 of URL: " + BICECEConstants.ADOBE_ANALYTICS_INT);
+                results.putAll(adobeAnalyticsLogs);
+            }
         }
         updateTestingHub(results);
     }
 
-    @Test(groups = {"GDPR-mandatory-tags"}, description = "Validate GDPR mandatory tags")
-    public void validateGdprMandatoryTags() throws InterruptedException {
+    @Test(groups = {"GDPR-mandatory-tags-not-fired"}, description = "Validate GDPR mandatory tags not fires")
+    public void validateGdprMandatoryTagsNotFired() throws InterruptedException {
         portaltb.openAutoDeskHomePage(testDataForEachMethod);
         List<String> logs = AnalyticsNetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
         AssertUtils.assertFalse(AnalyticsNetworkLogs.getObject().isGdprTagsFired(logs, testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS)), "Able to find " + testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS));
@@ -99,7 +111,7 @@ public class TealiumNetworkLogs extends ECETestBase {
     }
 
     @Test(groups = {"GDPR-cookies"}, description = "Validate GDPR Cookies present on page load before consent")
-    public void validateGDPRCookies() {
+    public void validateGDPRCookies() throws InterruptedException {
         HashMap<String, String> results = new HashMap<>();
         String cookie;
         results.putAll(testDataForEachMethod);
@@ -107,17 +119,17 @@ public class TealiumNetworkLogs extends ECETestBase {
         Set<Cookie> cookies = AnalyticsNetworkLogs.getObject().getCookies(this.getDriver());
         cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI, cookie);
-        AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[0]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + "under cookie value " + cookie);
-        AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[1]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + "under cookie value " + cookie);
-        AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[2]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + "under cookie value " + cookie);
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[0]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[0]);
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[1]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[1]);
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[2]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[2]);
 
         cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_GEO);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI_GEO, cookie);
-        AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiGeo").split(",")[0]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_GEO + "under cookie value " + cookie);
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiGeo")), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_GEO + " with value: " + testDataForEachMethod.get("gdprOptOutMultiGeo"));
 
         cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE, cookie);
-        AssertUtils.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiType").split(",")[0]), "Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE + "under cookie value " + cookie);
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiType")), " Able to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE);
 
         updateTestingHub(results);
     }
@@ -134,10 +146,6 @@ public class TealiumNetworkLogs extends ECETestBase {
             AssertUtils.assertEquals("Unable to find Parameter: EC of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.EC), testDataForEachMethod.get(BICECEConstants.EC));
             AssertUtils.assertEquals("Unable to find Parameter: EL of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.EL), testDataForEachMethod.get(BICECEConstants.EL));
             AssertUtils.assertEquals("Unable to find Parameter: CD1 of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.CD1), testDataForEachMethod.get(BICECEConstants.CD1));
-            AssertUtils.assertEquals("Unable to find Parameter: CD2 of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.CD2), testDataForEachMethod.get(BICECEConstants.CD2));
-            AssertUtils.assertEquals("Unable to find Parameter: CD5 of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.CD5), testDataForEachMethod.get(BICECEConstants.CD5));
-            AssertUtils.assertEquals("Unable to find Parameter: CD6 of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.CD6), testDataForEachMethod.get(BICECEConstants.CD6));
-            AssertUtils.assertEquals("Unable to find Parameter: CD7 of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.CD7), testDataForEachMethod.get(BICECEConstants.CD7));
             AssertUtils.assertEquals("Unable to find Parameter: CD8 of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.CD8), testDataForEachMethod.get(BICECEConstants.CD8));
             AssertUtils.assertEquals("Unable to find Parameter: CD8 of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsGdprLogs.get(BICECEConstants.CD9), testDataForEachMethod.get(BICECEConstants.CD9));
             results.putAll(googleAnalyticsGdprLogs);

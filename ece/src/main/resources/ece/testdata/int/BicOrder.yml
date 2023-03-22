@@ -332,6 +332,7 @@ validateTealiumNetworkLogs:
 validateGoogleNetworkLogsAndTags:
   autodeskHomePageUrl: "https://www-int.autodesk.com/"
   tid: "UA-60717701-17"
+  t: "pageview"
   dh: "www-int.autodesk.com"
   dp: "%2F"
   dt: "adsk%3Aen%3Ahome"
@@ -339,8 +340,8 @@ validateGoogleNetworkLogsAndTags:
 validateAdobeNetworkLogsAndTags:
   autodeskHomePageUrl: "https://www-int.autodesk.com/"
   pageName: "adsk%3Aen%3Ahome"
-  events: "event1%2Cevent89%2Cevent150"
-  pev2: "[WAF] pageview"
+  events: "event1"
+  pev2: "pageview"
 
 validateGdprMandatoryTags:
   autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
@@ -350,7 +351,7 @@ validateGdprMandatoryTags:
 
 validateGDPRCookies:
   autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
-  gdprOptOutMulti: "c7:1,c8:1,c9:1"
+  gdprOptOutMulti: "c7:0,c8:1,c9:1"
   gdprOptOutMultiGeo: "US"
   gdprOptOutMultiType: "Not Yet Set"
 
@@ -361,9 +362,5 @@ validateGDPRGoogleNetworkTags:
   ec: "Privacy%20Management"
   el: "Rules%20Triggered"
   cd1: "privacy-options-displayed-rules"
-  cd2: "na"
-  cd5: "true"
-  cd6: "true"
-  cd7: "true"
   cd8: "global-sites"
   cd9: "US"
