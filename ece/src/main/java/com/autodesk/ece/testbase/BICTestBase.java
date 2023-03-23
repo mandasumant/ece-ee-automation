@@ -1578,6 +1578,7 @@ public class BICTestBase {
   public void estimateFlexTokenPrice(LinkedHashMap<String, String> data) throws MetadataException {
     String flexTokensEstimatorUrl =
         data.get("guacDotComBaseURL") + data.get(BICECEConstants.COUNTRY_DOMAIN) + data.get("flexBenefitsPath");
+    Util.printInfo("Getting the URL: " + flexTokensEstimatorUrl);
     getUrl(flexTokensEstimatorUrl);
 
     if (bicPage.checkIfElementExistsInPage("estimatorAcceptCookies", 5)) {
