@@ -67,7 +67,7 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> googleAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.GOOGLE_ANALYTICS);
         if (googleAnalyticsLogs != null) {
             AssertUtils.assertEquals("Unable to find Parameter: tid of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.TID), testDataForEachMethod.get(BICECEConstants.TID));
-            AssertUtils.assertEquals("Unable to find Parameter: tid of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.T), testDataForEachMethod.get(BICECEConstants.T));
+            AssertUtils.assertEquals("Unable to find Parameter: t of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.T), testDataForEachMethod.get(BICECEConstants.T));
             AssertUtils.assertEquals("Unable to find Parameter: dh of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.DH), testDataForEachMethod.get(BICECEConstants.DH));
             AssertUtils.assertEquals("Unable to find Parameter: dp of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.DP), testDataForEachMethod.get(BICECEConstants.DP));
             AssertUtils.assertEquals("Unable to find Parameter: dt of URL: " + BICECEConstants.GOOGLE_ANALYTICS, googleAnalyticsLogs.get(BICECEConstants.DT), testDataForEachMethod.get(BICECEConstants.DT));

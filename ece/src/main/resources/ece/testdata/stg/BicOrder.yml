@@ -343,7 +343,7 @@ validateAdobeNetworkLogsAndTags:
   events: "event1"
   pev2: "pageview"
 
-validateGdprMandatoryTags:
+validateGdprMandatoryTagsNotFired:
   autodeskHomePageUrl: "https://www-pt.autodesk.co.uk/"
   GdprFacebook: "https://connect.facebook.net/en_US/fbevents.js"
   GdprAdobeAnalytics: "smetrics.autodesk.com/b/ss"
