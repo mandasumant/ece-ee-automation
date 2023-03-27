@@ -58,6 +58,7 @@ pipeline {
         booleanParam(name: 'APOLLO_R2_0_5', defaultValue: false, description: 'Run Apollo R2.0.5 Japan')
         booleanParam(name: 'APOLLO_CREDIT_MEMO', defaultValue: false, description: 'LOC Credit Memo flows')
         booleanParam(name: 'FINANCING', defaultValue: false, description: 'Run Financing Regression')
+        booleanParam(name: 'ANALYTICS', defaultValue: false, description: 'Run ANALYTICS Regression')
         booleanParam(name: 'EDU', defaultValue: false, description: 'Run all EDU tests')
         choice(name: 'INVOICE_VALIDATION', choices: ['False', 'True'], description: 'Run Invoice Validation ?')
         string(name: 'JIRAPAT', defaultValue: 'NjI2Mjk1Mzg1MDU0OjmbRT/D/UpHMhc92q4uPBIPhwYo')
@@ -84,6 +85,7 @@ pipeline {
                                     params.APOLLO_CREDIT_MEMO == true ||
                                     params.EDU == true ||
                                     params.FINANCING == true
+                                    params.ANALYTICS == true
                         }
                     }
                 }
@@ -110,6 +112,7 @@ pipeline {
                                     params.APOLLO_CREDIT_MEMO == true ||
                                     params.EDU == true ||
                                     params.FINANCING == true
+                                    params.ANALYTICS == true
                         }
                     }
                 }
@@ -140,6 +143,7 @@ pipeline {
                                     params.APOLLO_CREDIT_MEMO == true ||
                                     params.EDU == true ||
                                     params.FINANCING == true
+                                    params.ANALYTICS == true
                         }
                     }
                 }
@@ -278,6 +282,17 @@ pipeline {
             }
             steps {
                 triggerFinancing(serviceBuildHelper, params.ENVIRONMENT)
+            }
+        }
+        stage('Analysis Tests') {
+            when {
+                branch 'master'
+                expression {
+                    params.ANALYTICS == true
+                }
+            }
+            steps {
+                triggerAnalytics(serviceBuildHelper, params.ENVIRONMENT)
             }
         }
     }
@@ -602,7 +617,7 @@ def triggerCJT(def serviceBuildHelper, String env) {
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"CLT Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com", "abhijit.rajurkar@autodesk.com", "adam.hill@autodesk.com"],"testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"CLT Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                 '{"displayname":"GUAC - BiC Native Multi line item Order","testcasename":"validateMultiLineItemBicNativeOrder","description":"BiC Native Multi line item Order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-multiline-bicorder","testMethod":"validateMultiLineItemBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","address":"Autodesk@2300 Woodcrest Pl@Birmingham@35209@9916800100@United States@Alabama", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"GUAC - BiC Native Order US","testcasename":"validateBicNativeOrder","description":"BiC Native Order - US ","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"GUAC - BiC Native Order UK","testcasename":"validateBicNativeOrder","description":"BiC Native Order - UK ","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"BACS","store":"STORE-UK","sku":"default:1","email":"","locale":"en_GB", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
@@ -615,13 +630,7 @@ def triggerCJT(def serviceBuildHelper, String env) {
                 '{"displayname":"GUAC - BiC order with existing user","testcasename":"validateBicReturningUser","description":"BiC order with existing user","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-returningUser","testMethod":"validateBicReturningUser","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"GUAC - BiC renew order","testcasename":"validateRenewBicOrder","description":"BiC renew recurring order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"renew-bic-order","testMethod":"validateRenewBicOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","address":"Autodesk@1245 Alpine Ave@Boulder@80304@9916800100@United States@CO", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"GUAC - BiC PromoCode order","testcasename":"promocodeBicOrder","description":"BiC Order with PromoCoder","testClass":"com.autodesk.ece.bic.testsuites.BICOrderPromoCode","testGroup":"bic-promocode-order","testMethod":"promocodeBicOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
-                '{"displayname":"GUAC - BiC refund order UK","testcasename":"validateBicRefundOrder","description":"BiC refund order - UK","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","locale":"en_GB","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
-                '{"displayname":"BIC Ecommerce Tealium Analytics logs","testcasename":"5810b037","description":"BIC Ecommerce Tealium Analytics logs","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"tealium-network-logs","testMethod":"validateTealiumNetworkLogs","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
-                '{"displayname":"BIC Ecommerce Google Analytics logs","testcasename":"3fe26a1b","description":"BIC Ecommerce Google Analytics logs","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"google-network-logs","testMethod":"validateGoogleNetworkLogsAndTags","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
-                '{"displayname":"BIC Ecommerce Adobe Analytics logs","testcasename":"3a9c7241","description":"BIC Ecommerce Adobe Analytics logs","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"adobe-network-logs","testMethod":"validateAdobeNetworkLogsAndTags","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
-                '{"displayname":"BIC Ecommerce GDPR Mandatory Tags Not Fired","testcasename":"19aa6e3d","description":"BIC Ecommerce GDPR Mandatory Tags Not Fired","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-mandatory-tags-not-fired","testMethod":"validateGdprMandatoryTagsNotFired","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
-                '{"displayname":"BIC Ecommerce GDPR Cookies","testcasename":"85f95d88","description":"BIC Ecommerce GDPR Cookies","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-cookies","testMethod":"validateGDPRCookies","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
-                '{"displayname":"BIC Ecommerce GDPR Google Tags","testcasename":"c8016bf0","description":"BIC Ecommerce GDPR Google Tags","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-google-tags","testMethod":"validateGDPRGoogleNetworkTags","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}}' +
+                '{"displayname":"GUAC - BiC refund order UK","testcasename":"validateBicRefundOrder","description":"BiC refund order - UK","testClass":"com.autodesk.ece.bic.testsuites.BICRefundOrder","testGroup":"bic-RefundOrder","testMethod":"validateBicRefundOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-UK","locale":"en_GB","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore")
         execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
@@ -774,6 +783,39 @@ def triggerFinancing(def serviceBuildHelper, String env) {
         } else {
             currentBuild.result = 'FAILURE'
             println('Testing Hub API call failed - estore - Financing')
+        }
+    }
+}
+
+def triggerAnalytics(def serviceBuildHelper, String env) {
+    echo 'Initiating Analytics Tests'
+    script {
+        println("Building Testing Hub API Input Map - estore")
+        def testingHubInputMap = [:]
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Analytics Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com","abhijit.rajurkar@autodesk.com","adam.hill@autodesk.com"],"testcases":[' +
+               '{"displayname":"BIC Ecommerce Tealium Analytics logs","testcasename":"5810b037","description":"BIC Ecommerce Tealium Analytics logs","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"tealium-network-logs","testMethod":"validateTealiumNetworkLogs","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"BIC Ecommerce Google Analytics logs","testcasename":"3fe26a1b","description":"BIC Ecommerce Google Analytics logs","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"google-network-logs","testMethod":"validateGoogleNetworkLogsAndTags","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"BIC Ecommerce Adobe Analytics logs","testcasename":"3a9c7241","description":"BIC Ecommerce Adobe Analytics logs","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"adobe-network-logs","testMethod":"validateAdobeNetworkLogsAndTags","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Cookies Before Consent","testcasename":"85f95d88","description":"GDPR Cookies Before Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-cookies-before-consent","testMethod":"validateGDPRCookiesBeforeConsent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Footer Banner Before Consent","testcasename":"6633b8bd","description":"GDPR Cookies Footer Banner Before Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-footer-banner-before-consent","testMethod":"validateGDPRFooterBannerBeforeConsent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Mandatory Tags Not Fired Before Consent","testcasename":"19aa6e3d","description":"GDPR Mandatory Tags Not Fired Before Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-mandatory-tags-not-fired-before-consent","testMethod":"validateGdprMandatoryTagsNotFiredBeforeConsent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Google Tags Before Consent","testcasename":"c8016bf0","description":"GDPR Google Tags Before Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-google-tags-before-consent","testMethod":"validateGDPRGoogleNetworkTagsBeforeConsent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Cookies After Consent","testcasename":"9e5efee8","description":"GDPR Cookies After Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-cookies-after-consent","testMethod":"validateGDPRCookiesAfterConsent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Footer Banner After Consent","testcasename":"387c6e2c","description":"GDPR Cookies Footer Banner After Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-footer-banner-after-consent","testMethod":"validateGDPRFooterBannerAfterConsent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Mandatory Tags Fired After Consent","testcasename":"88c7224d","description":"GDPR Mandatory Tags Fired After Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-mandatory-tags-fired-after-consent","testMethod":"validateGdprMandatoryTagsFiredAfterConsent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Cookies On Next Page Load","testcasename":"ecf50dad","description":"GDPR Cookies On Next Page Load","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-cookies-after-next-page-load","testMethod":"validateGDPRCookiesOnNextPageLoad","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Footer Banner On Next Page Load","testcasename":"e0bc731f","description":"GDPR Cookies Footer Banner On Next Page Load","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-footer-banner-after-next-page-load","testMethod":"validateGDPRFooterBannerOnNextPageLoad","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
+               '{"displayname":"GDPR Mandatory Tags Fired On Next Page Load","testcasename":"21ff36cf","description":"GDPR Mandatory Tags Fired On Next Page Load","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-mandatory-tags-fired-after-next-page-load","testMethod":"validateGdprMandatoryTagsFiredOnNextPageLoad","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}}'+
+               '],"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - estore")
+        if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+            println('Testing Hub API called successfully - estore - Analytics')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - estore - Analytics')
         }
     }
 }

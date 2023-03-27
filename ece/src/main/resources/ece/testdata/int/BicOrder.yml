@@ -343,19 +343,22 @@ validateAdobeNetworkLogsAndTags:
   events: "event1"
   pev2: "pageview"
 
-validateGdprMandatoryTagsNotFired:
+validateGDPRCookiesBeforeConsent:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+  gdprOptOutMulti: "c7:0,c8:1,c9:1"
+  gdprOptOutMultiGeo: "US"
+  gdprOptOutMultiType: "No Cookies Were Found"
+
+validateGDPRFooterBannerBeforeConsent:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+
+validateGdprMandatoryTagsNotFiredBeforeConsent:
   autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
   GdprFacebook: "https://connect.facebook.net/en_US/fbevents.js"
   GdprAdobeAnalytics: "smetrics.autodesk.com/b/ss"
   GdprTwitterAnalytics: "https://static.ads-twitter.com/uwt.js"
 
-validateGDPRCookies:
-  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
-  gdprOptOutMulti: "c7:0,c8:1,c9:1"
-  gdprOptOutMultiGeo: "US"
-  gdprOptOutMultiType: "Not Yet Set"
-
-validateGDPRGoogleNetworkTags:
+validateGDPRGoogleNetworkTagsBeforeConsent:
   autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
   tid: "UA-60717701-17"
   ea: "Preferences%20Window%20Displayed"
@@ -364,3 +367,37 @@ validateGDPRGoogleNetworkTags:
   cd1: "privacy-options-displayed-rules"
   cd8: "global-sites"
   cd9: "US"
+
+validateGDPRCookiesAfterConsent:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+  gdprOptOutMulti: "c7:0,c8:0,c9:0"
+  gdprOptOutMultiType: "A"
+
+validateGDPRFooterBannerAfterConsent:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+
+validateGdprMandatoryTagsFiredAfterConsent:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+  GdprFacebook: "https://connect.facebook.net/en_US/fbevents.js"
+  GdprAdobeAnalytics: "smetrics.autodesk.com/b/ss"
+  GdprGoogleAnalytics: "google-analytics.com/collect"
+  GdprTwitterAnalytics: "https://static.ads-twitter.com/uwt.js"
+
+validateGDPRCookiesOnNextPageLoad:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+  autodeskHomeNextPageUrl: "https://www-int.autodesk.co.uk/products"
+  gdprOptOutMulti: "c7:0,c8:0,c9:0"
+  gdprOptOutMultiGeo: "US"
+  gdprOptOutMultiType: "A"
+
+validateGDPRFooterBannerOnNextPageLoad:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+  autodeskHomeNextPageUrl: "https://www-int.autodesk.co.uk/products"
+
+validateGdprMandatoryTagsFiredAfterConsentOnNextPage:
+  autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
+  autodeskHomeNextPageUrl: "https://www-int.autodesk.co.uk/products"
+  GdprFacebook: "https://connect.facebook.net/en_US/fbevents.js"
+  GdprAdobeAnalytics: "smetrics.autodesk.com/b/ss"
+  GdprGoogleAnalytics: "google-analytics.com/collect"
+  GdprTwitterAnalytics: "https://static.ads-twitter.com/uwt.js"

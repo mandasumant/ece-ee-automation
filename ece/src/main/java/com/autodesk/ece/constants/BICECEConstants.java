@@ -231,6 +231,7 @@ public class BICECEConstants extends BICConstants {
   public static final String EVENTS = "events";
   public static final String PEV2 = "pev2";
   public static final String GDPR_ADOBE_ANALYTICS = "GdprAdobeAnalytics";
+  public static final String GDPR_GOOGLE_ANALYTICS = "GdprGoogleAnalytics";
   public static final String GDPR_FACEBOOK_ANALYTICS = "GdprFacebook";
   public static final String GDPR_TWITTER_ANALYTICS = "GdprTwitterAnalytics";
   public static final String GDPR_OPT_OUT_MULTI = "OPTOUTMULTI";

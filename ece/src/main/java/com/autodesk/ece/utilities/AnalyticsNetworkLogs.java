@@ -131,7 +131,7 @@ public class AnalyticsNetworkLogs {
     }
 
     public String getCookie(Set<Cookie> cookies, String cookieName) {
-        String cookie = "Not Yet Set";
+        String cookie = "No Cookies Were Found";
         Iterator<Cookie> itr = cookies.iterator();
         while (itr.hasNext()) {
             Cookie c = itr.next();

@@ -2438,8 +2438,30 @@ public class PortalTestBase {
     }
   }
 
+  public void openAutoDeskHomePage(LinkedHashMap<String, String> data, String url) {
+    openPortalURL(data.get(url));
+  }
 
-  public void openAutoDeskHomePage(LinkedHashMap<String, String> data) {
-    openPortalURL(data.get("autodeskHomePageUrl"));
+  public boolean verifyCookiesFooterBannerIsVisible() {
+    boolean bannerVisible;
+    try {
+      bannerVisible = portalPage.checkIfElementExistsInPage("cookiesFooterBanner", 10) && portalPage.checkIfElementExistsInPage("cookiesFooterBannerAccept", 10);
+    } catch (Exception e) {
+      bannerVisible = false;
+    }
+    return bannerVisible;
+  }
+
+  public void clickCookiesFooterAcceptButton() {
+    try {
+      if (portalPage.checkIfElementExistsInPage("cookiesFooterBannerAccept", 10)) {
+        portalPage.clickUsingLowLevelActions("cookiesFooterBannerAccept");
+        Util.printInfo("Able to Click Accept Button of Cookies Banner");
+      } else {
+        AssertUtils.fail("Unable to Click Accept Button of Cookies Banner");
+      }
+    } catch (Exception e) {
+      AssertUtils.fail("Unable to Click Accept Button of Cookies Banner");
+    }
   }
 }
