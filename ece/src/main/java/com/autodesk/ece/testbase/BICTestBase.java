@@ -473,44 +473,45 @@ public class BICTestBase {
         "\n" + "-----------------------------");
   }
 
-  public void clickOnContinueBtn(String paymentType) {
+  public void clickOnContinueBtn(String paymentType) throws MetadataException {
     Util.sleep(2000);
-    Util.printInfo("Clicking on Save button");
 
-    String tabKey = paymentType.toLowerCase();
-    if (paymentType.equalsIgnoreCase(BICECEConstants.VISA) || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
-        || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD) || paymentType.equalsIgnoreCase(
-        BICECEConstants.LOC)) {
-      tabKey = "credit-card";
-    }
-
-    WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
-    WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
-
-    int attempts = 0;
-
-    while (attempts < 5) {
-      try {
-        continueButton.click();
-
-        waitForLoadingSpinnerToComplete("loadingSpinner");
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        wait.until(ExpectedConditions.invisibilityOf(continueButton));
-
-        Util.printInfo("Save button no longer present");
-        break;
-      } catch (TimeoutException e) {
-        e.printStackTrace();
-        Util.printInfo("Save button still present, retrying");
-        attempts++;
-        if (attempts == 5) {
-          AssertUtils.fail("Failed to click on Save button on billing details page...");
-        }
-        Util.sleep(2000);
+    if (bicPage.waitForFieldPresent("creditCardPaymentTab", 5000)) {
+      Util.printInfo("Clicking on Save button");
+      String tabKey = paymentType.toLowerCase();
+      if (paymentType.equalsIgnoreCase(BICECEConstants.VISA) || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
+          || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD) || paymentType.equalsIgnoreCase(
+          BICECEConstants.LOC)) {
+        tabKey = "credit-card";
       }
-    }
 
+      WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
+      WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
+
+      int attempts = 0;
+      while (attempts < 5) {
+        try {
+          continueButton.click();
+          waitForLoadingSpinnerToComplete("loadingSpinner");
+          WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+          wait.until(ExpectedConditions.invisibilityOf(continueButton));
+
+          Util.printInfo("Save button no longer present");
+          break;
+        } catch (TimeoutException e) {
+          e.printStackTrace();
+          Util.printInfo("Save button still present, retrying");
+          attempts++;
+          if (attempts == 5) {
+            AssertUtils.fail("Failed to click on Save button on billing details page...");
+          }
+          Util.sleep(2000);
+        }
+      }
+    } else if (bicPage.waitForFieldPresent("creditCardRadioButton", 5000)) {
+      Util.printInfo("clicking review button");
+      bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+    }
   }
 
   private void populateTaxIdForFlex() {
@@ -690,9 +691,12 @@ public class BICTestBase {
   @Step("Populate payment details")
   public void populatePaymentDetails(String[] paymentCardDetails) {
     try {
-      bicPage.clickUsingLowLevelActions("creditCardPaymentTab");
-    } catch (Exception e) {
-      Util.printWarning("Failed to click on CC tab, it is possibly already selected");
+      if (bicPage.waitForFieldPresent("creditCardPaymentTab", 5000)) {
+        bicPage.clickUsingLowLevelActions("creditCardPaymentTab");
+      } else if (bicPage.waitForFieldPresent("creditCardRadioButton", 5000)) {
+        bicPage.clickUsingLowLevelActions("creditCardRadioButton");
+      }
+    } catch (MetadataException e) {
       e.printStackTrace();
     }
     if (!bicPage.isFieldVisible("invoicePaymentEdit")) {
@@ -1806,7 +1810,7 @@ public class BICTestBase {
   }
 
   public void enterBillingDetails(LinkedHashMap<String, String> data,
-      Map<String, String> address, String paymentMethod) {
+      Map<String, String> address, String paymentMethod) throws MetadataException {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     selectPaymentProfile(data, paymentCardDetails, address);
 

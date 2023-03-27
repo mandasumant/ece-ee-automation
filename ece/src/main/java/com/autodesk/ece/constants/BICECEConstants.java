@@ -208,13 +208,17 @@ public class BICECEConstants extends BICConstants {
   public static final String SKU = "sku";
   public static final String QTY = "qty";
   public static final String TENANT = "tenant";
+  public static final String PLATFORM_TENANT = "PlatformAutomation";
   public static final String CASH = "CASH";
   public static final String APPLY_CM = "applyCM";
   public static final String CURRENCY = "currency";
   public static final String SUBMIT_PAYMENT_BUTTON = "submitPaymentButton";
   public static final String LOC_TEST_NAME = "LOC_ORDER";
   public static final String QUOTE_TEST_NAME = "QUOTE";
-  public static final String PROJECT78_FLAG = "pushToDataStore";
+  public static final String PROJECT78_PUSH_FLAG = "pushToDataStore";
+  public static final String PROJECT78_PULL_FLAG = "pullFromDataStore";
+
+
   public static final String BIC_TEST_NAME = "BIC_ORDER";
   public static final String RESELLER_TEST_NAME = "RESELLER_ORDER";
   public static final String GOOGLE_ANALYTICS = "https://google-analytics.com/collect";

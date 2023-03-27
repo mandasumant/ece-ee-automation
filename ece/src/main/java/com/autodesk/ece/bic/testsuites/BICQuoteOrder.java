@@ -20,7 +20,6 @@ import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
-import com.autodesk.testinghub.core.testbase.TestinghubUtil;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
@@ -29,6 +28,7 @@ import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -40,8 +40,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -170,8 +168,8 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateBicQuote() {
     String locale = "en_US";
     Boolean shouldPushToDataStore =
-        !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_FLAG)) ? Boolean.valueOf(
-            System.getProperty(BICECEConstants.PROJECT78_FLAG)) : false;
+        !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PUSH_FLAG)) ? Boolean.valueOf(
+            System.getProperty(BICECEConstants.PROJECT78_PUSH_FLAG)) : false;
 
     if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
       locale = System.getProperty("locale");
@@ -218,9 +216,9 @@ public class BICQuoteOrder extends ECETestBase {
           builder.scenario(BICECEConstants.SAME_PAYER);
         }
 
-        if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
-          builder.tenant(System.getProperty(BICECEConstants.TENANT));
-        }
+          if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
+            builder.tenant(System.getProperty(BICECEConstants.TENANT));
+          }
 
         OrderData orderData = dsClient.queueOrder(builder.build());
       } catch (Exception e) {
@@ -236,40 +234,51 @@ public class BICQuoteOrder extends ECETestBase {
   public void validateBicQuoteOrder() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
     HashMap<String, String> results = new HashMap<String, String>();
+    Address address = getBillingAddress();
 
-    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-      Names payerNames = BICTestBase.generateFirstAndLastNames();
-      String payerEmail = BICTestBase.generateUniqueEmailID();
-      Util.printInfo("Payer email: " + payerEmail);
+    Boolean shouldPullFromDataStore =
+        !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) ? Boolean.valueOf(
+            System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) : false;
+
+    if (shouldPullFromDataStore) {
+      loadQuoteDataFromP78();
+      address = new Address(testDataForEachMethod.get("address"));
+      address.company = testDataForEachMethod.get("company");
+    } else {
+      if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+        Names payerNames = BICTestBase.generateFirstAndLastNames();
+        String payerEmail = BICTestBase.generateUniqueEmailID();
+        Util.printInfo("Payer email: " + payerEmail);
+        getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+        getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
+        getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
+        getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+        testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
+        testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
+      }
+
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-      getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
+      getBicTestBase().createBICAccount(
+          new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+              testDataForEachMethod.get(BICECEConstants.LASTNAME)),
+          testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
+
       getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
+      String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+          testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+
+      //Wait for Quote to sync from CPQ/SFDC to S4.
+      Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+      Util.sleep(600000);
+      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+      testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+      // Signing out after quote creation
       getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
-      testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
-      testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
     }
 
-    Address address = getBillingAddress();
-    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-    getBicTestBase().createBICAccount(
-        new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-            testDataForEachMethod.get(BICECEConstants.LASTNAME)),
-        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
-
-    getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
-        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
-
-    //Wait for Quote to sync from CPQ/SFDC to S4.
-    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
-    Util.sleep(600000);
-
-    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
-    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
     testResults.putAll(testDataForEachMethod);
     updateTestingHub(testResults);
-    // Signing out after quote creation
-    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
     testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
 
@@ -353,7 +362,7 @@ public class BICQuoteOrder extends ECETestBase {
             .name(BICECEConstants.LOC_TEST_NAME)
             .emailId(results.get(BICConstants.emailid))
             .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
-            .quoteId(quoteId)
+            .quoteId(testDataForEachMethod.get(BICECEConstants.QUOTE_ID))
             .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
             .address(System.getProperty(BICECEConstants.ADDRESS))
             .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
@@ -377,7 +386,6 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
-
     updateTestingHub(testResults);
   }
 
@@ -388,69 +396,65 @@ public class BICQuoteOrder extends ECETestBase {
     Boolean isLoggedOut = true;
     Integer attempt = 0;
 
-    loadPrevTransactionOut();
+    loadInvoiceDataFromP78();
 
     results.putAll(testDataForEachMethod);
     if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
       results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
     }
 
-    if (testDataForEachMethod.containsKey("Placing the Flex Order")
-        && testDataForEachMethod.get("Placing the Flex Order").equalsIgnoreCase("Passed")) {
-      if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
-        String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType")
-            : System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER")
-                ? BICECEConstants.VISA
-                : BICECEConstants.CREDITCARD;
-        testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
-        System.setProperty(BICECEConstants.PAYMENT, paymentType);
 
-        //For purchaser as Payer test cases we need to update the Payer email address for login.
-        if (!testDataForEachMethod.containsKey(BICECEConstants.PAYER_EMAIL)
-            || testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
-          testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, testDataForEachMethod.get(BICConstants.emailid));
-        }
-        while (isLoggedOut) {
-          attempt++;
-          if (attempt > 5) {
-            Assert.fail("Retries Exhausted: Payment of Invoice failed because Session issues. Check Screenshots!");
-          }
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+      String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType")
+          : System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER")
+              ? BICECEConstants.VISA
+              : BICECEConstants.CREDITCARD;
+      testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
+      System.setProperty(BICECEConstants.PAYMENT, paymentType);
 
-          portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
-              PASSWORD);
-
-          double invoiceTotalBeforePayment = portaltb.selectInvoiceAndValidateCreditMemoWithoutPONumber(false);
-          isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
-          if (isLoggedOut == false) {
-            portaltb.verifyInvoiceTotalAfterPayment(invoiceTotalBeforePayment);
-          }
-
-        }
-        portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
-
-        if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
-            .equalsIgnoreCase("LOC")) {
-          portaltb.verifyCreditMemoStatus("//*[@data-testid=\"credit-memo-list-empty-container\"]");
+      //For purchaser as Payer test cases we need to update the Payer email address for login.
+      if (!testDataForEachMethod.containsKey(BICECEConstants.PAYER_EMAIL)
+          || testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
+        testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, testDataForEachMethod.get(BICConstants.emailid));
+      }
+      while (isLoggedOut) {
+        attempt++;
+        if (attempt > 5) {
+          Assert.fail("Retries Exhausted: Payment of Invoice failed because Session issues. Check Screenshots!");
         }
 
-      } else {
-        Assert.fail("NON LOC Orders Do NOT have Pay Invoice Flow!!!");
+        portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
+            PASSWORD);
+
+        double invoiceTotalBeforePayment = portaltb.selectInvoiceAndValidateCreditMemoWithoutPONumber(false);
+        isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
+        if (isLoggedOut == false) {
+          portaltb.verifyInvoiceTotalAfterPayment(invoiceTotalBeforePayment);
+        }
+
+      }
+      portaltb.verifyInvoiceStatus(results.get(BICECEConstants.ORDER_ID));
+
+      if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+          .equalsIgnoreCase("LOC")) {
+        portaltb.verifyCreditMemoStatus("//*[@data-testid=\"credit-memo-list-empty-container\"]");
       }
 
-      if (getBicTestBase().shouldValidateSAP()) {
-        portaltb.validateBICOrderTaxInvoice(results);
-      }
-
-      if (testDataForEachMethod.containsKey("DS_ORDER_ID")) {
-        int orderId = Integer.parseInt(testDataForEachMethod.get("DS_ORDER_ID"));
-        DatastoreClient dsClient = new DatastoreClient();
-        dsClient.completeOrder(orderId);
-      }
-
-      updateTestingHub(testResults);
     } else {
-      Assert.fail("Pay By Invoice Step failed in the previous transaction, so failing Pay Invoice Testcase!!!");
+      Assert.fail("NON LOC Orders Do NOT have Pay Invoice Flow!!!");
     }
+
+    if (getBicTestBase().shouldValidateSAP()) {
+      portaltb.validateBICOrderTaxInvoice(results);
+    }
+
+    if (testDataForEachMethod.containsKey("DS_ORDER_ID")) {
+      int orderId = Integer.parseInt(testDataForEachMethod.get("DS_ORDER_ID"));
+      DatastoreClient dsClient = new DatastoreClient();
+      dsClient.completeOrder(orderId);
+    }
+
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {"bic-loc-create-credit-memo"}, description = "Create Credit Memo for Pay Invoice")
@@ -461,7 +465,7 @@ public class BICQuoteOrder extends ECETestBase {
     String creditMemoAmount = testDataForEachMethod.get("creditMemo");
     Util.printInfo("The Credit Memo amount is: " + creditMemoAmount);
 
-    loadPrevTransactionOut();
+    loadInvoiceDataFromP78();
     results.putAll(testDataForEachMethod);
 
     if (!Strings.isNotNullAndNotEmpty(results.get(BICECEConstants.ORDER_ID))) {
@@ -1464,71 +1468,82 @@ public class BICQuoteOrder extends ECETestBase {
     AssertUtils.assertFalse(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button not should be present");
   }
 
-  private void loadPrevTransactionOut() {
-    String previousTransactionId = System.getProperty("prvexecutionid");
+  private void loadInvoiceDataFromP78() {
+    DatastoreClient dsClient = new DatastoreClient();
+    OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder();
+    String address = System.getProperty(BICECEConstants.ADDRESS);
 
-    if (!Objects.isNull(previousTransactionId) && !previousTransactionId.equals("")) {
-      String transactiondetails = TestinghubUtil.getTransactionOutput();
-      JsonPath js = new JsonPath(transactiondetails);
-      String currentTestName = js.getString("name");
-      String prvExecutionResponse = getTestingHubUtil().getAllTransactions(previousTransactionId);
+    if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
+        .equalsIgnoreCase("LOC")) {
+      builder
+          .name("LOC_CREDITMEMO")
+          .address(address)
+          .locale(locale);
 
-      JSONArray jsonObject = new JSONObject(prvExecutionResponse).getJSONArray("items");
-
-      jsonObject.forEach(item -> {
-        JSONObject transactionJson = (JSONObject) item;
-        if (transactionJson.get("name").equals(currentTestName)) {
-          Util.printInfo("Found the matching Test cases for : " + currentTestName);
-          HashMap<String, String> output = TestinghubUtil.getTransactionOutputObject(transactionJson.toString());
-          HashMap<String, String> steps = TestinghubUtil.getTransactionSteps(transactionJson.toString());
-
-          testDataForEachMethod.putAll(output);
-          testDataForEachMethod.putAll(steps);
-        }
-      });
     } else {
-      DatastoreClient dsClient = new DatastoreClient();
-      OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder();
-      String address = System.getProperty(BICECEConstants.ADDRESS);
+      builder.name(BICECEConstants.LOC_TEST_NAME)
+          .paymentType("LOC");
 
-      if (System.getProperty(BICECEConstants.APPLY_CM) != null && System.getProperty(BICECEConstants.APPLY_CM)
-          .equalsIgnoreCase("LOC")) {
-        builder
-            .name("LOC_CREDITMEMO")
-            .address(address)
-            .locale(locale);
-
+      if (address != null) {
+        builder.address(address);
       } else {
-        builder.name(BICECEConstants.LOC_TEST_NAME)
-            .paymentType("LOC");
-
-        if (address != null) {
-          builder.address(address);
-        } else {
-          builder.locale(locale);
-        }
-
-        String scenario = System.getProperty("scenario");
-        if (scenario != null) {
-          builder.scenario(scenario);
-        }
+        builder.locale(locale);
       }
 
-      OrderData order = dsClient.grabOrder(builder.build());
-      try {
-        testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
-        testDataForEachMethod.put(BICECEConstants.ORDER_ID, order.getOrderNumber().toString());
-        testDataForEachMethod.put("Placing the Flex Order", "Passed");
-        testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
-        if (order.getAddress() != null) {
-          testDataForEachMethod.put(BICECEConstants.ADDRESS, order.getAddress());
-        }
-      } catch (Exception e) {
-        AssertUtils.fail("Failed to invoice to pay");
+      String scenario = System.getProperty("scenario");
+      if (scenario != null) {
+        builder.scenario(scenario);
       }
-
     }
 
+    OrderData order = dsClient.grabOrder(builder.build());
+    try {
+      testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
+      testDataForEachMethod.put(BICECEConstants.ORDER_ID, order.getOrderNumber().toString());
+      testDataForEachMethod.put("Placing the Flex Order", "Passed");
+      testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
+      if (order.getAddress() != null) {
+        testDataForEachMethod.put(BICECEConstants.ADDRESS, order.getAddress());
+      }
+    } catch (Exception e) {
+      AssertUtils.fail("Failed to fetch data from P78, for Pay Invoice");
+    }
+  }
+
+
+  private void loadQuoteDataFromP78() {
+    DatastoreClient dsClient = new DatastoreClient();
+    OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder();
+
+    builder
+        .name(BICECEConstants.QUOTE_TEST_NAME)
+        .locale(locale)
+        .tenant(BICECEConstants.PLATFORM_TENANT);
+
+    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+      builder.scenario(BICECEConstants.DIFFERENT_PAYER);
+    } else {
+      builder.scenario(BICECEConstants.SAME_PAYER);
+    }
+
+
+    OrderData order = dsClient.grabOrder(builder.build());
+    try {
+      testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
+      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, order.getQuoteId());
+      testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
+
+      Response quoteDetails = pwsTestBase.getQuoteDetails(
+          testDataForEachMethod.get("quoteAgentCsnAccount"), order.getQuoteId());
+
+      testDataForEachMethod.put("firstname",quoteDetails.jsonPath().getString("purchaser.firstName"));
+      testDataForEachMethod.put("lastname",quoteDetails.jsonPath().getString("purchaser.lastName"));
+      testDataForEachMethod.put("company",quoteDetails.jsonPath().getString("endCustomer.name"));
+      testDataForEachMethod.put("address",order.getAddress());
+
+    } catch (Exception e) {
+      AssertUtils.fail("Failed to fetch data from P78, for Quote Orders");
+    }
   }
 
   private String submitECMSTaxExemption(HashMap<String, String> testResults, Address address) throws IOException {

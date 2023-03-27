@@ -299,8 +299,8 @@ public class PWSTestBase {
         .get("https://" + hostname + "/v1/quotes/status?transactionId=" + transactionId)
         .then().extract().response();
   }
-
-  private Response getQuoteDetails(String agentCSN, String quoteNo) {
+  @Step("Get Quote" + GlobalConstants.TAG_TESTINGHUB)
+  public Response getQuoteDetails(String agentCSN, String quoteNo) {
     Util.printInfo("Calling Get Quote Details API");
     PWSAccessInfo access_token = getAccessToken();
     String signature = signString(access_token.token, clientSecret, access_token.timestamp);
