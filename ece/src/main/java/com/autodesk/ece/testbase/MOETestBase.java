@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -1452,14 +1453,38 @@ public class MOETestBase {
         moePage.populateField("productSearch", plc);
 
         moePage.clickUsingLowLevelActions("productSearchButton");
-        Util.sleep(3000);
+        Util.sleep(5000);
+
         moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
 
-        Util.printInfo("Open product found.");
-        moePage.waitForFieldPresent("openProductFound", 20000);
-        moePage.clickUsingLowLevelActions("openProductFound");
-        Util.sleep(3000);
-        moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
+        Util.printInfo("Open Flex product.");
+        WebElement openFlexProduct = driver.findElement(
+            By.xpath(moePage.getFirstFieldLocator("openProductFound")));
+
+        int attempt = 0;
+
+        while (attempt < 4) {
+          try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+            wait.until(ExpectedConditions.visibilityOf(openFlexProduct));
+
+            openFlexProduct.click();
+            Util.sleep(5000);
+
+            moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
+
+            wait.until(ExpectedConditions.invisibilityOf(openFlexProduct));
+            Util.printInfo("Flex product opened.");
+            break;
+          } catch (TimeoutException e) {
+            e.printStackTrace();
+            if (attempt == 3) {
+              AssertUtils.fail("Failed to open Flex product.");
+            }
+            Util.printInfo("Unable to open Flex product. Retrying! Attempt #" + attempt);
+            attempt++;
+          }
+        }
 
         Util.printInfo("Select Flex checkbox");
         WebElement checkbox = driver.findElement(
