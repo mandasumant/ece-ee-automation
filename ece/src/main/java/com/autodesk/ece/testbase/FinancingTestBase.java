@@ -13,11 +13,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.sikuli.script.Key;
 
 public class FinancingTestBase {
 
@@ -56,8 +53,7 @@ public class FinancingTestBase {
       if (!isNotNullAndNotEmpty(data.get("isFinancingRenewal"))) {
         WebElement applicationType = driver.findElement(By.xpath("//*[@id=\"applicantType\"]/div"));
         applicationType.click();
-        Actions a = new Actions(driver);
-        a.sendKeys(Keys.chord(Key.DOWN, Key.ENTER)).perform();
+        financingPage.clickUsingLowLevelActions("financingBusinessCorporation");
 
         financingPage.populateField("financingNumberOfEmployees", "1000");
         financingPage.populateField("financingLegalName", "Infra Company Inc");
@@ -74,8 +70,8 @@ public class FinancingTestBase {
         financingPage.populateField("financingBusinessAddressCity", "San Francisco");
         WebElement state = driver.findElement(By.xpath("//*[@id=\"address.stateCode\"]/div"));
         state.click();
-        Actions stateAction = new Actions(driver);
-        stateAction.sendKeys(Keys.chord(Key.DOWN, Key.ENTER)).perform();
+        financingPage.clickUsingLowLevelActions("financingStateAlabama");
+
         financingPage.populateField("financingBusinessAddressZipCode", "94101");
 
         Util.printInfo("Adding Personal details");

@@ -431,9 +431,23 @@ public class PelicanTestBase {
   @Step("Get Purchase Order V4 API" + GlobalConstants.TAG_TESTINGHUB)
   public String getPurchaseOrderV4(HashMap<String, String> data) {
     String getPurchaseOrderDetailsUrl = data.get("getPurchaseOrderDetailsV4Url");
-    getPurchaseOrderDetailsUrl = addTokenInResourceUrl(getPurchaseOrderDetailsUrl,
-        data.get(BICECEConstants.orderNumber));
     Util.printInfo("Get Purchase Order V4 Request URL: " + getPurchaseOrderDetailsUrl);
+
+    //Generate the input JSON
+    JSONObject filters = new JSONObject();
+    JSONArray array = new JSONArray();
+    if (data.get(BICConstants.orderNumber) != null) {
+      array.put(data.get(BICConstants.orderNumber));
+      JSONObject orders = new JSONObject();
+      orders.put("orderIds", array);
+      filters.put("filters", orders);
+    } else {
+      JSONObject emailId = new JSONObject();
+      emailId.put("email", data.get(BICECEConstants.emailid));
+      filters.put("filters", emailId);
+    }
+
+    String requestJson = filters.toJSONString();
 
     String Content_Type = BICECEConstants.APPLICATION_JSON;
     PelicanSignature signature = requestSigner.generateSignature();
@@ -445,7 +459,7 @@ public class PelicanTestBase {
     header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
-    Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, null);
+    Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, requestJson);
     String result = response.getBody().asString();
     Util.PrintInfo(BICECEConstants.RESULT + result);
 
@@ -585,117 +599,125 @@ public class PelicanTestBase {
     HashMap<String, String> results = new HashMap<>();
     JsonPath jp = new JsonPath(poResponse);
     try {
-      results.put("getPOResponse_origin", jp.get("origin").toString());
-      results.put(BICECEConstants.ORDER_ID, jp.get("id").toString());
-      results.put("getPOResponse_quoteId", jp.get("quoteId") == null ? "" : jp.get("quoteId").toString());
-      results.put("getPOResponse_salesChannelType", jp.get("salesChannelType").toString());
-      results.put("getPOResponse_orderState", jp.get("orderState").toString());
-      results.put("getPOResponse_taxId", jp.get("taxId") != null ? jp.get("taxId").toString() : "");
-      results.put("getPOResponse_countryCode", jp.get("price.country").toString());
-      results.put(BICECEConstants.SUBTOTAL_WITH_TAX, jp.get("price.totalPrice").toString());
+      results.put("getPOResponse_origin", jp.get("content[0].origin").toString());
+      results.put(BICECEConstants.ORDER_ID, jp.get("content[0].id").toString());
+      results.put("getPOResponse_quoteId",
+          jp.get("content[0].quoteId") == null ? "" : jp.get("content[0].quoteId").toString());
+      results.put("getPOResponse_salesChannelType", jp.get("content[0].salesChannelType").toString());
+      results.put("getPOResponse_orderState", jp.get("content[0].orderState").toString());
+      results.put("getPOResponse_taxId",
+          jp.get("content[0].taxId") != null ? jp.get("content[0].taxId").toString() : "");
+      results.put("getPOResponse_countryCode", jp.get("content[0].price.country").toString());
+      results.put(BICECEConstants.SUBTOTAL_WITH_TAX, jp.get("content[0].price.totalPrice").toString());
 
       results.put("getPOResponse_storedPaymentProfileId",
-          jp.get("payment.paymentProfileId") != null ? jp.get("payment.paymentProfileId").toString() : "");
+          jp.get("content[0].payment.paymentProfileId") != null ? jp.get("content[0].payment.paymentProfileId")
+              .toString() : "");
       results.put(BICECEConstants.IS_TAX_EXEMPT,
-          jp.get("payment.isTaxExempt") != null ? jp.get("payment.isTaxExempt").toString() : "null");
-      results.put("getPOResponse_productType", jp.get("lineItems[0].offering.name").toString());
-      results.put("getPOResponse_quantity", jp.get("lineItems[0].quantity").toString());
-      results.put("getPOResponse_offeringId", jp.get("lineItems[0].offering.id").toString());
+          jp.get("content[0].payment.isTaxExempt") != null ? jp.get("content[0].payment.isTaxExempt").toString()
+              : "null");
+      results.put("getPOResponse_productType", jp.get("content[0].lineItems[0].offering.name").toString());
+      results.put("getPOResponse_quantity", jp.get("content[0].lineItems[0].quantity").toString());
+      results.put("getPOResponse_offeringId", jp.get("content[0].lineItems[0].offering.id").toString());
       results.put("getPOResponse_fulfillmentStatus",
-          jp.get("lineItems[0].fulfillmentStatus").toString());
+          jp.get("content[0].lineItems[0].fulfillmentStatus").toString());
       results.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
-          jp.get("lineItems[0].subscriptionInfo.subscriptionId").toString());
+          jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionId").toString());
       results.put("getPOResponse_subscriptionPeriodStartDate",
-          jp.get("lineItems[0].subscriptionInfo.subscriptionPeriodStartDate").toString());
+          jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodStartDate").toString());
       results.put("getPOResponse_subscriptionPeriodEndDate",
-          jp.get("lineItems[0].subscriptionInfo.subscriptionPeriodEndDate").toString());
+          jp.get("content[0].lineItems[0].subscriptionInfo.subscriptionPeriodEndDate").toString());
       results.put("getPOResponse_fulfillmentDate",
-          jp.get("lineItems[0].fulfillmentDate").toString());
+          jp.get("content[0].lineItems[0].fulfillmentDate").toString());
       results.put("getPOResponse_paymentProcessor",
-          jp.get("payment.paymentProcessor") != null ? jp.get("payment.paymentProcessor").toString() : "");
+          jp.get("content[0].payment.paymentProcessor") != null ? jp.get("content[0].payment.paymentProcessor")
+              .toString() : "");
       results.put("getPOResponse_endCustomer_company",
-          jp.get("endCustomer.company"));
+          jp.get("content[0].endCustomer.company"));
       results.put("getPOResponse_endCustomer_firstName",
-          jp.get("endCustomer.firstName"));
+          jp.get("content[0].endCustomer.firstName"));
       results.put("getPOResponse_endCustomer_lastName",
-          jp.get("endCustomer.lastName"));
+          jp.get("content[0].endCustomer.lastName"));
       results.put("getPOResponse_endCustomer_addressLine1",
-          jp.get("endCustomer.addressLine1"));
+          jp.get("content[0].endCustomer.addressLine1"));
       results.put("getPOResponse_endCustomer_city",
-          jp.get("endCustomer.city"));
+          jp.get("content[0].endCustomer.city"));
       results.put("getPOResponse_endCustomer_state",
-          jp.get("endCustomer.state"));
+          jp.get("content[0].endCustomer.state"));
 
       results.put("getPOReponse_firstName",
-          jp.get("endCustomer.firstName"));
+          jp.get("content[0].endCustomer.firstName"));
       results.put("getPOReponse_lastName",
-          jp.get("endCustomer.lastName"));
+          jp.get("content[0].endCustomer.lastName"));
       results.put("getPOReponse_street",
-          jp.get("endCustomer.addressLine1"));
+          jp.get("content[0].endCustomer.addressLine1"));
       results.put("getPOReponse_city",
-          jp.get("endCustomer.city"));
+          jp.get("content[0].endCustomer.city"));
       results.put("getPOResponse_subtotalAfterPromotions",
-          jp.get("price.totalPrice").toString());
+          jp.get("content[0].price.totalPrice").toString());
 
       results.put("getPOResponse_endCustomer_country",
-          jp.get("endCustomer.country"));
+          jp.get("content[0].endCustomer.country"));
       results.put("getPOResponse_endCustomer_postalCode",
-          jp.get("endCustomer.postalCode"));
+          jp.get("content[0].endCustomer.postalCode"));
       results.put("getPOResponse_endCustomer_accountCsn",
-          jp.get("endCustomer.accountCsn"));
+          jp.get("content[0].endCustomer.accountCsn"));
       results.put("getPOResponse_endCustomer_contactCsn",
-          jp.get("endCustomer.contactCsn"));
+          jp.get("content[0].endCustomer.contactCsn"));
 
       results.put("getPOResponse_billingAddress_firstName",
-          jp.get("billingAddress.firstName"));
+          jp.get("content[0].billingAddress.firstName"));
       results.put("getPOResponse_billingAddress_lastName",
-          jp.get("billingAddress.lastName"));
+          jp.get("content[0].billingAddress.lastName"));
       results.put("getPOResponse_billingAddress_addressLine1",
-          jp.get("billingAddress.addressLine1"));
+          jp.get("content[0].billingAddress.addressLine1"));
       results.put("getPOResponse_billingAddress_city",
-          jp.get("billingAddress.city"));
+          jp.get("content[0].billingAddress.city"));
       results.put("getPOResponse_billingAddress_accountCsn",
-          jp.get("billingAddress.accountCsn") != null ? jp.get("billingAddress.accountCsn").toString() : null);
+          jp.get("content[0].billingAddress.accountCsn") != null ? jp.get("content[0].billingAddress.accountCsn")
+              .toString() : null);
       results.put("getPOResponse_billingAddress_contactCsn",
-          jp.get("billingAddress.contactCsn") != null ? jp.get("billingAddress.contactCsn").toString() : null);
+          jp.get("content[0].billingAddress.contactCsn") != null ? jp.get("content[0].billingAddress.contactCsn")
+              .toString() : null);
 
       if (jp.get("agentAccount") != null) {
         results.put("getPOResponse_agentAccount_firstName",
-            jp.get("agentAccount.firstName"));
+            jp.get("content[0].agentAccount.firstName"));
         results.put("getPOResponse_agentAccount_lastName",
-            jp.get("agentAccount.lastName"));
+            jp.get("content[0].agentAccount.lastName"));
         results.put("getPOResponse_agentAccount_addressLine1",
-            jp.get("agentAccount.addressLine1"));
+            jp.get("content[0].agentAccount.addressLine1"));
         results.put("getPOResponse_agentAccount_city",
-            jp.get("agentAccount.city"));
+            jp.get("content[0].agentAccount.city"));
         results.put("getPOResponse_agentAccount_accountCsn",
-            jp.get("agentAccount.accountCsn"));
+            jp.get("content[0].agentAccount.accountCsn"));
         results.put("getPOResponse_agentAccount_contactCsn",
-            jp.get("agentAccount.contactCsn"));
+            jp.get("content[0].agentAccount.contactCsn"));
       } else {
         results.put("getPOResponse_agentAccount", null);
       }
 
       if (jp.get("agentContact") != null) {
         results.put("getPOResponse_agentContact_firstName",
-            jp.get("agentContact.firstName"));
+            jp.get("content[0].agentContact.firstName"));
         results.put("getPOResponse_agentContact_lastName",
-            jp.get("agentContact.lastName"));
+            jp.get("content[0].agentContact.lastName"));
         results.put("getPOResponse_agentContact_addressLine1",
-            jp.get("agentContact.addressLine1"));
+            jp.get("content[0].agentContact.addressLine1"));
         results.put("getPOResponse_agentContact_city",
-            jp.get("agentContact.city"));
+            jp.get("content[0].agentContact.city"));
         results.put("getPOResponse_agentContact_accountCsn",
-            jp.get("agentContact.accountCsn"));
+            jp.get("content[0].agentContact.accountCsn"));
         results.put("getPOResponse_agentContact_contactCsn",
-            jp.get("agentContact.contactCsn"));
+            jp.get("content[0].agentContact.contactCsn"));
       } else {
         results.put("getPOResponse_agentContact", null);
       }
 
-      results.put("getPOResponse_oxygenID", jp.get("purchaser.oxygenId").toString());
-      results.put(BICECEConstants.PAYER_EMAIL, jp.get("purchaser.email").toString());
-      results.put(BICECEConstants.PAYER_CSN, jp.get("payerAccount.accountCsn").toString());
+      results.put("getPOResponse_oxygenID", jp.get("content[0].purchaser.oxygenId").toString());
+      results.put(BICECEConstants.PAYER_EMAIL, jp.get("content[0].purchaser.email").toString());
+      results.put(BICECEConstants.PAYER_CSN,
+          jp.get("content[0].payerAccount") != null ? jp.get("content[0].payerAccount.accountCsn").toString() : null);
 
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service V4 API" + e.getMessage());

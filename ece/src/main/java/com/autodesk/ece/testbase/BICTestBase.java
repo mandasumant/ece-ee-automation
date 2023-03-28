@@ -882,11 +882,16 @@ public class BICTestBase {
 
     try {
       Util.printInfo("Clicking on Financing tab.");
-      bicPage.clickUsingLowLevelActions("financingTab");
+      if (bicPage.checkIfElementExistsInPage("financingTab", 1)) {
+        bicPage.clickUsingLowLevelActions("financingTab");
 
-      populateBillingAddress(address, data);
+        populateBillingAddress(address, data);
+      } else {
+        bicPage.clickUsingLowLevelActions("financingTabFlexCart");
+        bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+      }
+
       Util.sleep(20000);
-
       bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 20000);
       bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
 
@@ -1393,10 +1398,14 @@ public class BICTestBase {
         System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_INT)) {
       navigateToDotComPage(data);
 
-      // Selecting monthly for Non-Flex, Non-Financing
+      // Selecting monthly for Non-Flex
       if (productType.equals("flex")) {
         bicPage.waitForFieldPresent("flexTab", 5000);
         bicPage.clickUsingLowLevelActions("flexTab");
+
+        if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+          bicPage.clickUsingLowLevelActions("flex500Tokens");
+        }
 
         bicPage.waitForFieldPresent("buyTokensButton", 5000);
         Util.sleep(3000);
@@ -1568,6 +1577,10 @@ public class BICTestBase {
           Util.sleep(60000);
           driver.navigate().refresh();
         }
+      } else {
+        financingTestBase.setTestData(data);
+        financingTestBase.completeFinancingApplication(data);
+        break;
       }
     }
 
@@ -1825,6 +1838,10 @@ public class BICTestBase {
       Util.printInfo("No Chat Popup found. Continuing...");
     }
     Util.printInfo("Checking if Chat Popup Present. Done");
+
+    if (paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      return;
+    }
 
     if (data.get("productType").equals("flex") && (paymentMethod.equalsIgnoreCase(BICECEConstants.CREDITCARD)
         || paymentMethod.equals(BICECEConstants.VISA)) && (
