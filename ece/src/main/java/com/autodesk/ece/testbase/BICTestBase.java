@@ -1842,13 +1842,16 @@ public class BICTestBase {
     if (paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       return;
     }
-
     if (data.get("productType").equals("flex") && (paymentMethod.equalsIgnoreCase(BICECEConstants.CREDITCARD)
         || paymentMethod.equals(BICECEConstants.VISA)) && (
         System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_INT) || data.get("locale")
             .equals("en_CA"))) {
       try {
-        bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+        if (bicPage.checkIfElementExistsInPage("savePaymentProfile", 20)) {
+          bicPage.clickUsingLowLevelActions("savePaymentProfile");
+        } else {
+          bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+        }
       } catch (MetadataException e) {
         throw new RuntimeException(e);
       }
