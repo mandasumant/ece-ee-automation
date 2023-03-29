@@ -394,7 +394,7 @@ validateGDPRFooterBannerOnNextPageLoad:
   autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
   autodeskHomeNextPageUrl: "https://www-int.autodesk.co.uk/products"
 
-validateGdprMandatoryTagsFiredAfterConsentOnNextPage:
+validateGdprMandatoryTagsFiredOnNextPageLoad:
   autodeskHomePageUrl: "https://www-int.autodesk.co.uk/"
   autodeskHomeNextPageUrl: "https://www-int.autodesk.co.uk/products"
   GdprFacebook: "https://connect.facebook.net/en_US/fbevents.js"
