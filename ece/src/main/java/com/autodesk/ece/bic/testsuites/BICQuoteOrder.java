@@ -171,6 +171,10 @@ public class BICQuoteOrder extends ECETestBase {
         !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PUSH_FLAG)) ? Boolean.valueOf(
             System.getProperty(BICECEConstants.PROJECT78_PUSH_FLAG)) : false;
 
+    Boolean isMultiLineItem =
+        !Objects.isNull(System.getProperty(BICECEConstants.IS_MULTILINE)) ? Boolean.valueOf(
+            System.getProperty(BICECEConstants.IS_MULTILINE)) : false;
+
     if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
       locale = System.getProperty("locale");
     }
@@ -184,7 +188,7 @@ public class BICQuoteOrder extends ECETestBase {
         testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
-        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
+        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, isMultiLineItem);
 
     //Wait for Quote to sync from CPQ/SFDC to S4.
     Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
@@ -210,11 +214,13 @@ public class BICQuoteOrder extends ECETestBase {
             .address(System.getProperty(BICECEConstants.ADDRESS))
             .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
 
-        if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-          builder.scenario(BICECEConstants.DIFFERENT_PAYER);
-        } else {
-          builder.scenario(BICECEConstants.SAME_PAYER);
-        }
+          if(isMultiLineItem) {
+            builder.scenario(BICECEConstants.MULTI_LINE_ITEM);
+          } else if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+            builder.scenario(BICECEConstants.DIFFERENT_PAYER);
+          } else {
+            builder.scenario(BICECEConstants.SAME_PAYER);
+          }
 
           if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
             builder.tenant(System.getProperty(BICECEConstants.TENANT));
@@ -636,26 +642,37 @@ public class BICQuoteOrder extends ECETestBase {
   @Test(groups = {"multiline-quoteorder"}, description = "Validation of Create Multiline item quote Order")
   public void validateMultiLineItemQuoteOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
-
     Address address = getBillingAddress();
-    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
 
-    getBicTestBase().createBICAccount(
-        new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-            testDataForEachMethod.get(BICECEConstants.LASTNAME)),
-        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
+    Boolean shouldPullFromDataStore =
+        !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) ? Boolean.valueOf(
+            System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) : false;
 
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
-        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, true);
+    if (shouldPullFromDataStore) {
+      loadQuoteDataFromP78();
+      address = new Address(testDataForEachMethod.get("address"));
+      address.company = testDataForEachMethod.get("company");
+    } else {
+      getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+      getBicTestBase().createBICAccount(
+          new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+              testDataForEachMethod.get(BICECEConstants.LASTNAME)),
+          testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
 
-    //Wait for Quote to sync from CPQ/SFDC to S4.
-    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
-    Util.sleep(600000);
+      getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
+      String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+          testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
 
-    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
-
-    // Signing out after quote creation
-    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+      //Wait for Quote to sync from CPQ/SFDC to S4.
+      Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+      Util.sleep(600000);
+      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+      testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+      // Signing out after quote creation
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+    }
+    testResults.putAll(testDataForEachMethod);
+    updateTestingHub(testResults);
 
     testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
@@ -721,7 +738,7 @@ public class BICQuoteOrder extends ECETestBase {
             .name(BICECEConstants.LOC_TEST_NAME)
             .emailId(results.get(BICConstants.emailid))
             .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
-            .quoteId(quoteId)
+            .quoteId(testDataForEachMethod.get(BICECEConstants.QUOTE_ID))
             .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
             .address(System.getProperty(BICECEConstants.ADDRESS))
             .scenario("Multi Line Item").build());
@@ -1517,15 +1534,15 @@ public class BICQuoteOrder extends ECETestBase {
 
     builder
         .name(BICECEConstants.QUOTE_TEST_NAME)
-        .locale(locale)
-        .tenant(BICECEConstants.PLATFORM_TENANT);
+        .locale(locale);
 
-    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+    if(Objects.equals(System.getProperty(BICECEConstants.IS_MULTILINE), BICECEConstants.TRUE)) {
+      builder.scenario(BICECEConstants.MULTI_LINE_ITEM);
+    } else if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
       builder.scenario(BICECEConstants.DIFFERENT_PAYER);
     } else {
       builder.scenario(BICECEConstants.SAME_PAYER);
     }
-
 
     OrderData order = dsClient.grabOrder(builder.build());
     try {

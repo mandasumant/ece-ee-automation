@@ -193,6 +193,7 @@ public class BICECEConstants extends BICConstants {
   public static final String IS_SAME_PAYER = "isSamePayer";
   public static final String SAME_PAYER = "SamePayer";
   public static final String DIFFERENT_PAYER = "DifferentPayer";
+  public static final String MULTI_LINE_ITEM = "MultiLineItem";
   public static final String EXISTING_PAYER_CSN = "existingPayerCSN";
   public static final String EXISTING_PAYER_EMAIL = "existingPayerEmail";
   public static final String SUBMIT_TAX_INFO = "submitTaxInfo";
@@ -217,6 +218,7 @@ public class BICECEConstants extends BICConstants {
   public static final String QUOTE_TEST_NAME = "QUOTE";
   public static final String PROJECT78_PUSH_FLAG = "pushToDataStore";
   public static final String PROJECT78_PULL_FLAG = "pullFromDataStore";
+  public static final String IS_MULTILINE = "isMultiLineItem";
 
 
   public static final String BIC_TEST_NAME = "BIC_ORDER";

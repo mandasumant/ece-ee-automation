@@ -81,6 +81,8 @@ public class PWSTestBase {
     if (isMultiLineItem) {
       if (System.getProperty("quantity2") != null) {
         data.put(BICECEConstants.FLEX_TOKENS, System.getProperty("quantity2"));
+      } else {
+        data.put(BICECEConstants.FLEX_TOKENS, "4000");
       }
       LineItemDTO lineItemTwo = new LineItemDTO(data);
       lineItemTwo.setOffer(offer);
