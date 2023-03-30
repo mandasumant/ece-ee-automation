@@ -2,6 +2,7 @@ package com.autodesk.ece.utilities;
 
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -133,15 +134,17 @@ public class AnalyticsNetworkLogs {
     public String getCookie(Set<Cookie> cookies, String cookieName) {
         String cookie = "No Cookies Were Found";
         Iterator<Cookie> itr = cookies.iterator();
+        String decodedCookieValue = null;
         while (itr.hasNext()) {
             Cookie c = itr.next();
             if (c.getName().equalsIgnoreCase(cookieName)) {
                 cookie = c.getValue();
+                decodedCookieValue = URLDecoder.decode(cookie);
                 break;
             }
 
         }
-        return cookie;
+        return decodedCookieValue;
     }
 
 }

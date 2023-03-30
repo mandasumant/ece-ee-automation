@@ -111,13 +111,13 @@ public class TealiumNetworkLogs extends ECETestBase {
         Set<Cookie> cookies = AnalyticsNetworkLogs.getObject().getCookies(this.getDriver());
         cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI, cookie);
-        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[0]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[0]);
-        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[1]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[1]);
-        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[2]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[2]);
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[0]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[0] + " but found " + cookie);
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[1]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[1] + " but found " + cookie);
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMulti").split(",")[2]), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI + " with value: " + testDataForEachMethod.get("gdprOptOutMulti").split(",")[2] + " but found " + cookie);
 
         cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_GEO);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI_GEO, cookie);
-        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiGeo")), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_GEO + " with value: " + testDataForEachMethod.get("gdprOptOutMultiGeo"));
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiGeo")), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_GEO + " with value: " + testDataForEachMethod.get("gdprOptOutMultiGeo") + " but found " + cookie);
 
         cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE, cookie);
@@ -181,7 +181,7 @@ public class TealiumNetworkLogs extends ECETestBase {
 
         cookie = AnalyticsNetworkLogs.getObject().getCookie(cookies, BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE);
         results.put(BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE, cookie);
-        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiType")), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE +  " with value: " + testDataForEachMethod.get("gdprOptOutMultiType"));
+        Assert.assertTrue(cookie.contains(testDataForEachMethod.get("gdprOptOutMultiType")), " Unable to find Cookie: " + BICECEConstants.GDPR_OPT_OUT_MULTI_TYPE +  " with value: " + testDataForEachMethod.get("gdprOptOutMultiType") + " but found " + cookie);
         updateTestingHub(results);
     }
 
@@ -203,10 +203,10 @@ public class TealiumNetworkLogs extends ECETestBase {
         portaltb.openAutoDeskHomePage(testDataForEachMethod, "autodeskHomePageUrl");
         portaltb.clickCookiesFooterAcceptButton();
         List<String> logs = AnalyticsNetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
+        results.put("GDPR Adobe Analytics", AnalyticsNetworkLogs.getObject().filterLogs(logs, testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS)));
         results.put("GDPR Facebook Analytics", AnalyticsNetworkLogs.getObject().filterLogs(logs, testDataForEachMethod.get(BICECEConstants.GDPR_FACEBOOK_ANALYTICS)));
         results.put("GDPR Twitter Analytics", AnalyticsNetworkLogs.getObject().filterLogs(logs, testDataForEachMethod.get(BICECEConstants.GDPR_TWITTER_ANALYTICS)));
         results.put("GDPR Google Analytics", AnalyticsNetworkLogs.getObject().filterLogs(logs, testDataForEachMethod.get(BICECEConstants.GDPR_GOOGLE_ANALYTICS)));
-        results.put("GDPR Adobe Analytics", AnalyticsNetworkLogs.getObject().filterLogs(logs, testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS)));
         updateTestingHub(results);
     }
 
