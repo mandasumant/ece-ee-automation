@@ -190,6 +190,7 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod, "autodeskHomePageUrl");
+        Assert.assertTrue(portaltb.verifyCookiesFooterBannerIsVisible(), " Unable to find Cookies Footer Banner");
         portaltb.clickCookiesFooterAcceptButton();
         Assert.assertFalse(portaltb.verifyCookiesFooterBannerIsVisible(), "Able to find Cookies Footer Banner");
         results.put("CookiesBanner", "Not Available");
@@ -201,6 +202,7 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod, "autodeskHomePageUrl");
+        Assert.assertTrue(portaltb.verifyCookiesFooterBannerIsVisible(), " Unable to find Cookies Footer Banner");
         portaltb.clickCookiesFooterAcceptButton();
         List<String> logs = AnalyticsNetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
         results.put("GDPR Adobe Analytics", AnalyticsNetworkLogs.getObject().filterLogs(logs, testDataForEachMethod.get(BICECEConstants.GDPR_ADOBE_ANALYTICS)));
