@@ -2445,7 +2445,9 @@ public class PortalTestBase {
   public boolean verifyCookiesFooterBannerIsVisible() {
     boolean bannerVisible;
     try {
-      bannerVisible = portalPage.checkIfElementExistsInPage("cookiesFooterBanner", 10) && portalPage.checkIfElementExistsInPage("cookiesFooterBannerAccept", 10);
+      bannerVisible =
+          portalPage.checkIfElementExistsInPage("cookiesFooterBanner", 10) && portalPage.checkIfElementExistsInPage(
+              "cookiesFooterBannerAccept", 10);
     } catch (Exception e) {
       bannerVisible = false;
     }

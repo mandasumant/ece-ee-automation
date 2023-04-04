@@ -13,6 +13,7 @@ LocaleConfig:
     maxAmountPBI: "100,000.00"
     ttrEnabled: "true"
     paypalEmail: "paypal-buyer-namer@ssttest.net"
+    optyId: "A-1776440"
 
   en_CA:
     region: "ENCA"
@@ -141,7 +142,7 @@ LocaleConfig:
     storeName: "STORE-JP"
     currencyStore: "JPY"
     countryDomain: ".co.jp"
-    paymentMethods: "CREDITCARD,PAYPAL,CASH"
+    paymentMethods: "CREDITCARD,MASTERCARD,AMEX,JCB,PAYPAL,CASH"
     address: "Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@13"
     isTaxed: "Y"
     quoteAgentCsnAccount: "0070016107"
@@ -149,6 +150,7 @@ LocaleConfig:
     minAmountPBI: "127,872"
     maxAmountPBI: "12,787,150"
     paypalEmail: "Paypal-buyer-japan@ssttest.net"
+    optyId: "A-18595460"
 
   de_DE:
     region: "DEDE"

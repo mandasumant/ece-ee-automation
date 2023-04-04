@@ -193,9 +193,9 @@ pipeline {
             }
         }
 
-       stage('Apollo R2.0.5') {
+        stage('Apollo R2.0.5') {
 
-          when {
+            when {
                 branch 'master'
                 anyOf {
                     triggeredBy 'TimerTrigger'
@@ -205,7 +205,7 @@ pipeline {
                 }
             }
             steps {
-                triggerApolloR2_0_5(serviceBuildHelper,'INT')
+                triggerApolloR2_0_5(serviceBuildHelper, 'INT')
                 script {
                     sh 'sleep 600'
                 }
@@ -352,26 +352,26 @@ def triggerApolloR2_3CreateCreditMemo(def serviceBuildHelper) {
 def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
     echo 'Initiating Apollo R2.0.5 for Japan'
     script {
-       println("Building Testing Hub API Input Map - estore")
-       def testingHubInputMap = [:]
-       def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
-       testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
-       testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-       testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionname":"Apollo: Apollo R2.0.5 Japan orders on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"29733","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
-               '{"displayname":"GUAC - BiC Native Order JP CC","testcasename":"validateBicNativeOrder","description":"GUAC - BiC Native Order JP CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13812"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@日本@大阪府","locale":"ja_JP"}},' +
-               '{"displayname":"GUAC - BiC Native Order JP PAYPAL","testcasename":"validateBicNativeOrder","description":"GUAC - BiC Native Order JP PAYPAL","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13837"},"testdata":{"usertype":"new","password":"","payment":"PAYPAL","store":"STORE-JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@日本@大阪府","locale":"ja_JP"}}' +
-               '],"workstreamname":"dclecjt"}'
-       println("Starting Testing Hub API Call - estore")
-       testingHubInputMap.
-       execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
-       if (execution_id != null) {
-           println('Testing Hub API called successfully - estore')
-       } else {
-           currentBuild.result = 'FAILURE'
-           println('Testing Hub API call failed - estore')
-       }
+        println("Building Testing Hub API Input Map - estore")
+        def testingHubInputMap = [:]
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+        testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionname":"Apollo: Apollo R2.0.5 Japan orders on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"29733","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
+                '{"displayname":"GUAC - BiC Native Order JP CC","testcasename":"validateBicNativeOrder","description":"GUAC - BiC Native Order JP CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13812"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@日本@大阪府"}},' +
+                '{"displayname":"GUAC - BiC Native Order JP PAYPAL","testcasename":"validateBicNativeOrder","description":"GUAC - BiC Native Order JP PAYPAL","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13837"},"testdata":{"usertype":"new","password":"","payment":"PAYPAL","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@日本@大阪府"}},' +
+                '{"displayname":"GUAC - MOE order JP CC","testcasename":"validateBicNativeOrderMoe","description":"MOE order JP CC","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-nativeorder-moe","testMethod":"validateBicNativeOrderMoe","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@日本@東京都","timezone":"Japan/Tokyo"}}' +
+                '],"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - estore")
+        testingHubInputMap.
+                execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
+        if (execution_id != null) {
+            println('Testing Hub API called successfully - estore')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - estore')
+        }
     }
-
     script {
         println("Building Testing Hub API Input Map - All")
 
@@ -382,18 +382,18 @@ def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":" ' + params.ENVIRONMENT + ' ","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-                 '{"displayname":"BiC order Flex - Japan Credit Card","testcasename":"d27c5060","description":"BiC order Flex - Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@大阪府","sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
+                '{"displayname":"BiC order Flex - Japan Credit Card","testcasename":"d27c5060","description":"BiC order Flex - Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@大阪府","sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"BiC order Flex Estimator - Japan Paypal","testcasename":"fbf7fe55","description":"BiC order Flex - Japan Paypal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"PAYPAL","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@大阪府", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"BiC Flex Direct Order Refund Japan Credit Card","testcasename":"a1c54974","description":"Flex Direct Order Refund Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexdirect-new-refund","testMethod":"validateFlexOrderNewCartRefund","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@大阪府", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"Quote 2 Order - Japan Credit Card ","testcasename":"9d3de1c2","description":"Quote 2 Order - Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","isTaxed":"Y","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@13","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
                 '{"displayname":"Quote 2 Order Multi line item Order Japan Credit Card","testcasename":"e803e4a4","description":"Quote 2 Order Multi line item Order Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"multiline-quoteorder","testMethod":"validateMultiLineItemQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@13","sku":"default:1","email":"","isTaxed":"Y","locale":"ja_JP","quantity1":"2000","quantity2":"4000","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
                 '{"displayname":"Quote 2 Order SUS and Quote Orders Japan Credit Card","testcasename":"c5558739","description":"Quote 2 Order SUS and Quote Orders Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-sus-quote-orders","testMethod":"validateBicSUSAndQuoteOrders","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@13","sku":"default:1","email":"","isTaxed":"Y","locale":"ja_JP","sapValidation":"' + params.INVOICE_VALIDATION + '","emailType":"biz","timezone":"Japan/Tokyo"}},' +
-                '{"displayname":"LOC Q2O Same Purchaser & Payer - Japan","testcasename":"9d3de1c2","description":"LOC Q2O Same Purchaser & Payer - Japan","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"7094","jiraId":"APLR2PMO-12671"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@13",emailType":"biz","isTaxed":"Y","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
-                '{"displayname":"LOC Q2O Pay Invoice Same Purchaser & Payer - JP","testcasename":"9329504a","description":"LOC Q2O Pay Invoice Same Purchaser & Payer - JP","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-JP","locale":"ja_JP",sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","timezone":"Japan/Tokyo"}},' +
+                '{"displayname":"LOC Q2O Same Purchaser & Payer - Japan","testcasename":"9d3de1c2","description":"LOC Q2O Same Purchaser & Payer - Japan","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"7094","jiraId":"APLR2PMO-12671"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@13","emailType":"biz","isTaxed":"Y","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
+                '{"displayname":"LOC Q2O Pay Invoice Same Purchaser & Payer - JP","testcasename":"9329504a","description":"LOC Q2O Pay Invoice Same Purchaser & Payer - JP","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","timezone":"Japan/Tokyo"}},' +
                 '{"displayname":"MOE O2P Order JP - Agent - New ","testcasename":"e2ea9875","description":"MOE O2P Order JP - Agent - New user","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdmAgent-moe","testMethod":"validateMoeOdmOpportunityFlowAgent","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@大阪府","locale":"ja_JP"}},' +
                 '{"displayname":"MOE O2P Order JP - Customer - Existing","testcasename":"97993340","description":"MOE O2P Order JP - Customer - Existing","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdmCustomer-moe","testMethod":"validateMoeOdmOpportunityFlowCustomer","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@大阪府","locale":"ja_JP"}},' +
                 '{"displayname":"MOE DTC O2P Order JP - Customer - Existing","testcasename":"2363224d","description":"MOE DTC O2P Order JP - Customer - Existing","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-returningUserOdmDtc-moe","testMethod":"validateMoeOdmDtcFlowReturningCustomer","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","isTaxed":"Y","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@大阪府","locale":"ja_JP"}}' +
-         '],"workstreamname":"dclecjt"}'
+                '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - flex - All")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
             println('Testing Hub API called successfully - flex - All')
@@ -451,7 +451,7 @@ def triggerCJT(def serviceBuildHelper, String env) {
                 '{"displayname":"Account Portal - Change Payment","testcasename":"validateBICChangePaymentProfile","description":"Change Payment from Portal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-changePayment","testMethod":"validateBICChangePaymentProfile","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}},' +
                 '{"displayname":"Account Portal - Switch Term","testcasename":"validateBicNativeOrderSwitchTerm","description":"Switch Term for BiC Order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder-switch-term","testMethod":"validateBicNativeOrderSwitchTerm","parameters":{"application":"ece","payment":"VISA","store":"STORE-NAMER"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}},' +
                 '{"displayname":"Account Portal - Restart Subscription","testcasename":"validateRestartSubscription","description":"Restart a Canceled Subscription","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-restart-subscription","testMethod":"validateRestartSubscription","parameters":{"application":"ece","payment":"VISA","store":"STORE-NAMER"},"testdata":{}},' +
-                '{"displayname":"Account Portal - Align Billing","testcasename":"validateAlignBilling","description":"Align 2 Subscriptions to same Renewal from Portal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-align-billing","testMethod":"validateAlignBilling","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}}' +
+                '{"displayname":"Account Portal - Align Billing","testcasename":"validateAlignBilling","description":"Align 2 Subscriptions to same Renewal from Portal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-align-billing","testMethod":"validateAlignBilling","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}},' +
                 '{"displayname":"MOAB - Reseller  Pay invoices with Cash & CM - US","testcasename":"4e084fce","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","applyCM":"Y","sku":"default:1","email":"","locale":"en_US"}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - accountportal")

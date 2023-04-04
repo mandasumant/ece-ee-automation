@@ -51,10 +51,10 @@ public class MOETestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
+    String optyId = data.get(BICECEConstants.MOE_OPTY_ID);
     String productID = "";
     String quantity = "";
-    String guacResourceURL = data.get(BICECEConstants.GUAC_RESOURCE_URL);
-    String guacMoeResourceURL = data.get("guacMoeResourceURL") + "A-1776440";
+    String guacMoeResourceURL = data.get("guacMoeResourceURL") + optyId;
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
     String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
@@ -154,7 +154,8 @@ public class MOETestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
-    String guacMoeResourceURL = data.get("guacMoeResourceURL") + "A-1776440";
+    String optyId = data.get(BICECEConstants.MOE_OPTY_ID);
+    String guacMoeResourceURL = data.get("guacMoeResourceURL") + optyId;
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
 
     Names names = bicTestBase.generateFirstAndLastNames();
@@ -290,7 +291,7 @@ public class MOETestBase {
     Util.printInfo("GuacMoeURL: " + constructGuacMoeURL);
     Map<String, String> address = null;
 
-    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
+    address = bicTestBase.getBillingAddress(data);
 
     Names names = BICTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password, false);

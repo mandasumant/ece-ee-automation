@@ -479,9 +479,12 @@ public class BICTestBase {
     if (bicPage.waitForFieldPresent("creditCardPaymentTab", 5000)) {
       Util.printInfo("Clicking on Save button");
       String tabKey = paymentType.toLowerCase();
-      if (paymentType.equalsIgnoreCase(BICECEConstants.VISA) || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
-          || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD) || paymentType.equalsIgnoreCase(
-          BICECEConstants.LOC)) {
+      if (paymentType.equalsIgnoreCase(BICECEConstants.VISA)
+          || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
+          || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD)
+          || paymentType.equalsIgnoreCase(BICECEConstants.JCB)
+          || paymentType.equalsIgnoreCase(BICECEConstants.AMEX)
+          || paymentType.equalsIgnoreCase(BICECEConstants.LOC)) {
         tabKey = "credit-card";
       }
 
