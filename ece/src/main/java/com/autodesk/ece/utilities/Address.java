@@ -49,9 +49,7 @@ public class Address {
       FileInputStream fileStream = new FileInputStream(countryCodeJsonFilePath);
       InputStreamReader inputStream = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
       JsonPath jp = new JsonPath(inputStream);
-      Util.printInfo("THE JSPON PATH" + jp.prettyPrint());
       countryCode = jp.getString("find { it.Name == '" + this.country + "' }.Code");
-      Util.PrintInfo("THE COUNTRY CODE " + countryCode);
     } catch (FileNotFoundException e) {
       Util.printError("Failed to load country codes file: " + e.getMessage());
     }

@@ -363,8 +363,8 @@ def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
                 '{"displayname":"GUAC - MOE order JP CC","testcasename":"validateBicNativeOrderMoe","description":"MOE order JP CC","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-nativeorder-moe","testMethod":"validateBicNativeOrderMoe","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@日本@東京都","timezone":"Japan/Tokyo"}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore")
-        testingHubInputMap.
-                execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
+        execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
+
         if (execution_id != null) {
             println('Testing Hub API called successfully - estore')
         } else {
