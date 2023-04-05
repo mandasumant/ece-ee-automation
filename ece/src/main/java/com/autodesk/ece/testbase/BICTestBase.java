@@ -1222,6 +1222,10 @@ public class BICTestBase {
           case BICECEConstants.CASH:
             selectCashPayment();
             break;
+          case BICECEConstants.PAYMENT_KONBINI:
+            selectKonbiniPaymentTab();
+            selectConvenienceStoreType();
+            break;
           default:
             populatePaymentDetails(paymentCardDetails);
             break;
@@ -1845,6 +1849,11 @@ public class BICTestBase {
     if (paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       return;
     }
+
+    if (paymentMethod.equals(BICECEConstants.PAYMENT_KONBINI)) {
+      return;
+    }
+
     if (data.get("productType").equals("flex") && (paymentMethod.equalsIgnoreCase(BICECEConstants.CREDITCARD)
         || paymentMethod.equals(BICECEConstants.VISA)) && (
         System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_INT) || data.get("locale")
@@ -2752,6 +2761,23 @@ public class BICTestBase {
     financingTestBase.completeFinancingApplication(data);
 
     return results;
+  }
+
+  public void selectKonbiniPaymentTab() throws MetadataException {
+    Util.printInfo("Clicking on Konbini Payment Tab...");
+    bicPage.clickUsingLowLevelActions("konbiniPaymentTab");
+  }
+
+  public void selectConvenienceStoreType() throws MetadataException {
+    if (bicPage.checkIfElementExistsInPage("selectStoreType", 10)) {
+      bicPage.clickUsingLowLevelActions("selectStoreType");
+      String selectCountryOption = bicPage.getFirstFieldLocator("selectStoreTypeOption")
+              .replace("<STOREOPTION>", System.getProperty(BICECEConstants.STORE_TYPE_OPTION));
+      driver.findElement(By.xpath(selectCountryOption)).click();
+      Util.sleep(5000);
+      bicPage.clickUsingLowLevelActions("keepKonbiniPaymentTab");
+      waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
   }
 
   public static class Names {

@@ -214,6 +214,8 @@ public class BICECEConstants extends BICConstants {
   public static final String TENANT = "tenant";
   public static final String PLATFORM_TENANT = "PlatformAutomation";
   public static final String CASH = "CASH";
+  public static final String PAYMENT_KONBINI = "KONBINI";
+  public static final String STORE_TYPE_OPTION = "store_type";
   public static final String APPLY_CM = "applyCM";
   public static final String CURRENCY = "currency";
   public static final String SUBMIT_PAYMENT_BUTTON = "submitPaymentButton";
