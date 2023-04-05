@@ -594,7 +594,7 @@ def triggerFinancing(def serviceBuildHelper, String env) {
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","executionname":"Financing Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com"],"testcases":[' +
-                '{"displayname":"BiC Financing Q2O Order","testcasename":"9d3de1c2","description":"BiC Financing Q2O Order","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""}}' +
+                '{"displayname":"BiC Financing Q2O Order","testcasename":"9d3de1c2","description":"BiC Financing Q2O Order","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":"","timezone":"America/New_York"}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - flex")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
