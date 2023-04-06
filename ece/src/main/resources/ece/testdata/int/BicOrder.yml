@@ -30,7 +30,8 @@ default:
   zipPayVerificationCode: "123456"
 
   getPurchaseOrderDetailsUrl: "https://api.pelicanint.autodesk.com/orders/v3/filters"
-  getPurchaseOrderDetailsV4Url: "https://api.pelicanint.autodesk.com/orders/v4/filters"
+  getPurchaseOrderDetailsV4Url: "https://api.pelicanint.autodesk.com/orders/v4/passtoken"
+  getPurchaseOrderFiltersV4Url: "https://api.pelicanint.autodesk.com/orders/v4/filters"
   putPelicanRefundOrderUrl: "https://api.pelicanint.autodesk.com/orders/v3/passtoken/operation"
   putPelicanRefundOrderV4Url: "https://api.pelicanint.autodesk.com/orders/v4/passtoken/operation"
   getSubscriptionByIdUrl: "https://api.pelicanint.autodesk.com/subscriptions/v3/passtoken"

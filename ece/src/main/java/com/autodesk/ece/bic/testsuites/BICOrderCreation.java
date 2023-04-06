@@ -6,7 +6,6 @@ import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -770,6 +769,10 @@ public class BICOrderCreation extends ECETestBase {
         portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
 
+      // If the order number is null (such as from a financing order), use the order number from the pelican request
+      if (results.get(BICConstants.orderNumber) == null) {
+        results.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      }
       // Refund PurchaseOrder details from pelican
       pelicantb.createRefundOrderV4(results);
 
@@ -777,6 +780,9 @@ public class BICOrderCreation extends ECETestBase {
       // add additional 6min sleep for the IPN message to come back.
       Util.sleep(360000);
 
+      // Hack to improve reliability, remove the order number to force the order api to use the oxygen id instead of the
+      // order number since the latter is not officially supported
+      results.remove(BICConstants.orderNumber);
       // Getting a PurchaseOrder details from pelican
       JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
       results.put("refund_orderState", jp.get("orderState").toString());
