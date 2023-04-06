@@ -11,7 +11,6 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.ece.utilities.Address;
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.ece.utilities.TaxExemptionMappings;
 import com.autodesk.ece.utilities.TaxExemptionMappings.TaxOptions;
 import com.autodesk.testinghub.core.base.GlobalConstants;
@@ -291,6 +290,8 @@ public class BICQuoteOrder extends ECETestBase {
     // Re login during checkout
     getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
     getBicTestBase().refreshCartIfEmpty();
+    String oxygenId = getBicTestBase().driver.manage().getCookieNamed("identity-sso").getValue();
+    testDataForEachMethod.put(BICConstants.oxid, oxygenId);
 
     if (Objects.equals(testDataForEachMethod.get("ttrEnabled"), "true")) {
       if (testDataForEachMethod.get("taxOptionEnabled").equals("Y")) {

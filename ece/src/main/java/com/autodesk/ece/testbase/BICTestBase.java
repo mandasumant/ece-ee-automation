@@ -333,6 +333,9 @@ public class BICTestBase {
     driver.switchTo().defaultContent();
     waitForLoadingSpinnerToComplete("loadingSpinner");
     Util.printInfo("Successfully logged into Bic");
+
+    String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
+    data.put(BICConstants.oxid, oxygenId);
   }
 
   @Step("Add a seat from the existing subscription popup")
@@ -1701,6 +1704,8 @@ public class BICTestBase {
     createBICAccount(names, data.get(BICECEConstants.emailid),
         ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
     data.putAll(names.getMap());
+    String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
+    data.put(BICConstants.oxid, oxygenId);
   }
 
   private void updateEstimatorToolInput(WebElement webElement, int input) {
@@ -1829,11 +1834,7 @@ public class BICTestBase {
     return getBillingAddress(billingAddress);
   }
 
-  public void enterBillingDetails(LinkedHashMap<String, String> data,
-      Map<String, String> address, String paymentMethod) throws MetadataException {
-    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
-    selectPaymentProfile(data, paymentCardDetails, address);
-
+  private void dismissChatPopup() {
     // handling the chat popup
     try {
       Util.printInfo("Checking if Chat Popup Present");
@@ -1845,6 +1846,14 @@ public class BICTestBase {
       Util.printInfo("No Chat Popup found. Continuing...");
     }
     Util.printInfo("Checking if Chat Popup Present. Done");
+  }
+
+  public void enterBillingDetails(LinkedHashMap<String, String> data,
+      Map<String, String> address, String paymentMethod) throws MetadataException {
+    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
+    dismissChatPopup();
+    selectPaymentProfile(data, paymentCardDetails, address);
+    dismissChatPopup();
 
     if (paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       return;

@@ -442,9 +442,9 @@ public class PelicanTestBase {
       orders.put("orderIds", array);
       filters.put("filters", orders);
     } else {
-      JSONObject emailId = new JSONObject();
-      emailId.put("email", data.get(BICECEConstants.emailid));
-      filters.put("filters", emailId);
+      JSONObject oxygenId = new JSONObject();
+      oxygenId.put("oxygenId", data.get(BICConstants.oxid));
+      filters.put("filters", oxygenId);
     }
 
     String requestJson = filters.toJSONString();
@@ -459,6 +459,7 @@ public class PelicanTestBase {
     header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
 
+    Util.PrintInfo("Requesting order details with filter: " + requestJson);
     Response response = getRestResponse(getPurchaseOrderDetailsUrl, header, requestJson);
     String result = response.getBody().asString();
     Util.PrintInfo(BICECEConstants.RESULT + result);
