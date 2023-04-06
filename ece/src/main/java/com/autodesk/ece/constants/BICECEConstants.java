@@ -98,7 +98,6 @@ public class BICECEConstants extends BICConstants {
   public static final String ORDER_NUMBER = "OrderNumber  :: ";
   public static final String DOWNLOAD_FREE_TRIAL_LOGIN_FRAME = "downloadFreeTrialLoginFrame";
   public static final String MOE_LOGIN_USERNAME_FIELD = "moeLoginUsernameField";
-  public static final String MOE_OPTY_ID = "optyId";
   public static final String PRODUCT_PE_ID = "product_pe_id";
   public static final String PRODUCT_NAME = "productName";
   public static final String PRODUCTS_PATH = "productsPath";

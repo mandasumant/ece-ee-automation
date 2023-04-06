@@ -150,7 +150,7 @@ LocaleConfig:
     minAmountPBI: "127,872"
     maxAmountPBI: "12,787,150"
     paypalEmail: "Paypal-buyer-japan@ssttest.net"
-    optyId: "A-18595460"
+    optyId: "A-18596952"
 
   de_DE:
     region: "DEDE"

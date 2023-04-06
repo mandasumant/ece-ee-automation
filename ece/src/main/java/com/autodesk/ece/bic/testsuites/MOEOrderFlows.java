@@ -3,7 +3,6 @@ package com.autodesk.ece.bic.testsuites;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.MOETestBase;
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -36,7 +35,7 @@ public class MOEOrderFlows extends ECETestBase {
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
-  String optyName, account, stage, projectCloseDate, fulfillment, email, sku = "", plc, currency = "", contact;
+  String optyName, account, stage, projectCloseDate, fulfillment, email, sku = "", plc, currency = "", contact, optyId;
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
   String priceId = System.getProperty(BICECEConstants.PRICE_ID);
   private String PASSWORD;
@@ -97,10 +96,16 @@ public class MOEOrderFlows extends ECETestBase {
     } else if (System.getProperty(BICECEConstants.STORE).equals("STORE-CA")) {
       account = testDataForEachMethod.get("accountEnCa");
       contact = testDataForEachMethod.get("contactEnCa");
+    } else if (System.getProperty(BICECEConstants.STORE).equals("STORE-JP")) {
+      account = testDataForEachMethod.get("accountJaJp");
+      contact = testDataForEachMethod.get("contactJaJp");
+      optyId = testDataForEachMethod.get("optyIdJaJp");
     } else {
       account = testDataForEachMethod.get("account");
       contact = testDataForEachMethod.get("contact");
+      optyId = testDataForEachMethod.get("optyIdEnUs");
     }
+    testDataForEachMethod.put("optyId", optyId);
     testDataForEachMethod.put("contactEmail", contact);
 
     if (Strings.isNullOrEmpty(System.getProperty("projectCloseDate"))) {
@@ -155,6 +160,7 @@ public class MOEOrderFlows extends ECETestBase {
     plc = null;
     currency = null;
     contact = null;
+    optyId = null;
   }
 
   @Test(groups = {

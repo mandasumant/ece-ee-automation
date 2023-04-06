@@ -51,7 +51,7 @@ public class MOETestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
-    String optyId = data.get(BICECEConstants.MOE_OPTY_ID);
+    String optyId = data.get("optyId");
     String productID = "";
     String quantity = "";
     String guacMoeResourceURL = data.get("guacMoeResourceURL") + optyId;
@@ -97,13 +97,15 @@ public class MOETestBase {
     Names names = BICTestBase.generateFirstAndLastNames();
     String emailID = BICTestBase.generateUniqueEmailID();
     emulateUser(emailID, names);
+    data.put(BICECEConstants.FIRSTNAME, names.firstName);
+    data.put(BICECEConstants.LASTNAME, names.lastName);
 
     // TODO: Validate that the product that's added by default to GUAC MOE cart matches with the line items that are part of the Opportunity (passed to GUAC as part of get Opty call).
 
     // TODO: Validate that the address fields that are pre-filled in the payment section matches the address that's in the Opportunity in salesforce (passed to GUAC as part of get Opty call).
 
     // Populate Billing info and save payment profile
-    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
+    address = bicTestBase.getBillingAddress(data);
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
         .split("@");
@@ -154,7 +156,7 @@ public class MOETestBase {
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String guacBaseURL = data.get("guacBaseURL");
-    String optyId = data.get(BICECEConstants.MOE_OPTY_ID);
+    String optyId = data.get("optyId");
     String guacMoeResourceURL = data.get("guacMoeResourceURL") + optyId;
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
 
@@ -185,7 +187,6 @@ public class MOETestBase {
 
     try {
       if (StringUtils.isNotEmpty(sku)) {
-
         Util.printInfo("Associating Products to Opty: " + sku);
 
         moePage.click("titleProducts");
@@ -199,10 +200,18 @@ public class MOETestBase {
 
         moePage.populateField("skuSearch", sku);
         moePage.clickUsingLowLevelActions("skuSearchButton");
-        moePage.waitForPageToLoad();
-
-        moePage.click("checkbox");
         Util.sleep(5000);
+
+        moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
+
+        Util.printInfo("Select product.");
+        WebElement checkbox = driver.findElement(
+            By.xpath("//input[@value=\"" + sku + "\"]"));
+        moePage.waitForElementVisible(checkbox, 60);
+        checkbox.click();
+        Util.sleep(5000);
+
+        moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
 
         moePage.populateField("estimatedUnit", "1");
         Util.sleep(2000);
@@ -759,9 +768,7 @@ public class MOETestBase {
     String constructPortalUrl = data.get("cepURL");
     bicTestBase.getUrl(constructPortalUrl);
 
-    if (!GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
-      bicTestBase.getUrl(data.get("oxygenLogOut"));
-    }
+    bicTestBase.getUrl(data.get("oxygenLogOut"));
 
     bicTestBase.loginToOxygen(emailID, password);
   }
@@ -1107,11 +1114,6 @@ public class MOETestBase {
     Util.printInfo("Scrolling down the page");
     BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
 
-    if (System.getProperty("usertype").equals("new")) {
-      bicTestBase.enterCustomerDetails(address);
-      Util.sleep(5000);
-    }
-
     // In case address suggestion is returned, continue button will be displayed.
     if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue button after adding the customer details");
@@ -1199,7 +1201,11 @@ public class MOETestBase {
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     Util.printInfo("Clicking on cta: Save");
-    moePage.click("savePaymentProfile");
+    if ("STORE-JP".equals(System.getProperty(BICECEConstants.STORE))) {
+      moePage.click("submitPaymentProfile");
+    } else {
+      moePage.click("savePaymentProfile");
+    }
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     // In case address suggestion is returned, continue button will be displayed.
@@ -1461,6 +1467,11 @@ public class MOETestBase {
         Util.printInfo("Open Flex product.");
         WebElement openFlexProduct = driver.findElement(
             By.xpath(moePage.getFirstFieldLocator("openProductFound")));
+
+        Util.printInfo("Scroll to Flex product");
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView();", openFlexProduct);
+        Util.sleep(5000);
 
         int attempt = 0;
 
