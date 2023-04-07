@@ -1008,7 +1008,8 @@ public class MOETestBase {
 
     bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
 
-    moePage.click("savePaymentProfile");
+    submitPayment();
+
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     bicTestBase.agreeToTerm();
@@ -1090,8 +1091,8 @@ public class MOETestBase {
 
       bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
 
-      Util.printInfo("Saving payment profile.");
-      moePage.click("savePaymentProfile");
+      submitPayment();
+
       bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     } else {
@@ -1113,6 +1114,13 @@ public class MOETestBase {
 
     Util.printInfo("Scrolling down the page");
     BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+
+    if (bicTestBase.bicPage.checkIfElementExistsInPage("creditCardRadioButton", 10)) {
+      Util.printInfo("Clicking on radio button: Credit Card");
+      bicTestBase.bicPage.click("creditCardRadioButton");
+    }
+
+    submitPayment();
 
     // In case address suggestion is returned, continue button will be displayed.
     if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
@@ -1200,12 +1208,8 @@ public class MOETestBase {
     bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
-    Util.printInfo("Clicking on cta: Save");
-    if ("STORE-JP".equals(System.getProperty(BICECEConstants.STORE))) {
-      moePage.click("submitPaymentProfile");
-    } else {
-      moePage.click("savePaymentProfile");
-    }
+    submitPayment();
+
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     // In case address suggestion is returned, continue button will be displayed.
@@ -1580,6 +1584,21 @@ public class MOETestBase {
         e.printStackTrace();
         Util.printInfo("It's not: " + i);
       }
+    }
+  }
+
+  @Step("Click Submit payment button" + GlobalConstants.TAG_TESTINGHUB)
+  public void submitPayment() {
+    try {
+      if (moePage.checkIfElementExistsInPage("submitPaymentProfile", 10)) {
+        Util.printInfo("Clicking on cta: Review order");
+        moePage.click("submitPaymentProfile");
+      } else {
+        Util.printInfo("Clicking on cta: Save");
+        moePage.click("savePaymentProfile");
+      }
+    } catch (Exception e) {
+      AssertUtils.fail("Unable to submit payment profile.");
     }
   }
 
