@@ -52,11 +52,7 @@ public class TealiumNetworkLogs extends ECETestBase {
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod, "autodeskHomePageUrl");
         List<String> logs = AnalyticsNetworkLogs.getObject().fetchNetworkLogs(this.getDriver());
-        if (System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_STG)) {
-            results.put("Tealium", AnalyticsNetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS_STG));
-        } else {
-            results.put("Tealium", AnalyticsNetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS_INT));
-        }
+        results.put("Tealium", AnalyticsNetworkLogs.getObject().filterLogs(logs, BICECEConstants.TEALIUM_ANALYTICS));
         updateTestingHub(results);
     }
 
@@ -82,22 +78,12 @@ public class TealiumNetworkLogs extends ECETestBase {
         HashMap<String, String> results = new HashMap<>();
         results.putAll(testDataForEachMethod);
         portaltb.openAutoDeskHomePage(testDataForEachMethod, "autodeskHomePageUrl");
-        if (System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_STG)) {
-            HashMap<String, String> adobeAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.ADOBE_ANALYTICS_STG);
-            if (adobeAnalyticsLogs != null) {
-                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PAGE_NAME).contains(testDataForEachMethod.get(BICECEConstants.PAGE_NAME)), " Unable to find Parameter: pageName of URL: " + BICECEConstants.ADOBE_ANALYTICS_STG);
-                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.EVENTS).contains(testDataForEachMethod.get(BICECEConstants.EVENTS)), " Unable to find Parameter: events of URL: " + BICECEConstants.ADOBE_ANALYTICS_STG);
-                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PEV2).contains(testDataForEachMethod.get(BICECEConstants.PEV2)), " Unable to find Parameter: pev2 of URL: " + BICECEConstants.ADOBE_ANALYTICS_STG);
-                results.putAll(adobeAnalyticsLogs);
-            }
-        } else {
-            HashMap<String, String> adobeAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.ADOBE_ANALYTICS_INT);
-            if (adobeAnalyticsLogs != null) {
-                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PAGE_NAME).contains(testDataForEachMethod.get(BICECEConstants.PAGE_NAME)), " Unable to find Parameter: pageName of URL: " + BICECEConstants.ADOBE_ANALYTICS_INT);
-                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.EVENTS).contains(testDataForEachMethod.get(BICECEConstants.EVENTS)), " Unable to find Parameter: events of URL: " + BICECEConstants.ADOBE_ANALYTICS_INT);
-                Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PEV2).contains(testDataForEachMethod.get(BICECEConstants.PEV2)), " Unable to find Parameter: pev2 of URL: " + BICECEConstants.ADOBE_ANALYTICS_INT);
-                results.putAll(adobeAnalyticsLogs);
-            }
+        HashMap<String, String> adobeAnalyticsLogs = AnalyticsNetworkLogs.getReqLogsParameters(this.getDriver(), BICECEConstants.ADOBE_ANALYTICS);
+        if (adobeAnalyticsLogs != null) {
+            Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PAGE_NAME).contains(testDataForEachMethod.get(BICECEConstants.PAGE_NAME)), " Unable to find Parameter: pageName of URL: " + BICECEConstants.ADOBE_ANALYTICS);
+            Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.EVENTS).contains(testDataForEachMethod.get(BICECEConstants.EVENTS)), " Unable to find Parameter: events of URL: " + BICECEConstants.ADOBE_ANALYTICS);
+            Assert.assertTrue(adobeAnalyticsLogs.get(BICECEConstants.PEV2).contains(testDataForEachMethod.get(BICECEConstants.PEV2)), " Unable to find Parameter: pev2 of URL: " + BICECEConstants.ADOBE_ANALYTICS);
+            results.putAll(adobeAnalyticsLogs);
         }
         updateTestingHub(results);
     }

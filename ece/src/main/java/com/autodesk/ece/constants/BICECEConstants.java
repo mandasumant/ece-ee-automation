@@ -228,10 +228,8 @@ public class BICECEConstants extends BICConstants {
   public static final String BIC_TEST_NAME = "BIC_ORDER";
   public static final String RESELLER_TEST_NAME = "RESELLER_ORDER";
   public static final String GOOGLE_ANALYTICS = "https://google-analytics.com/collect";
-  public static final String ADOBE_ANALYTICS_INT = "https://smetrics.autodesk.com/b/ss/autodesk-new-gl";
-  public static final String ADOBE_ANALYTICS_STG = "https://smetrics.autodesk.com/b/ss/autodeskdevsite";
-  public static final String TEALIUM_ANALYTICS_INT = "https://tags.tiqcdn.com/utag/autodesk/global-sites/prod/utag.js";
-  public static final String TEALIUM_ANALYTICS_STG = "https://tags.tiqcdn.com/utag/autodesk/global-sites-qa/qa/utag.js";
+  public static final String ADOBE_ANALYTICS = "https://smetrics.autodesk.com/b/ss/autodeskdevsite";
+  public static final String TEALIUM_ANALYTICS = "https://tags.tiqcdn.com/utag/autodesk/global-sites-qa/qa/utag.js";
   public static final String TID = "tid";
   public static final String T = "t";
   public static final String DH = "dh";
