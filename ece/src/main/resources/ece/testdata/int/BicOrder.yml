@@ -48,7 +48,7 @@ default:
   accountsPortalOrdersInvoicesUrl: "https://int-manage.autodesk.com/cep/#orders/invoices"
   accountsPortalSubscriptionsUrl: "https://int-manage.autodesk.com/billing/subscriptions-contracts"
   accountsPortalInvoiceUrl: "https://api.int-manage.autodesk.com/service/orders/v1/orders/"
-  accountsPortalOrderHistoryUrl: "https://int-manage.autodesk.com/cep/#orders/order-history"
+  accountsPortalOrderHistoryUrl: "https://int-manage.autodesk.com/billing/order-history"
   accountsPortalProductsServicesUrl: "https://int-manage.autodesk.com/products"
   accountsPortalAddSeatsUrl: "https://int-manage.autodesk.com/billing/add-seats"
   accountsPortalQuoteUrl: "https://int-manage.autodesk.com/billing/quotes"
