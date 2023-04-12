@@ -1,5 +1,8 @@
 package com.autodesk.ece.testbase;
 
+import static com.autodesk.ece.testbase.BICTestBase.bicPage;
+import static com.autodesk.ece.testbase.BICTestBase.clearTextInputValue;
+import static org.testng.util.Strings.isNullOrEmpty;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.BICTestBase.Names;
 import com.autodesk.testinghub.core.base.GlobalConstants;
@@ -19,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -185,6 +189,10 @@ public class MOETestBase {
 
     results.put("opportunityId", opportunityId);
 
+    String currentUrl = driver.getCurrentUrl();
+    Util.printInfo("Opty current URL :: " + currentUrl);
+    results.put("currentOptyUrl", currentUrl);
+
     try {
       if (StringUtils.isNotEmpty(sku)) {
         Util.printInfo("Associating Products to Opty: " + sku);
@@ -278,7 +286,7 @@ public class MOETestBase {
     loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
     Util.sleep(10000);
 
-    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
+    address = bicTestBase.getBillingAddress(data);
 
     bicTestBase.enterBillingDetails(data, address, paymentMethod);
 
@@ -338,12 +346,10 @@ public class MOETestBase {
       String guacBaseURL, String guacMoeResourceURL, String locale, String password,
       String paymentMethod) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
+    Map<String, String> address = bicTestBase.getBillingAddress(data);
     locale = locale.replace("_", "-");
     String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
     System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
-    Map<String, String> address = null;
-
-    address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
 
     Names names = BICTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password, false);
@@ -364,11 +370,11 @@ public class MOETestBase {
 
     validateQuoteToggleDefaultView();
 
-    populateQuoteDetailsAndSend(emailID);
+    populateQuoteDetailsAndSend(address, emailID);
 
     validateQuoteReadOnlyView();
 
-    addNewProductWithQuoteDetailsAndSend(emailID);
+    addNewProductWithQuoteDetailsAndSend(address, emailID);
 
     selectQuoteElementFromDropdown();
 
@@ -389,6 +395,7 @@ public class MOETestBase {
   @Step("Create a quote and send to the customer from MOE DTC page.")
   private String sendQuoteFromDtcPage(LinkedHashMap<String, String> data, String guacBaseURL,
       String locale, String emailID, Names names) throws MetadataException {
+    Map<String, String> address = bicTestBase.getBillingAddress(data);
     navigateToMoeDtcUrl(data, guacBaseURL, locale);
 
     proceedToDtcCartSection();
@@ -399,15 +406,9 @@ public class MOETestBase {
     validateOrderDefaultViewDtc();
 
     // Populate customer info and send quote.
-    String quoteNumber = populateCustomerInfoAndSendQuoteDTC(emailID, names);
+    String quoteNumber = populateCustomerInfoAndSendQuoteDTC(address, emailID, names);
 
-    // CTA should change from 'Send quote' to 'Resend quote'
     validateQuoteReadOnlyView();
-
-    // Agent clicks on 'Resend quote' CTA
-    Util.printInfo("Click on 'Resend quote' button.");
-    moePage.click("moeResendQuote");
-    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
     return quoteNumber;
   }
@@ -547,8 +548,8 @@ public class MOETestBase {
   }
 
   @Step("Populate Quote details and send")
-  private void populateQuoteDetailsAndSend(String emailID) {
-    Util.printInfo("Populate Quote details and send");
+  private void populateQuoteDetailsAndSend(Map<String, String> address, String emailID) {
+    System.setProperty("shortAddress", "true");
 
     // Open Quote section
     JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -556,13 +557,12 @@ public class MOETestBase {
     moePage.waitForPageToLoad();
 
     AssertUtils.assertTrue(driver
-        .findElement(By.xpath("//h3[contains(text(),\"Quote contact information\")]"))
+        .findElement(By.xpath("//*[@data-testid=\"quote-section-add\"]//h3"))
         .isDisplayed());
 
     // Note: contact information should be filled in with the opportunity contact info as per requirements
     // Jira ECEECOM-1621: only adding state and phone number since they do not come back from salesforce.
-    moePage.populateField("moeQuoteStateField", "WA");
-    moePage.populateField("moeQuotePhoneNumberField", "1234567890");
+    populateQuoteBillingAddress(address);
 
     setExpirationDate();
 
@@ -605,18 +605,16 @@ public class MOETestBase {
     webElement.sendKeys(currentMonthDay);
   }
 
+  @Step("Click on 'Send quote' button")
   private void sendQuote() {
-    Util.printInfo("Click on 'Send quote' cta");
-    moePage.click("moeSendQuote");
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     // TODO: add try catch block to validate if error modal loaded
     // Note: R2.0.2 - Quote feature not fully implemented under INT env.
     try {
-      AssertUtils.assertTrue(driver
-          .findElement(By.xpath("//button/span[contains(text(),\"Resend quote\")]"))
-          .isDisplayed());
+      moePage.checkIfElementExistsInPage("moeSendQuote", 10);
+      moePage.click("moeSendQuote");
     } catch (Exception e) {
-      AssertUtils.fail("Can not find 'Resend quote' button");
+      AssertUtils.fail("Unable to click on 'Send quote' button");
     }
   }
 
@@ -628,10 +626,10 @@ public class MOETestBase {
           .getAttribute("aria-checked")
           .contains("true");
       AssertUtils.assertTrue(driver
-          .findElement(By.xpath("//h4[contains(text(),\"Quote contact information\")]"))
+          .findElement(By.xpath("//*[@data-testid=\"quote-section-add\"]//h4"))
           .isDisplayed());
       AssertUtils.assertTrue(driver
-          .findElement(By.xpath("//h5[contains(text(),\"Quote #:\")]"))
+          .findElement(By.xpath("//*[contains(@class, \"ReadOnlyQuoteInformationWrapper\")]/child::div[1]/h5"))
           .isDisplayed());
     } catch (Exception e) {
       AssertUtils.fail("Unable to find element from Quote read only view");
@@ -639,13 +637,19 @@ public class MOETestBase {
   }
 
   private void emptyCart() {
+
+    WebElement productLineItem = driver
+        .findElement(By.xpath("//*[contains(@data-testid, \"product-line-item-\")]"));
+
     try {
       Util.printInfo("Delete cart item");
+      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+      wait.until(ExpectedConditions.visibilityOf(productLineItem));
+
       moePage.clickUsingLowLevelActions("moeDeleteProduct");
       bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
-      AssertUtils.assertTrue(driver
-          .findElement(By.xpath("//h3[contains(text(),\"Your cart is empty\")]"))
-          .isDisplayed());
+
+      wait.until(ExpectedConditions.invisibilityOf(productLineItem));
     } catch (Exception e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to delete cart item");
@@ -654,7 +658,7 @@ public class MOETestBase {
 
   private void addProductFromSearchResult() {
     try {
-      Util.printInfo("Add product");
+      Util.printInfo("Add product: 3ds max 1 month");
       WebElement webElement = driver.findElement(By.xpath("//input[@id=\"downshift-0-input\"]"));
       webElement.sendKeys("3ds max 1 month");
       webElement.sendKeys(Keys.RETURN);
@@ -667,14 +671,14 @@ public class MOETestBase {
   }
 
   @Step("Add new product with Quote details and send")
-  private void addNewProductWithQuoteDetailsAndSend(String emailID) {
+  private void addNewProductWithQuoteDetailsAndSend(Map<String, String> address, String emailID) {
     emptyCart();
 
     addProductFromSearchResult();
 
     validateProductNameNew();
 
-    populateQuoteDetailsAndSend(emailID);
+    populateQuoteDetailsAndSend(address, emailID);
 
     validateProductNameNew();
 
@@ -713,7 +717,7 @@ public class MOETestBase {
   }
 
   @Step("Add customer info in the quote section and send a quote.")
-  private String populateCustomerInfoAndSendQuoteDTC(String emailID, Names names) {
+  private String populateCustomerInfoAndSendQuoteDTC(Map<String, String> address, String emailID, Names names) {
     Util.printInfo("MOE - Send Quote");
 
     // Open Quote section
@@ -722,26 +726,21 @@ public class MOETestBase {
     moePage.waitForPageToLoad();
 
     AssertUtils.assertTrue(driver
-        .findElement(By.xpath("//h3[contains(text(),\"Quote contact information\")]"))
+        .findElement(By.xpath("//*[@data-testid=\"quote-section-add\"]//h3"))
         .isDisplayed());
 
     // Clean first and last name fields due to bug then enter data
     String firstNameXpath = moePage.getFirstFieldLocator("moeQuoteFirstNameField");
     String lastNameXpath = moePage.getFirstFieldLocator("moeQuoteLastNameField");
 
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
+    clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
     driver.findElement(By.xpath(firstNameXpath)).sendKeys(names.firstName);
 
     Util.sleep(1000);
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
+    clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
     driver.findElement(By.xpath(lastNameXpath)).sendKeys(names.lastName);
 
-    moePage.populateField("moeQuoteAddressField", "149 Penn Rd");
-    moePage.populateField("moeQuoteCityField", "Silverdale");
-    moePage.populateField("moeQuoteStateField", "WA");
-    moePage.populateField("moeQuotePostalCodeField", "98315");
-    moePage.populateField("moeQuotePhoneNumberField", "1234567890");
-    moePage.populateField("moeQuoteCompanyField", "Autodesk Quote");
+    populateQuoteBillingAddress(address);
 
     setExpirationDate();
 
@@ -751,15 +750,84 @@ public class MOETestBase {
     sendQuote();
 
     // Get quote number from the page
-    String quoteNumber = moePage.getValueFromGUI("moeQuoteNumber");
+    String quoteNumber = moePage.getValueFromGUI("moeQuoteNumberStatic");
     Util.printInfo("Quote number is: " + quoteNumber);
-
-    moePage.waitForPageToLoad();
 
     Util.printInfo("MOE - Quote sent");
 
     return quoteNumber;
   }
+
+  @Step("Populate Quote billing details")
+  @SuppressWarnings("static-access")
+  private boolean populateQuoteBillingAddress(Map<String, String> address) {
+    boolean status = false;
+
+    try {
+      Util.printInfo("Quote address details :" + address);
+      String orgNameXpath = "", fullAddrXpath = "", cityXpath = "", zipXpath = "", phoneXpath = "", countryXpath = "",
+          stateXpath = "";
+      String paymentTypeToken = "quote";
+
+      orgNameXpath = bicTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      fullAddrXpath = bicTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      cityXpath = bicTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY).replace(
+          BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      zipXpath = bicTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE).replace(
+          BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      phoneXpath = bicTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      countryXpath = bicTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+      stateXpath = bicTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
+          .replace(BICECEConstants.PAYMENT_PROFILE, paymentTypeToken);
+
+      clearTextInputValue(driver.findElement(By.xpath(phoneXpath)));
+      Util.sleep(2000);
+      driver.findElement(By.xpath(phoneXpath)).sendKeys(address.get(BICECEConstants.PHONE_NUMBER));
+
+      if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address
+          .get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
+        driver.findElement(By.xpath(stateXpath))
+            .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
+      }
+
+      if (isNullOrEmpty(System.getProperty("shortAddress"))) {
+        bicTestBase.bicPage.waitForFieldPresent(BICECEConstants.FULL_ADDRESS, 2000);
+        clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
+        driver.findElement(By.xpath(fullAddrXpath))
+            .sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
+
+        WebElement countryEle = driver.findElement(By.xpath(countryXpath));
+        Select selCountry = new Select(countryEle);
+        WebElement countryOption = selCountry.getFirstSelectedOption();
+        String defaultCountry = countryOption.getText();
+        Util.printInfo("The Country selected by default : " + defaultCountry);
+        selCountry.selectByVisibleText(address.get(BICECEConstants.COUNTRY));
+
+        clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
+        driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY));
+
+        if (!address.get(BICECEConstants.ZIPCODE).equals(BICECEConstants.NA)) {
+          clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
+          driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.ZIPCODE));
+        }
+
+        driver.findElement(By.xpath(orgNameXpath))
+            .sendKeys(address.get(
+                BICECEConstants.ORGANIZATION_NAME) + " " + RandomStringUtils.random(6, true, false));
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      Util.printTestFailedMessage("populateBillingDetails");
+      AssertUtils.fail("Unable to Populate Billing Details");
+    }
+    return status;
+  }
+
 
   @Step("Login to Portal with user account")
   private void loginToPortalWithUserAccount(LinkedHashMap<String, String> data, String emailID,
@@ -822,6 +890,8 @@ public class MOETestBase {
     JavascriptExecutor js = (JavascriptExecutor) driver;
     Util.printInfo("Set session storage data 'OPTOUTMULTI_TYPE' from 'loginToCheckoutWithUserAccount'.");
     js.executeScript("document.cookie=\"OPTOUTMULTI_TYPE=A\";");
+    Util.printInfo("Session Storage: set 'nonsensitiveHasNonLocalModalLaunched' to true.");
+    js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
     moePage.refresh();
 
     // Create new user and sign in
@@ -929,7 +999,7 @@ public class MOETestBase {
             "//span[@class='test-id__field-value slds-form-element__static slds-grow  is-read-only' and contains(., 'A-')]"))
         .getText();
 
-    Util.printInfo("New opportunity created " + optyName + " with the id " + optyId);
+    Util.printInfo("New opportunity created [" + optyName + "] with the id: " + optyId);
 
     return optyId;
   }
@@ -965,7 +1035,7 @@ public class MOETestBase {
       moePage.click("moeModalCloseBtn");
       bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
-      BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+      bicPage.executeJavascript("window.scrollBy(0,1000);");
 
       // Populate Billing info and save payment profile
       address = bicTestBase.getBillingAddress(data.get(BICECEConstants.ADDRESS));
@@ -977,7 +1047,7 @@ public class MOETestBase {
 
       results.put(BICConstants.orderNumber, orderNumber);
     } else {
-      BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+      bicPage.executeJavascript("window.scrollBy(0,1000);");
 
       Util.printInfo("Clicking on Agreement checkbox");
       bicTestBase.agreeToTerm();
@@ -1072,7 +1142,7 @@ public class MOETestBase {
       Util.printInfo("Customer details continue button no longer visible.");
     }
 
-    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,800);");
+    bicPage.executeJavascript("window.scrollBy(0,800);");
 
     // INFO: R2.0.2 - We only support credit card right now.
     // For STORE-CA, the UI is set with only cc payment method which default to no tab being visible
@@ -1113,11 +1183,11 @@ public class MOETestBase {
     Util.sleep(10000);
 
     Util.printInfo("Scrolling down the page");
-    BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+    bicPage.executeJavascript("window.scrollBy(0,1000);");
 
-    if (bicTestBase.bicPage.checkIfElementExistsInPage("creditCardRadioButton", 10)) {
+    if (bicPage.checkIfElementExistsInPage("creditCardRadioButton", 10)) {
       Util.printInfo("Clicking on radio button: Credit Card");
-      bicTestBase.bicPage.click("creditCardRadioButton");
+      bicPage.click("creditCardRadioButton");
     }
 
     submitPayment();
@@ -1589,16 +1659,21 @@ public class MOETestBase {
 
   @Step("Click Submit payment button" + GlobalConstants.TAG_TESTINGHUB)
   public void submitPayment() {
-    try {
-      if (moePage.checkIfElementExistsInPage("submitPaymentProfile", 10)) {
-        Util.printInfo("Clicking on cta: Review order");
-        moePage.click("submitPaymentProfile");
-      } else {
-        Util.printInfo("Clicking on cta: Save");
-        moePage.click("savePaymentProfile");
+
+    if (!bicTestBase.isSubmitOrderEnabled()) {
+      try {
+        if (moePage.checkIfElementExistsInPage("submitPaymentProfile", 5)) {
+          Util.printInfo("Clicking on cta: Review order");
+          moePage.click("submitPaymentProfile");
+        } else {
+          Util.printInfo("Clicking on cta: Save");
+          moePage.click("savePaymentProfile");
+        }
+      } catch (Exception e) {
+        AssertUtils.fail("Unable to submit payment profile.");
       }
-    } catch (Exception e) {
-      AssertUtils.fail("Unable to submit payment profile.");
+    } else {
+      Util.printInfo("Data sync successful. Customer details section complete.");
     }
   }
 

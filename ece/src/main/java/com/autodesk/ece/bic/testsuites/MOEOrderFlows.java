@@ -96,6 +96,7 @@ public class MOEOrderFlows extends ECETestBase {
     } else if (System.getProperty(BICECEConstants.STORE).equals("STORE-CA")) {
       account = testDataForEachMethod.get("accountEnCa");
       contact = testDataForEachMethod.get("contactEnCa");
+      optyId = testDataForEachMethod.get("optyIdEnCa");
     } else if (System.getProperty(BICECEConstants.STORE).equals("STORE-JP")) {
       account = testDataForEachMethod.get("accountJaJp");
       contact = testDataForEachMethod.get("contactJaJp");
@@ -105,6 +106,7 @@ public class MOEOrderFlows extends ECETestBase {
       contact = testDataForEachMethod.get("contact");
       optyId = testDataForEachMethod.get("optyIdEnUs");
     }
+    testDataForEachMethod.put("account", account);
     testDataForEachMethod.put("optyId", optyId);
     testDataForEachMethod.put("contactEmail", contact);
 
@@ -200,6 +202,7 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> sfdcResults
         = moetb.createMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku, currency);
     testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityId"));
+    testDataForEachMethod.put("currentOptyUrl", sfdcResults.get("currentOptyUrl"));
 
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -213,6 +216,8 @@ public class MOEOrderFlows extends ECETestBase {
         BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
     validateTestResults(testResults, results);
+
+    moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
 
     validateCreateOrder(testResults);
   }
@@ -242,7 +247,7 @@ public class MOEOrderFlows extends ECETestBase {
     sfdctb.clickOnCreateMOEOpty();
     HashMap<String, String> sfdcResults
         = moetb.createMoeOpty(optyName, account, stage, projectCloseDate, fulfillment, sku, currency);
-    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityid"));
+    testDataForEachMethod.put("guacMoeOptyId", sfdcResults.get("opportunityId"));
 
     HashMap<String, String> results = moetb.createBicOrderMoeWithQuote(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
@@ -349,7 +354,7 @@ public class MOEOrderFlows extends ECETestBase {
 
     // Compare quoteId value from purchase order and finance reports
     JsonPath jp = new JsonPath(result);
-    AssertUtils.assertEquals(jp.get("content[0].quoteId"), results.get("quoteId"));
+    AssertUtils.assertEquals(jp.get("content[0].nonBindingQuoteId"), results.get("quoteId"));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
