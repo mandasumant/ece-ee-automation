@@ -133,10 +133,15 @@ public class BICTestBase {
     ba.put(BICECEConstants.CITY, newAddress.city);
     ba.put(BICECEConstants.ZIPCODE, newAddress.postalCode);
     ba.put(BICECEConstants.PHONE_NUMBER, newAddress.phoneNumber);
-    ba.put(BICECEConstants.COUNTRY, newAddress.country);
 
-    if (newAddress.province != null) {
-      ba.put(BICECEConstants.STATE_PROVINCE, newAddress.province);
+    if (System.getProperty(BICECEConstants.STORE).equals("STORE-JP")) {
+      ba.put(BICECEConstants.STATE_PROVINCE, "大阪府");
+      ba.put(BICECEConstants.COUNTRY, "日本");
+    } else {
+      ba.put(BICECEConstants.COUNTRY, newAddress.country);
+      if (newAddress.province != null) {
+        ba.put(BICECEConstants.STATE_PROVINCE, newAddress.province);
+      }
     }
     Util.printInfo("The address being used :" + address);
 

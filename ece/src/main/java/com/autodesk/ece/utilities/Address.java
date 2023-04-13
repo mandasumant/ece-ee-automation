@@ -1,7 +1,6 @@
 package com.autodesk.ece.utilities;
 
 
-import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.testinghub.core.utils.Util;
 import io.restassured.path.json.JsonPath;
 import java.io.FileInputStream;
@@ -43,33 +42,29 @@ public class Address {
 
     ClassLoader classLoader = this.getClass().getClassLoader();
 
-    String countryCodeJsonFilePath = Objects.requireNonNull(classLoader.getResource("ece/payload/countryCodes.json"))
-        .getPath();
-    if (System.getProperty(BICECEConstants.STORE).equals("STORE-JP")) {
-      provinceName = "大阪府";
-      countryCode = "日本";
-    } else {
+    String countryCodeJsonFilePath = Objects.requireNonNull(
+        classLoader.getResource("ece/payload/countryCodes.json")).getPath();
+
+    try {
+      FileInputStream fileStream = new FileInputStream(countryCodeJsonFilePath);
+      InputStreamReader inputStream = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
+      JsonPath jp = new JsonPath(inputStream);
+      countryCode = jp.getString("find { it.Name == '" + this.country + "' }.Code");
+    } catch (FileNotFoundException e) {
+      Util.printError("Failed to load country codes file: " + e.getMessage());
+    }
+
+    String provinceNameJsonFilePath = Objects.requireNonNull(
+        classLoader.getResource("ece/testdata/misc/provinces.json")).getPath();
+
+    if (!this.province.equals("")) {
       try {
-        FileInputStream fileStream = new FileInputStream(countryCodeJsonFilePath);
+        FileInputStream fileStream = new FileInputStream(provinceNameJsonFilePath);
         InputStreamReader inputStream = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
         JsonPath jp = new JsonPath(inputStream);
-        countryCode = jp.getString("find { it.Name == '" + this.country + "' }.Code");
+        provinceName = jp.get(this.province);
       } catch (FileNotFoundException e) {
         Util.printError("Failed to load country codes file: " + e.getMessage());
-      }
-
-      String provinceNameJsonFilePath = Objects.requireNonNull(
-          classLoader.getResource("ece/testdata/misc/provinces.json")).getPath();
-
-      if (!this.province.equals("")) {
-        try {
-          FileInputStream fileStream = new FileInputStream(provinceNameJsonFilePath);
-          InputStreamReader inputStream = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
-          JsonPath jp = new JsonPath(inputStream);
-          provinceName = jp.get(this.province);
-        } catch (FileNotFoundException e) {
-          Util.printError("Failed to load country codes file: " + e.getMessage());
-        }
       }
     }
   }
