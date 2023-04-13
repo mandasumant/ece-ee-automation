@@ -35,7 +35,7 @@ public class Address {
     this.postalCode = billingAddress[3];
     this.phoneNumber = getRandomMobileNumber();
 
-    if (billingAddress.length == 6) {
+    if (billingAddress.length >= 6) {
       this.country = billingAddress[5];
     }
 
