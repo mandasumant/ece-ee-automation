@@ -179,7 +179,8 @@ public class EDUTestBase {
     eduPage.click("eduRoleSubmit");
 
     registerOxygenUser(results);
-    verifyRegistrationEmail(results.get(BICConstants.emailid));
+    // ECEEPLT-6472: re-enable this once mailosaur is setup
+    // verifyRegistrationEmail(results.get(BICConstants.emailid));
 
     eduPage.waitForField(EDU_GET_STARTED, true, 5000);
 
@@ -606,7 +607,8 @@ public class EDUTestBase {
 
   private void registerOxygenUser(HashMap<String, String> results) {
     // Generate a new user email, name, and password
-    String email = bicTestBase.generateMailosaurEmailID();
+    // ECEEPLT-6472: Change this back to mailosaur when the account is setup
+    String email = bicTestBase.generateUniqueEmailID();
     results.put(BICConstants.emailid, email);
     String randomString = RandomStringUtils.random(6, true, false);
     String firstName = "FN" + randomString;
