@@ -147,7 +147,6 @@ public class BICFinancingOrder extends ECETestBase {
 
   }
 
-  //COMMENT: STG test will fail until ECEECOM-7381 is fixed.
   @Test(groups = {"bic-financing-renew-order"}, description = "Validation of BIC Financing Renewal Order")
   public void validateBicNativeFinancingRenewalOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
