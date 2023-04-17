@@ -50,7 +50,7 @@ public class FinancingTestBase {
       Util.sleep(2000);
       Util.printInfo("current URL : " + driver.getCurrentUrl());
 
-      if (!isNotNullAndNotEmpty(data.get("isFinancingRenewal"))) {
+      if (!isNotNullAndNotEmpty(data.get("isReturningUser"))) {
         WebElement applicationType = driver.findElement(By.xpath("//*[@id=\"applicantType\"]/div"));
         applicationType.click();
         financingPage.clickUsingLowLevelActions("financingBusinessCorporation");

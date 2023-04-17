@@ -2,7 +2,6 @@ package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -148,6 +147,7 @@ public class BICFinancingOrder extends ECETestBase {
 
   }
 
+  //COMMENT: STG test will fail until ECEECOM-7381 is fixed.
   @Test(groups = {"bic-financing-renew-order"}, description = "Validation of BIC Financing Renewal Order")
   public void validateBicNativeFinancingRenewalOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
@@ -196,9 +196,8 @@ public class BICFinancingOrder extends ECETestBase {
 
     portaltb.renewFinancingSubscription(results.get(BICConstants.emailid), PASSWORD);
 
-    results = getBicTestBase().renewFinancingOrder(
-        testDataForEachMethod);
-    results.putAll(testDataForEachMethod);
+    testDataForEachMethod.put("isReturningUser", "true");
+    results.putAll(getBicTestBase().renewFinancingOrder(testDataForEachMethod));
 
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);

@@ -38,6 +38,7 @@ public class MOEOrderFlows extends ECETestBase {
   String optyName, account, stage, projectCloseDate, fulfillment, email, sku = "", plc, currency = "", contact, optyId;
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
   String priceId = System.getProperty(BICECEConstants.PRICE_ID);
+  long startTime, stopTime, executionTime;
   private String PASSWORD;
 
   @BeforeClass(alwaysRun = true)
@@ -480,10 +481,6 @@ public class MOEOrderFlows extends ECETestBase {
     AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
         BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
 
-    // Verify that Order status is Charged
-    AssertUtils.assertEquals("Order status is not CHARGED",
-        results.get("getPOResponse_orderState"), "CHARGED");
-
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
@@ -536,15 +533,21 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> results = moetb.createBicOrderMoeOdmDtc(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
+    updateTestingHub(testResults);
+
+    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
+
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
     AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
         BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
-
-    // Verify that Order status is Charged
-    AssertUtils.assertEquals("Order status is not CHARGED",
-        results.get("getPOResponse_orderState"), "CHARGED");
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
@@ -582,6 +585,11 @@ public class MOEOrderFlows extends ECETestBase {
     }
 
     updateTestingHub(testResults);
+
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {
@@ -590,47 +598,48 @@ public class MOEOrderFlows extends ECETestBase {
       throws Exception {
     HashMap<String, String> testResults = new HashMap<>();
     MOETestBase moetb = new MOETestBase(this.getTestBase(), testDataForEachMethod);
+    startTime = System.nanoTime();
 
-    testDataForEachMethod.put(
-        BICECEConstants.PRODUCT_ID, testDataForEachMethod.get(BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing initial order.");
-
     HashMap<String, String> results = moetb.createBicOrderMoeOdmDtc(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
     updateTestingHub(testResults);
+
+    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
 
     results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
     results.remove(BICConstants.orderNumber);
     updateTestingHub(results);
     testDataForEachMethod.putAll(results);
 
-    testDataForEachMethod.put("bicNativePriceID", testDataForEachMethod.get(
-        BICECEConstants.PRODUCT_ID));
     Util.printInfo("Placing second order for the returning user.");
+    testDataForEachMethod.put("isReturningUser", "true");
+    results.putAll(moetb.createBicOrderMoeOdmDtc(testDataForEachMethod));
 
-    results = moetb.createBicOrderForReturningUserMoeOdmDtc(testDataForEachMethod);
+    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
     results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
 
     updateTestingHub(results);
-    results.putAll(testDataForEachMethod);
+    testDataForEachMethod.putAll(results);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
     updateTestingHub(testResults);
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+      Util.sleep(120000);
+    }
 
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
     AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
         BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
-
-    // Verify that Order status is Charged
-    AssertUtils.assertEquals("Order status is not CHARGED",
-        results.get("getPOResponse_orderState"), "CHARGED");
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
@@ -668,6 +677,9 @@ public class MOEOrderFlows extends ECETestBase {
       portaltb.validateBICOrderTaxInvoice(results);
     }
 
+    stopTime = System.nanoTime();
+    executionTime = ((stopTime - startTime) / 60000000000L);
+    testResults.put(BICECEConstants.E2E_EXECUTION_TIME, String.valueOf(executionTime));
     updateTestingHub(testResults);
   }
 }

@@ -1144,16 +1144,6 @@ public class MOETestBase {
 
     bicPage.executeJavascript("window.scrollBy(0,800);");
 
-    // INFO: R2.0.2 - We only support credit card right now.
-    // For STORE-CA, the UI is set with only cc payment method which default to no tab being visible
-    if (moePage.isFieldVisible("creditCardTab")) {
-      try {
-        moePage.click("creditCardTab");
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
     if (System.getProperty("usertype").equals("new")) {
       // Populate Billing info and save payment profile
       String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
@@ -1188,9 +1178,10 @@ public class MOETestBase {
     if (bicPage.checkIfElementExistsInPage("creditCardRadioButton", 10)) {
       Util.printInfo("Clicking on radio button: Credit Card");
       bicPage.click("creditCardRadioButton");
-    }
+      Util.sleep(2000);
 
-    submitPayment();
+      submitPayment();
+    }
 
     // In case address suggestion is returned, continue button will be displayed.
     if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
@@ -1219,17 +1210,23 @@ public class MOETestBase {
   public HashMap<String, String> createBicOrderMoeOdmDtc(LinkedHashMap<String, String> data)
       throws Exception {
     HashMap<String, String> results = new HashMap<>();
-    Map<String, String> address = bicTestBase.getBillingAddress(data);
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
     String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
-    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String guacBaseURL = data.get("guacBaseURL");
-    navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
     String oxygenLogOutUrl = data.get("oxygenLogOut");
 
-    bicTestBase.setStorageData();
+    navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
 
-    loginToMoe();
+    if (isNullOrEmpty(data.get("isReturningUser"))) {
+      bicTestBase.setStorageData();
+      loginToMoe();
+    } else {
+      if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
+        loginToMoe();
+      } else {
+        moePage.clickUsingLowLevelActions("moeReLoginLink");
+      }
+    }
 
     AssertUtils.assertTrue(driver
         .findElement(By.xpath("//div[@data-wat-link-section=\"checkout-empty-cart\"]"))
@@ -1244,57 +1241,53 @@ public class MOETestBase {
     AssertUtils.assertTrue(
         productLineItem.getText().contains("Flex"));
 
+    if (System.getProperty(BICECEConstants.PAYMENT).equals("FINANCING")) {
+      data.put(BICECEConstants.QTY,
+          System.getProperty(BICECEConstants.QUANTITY) != null ? System.getProperty(BICECEConstants.QUANTITY) : "100");
+
+      clearTextInputValue(driver.findElement(By.xpath(bicPage.getFirstFieldLocator("quantity"))));
+      driver.findElement(By.xpath(bicPage.getFirstFieldLocator("quantity")))
+          .sendKeys(data.get(BICECEConstants.QTY), Keys.TAB);
+      bicPage.waitForPageToLoad();
+    }
+
     String copyCartLink = copyCartLinkFromClipboard();
 
-    Names names = BICTestBase.generateFirstAndLastNames();
-    data.putAll(names.getMap());
-    String emailID = BICTestBase.generateUniqueEmailID();
-    data.put(BICECEConstants.emailid, emailID);
+    if (isNullOrEmpty(data.get("isReturningUser"))) {
+      Names names = BICTestBase.generateFirstAndLastNames();
+      data.putAll(names.getMap());
+      String emailID = BICTestBase.generateUniqueEmailID();
+      data.put(BICECEConstants.emailid, emailID);
 
-    Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
-    bicTestBase.getUrl(oxygenLogOutUrl);
+      Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
+      bicTestBase.getUrl(oxygenLogOutUrl);
 
-    loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
-    Util.sleep(10000);
+      loginToCheckoutWithUserAccount(emailID, names, password, copyCartLink);
+      Util.sleep(10000);
 
-    productLineItem = driver.findElement(
-        By.xpath(moePage.getFirstFieldLocator("moeProductLineItem")));
-    AssertUtils.assertTrue(
-        productLineItem.getText().contains("Flex"));
+      productLineItem = driver.findElement(
+          By.xpath(moePage.getFirstFieldLocator("moeProductLineItem")));
+      AssertUtils.assertTrue(
+          productLineItem.getText().contains("Flex"));
 
-    bicTestBase.enterCustomerDetails(address);
-    Util.sleep(10000);
+      results.put(BICConstants.emailid, emailID);
 
-    // In case address suggestion is returned, continue button will be displayed.
-    if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
-      Util.printInfo("Clicking on Continue button after adding the customer details");
-      moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
+      String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
+      data.put(BICConstants.oxid, oxygenId);
+    } else {
+      String emailID = data.get(BICECEConstants.emailid);
+      data.put(BICConstants.emailid, emailID);
+      updateStorageData();
+
+      Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
+      bicTestBase.getUrl(oxygenLogOutUrl);
+
+      bicTestBase.getUrl(copyCartLink);
+
+      bicTestBase.loginAccount(data);
+
+      results.put(BICConstants.emailid, emailID);
     }
-
-    String[] paymentCardDetails = bicTestBase.getPaymentDetails(paymentMethod.toUpperCase())
-        .split("@");
-
-    bicTestBase.selectPaymentProfile(data, paymentCardDetails, address);
-    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
-
-    submitPayment();
-
-    bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
-
-    // In case address suggestion is returned, continue button will be displayed.
-    if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
-      Util.printInfo("Clicking on Continue button after saving payment profile");
-      moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
-    }
-
-    bicTestBase.submitOrder(data);
-    String orderNumber = bicTestBase.getOrderNumber(data);
-    bicTestBase.printConsole(orderNumber, data, address);
-
-    results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
   }
@@ -1307,11 +1300,14 @@ public class MOETestBase {
     String emailID = data.get(BICConstants.emailid);
     String locale = data.get(BICECEConstants.LOCALE).replace("_", "-");
     String guacBaseURL = data.get("guacBaseURL");
-    navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
     String oxygenLogOutUrl = data.get("oxygenLogOut");
+
+    navigateToMoeOdmDtcUrl(data, guacBaseURL, locale);
 
     if (GlobalConstants.getENV().equals(BICECEConstants.ENV_INT)) {
       loginToMoe();
+    } else {
+      moePage.clickUsingLowLevelActions("moeReLoginLink");
     }
 
     AssertUtils.assertTrue(driver
@@ -1320,12 +1316,22 @@ public class MOETestBase {
 
     Util.printInfo("Add Flex product");
     moePage.click("moeAddFlexProductButton");
-    Util.sleep(3000);
+    Util.sleep(5000);
 
     WebElement productLineItem = driver.findElement(
         By.xpath(moePage.getFirstFieldLocator("moeProductLineItem")));
     AssertUtils.assertTrue(
         productLineItem.getText().contains("Flex"));
+
+    if (System.getProperty(BICECEConstants.PAYMENT).equals("FINANCING")) {
+      data.put(BICECEConstants.QTY,
+          System.getProperty(BICECEConstants.QUANTITY) != null ? System.getProperty(BICECEConstants.QUANTITY) : "100");
+
+      clearTextInputValue(driver.findElement(By.xpath(bicPage.getFirstFieldLocator("quantity"))));
+      driver.findElement(By.xpath(bicPage.getFirstFieldLocator("quantity")))
+          .sendKeys(data.get(BICECEConstants.QTY), Keys.TAB);
+      bicPage.waitForPageToLoad();
+    }
 
     String copyCartLink = copyCartLinkFromClipboard();
 
@@ -1338,27 +1344,7 @@ public class MOETestBase {
 
     bicTestBase.loginAccount(data);
 
-    if (!moePage.checkIfElementExistsInPage("moeCustomerDetailsComplete", 10)) {
-      Util.printInfo("Entering customer details information.");
-      bicTestBase.enterCustomerDetails(address);
-      Util.sleep(5000);
-    } else {
-      Util.printInfo("Data sync successful. Customer details section complete.");
-    }
-
-    // In case address suggestion is returned, continue button will be displayed.
-    if (moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 10)) {
-      Util.printInfo("Clicking on Continue button after adding the customer details");
-      moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
-      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
-    }
-
-    bicTestBase.submitOrder(data);
-    String orderNumber = bicTestBase.getOrderNumber(data);
-    bicTestBase.printConsole(orderNumber, data, address);
-
     results.put(BICConstants.emailid, emailID);
-    results.put(BICConstants.orderNumber, orderNumber);
 
     return results;
   }
@@ -1659,8 +1645,12 @@ public class MOETestBase {
 
   @Step("Click Submit payment button" + GlobalConstants.TAG_TESTINGHUB)
   public void submitPayment() {
+    Util.sleep(5000);
 
-    if (!bicTestBase.isSubmitOrderEnabled()) {
+    boolean submitCta = driver.findElement(
+        By.xpath("//button[@disabled and  @data-wat-value=\"submit order\"]")).isDisplayed();
+
+    if (submitCta) {
       try {
         if (moePage.checkIfElementExistsInPage("submitPaymentProfile", 5)) {
           Util.printInfo("Clicking on cta: Review order");

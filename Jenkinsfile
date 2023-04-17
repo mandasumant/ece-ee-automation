@@ -588,6 +588,26 @@ def triggerFinancing(def serviceBuildHelper, String env) {
             println('Testing Hub API call failed - estore')
         }
     }
+    if (env == "STG") {
+        //NOTE: INT env not configure to support Financing Renewal.
+        script {
+            println("Building Testing Hub API Input Map - estore")
+            def testingHubInputMap = [:]
+            def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+            testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+            testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Financing Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com", "cherry.ngo@autodesk.com"],"testcases":[' +
+                    '{"displayname":"BiC Financing Renew Order","testcasename":"783c495f","description":"BiC Financing Renew Order","testClass":"com.autodesk.ece.bic.testsuites.BICFinancingOrder","testGroup":"bic-financing-renew-order","testMethod":"validateBicNativeFinancingRenewalOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""}}' +
+                    '],"workstreamname":"dclecjt"}'
+            println("Starting Testing Hub API Call - estore")
+            if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+                println('Testing Hub API called successfully - estore')
+            } else {
+                currentBuild.result = 'FAILURE'
+                println('Testing Hub API call failed - estore')
+            }
+        }
+    }
     script {
         println("Building Testing Hub API Input Map - flex")
         def testingHubInputMap = [:]
@@ -595,7 +615,8 @@ def triggerFinancing(def serviceBuildHelper, String env) {
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","executionname":"Financing Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com"],"testcases":[' +
-                '{"displayname":"BiC Financing Q2O Order","testcasename":"9d3de1c2","description":"BiC Financing Q2O Order","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":"","timezone":"America/New_York"}}' +
+                '{"displayname":"BiC Financing Q2O Order","testcasename":"9d3de1c2","description":"BiC Financing Q2O Order","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":"","timezone":"America/New_York"}},' +
+                '{"displayname":"MOE Financing ODM DTC O2P Order - Customer","testcasename":"28d21011","description":"MOE Financing ODM DTC O2P Order - Customer","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdmDtcCustomer-moe","testMethod":"validateMoeOdmDtcFlowCustomer","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":"","quantity":"400"}},' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - flex")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {

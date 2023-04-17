@@ -157,13 +157,11 @@ validateMoeOdmOpportunityFlowCustomer:
   productType: "flex"
 
 validateMoeOdmDtcFlowCustomer:
-  productID: *FlexOrderPriceID
-  bicFlexPriceID: *FlexOrderPriceID
+  isNonQuoteFlexOrder: "true"
   productType: "flex"
 
 validateMoeOdmDtcFlowReturningCustomer:
-  productID: *FlexOrderPriceID
-  bicFlexPriceID: *FlexOrderPriceID
+  isNonQuoteFlexOrder: "true"
   productType: "flex"
 
 validateMoeQuoteOrderFlow:

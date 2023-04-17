@@ -1,5 +1,7 @@
 package com.autodesk.ece.testbase;
 
+import static org.testng.util.Strings.isNotNullAndNotEmpty;
+import static org.testng.util.Strings.isNullOrEmpty;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
@@ -893,7 +895,7 @@ public class BICTestBase {
 
     try {
       Util.printInfo("Clicking on Financing tab.");
-      if (bicPage.checkIfElementExistsInPage("financingTab", 1)) {
+      if (bicPage.checkIfElementExistsInPage("financingTab", 10)) {
         bicPage.clickUsingLowLevelActions("financingTab");
 
         populateBillingAddress(address, data);
@@ -1548,7 +1550,7 @@ public class BICTestBase {
         Util.printInfo("Placing Flex Order Attempt: " + attempt++);
       }
 
-      if (data.get("isNonQuoteFlexOrder") != null) {
+      if (isNotNullAndNotEmpty("isNonQuoteFlexOrder")) {
         enterCustomerDetails(address);
         data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
       } else {
@@ -1571,7 +1573,7 @@ public class BICTestBase {
 
       String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
-      if (data.get("isReturningUser") == null) {
+      if (isNullOrEmpty(data.get("isReturningUser"))) {
         enterBillingDetails(data, address, paymentMethod);
       } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
         paymentMethod = "LOC";
@@ -1593,6 +1595,14 @@ public class BICTestBase {
           driver.navigate().refresh();
         }
       } else {
+        if (isNotNullAndNotEmpty(data.get("isReturningUser"))) {
+          if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 10)) {
+            bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+            bicPage.waitForElementToDisappear("reviewLOCOrder", 15);
+          }
+          bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+          bicPage.waitForElementToDisappear(BICECEConstants.SUBMIT_ORDER_BUTTON, 15);
+        }
         financingTestBase.setTestData(data);
         financingTestBase.completeFinancingApplication(data);
         break;
@@ -1915,8 +1925,9 @@ public class BICTestBase {
   public void enterCustomerDetails(Map<String, String> address)
       throws MetadataException {
 
-    bicPage.waitForFieldPresent("companyNameField", 5000);
-    bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
+    if (bicPage.checkIfElementExistsInPage("companyNameField", 15)) {
+      bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
+    }
 
     if (bicPage.checkIfElementExistsInPage("selectCountryField", 10)) {
       bicPage.clickUsingLowLevelActions("selectCountryField");
@@ -1932,8 +1943,10 @@ public class BICTestBase {
     }
     Util.sleep(2000);
 
-    bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
-    Util.sleep(2000);
+    if (bicPage.checkIfElementExistsInPage("cityField", 10)) {
+      bicPage.populateField("cityField", address.get(BICECEConstants.CITY));
+      Util.sleep(2000);
+    }
 
     if (bicPage.checkIfElementExistsInPage("selectStateField", 10)) {
       bicPage.clickUsingLowLevelActions("selectStateField");
@@ -1948,7 +1961,9 @@ public class BICTestBase {
     }
     Util.sleep(2000);
 
-    bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
+    if (bicPage.checkIfElementExistsInPage("phoneNumberField", 10)) {
+      bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
+    }
 
     populateTaxIdForFlex();
 
@@ -2743,6 +2758,8 @@ public class BICTestBase {
   public HashMap<String, String> renewFinancingOrder(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<>();
 
+    skipAddSeats();
+
     WebElement continueButton = driver
         .findElement(By.cssSelector("[data-wat-value=\"submit order\"]"));
 
@@ -2769,8 +2786,6 @@ public class BICTestBase {
       }
     }
 
-    data.put("isFinancingRenewal", "true");
-
     financingTestBase.setTestData(data);
     financingTestBase.completeFinancingApplication(data);
 
@@ -2779,17 +2794,26 @@ public class BICTestBase {
 
   public void selectKonbiniPaymentTab() throws MetadataException {
     Util.printInfo("Clicking on Konbini Payment Tab...");
-    bicPage.clickUsingLowLevelActions("konbiniPaymentTab");
+    if (bicPage.checkIfElementExistsInPage("konbiniPaymentTab", 10)) {
+      Util.printInfo("Konbini payment method tab is visible");
+      bicPage.clickUsingLowLevelActions("konbiniPaymentTab");
+    } else if (bicPage.checkIfElementExistsInPage("konbiniRadioButton", 10)) {
+      Util.printInfo("Konbini payment method radio button is visible");
+      bicPage.clickUsingLowLevelActions("konbiniRadioButton");
+    } else {
+      AssertUtils.fail("Unable to click on Konbini payment method");
+    }
   }
 
   public void selectConvenienceStoreType() throws MetadataException {
     if (bicPage.checkIfElementExistsInPage("selectStoreType", 10)) {
       bicPage.clickUsingLowLevelActions("selectStoreType");
       String selectCountryOption = bicPage.getFirstFieldLocator("selectStoreTypeOption")
-              .replace("<STOREOPTION>", System.getProperty(BICECEConstants.STORE_TYPE_OPTION));
+          .replace("<STOREOPTION>", System.getProperty(BICECEConstants.STORE_TYPE_OPTION));
       driver.findElement(By.xpath(selectCountryOption)).click();
       Util.sleep(5000);
-      bicPage.clickUsingLowLevelActions("keepKonbiniPaymentTab");
+      bicPage.waitForFieldPresent("reviewLOCOrder", 10000);
+      bicPage.clickUsingLowLevelActions("reviewLOCOrder");
       waitForLoadingSpinnerToComplete("loadingSpinner");
     }
   }
