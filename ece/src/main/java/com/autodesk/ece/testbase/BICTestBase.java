@@ -923,16 +923,6 @@ public class BICTestBase {
     String paypalEmail = data.get(BICECEConstants.PAYPAL_EMAIL);
 
     try {
-      Util.printInfo("Clicking on Paypal payments tab...");
-      bicPage.clickUsingLowLevelActions("paypalPaymentTab");
-      Util.sleep(10000);
-
-      Util.printInfo("Validating Paypal checkout tab content is visible...");
-      bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("paypalPaymentHead").get(0), 10);
-
-      bicPage.scrollToBottomOfPage();
-
       Util.printInfo("Selecting Paypal checkout frame...");
       bicPage.selectFrame("paypalCheckoutOptionFrame");
 
@@ -1203,6 +1193,7 @@ public class BICTestBase {
       if (isValidPaymentType) {
         switch (data.get(BICECEConstants.PAYMENT_TYPE).toUpperCase()) {
           case BICConstants.paymentTypePayPal:
+            selectPaypalPayment();
             populatePaypalPaymentDetails(data);
             break;
           case BICConstants.paymentTypeDebitCard:
@@ -1233,7 +1224,7 @@ public class BICTestBase {
             selectCashPayment();
             break;
           case BICECEConstants.PAYMENT_KONBINI:
-            selectKonbiniPaymentTab();
+            selectKonbiniPayment();
             selectConvenienceStoreType();
             break;
           default:
@@ -1879,9 +1870,7 @@ public class BICTestBase {
     }
 
     if (data.get("productType").equals("flex") && (paymentMethod.equalsIgnoreCase(BICECEConstants.CREDITCARD)
-        || paymentMethod.equals(BICECEConstants.VISA)) && (
-        System.getProperty(BICECEConstants.ENVIRONMENT).equals(BICECEConstants.ENV_INT) || data.get("locale")
-            .equals("en_CA"))) {
+        || paymentMethod.equals(BICECEConstants.VISA))) {
       try {
         if (bicPage.checkIfElementExistsInPage("savePaymentProfile", 20)) {
           bicPage.clickUsingLowLevelActions("savePaymentProfile");
@@ -2792,7 +2781,7 @@ public class BICTestBase {
     return results;
   }
 
-  public void selectKonbiniPaymentTab() throws MetadataException {
+  public void selectKonbiniPayment() throws MetadataException {
     Util.printInfo("Clicking on Konbini Payment Tab...");
     if (bicPage.checkIfElementExistsInPage("konbiniPaymentTab", 10)) {
       Util.printInfo("Konbini payment method tab is visible");
@@ -2802,6 +2791,19 @@ public class BICTestBase {
       bicPage.clickUsingLowLevelActions("konbiniRadioButton");
     } else {
       AssertUtils.fail("Unable to click on Konbini payment method");
+    }
+  }
+
+  public void selectPaypalPayment() throws MetadataException {
+    Util.printInfo("Clicking on Paypal Payment Tab...");
+    if (bicPage.checkIfElementExistsInPage("paypalPaymentTab", 10)) {
+      Util.printInfo("Paypal payment method tab is visible");
+      bicPage.clickUsingLowLevelActions("paypalPaymentTab");
+    } else if (bicPage.checkIfElementExistsInPage("paypalRadioButton", 10)) {
+      Util.printInfo("Paypal payment method radio button is visible");
+      bicPage.clickUsingLowLevelActions("paypalRadioButton");
+    } else {
+      AssertUtils.fail("Unable to click on Paypal payment method");
     }
   }
 
