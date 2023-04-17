@@ -140,11 +140,10 @@ public class AnalyticsNetworkLogs {
             if (c.getName().equalsIgnoreCase(cookieName)) {
                 cookie = c.getValue();
                 decodedCookieValue = URLDecoder.decode(cookie);
-                break;
+                return decodedCookieValue;
             }
-
         }
-        return decodedCookieValue;
+        return cookie;
     }
 
 }

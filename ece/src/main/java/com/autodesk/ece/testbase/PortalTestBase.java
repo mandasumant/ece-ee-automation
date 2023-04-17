@@ -2440,6 +2440,7 @@ public class PortalTestBase {
 
   public void openAutoDeskHomePage(LinkedHashMap<String, String> data, String url) {
     openPortalURL(data.get(url));
+    Util.sleep(20000);
   }
 
   public boolean verifyCookiesFooterBannerIsVisible() {
