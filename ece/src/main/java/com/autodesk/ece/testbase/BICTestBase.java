@@ -1927,7 +1927,7 @@ public class BICTestBase {
 
     if (bicPage.checkIfElementExistsInPage("address1Field", 10)) {
       bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
-    } else {
+    } else if(bicPage.checkIfElementExistsInPage("addressAutocomplete", 10)) {
       bicPage.populateField("addressAutocomplete", address.get(BICECEConstants.FULL_ADDRESS));
     }
     Util.sleep(2000);
