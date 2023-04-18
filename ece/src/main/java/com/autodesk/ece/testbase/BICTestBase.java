@@ -1558,10 +1558,6 @@ public class BICTestBase {
         bicPage.waitForElementToDisappear("customerDetailsContinue", 10);
       }
 
-      if (bicPage.checkIfElementExistsInPage("paymentEditBtn", 5)) {
-        bicPage.clickUsingLowLevelActions("paymentEditBtn");
-      }
-
       String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
       if (isNullOrEmpty(data.get("isReturningUser"))) {
@@ -1927,7 +1923,7 @@ public class BICTestBase {
 
     if (bicPage.checkIfElementExistsInPage("address1Field", 10)) {
       bicPage.populateField("address1Field", address.get(BICECEConstants.FULL_ADDRESS));
-    } else if(bicPage.checkIfElementExistsInPage("addressAutocomplete", 10)) {
+    } else if (bicPage.checkIfElementExistsInPage("addressAutocomplete", 10)) {
       bicPage.populateField("addressAutocomplete", address.get(BICECEConstants.FULL_ADDRESS));
     }
     Util.sleep(2000);
