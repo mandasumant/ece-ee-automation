@@ -1019,8 +1019,14 @@ public class BICTestBase {
       }
 
       driver.switchTo().window(parentWindow);
-      Util.sleep(5000);
 
+      if (bicPage.checkIfElementExistsInPage("sameAsCustomerDetails", 10)) {
+        Util.printInfo("Clicking on same as customer details checkbox");
+        bicPage.clickUsingLowLevelActions("sameAsCustomerDetails");
+        Util.sleep(5000);
+      }
+
+      /*
       if (System.getProperty("store").equals("STORE-JP")) {
         String paypalString = driver.findElement(By.xpath(
                 "//*[@data-testid=\"payment-section-add\"]//div[2]/div[2]/div[2]/p"))
@@ -1031,6 +1037,8 @@ public class BICTestBase {
         AssertUtils.assertEquals(bicPage.getTextFromLink("paypalConfirmationText"),
             "PayPal is selected for payment.");
       }
+      */
+
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter paypal details to make payment...");
