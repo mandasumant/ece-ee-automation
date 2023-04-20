@@ -835,11 +835,23 @@ public class BICTestBase {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
 
     try {
-      Util.printInfo("Clicking on GIROPAY tab.");
-      bicPage.clickUsingLowLevelActions("giroPaymentTab");
+      if (bicPage.checkIfElementExistsInPage("giroPaymentTab", 10)) {
+        Util.printInfo("Giropay payment method tab is visible");
+        bicPage.clickUsingLowLevelActions("giroPaymentTab");
+      } else if (bicPage.checkIfElementExistsInPage("giropayRadioButton", 10)) {
+        Util.printInfo("Giropay payment method radio button is visible");
+        bicPage.clickUsingLowLevelActions("giropayRadioButton");
+      } else {
+        AssertUtils.fail("Unable to click on Giropay payment method");
+      }
 
-      populateBillingAddress(address, data);
-      Util.sleep(20000);
+      if (bicPage.checkIfElementExistsInPage("giropayRadioButtonFirstName", 10) || bicPage.checkIfElementExistsInPage("giropayPaymentTabFirstName", 10)) {
+        populateBillingAddress(address, data);
+        Util.sleep(20000);
+      } else {
+        bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+        waitForLoadingSpinnerToComplete("loadingSpinner");
+      }
 
       bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 20000);
       bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
@@ -850,8 +862,10 @@ public class BICTestBase {
       Util.sleep(2000);
       Util.printInfo("Selecting the bank name :");
       bicPage.clickUsingLowLevelActions("giroPayBankNameSelection");
+      Util.sleep(2000);
 
       Util.printInfo("Clicking Continue ");
+      bicPage.waitForFieldPresent("giroPayContinue", 20000);
       bicPage.clickUsingLowLevelActions("giroPayContinue");
 
       Robot rb = new Robot();
@@ -1862,6 +1876,11 @@ public class BICTestBase {
       Map<String, String> address, String paymentMethod) throws MetadataException {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     dismissChatPopup();
+    if (bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
+      bicPage.clickUsingLowLevelActions("paymentEditBtn");
+      bicPage.clickUsingLowLevelActions("editPaymentDetails");
+      waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
     selectPaymentProfile(data, paymentCardDetails, address);
     dismissChatPopup();
 
