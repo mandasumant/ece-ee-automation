@@ -1457,7 +1457,7 @@ public class MOETestBase {
             moePage.checkIfElementExistsInPage("contactRolesInput", 10);
             moePage.clickUsingLowLevelActions("contactRolesInput");
             moePage.populateField("contactRolesInput", contact);
-            Util.sleep(20000);
+            Util.sleep(40000);
             Util.printInfo("Populated input field with contact email");
 
             WebElement webElement = driver.findElement(
