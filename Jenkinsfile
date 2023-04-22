@@ -194,7 +194,6 @@ pipeline {
         }
 
         stage('Apollo R2.0.5') {
-
             when {
                 branch 'master'
                 anyOf {
