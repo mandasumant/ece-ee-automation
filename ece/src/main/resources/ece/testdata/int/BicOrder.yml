@@ -369,7 +369,7 @@ validateGDPRGoogleNetworkTagsBeforeConsent:
   ec: "Privacy%20Management"
   el: "Rules%20Triggered"
   cd1: "privacy-options-displayed-rules"
-  cd8: "global-sites"
+  cd8: "global-sites-qa"
   cd9: "US"
 
 validateGDPRCookiesAfterConsent:
