@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import lombok.SneakyThrows;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -373,6 +374,7 @@ public class BICTestBase {
   }
 
   @Step("Adding Product to Cart from DotCom")
+  @SneakyThrows
   public String subscribeAndAddToCart() {
     String url = null;
 
@@ -386,6 +388,11 @@ public class BICTestBase {
     }
 
     bicPage.clickToSubmit("guacAddToCart", 3000);
+
+    //TODO Additional validations will be added in ECEEPLT-6590
+    if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
+      bicPage.clickToSubmit("minicartCheckoutButton", 3000);
+    }
 
     try {
       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
