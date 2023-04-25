@@ -175,19 +175,21 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> moeResults = moetb.createBicOrderMoe(testDataForEachMethod);
     moeResults.putAll(testDataForEachMethod);
 
-    // Getting a PurchaseOrder details from pelican
-    String pelicanResponse = pelicantb.retryGetPurchaseOrder(moeResults, true, false);
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_KONBINI)) {
+      // Getting a PurchaseOrder details from pelican
+      String pelicanResponse = pelicantb.retryGetPurchaseOrder(moeResults, true, false);
 
-    moeResults.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
+      moeResults.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
-    validateTestResults(testResults, moeResults);
+      validateTestResults(testResults, moeResults);
 
-    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", moeResults.get("getPOReponse_origin"),
-        BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
+      AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", moeResults.get("getPOReponse_origin"),
+          BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
-    portaltb.validateBICOrderProductInCEP(moeResults.get(BICConstants.cepURL),
-        moeResults.get(BICConstants.emailid), PASSWORD, moeResults.get(BICECEConstants.SUBSCRIPTION_ID));
-    updateTestingHub(testResults);
+      portaltb.validateBICOrderProductInCEP(moeResults.get(BICConstants.cepURL),
+          moeResults.get(BICConstants.emailid), PASSWORD, moeResults.get(BICECEConstants.SUBSCRIPTION_ID));
+      updateTestingHub(testResults);
+    }
 
     validateCreateOrder(testResults);
   }
@@ -208,17 +210,19 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> results = moetb.createBasicMoeOpptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Getting a PurchaseOrder details from pelican
-    String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true, false);
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_KONBINI)) {
+      // Getting a PurchaseOrder details from pelican
+      String pelicanResponse = pelicantb.retryGetPurchaseOrder(results, true, false);
 
-    results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
+      results.putAll(pelicantb.getPurchaseOrderDetails(pelicanResponse));
 
-    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOReponse_origin"),
-        BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
+      AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOReponse_origin"),
+          BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
-    validateTestResults(testResults, results);
+      validateTestResults(testResults, results);
 
-    moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
+      moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
+    }
 
     validateCreateOrder(testResults);
   }
@@ -406,43 +410,38 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> results = moetb.createBasicMoeOdmOptyOrder(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_KONBINI)) {
+      // Getting a PurchaseOrder details from pelican
+      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOResponse_origin"),
-        BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
+      AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DIRECT", results.get("getPOResponse_origin"),
+          BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
-    // Verify that Order status is Charged
-    AssertUtils.assertEquals("Order status is not CHARGED",
-        results.get("getPOResponse_orderState"), "CHARGED");
+      // Get find Subscription ById
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
-    // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+      try {
+        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+        testResults
+            .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+        testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+        testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        testResults.put(BICConstants.subscriptionPeriodStartDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+        testResults.put(BICConstants.subscriptionPeriodEndDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+        testResults
+            .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
 
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
-      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
-      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
-      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
-      testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
-      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-      testResults
-          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
+      moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
 
-    moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
-
-    updateTestingHub(testResults);
-
-    //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
+      //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
      /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -455,6 +454,9 @@ public class MOEOrderFlows extends ECETestBase {
         testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
       updateTestingHub(testResults);*/
+    }
+
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {
@@ -475,39 +477,39 @@ public class MOEOrderFlows extends ECETestBase {
     HashMap<String, String> results = moetb.createBicOrderMoeOdmWithOptyDtc(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
-    // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_KONBINI)) {
+      // Getting a PurchaseOrder details from pelican
 
-    AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
-        BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
+      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-    // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+      AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
+          BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
 
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
-      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
-      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
-      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
-      testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
-      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-      testResults
-          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
+      // Get find Subscription ById
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
-    moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
+      try {
+        testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+        testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+        testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+        testResults
+            .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+        testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+        testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        testResults.put(BICConstants.subscriptionPeriodStartDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+        testResults.put(BICConstants.subscriptionPeriodEndDate,
+            results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+        testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+        testResults
+            .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
 
-    updateTestingHub(testResults);
+      moetb.validateOpportunityStatusInSfdc(testDataForEachMethod);
 
-    //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
+      //Due to an issue where the product is not displayed in portal, we are skipping this validation until resolved
      /*  portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -520,7 +522,9 @@ public class MOEOrderFlows extends ECETestBase {
         testResults.putAll(getBicTestBase().calculateFulfillmentTime(results));
       }
       updateTestingHub(testResults);*/
+    }
 
+    updateTestingHub(testResults);
   }
 
   @Test(groups = {

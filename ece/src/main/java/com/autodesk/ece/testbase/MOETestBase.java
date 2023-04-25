@@ -491,6 +491,7 @@ public class MOETestBase {
   @Step("Emulate user")
   private void emulateUser(String emailID, Names names) throws MetadataException {
     Util.printInfo("Emulate User");
+    moePage.waitForFieldPresent("moeAccountLookupEmail", 60000);
     moePage.click("moeAccountLookupEmail");
     moePage.populateField("moeAccountLookupEmail", emailID);
     moePage.click("moeAccountLookupBtn");
@@ -1064,7 +1065,7 @@ public class MOETestBase {
 
   @Step("Save payment details and submit order")
   private String savePaymentDetailsAndSubmitOrder(LinkedHashMap<String, String> data,
-      Map<String, String> address, String[] paymentCardDetails) {
+      Map<String, String> address, String[] paymentCardDetails) throws MetadataException {
 
     // INFO: R2.0.2 - We only support credit card right now.
     // For STORE-CA, the UI is set with only cc payment method which default to no tab being visible
@@ -1644,13 +1645,10 @@ public class MOETestBase {
   }
 
   @Step("Click Submit payment button" + GlobalConstants.TAG_TESTINGHUB)
-  public void submitPayment() {
+  public void submitPayment() throws MetadataException {
     Util.sleep(5000);
 
-    boolean submitCta = driver.findElement(
-        By.xpath("//button[@disabled and  @data-wat-value=\"submit order\"]")).isDisplayed();
-
-    if (submitCta) {
+    if (!bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
       try {
         if (moePage.checkIfElementExistsInPage("submitPaymentProfile", 5)) {
           Util.printInfo("Clicking on cta: Review order");
@@ -1660,10 +1658,10 @@ public class MOETestBase {
           moePage.click("savePaymentProfile");
         }
       } catch (Exception e) {
-        AssertUtils.fail("Unable to submit payment profile.");
+        AssertUtils.fail("Unable to click on payment section cta.");
       }
     } else {
-      Util.printInfo("Data sync successful. Customer details section complete.");
+      Util.printInfo("Payment section complete.");
     }
   }
 

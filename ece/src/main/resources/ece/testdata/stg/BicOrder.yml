@@ -69,10 +69,10 @@ default:
   contactEnCa: "testinghub-storeca-01@letscheck.pw"
   contactJaJp: "testinghub-storejp-02@letscheck.pw"
   emailid: "acdisttest1801@letscheck.pw"
-  guacMoeSku: "C1RK1-WW6737-L785"
+  guacMoeSku: "C1RK1-WW8422-L971"
   optyIdEnCa: "A-18602845"
   optyIdEnUs: "A-18597148"
-  optyIdJaJp: "A-18610877"
+  optyIdJaJp: "A-18630903"
   priceId: "24038"
 
   pwsClientId: "sR8Ye2YBRq5QAnUIiOxKWw0J3a92tDVJ"

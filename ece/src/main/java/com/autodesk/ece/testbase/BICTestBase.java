@@ -414,6 +414,7 @@ public class BICTestBase {
         case BICECEConstants.PAYMENT_TYPE_FINANCING:
           paymentProfile = dataPaymentType.toLowerCase();
           break;
+        case BICECEConstants.PAYMENT_KONBINI:
         case BICECEConstants.PAYMENT_TYPE_ZIP:
           paymentProfile = BICECEConstants.ALTERNATE_PAYMENT_METHODS;
           break;
@@ -487,8 +488,8 @@ public class BICTestBase {
     Util.sleep(2000);
 
     if (bicPage.waitForFieldPresent("creditCardPaymentTab", 5000)) {
-      Util.printInfo("Clicking on Save button");
       String tabKey = paymentType.toLowerCase();
+      Util.printInfo("Default payment tab: " + tabKey);
       if (paymentType.equalsIgnoreCase(BICECEConstants.VISA)
           || paymentType.equalsIgnoreCase(BICECEConstants.CREDITCARD)
           || paymentType.equalsIgnoreCase(BICECEConstants.MASTERCARD)
@@ -496,7 +497,11 @@ public class BICTestBase {
           || paymentType.equalsIgnoreCase(BICECEConstants.AMEX)
           || paymentType.equalsIgnoreCase(BICECEConstants.LOC)) {
         tabKey = "credit-card";
+      } else if (paymentType.equalsIgnoreCase(BICECEConstants.PAYMENT_KONBINI)) {
+        tabKey = "alternate-payment-methods";
       }
+
+      Util.printInfo("Clicking on Save button from tab: " + tabKey);
 
       WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
       WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
@@ -563,6 +568,7 @@ public class BICTestBase {
         case BICECEConstants.PAYMENT_TYPE_FINANCING:
           paymentTypeToken = paymentType.toLowerCase();
           break;
+        case BICECEConstants.PAYMENT_KONBINI:
         case BICECEConstants.PAYMENT_TYPE_ZIP:
           paymentTypeToken = BICECEConstants.ALTERNATE_PAYMENT_METHODS;
           break;
@@ -845,7 +851,8 @@ public class BICTestBase {
         AssertUtils.fail("Unable to click on Giropay payment method");
       }
 
-      if (bicPage.checkIfElementExistsInPage("giropayRadioButtonFirstName", 10) || bicPage.checkIfElementExistsInPage("giropayPaymentTabFirstName", 10)) {
+      if (bicPage.checkIfElementExistsInPage("giropayRadioButtonFirstName", 10) || bicPage.checkIfElementExistsInPage(
+          "giropayPaymentTabFirstName", 10)) {
         populateBillingAddress(address, data);
         Util.sleep(20000);
       } else {
@@ -2806,7 +2813,7 @@ public class BICTestBase {
 
   public void selectKonbiniPayment() throws MetadataException {
     Util.printInfo("Clicking on Konbini Payment Tab...");
-    if (bicPage.checkIfElementExistsInPage("konbiniPaymentTab", 10)) {
+    if (bicPage.checkIfElementExistsInPage("konbiniPaymentTab", 20)) {
       Util.printInfo("Konbini payment method tab is visible");
       bicPage.clickUsingLowLevelActions("konbiniPaymentTab");
     } else if (bicPage.checkIfElementExistsInPage("konbiniRadioButton", 10)) {
@@ -2830,16 +2837,20 @@ public class BICTestBase {
     }
   }
 
+  @Step("Select convenience store" + GlobalConstants.TAG_TESTINGHUB)
   public void selectConvenienceStoreType() throws MetadataException {
-    if (bicPage.checkIfElementExistsInPage("selectStoreType", 10)) {
+    if (bicPage.checkIfElementExistsInPage("selectStoreType", 20)) {
       bicPage.clickUsingLowLevelActions("selectStoreType");
+      Util.sleep(2000);
       String selectCountryOption = bicPage.getFirstFieldLocator("selectStoreTypeOption")
           .replace("<STOREOPTION>", System.getProperty(BICECEConstants.STORE_TYPE_OPTION));
       driver.findElement(By.xpath(selectCountryOption)).click();
       Util.sleep(5000);
-      bicPage.waitForFieldPresent("reviewLOCOrder", 10000);
-      bicPage.clickUsingLowLevelActions("reviewLOCOrder");
-      waitForLoadingSpinnerToComplete("loadingSpinner");
+
+      if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 10)) {
+        bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+        waitForLoadingSpinnerToComplete("loadingSpinner");
+      }
     }
   }
 
