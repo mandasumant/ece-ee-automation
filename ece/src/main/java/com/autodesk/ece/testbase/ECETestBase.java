@@ -52,7 +52,7 @@ public class ECETestBase {
     pelicantb = new PelicanTestBase();
     subscriptionServiceV4Testbase = new SubscriptionServiceV4TestBase();
     thutil = new TestinghubUtil(testbase);
-    tibcotb = new AutomationTibcoTestBase();
+    //tibcotb = new AutomationTibcoTestBase();
     saptb = new SAPTestBase();
     sapfioritb = new SAPDriverFiori(GlobalConstants.getTESTDATADIR(), webdriver);
   }
