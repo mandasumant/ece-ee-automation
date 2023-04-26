@@ -387,6 +387,16 @@ public class BICTestBase {
 
     bicPage.clickToSubmit("guacAddToCart", 3000);
 
+    //TODO Additional validations will be added in ECEEPLT-6590
+    try {
+      if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
+        bicPage.clickToSubmit("minicartCheckoutButton", 3000);
+      }
+    } catch (MetadataException e) {
+      Util.printError(e.getMessage());
+      AssertUtils.fail("Unable to click mini cart checkout button.");
+    }
+
     try {
       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id=\"checkout\"]")));
