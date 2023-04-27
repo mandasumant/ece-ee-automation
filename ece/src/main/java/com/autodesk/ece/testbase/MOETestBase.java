@@ -574,7 +574,6 @@ public class MOETestBase {
 
   @Step("Select Quote from dropdown list")
   private void selectQuoteElementFromDropdown() {
-    Util.printInfo("Select Quote");
     try {
       Select drpQuote = new Select(driver.findElement(By.name("quotes")));
       drpQuote.selectByIndex(2);
@@ -584,9 +583,8 @@ public class MOETestBase {
     }
   }
 
+  @Step("Enter Quote expiration date")
   private void setExpirationDate() {
-    Util.printInfo("Enter expiration date");
-
     DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
     Date date1 = new Date();
     String currentYear = dateFormat1.format(date1);
@@ -604,6 +602,7 @@ public class MOETestBase {
 
     webElement.sendKeys(Keys.TAB);
     webElement.sendKeys(currentMonthDay);
+    Util.printInfo("Quote expiration date entered: " + currentMonthDay + currentYear);
   }
 
   @Step("Click on 'Send quote' button")
@@ -614,6 +613,7 @@ public class MOETestBase {
     try {
       moePage.checkIfElementExistsInPage("moeSendQuote", 10);
       moePage.click("moeSendQuote");
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     } catch (Exception e) {
       AssertUtils.fail("Unable to click on 'Send quote' button");
     }
@@ -637,13 +637,13 @@ public class MOETestBase {
     }
   }
 
+  @Step("Delete cart item")
   private void emptyCart() {
 
     WebElement productLineItem = driver
         .findElement(By.xpath("//*[contains(@data-testid, \"product-line-item-\")]"));
 
     try {
-      Util.printInfo("Delete cart item");
       WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
       wait.until(ExpectedConditions.visibilityOf(productLineItem));
 
@@ -1648,7 +1648,9 @@ public class MOETestBase {
   public void submitPayment() throws MetadataException {
     Util.sleep(5000);
 
-    if (!bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
+    if (bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
+      Util.printInfo("Payment section complete.");
+    } else {
       try {
         if (moePage.checkIfElementExistsInPage("submitPaymentProfile", 5)) {
           Util.printInfo("Clicking on cta: Review order");
@@ -1660,8 +1662,6 @@ public class MOETestBase {
       } catch (Exception e) {
         AssertUtils.fail("Unable to click on payment section cta.");
       }
-    } else {
-      Util.printInfo("Payment section complete.");
     }
   }
 
