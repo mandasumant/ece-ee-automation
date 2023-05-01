@@ -179,8 +179,7 @@ public class EDUTestBase {
     eduPage.click("eduRoleSubmit");
 
     registerOxygenUser(results);
-    // ECEEPLT-6472: re-enable this once mailosaur is setup
-    // verifyRegistrationEmail(results.get(BICConstants.emailid));
+    verifyRegistrationEmail(results.get(BICConstants.emailid));
 
     eduPage.waitForField(EDU_GET_STARTED, true, 5000);
 
@@ -607,8 +606,7 @@ public class EDUTestBase {
 
   private void registerOxygenUser(HashMap<String, String> results) {
     // Generate a new user email, name, and password
-    // ECEEPLT-6472: Change this back to mailosaur when the account is setup
-    String email = bicTestBase.generateUniqueEmailID();
+    String email = BICTestBase.generateMailosaurEmailID();
     results.put(BICConstants.emailid, email);
     String randomString = RandomStringUtils.random(6, true, false);
     String firstName = "FN" + randomString;
@@ -656,6 +654,12 @@ public class EDUTestBase {
     String verifyLink = verifyButton.attr("href");
     AssertUtils.assertTrue(verifyLink != null, "Email verification link must be defined");
     driver.navigate().to(verifyLink);
+    try {
+      eduPage.clickUsingLowLevelActions("eduCommunicationOptIn"); // Opt out of marketing emails
+    } catch (MetadataException e) {
+      AssertUtils.fail("Failed to unsubscribe from marketing emails");
+      throw new RuntimeException(e);
+    }
     eduPage.click("eduRegisterComplete");
   }
 
