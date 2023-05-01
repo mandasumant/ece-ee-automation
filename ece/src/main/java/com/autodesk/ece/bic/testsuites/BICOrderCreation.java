@@ -261,7 +261,7 @@ public class BICOrderCreation extends ECETestBase {
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+        portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
 
       if (getBicTestBase().shouldValidateSAP()) {
@@ -701,7 +701,7 @@ public class BICOrderCreation extends ECETestBase {
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+        portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
 
       if (getBicTestBase().shouldValidateSAP()) {
@@ -765,7 +765,7 @@ public class BICOrderCreation extends ECETestBase {
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+        portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
 
       // If the order number is null (such as from a financing order), use the order number from the pelican request
@@ -831,7 +831,7 @@ public class BICOrderCreation extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     Util.printInfo("Placing Flex order for returning user");
@@ -859,7 +859,7 @@ public class BICOrderCreation extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
   }
 
@@ -915,7 +915,7 @@ public class BICOrderCreation extends ECETestBase {
           results.get(BICConstants.emailid),
           PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
       if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-        portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+        portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
       }
 
       if (getBicTestBase().shouldValidateSAP()) {

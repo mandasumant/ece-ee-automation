@@ -581,7 +581,7 @@ public class MOEOrderFlows extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     if (getBicTestBase().shouldValidateSAP()) {
@@ -674,7 +674,7 @@ public class MOEOrderFlows extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     if (getBicTestBase().shouldValidateSAP()) {

@@ -333,7 +333,7 @@ public class PortalTestBase {
   }
 
   @Step("CEP : Validating Order Total " + GlobalConstants.TAG_TESTINGHUB)
-  public void validateBICOrderTotal(String orderTotal) {
+  public void validateBICOrderDetails(String orderTotal) {
     try {
       openPortalURL(accountsPortalOrderHistoryUrl);
       boolean historyPrice = portalPage.waitForFieldPresent("portalOrderHistoryPrice");
@@ -342,11 +342,30 @@ public class PortalTestBase {
         portalPage.clickUsingLowLevelActions("portalOrderHistory");
         Util.sleep(5000);
       }
+      //validate order details
+      AssertUtils.assertTrue(portalPage.checkIfElementExistsInPage("portalOrderDetailsRow", 10));
+      Util.printInfo("Great. Order found in Order History");
+      portalPage.clickUsingLowLevelActions("portalOrderDetailsRow");
+      Util.sleep(10000);
+
+      WebElement getOrderHistoryDocument = portalPage
+          .getMultipleWebElementsfromField("portalOrderHistoryDetailIframe").get(0);
+      driver.switchTo().frame(getOrderHistoryDocument);
+      //Verify the Order Id
+      AssertUtils.assertEquals(portalPage.checkIfElementExistsInPage("portalOrderDetailNumber", 10), true,
+          "Order Number not found in the Document");
+      //Verify the Subscription Id
+      AssertUtils.assertEquals(portalPage.checkIfElementExistsInPage("portalSubscriptionId", 10), true,
+          "Subscription Id not found in the Document");
+
+      driver.switchTo().defaultContent();
       String historyOrderTotal = portalPage.getLinkText("portalOrderHistoryPrice").replaceAll("[^0-9]", "");
+
       AssertUtils.assertTrue(orderTotal.equals(historyOrderTotal),
           "Validate order total in history matches order total on checkout");
     } catch (Exception e) {
       e.printStackTrace();
+      AssertUtils.fail("Unable to open order details window or verify the order information.");
     }
   }
 

@@ -3,7 +3,6 @@ package com.autodesk.ece.bic.testsuites;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.testbase.DatastoreClient;
 import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.constants.BICConstants;
 import com.autodesk.testinghub.core.constants.TestingHubConstants;
@@ -117,7 +116,7 @@ public class BICRefundOrder extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     // Refund PurchaseOrder details from pelican

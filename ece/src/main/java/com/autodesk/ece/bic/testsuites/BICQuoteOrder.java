@@ -389,7 +389,7 @@ public class BICQuoteOrder extends ECETestBase {
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
@@ -809,7 +809,7 @@ public class BICQuoteOrder extends ECETestBase {
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     // Refund PurchaseOrder details from pelican
@@ -909,7 +909,7 @@ public class BICQuoteOrder extends ECETestBase {
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     updateTestingHub(testResults);
@@ -1144,7 +1144,7 @@ public class BICQuoteOrder extends ECETestBase {
         results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     updateTestingHub(testResults);
@@ -1232,7 +1232,7 @@ public class BICQuoteOrder extends ECETestBase {
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
@@ -1309,7 +1309,7 @@ public class BICQuoteOrder extends ECETestBase {
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderTotal(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
     }
 
     updateTestingHub(testResults);
