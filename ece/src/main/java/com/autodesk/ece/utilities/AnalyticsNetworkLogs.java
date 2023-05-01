@@ -1,5 +1,6 @@
 package com.autodesk.ece.utilities;
 
+import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import java.net.URLDecoder;
@@ -146,4 +147,15 @@ public class AnalyticsNetworkLogs {
         return cookie;
     }
 
+    public String fetchAndFilterNetworkLogs(String expectedURL, String URL) throws InterruptedException {
+        List<String> logs = AnalyticsNetworkLogs.getObject().fetchNetworkLogs(EISTestBase.getBrowserDriver());
+        for (int i = 0; i < logs.size(); i++) {
+            if (logs.get(i).contains(expectedURL)) {
+                AssertUtils.assertEquals("Status code of URL: " + logs.get(i).split(" ")[0] + "should be 200 ", logs.get(i).split(" ")[1], "200");
+                return logs.get(i);
+            }
+        }
+        AssertUtils.fail("Not Able to find log entry for URL: " + expectedURL + " On Page: " + URL);
+        return "";
+    }
 }

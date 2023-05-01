@@ -115,6 +115,7 @@ public class PortalTestBase {
       driver.get(data);
       driver.navigate().refresh();
       Util.printInfo("Opened:" + data);
+      bicTestBase.validateNetworkLogsOnEachPage(data);
     } catch (Exception e) {
       Util.printTestFailedMessage("Unable to launch portal page: " + data);
       driver.get(data);
@@ -127,6 +128,7 @@ public class PortalTestBase {
     driver.manage().deleteAllCookies();
     driver.navigate().to(url);
     Util.printInfo("Opened:" + url);
+    bicTestBase.validateNetworkLogsOnEachPage(url);
     return true;
   }
 

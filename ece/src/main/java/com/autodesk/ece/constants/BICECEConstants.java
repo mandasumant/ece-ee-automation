@@ -250,4 +250,5 @@ public class BICECEConstants extends BICConstants {
   public static final String CD1 = "cd1";
   public static final String CD8 = "cd8";
   public static final String CD9 = "cd9";
+  public static final String APPLY_ANALYTICS = "applyAnalytics";
 }

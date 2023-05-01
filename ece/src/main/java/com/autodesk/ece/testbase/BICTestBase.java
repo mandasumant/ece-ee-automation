@@ -1,5 +1,7 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
+import java.util.Objects;
 import static org.testng.util.Strings.isNotNullAndNotEmpty;
 import static org.testng.util.Strings.isNullOrEmpty;
 import com.autodesk.ece.constants.BICECEConstants;
@@ -2302,6 +2304,7 @@ public class BICTestBase {
       driver.manage().deleteAllCookies();
       driver.get(URL);
       bicPage.waitForPageToLoad();
+      validateNetworkLogsOnEachPage(URL);
     } catch (Exception e) {
       try {
         retryLoadingURL(URL);
@@ -2349,7 +2352,7 @@ public class BICTestBase {
       Util.printInfo("constructDotComURL " + constructDotComURL);
       bicPage.navigateToURL(constructDotComURL);
       Util.sleep(5000);
-
+      validateNetworkLogsOnEachPage(constructDotComURL);
       setStorageData();
       Util.sleep(5000);
 
@@ -2862,6 +2865,23 @@ public class BICTestBase {
         waitForLoadingSpinnerToComplete("loadingSpinner");
       }
     }
+  }
+
+  public void validateNetworkLogsOnEachPage(String URL) {
+    HashMap<String, String> results = new HashMap<>();
+    Boolean shouldValidateNetworkLogs =
+            !Objects.isNull(System.getProperty(BICECEConstants.APPLY_ANALYTICS)) ? Boolean.valueOf(
+                    System.getProperty(BICECEConstants.APPLY_ANALYTICS)) : false;
+    if (shouldValidateNetworkLogs) {
+      try {
+        results.put("Google", AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.GOOGLE_ANALYTICS, URL));
+        results.put("Tealium", AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.TEALIUM_ANALYTICS, URL));
+        results.put("Adobe", AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.ADOBE_ANALYTICS, URL));
+      } catch (Exception e) {
+        Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+      }
+    }
+    ECETestBase.updateTestingHub(results);
   }
 
   public static class Names {
