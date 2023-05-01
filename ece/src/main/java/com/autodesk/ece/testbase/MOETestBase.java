@@ -1361,7 +1361,7 @@ public class MOETestBase {
     bicTestBase.setStorageData();
   }
 
-  @Step("SFDC : Validating Opportunity state " + GlobalConstants.TAG_TESTINGHUB)
+  @Step("SFDC : Validate the Opportunity is closed " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> validateOpportunityStatusInSfdc(LinkedHashMap<String, String> data)
       throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
@@ -1387,7 +1387,8 @@ public class MOETestBase {
         }
 
         if (moePage.checkIfElementExistsInPage("optyIdStageWon", 90)) {
-          Util.printInfo("Opportunity found with closed state.");
+          Util.printInfo("Opportunity state: " + driver.findElement(
+              By.xpath(moePage.getFirstFieldLocator("optyIdStageWon"))).getText());
           isOpportunityOpened = false;
         } else {
           Util.printInfo("Opportunity not closed. Refreshing the page.");
