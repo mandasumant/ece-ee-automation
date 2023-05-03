@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
@@ -392,6 +393,28 @@ public class BICTestBase {
     //TODO Additional validations will be added in ECEEPLT-6590
     try {
       if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
+        Float subscriptionAmount = Optional
+            .of(bicPage.getMultipleTextValuesfromField("subscriptionPrice")[0])
+            .map(price -> price.replaceAll("[^\\d.]", "").trim())
+            .map(Float::valueOf)
+            .get();
+
+        Float minicartCheckoutPrice = Optional
+            .of(bicPage.getMultipleTextValuesfromField("minicartCheckoutPrice")[0].trim())
+            .map(price -> price.replaceAll("[^\\d.]", "").trim())
+            .map(Float::valueOf)
+            .get();
+        AssertUtils.assertEquals(subscriptionAmount, minicartCheckoutPrice,
+            "Subscription amount should be same as minicart checkout price");
+
+        Float minicartSubTotalPrice = Optional
+            .of(bicPage.getMultipleTextValuesfromField("minicartSubTotal")[0].trim())
+            .map(price -> price.replaceAll("[^\\d.]", "").trim())
+            .map(Float::valueOf)
+            .get();
+        AssertUtils.assertEquals(subscriptionAmount, minicartSubTotalPrice,
+            "Subscription amount should be same as minicart subtotal price");
+
         bicPage.clickToSubmit("minicartCheckoutButton", 3000);
       }
     } catch (MetadataException e) {
