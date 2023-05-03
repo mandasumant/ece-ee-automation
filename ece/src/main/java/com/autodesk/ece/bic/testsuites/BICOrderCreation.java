@@ -783,7 +783,7 @@ public class BICOrderCreation extends ECETestBase {
       // order number since the latter is not officially supported
       results.remove(BICConstants.orderNumber);
       // Getting a PurchaseOrder details from pelican
-      JsonPath jp = new JsonPath(pelicantb.getPurchaseOrderV4(results));
+      JsonPath jp = pelicantb.getRefundedPurchaseOrderV4WithPolling(results);
       results.put("refund_orderState", jp.get("orderState").toString());
       results.put("refund_fulfillmentStatus", jp.get("fulfillmentStatus"));
 

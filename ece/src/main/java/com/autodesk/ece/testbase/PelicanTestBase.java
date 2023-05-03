@@ -26,14 +26,17 @@ import io.restassured.response.Response;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.UUID;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.testng.Assert;
 
 
@@ -428,6 +431,24 @@ public class PelicanTestBase {
     return result;
   }
 
+  @Step("Get Pelican Response with polling" + GlobalConstants.TAG_TESTINGHUB)
+  public JsonPath getRefundedPurchaseOrderWithPolling(HashMap<String, String> data) {
+    //Adyen delays in IPN response is causing test failures. Until the issue is resolved lets
+    // add additional 5 minutes sleep for the IPN message to come back.
+    Util.sleep(300000);
+
+    return new FluentWait<>(data)
+        .withTimeout(Duration.ofMinutes(30L))
+        .pollingEvery(Duration.ofMinutes(5L))
+        .until(input -> {
+          Util.printInfo("Polling purchase order API until order status is REFUNDED");
+          return Optional.of(getPurchaseOrder(input))
+              .map(JsonPath::new)
+              .filter(jsonPath -> jsonPath.get("content[0].orderState").toString().equals("REFUNDED"))
+              .orElse(null);
+        });
+  }
+
   @Step("Get Purchase Order V4 API" + GlobalConstants.TAG_TESTINGHUB)
   public String getPurchaseOrderV4(HashMap<String, String> data) {
     String Content_Type = BICECEConstants.APPLICATION_JSON;
@@ -469,6 +490,24 @@ public class PelicanTestBase {
     }
 
     return result;
+  }
+
+  @Step("Get Purchase Order V4 API with Polling" + GlobalConstants.TAG_TESTINGHUB)
+  public JsonPath getRefundedPurchaseOrderV4WithPolling(HashMap<String, String> data) {
+    // Adyen delays in IPN response is causing test failures. Until the issue is resolved lets add additional
+    // 5 minutes sleep for the IPN message to come back.
+    Util.sleep(300000);
+
+    return new FluentWait<>(data)
+        .withTimeout(Duration.ofMinutes(30L))
+        .pollingEvery(Duration.ofMinutes(5L))
+        .until(input -> {
+          Util.printInfo("Polling purchase order V4 API until order status is REFUNDED");
+          return Optional.of(getPurchaseOrderV4(input))
+              .map(JsonPath::new)
+              .filter(jsonPath -> jsonPath.get("orderState").toString().equals("REFUNDED"))
+              .orElse(null);
+        });
   }
 
   @Step("Create Refund Order" + GlobalConstants.TAG_TESTINGHUB)

@@ -122,12 +122,7 @@ public class BICRefundOrder extends ECETestBase {
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrder(results);
 
-    //Adyen delays in IPN response is causing test failures. Until the issue is resolved lets
-    // add additional 6min sleep for the IPN message to come back.
-    Util.sleep(660000);
-
-    // Getting a PurchaseOrder details from pelican
-    JsonPath jp = new JsonPath(pelicantb.getPurchaseOrder(results));
+    JsonPath jp = pelicantb.getRefundedPurchaseOrderWithPolling(results);
     results.put("refund_orderState", jp.get("content[0].orderState").toString());
     results.put("refund_fulfillmentStatus", jp.get("content[0].fulfillmentStatus"));
     results.put("refund_paymentMethodType", jp.get("content[0].billingInfo.paymentMethodType"));
@@ -189,7 +184,7 @@ public class BICRefundOrder extends ECETestBase {
     Util.sleep(660000);
 
     // Getting a PurchaseOrder details from pelican
-    JsonPath jp = new JsonPath(pelicantb.getPurchaseOrder(results));
+    JsonPath jp = pelicantb.getRefundedPurchaseOrderWithPolling(results);
     results.put("refund_orderState", jp.get("content[0].orderState").toString());
     results.put("refund_fulfillmentStatus", jp.get("content[0].fulfillmentStatus"));
     results.put("refund_paymentMethodType", jp.get("content[0].billingInfo.paymentMethodType"));
