@@ -399,8 +399,12 @@ public class BICTestBase {
             .map(Float::valueOf)
             .get();
 
+        String checkoutPrice = bicPage.checkIfElementExistsInPage("minicartCheckoutDiscountedPrice", 3)
+            ? bicPage.getMultipleTextValuesfromField("minicartCheckoutDiscountedPrice")[0]
+            : bicPage.getMultipleTextValuesfromField("minicartCheckoutCalculatedPrice")[0];
+
         Float minicartCheckoutPrice = Optional
-            .of(bicPage.getMultipleTextValuesfromField("minicartCheckoutPrice")[0].trim())
+            .of(checkoutPrice.trim())
             .map(price -> price.replaceAll("[^\\d.]", "").trim())
             .map(Float::valueOf)
             .get();
