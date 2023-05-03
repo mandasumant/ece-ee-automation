@@ -541,7 +541,8 @@ public class MOEOrderFlows extends ECETestBase {
     testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
     updateTestingHub(testResults);
 
-    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
+    results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
 
     if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       Util.sleep(120000);
@@ -552,6 +553,10 @@ public class MOEOrderFlows extends ECETestBase {
 
     AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
         BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
@@ -612,23 +617,24 @@ public class MOEOrderFlows extends ECETestBase {
     testResults.put(BICConstants.oxid, results.get(BICConstants.oxid));
     updateTestingHub(testResults);
 
-    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
+    results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
 
     results.put(BICConstants.nativeOrderNumber + "1", results.get(BICConstants.orderNumber));
     results.remove(BICConstants.orderNumber);
-    updateTestingHub(results);
     testDataForEachMethod.putAll(results);
+
+    testResults.putAll(results);
+    updateTestingHub(testResults);
 
     Util.printInfo("Placing second order for the returning user.");
     testDataForEachMethod.put("isReturningUser", "true");
     results.putAll(moetb.createBicOrderMoeOdmDtc(testDataForEachMethod));
 
-    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
-    results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
-    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
-    updateTestingHub(testResults);
+    results = getBicTestBase().placeFlexOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
 
-    updateTestingHub(results);
+    results.put(BICConstants.nativeOrderNumber + "2", results.get(BICConstants.orderNumber));
     testDataForEachMethod.putAll(results);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -644,6 +650,10 @@ public class MOEOrderFlows extends ECETestBase {
 
     AssertUtils.assertEquals("GUAC MOE Origin is not GUAC_MOE_DTC", results.get("getPOResponse_origin"),
         BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
