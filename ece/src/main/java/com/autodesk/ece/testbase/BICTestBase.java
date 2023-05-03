@@ -1,11 +1,10 @@
 package com.autodesk.ece.testbase;
 
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
-import java.util.Objects;
 import static org.testng.util.Strings.isNotNullAndNotEmpty;
 import static org.testng.util.Strings.isNullOrEmpty;
 import com.autodesk.ece.constants.BICECEConstants;
 import com.autodesk.ece.utilities.Address;
+import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
@@ -31,6 +30,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
@@ -1135,19 +1135,29 @@ public class BICTestBase {
         }
 
         try {
-          bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10);
-
-          if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_ID)) {
-            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_ID).equals("")) {
-              Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
-              bicPage.populateField("purchaseOrderNumber", payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
+          if (bicPage.checkIfElementExistsInPage("yesPurchaseOrderOption", 10)) {
+            if (payByInvoiceDetails.containsKey(BICECEConstants.ORDER_ID)) {
+              if (!payByInvoiceDetails.get(BICECEConstants.ORDER_ID).equals("")) {
+                Util.printInfo("Entering Purchase order number : " + payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
+                bicPage.populateField("purchaseOrderNumber", payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
+              }
+            } else {
+              Util.printInfo("Selecting No PO Option in LOC flow");
+              bicPage.clickUsingLowLevelActions("noPurchaseOrderOption");
             }
-          } else {
-            Util.printInfo("Selecting No PO Option in LOC flow");
-            bicPage.clickUsingLowLevelActions("noPurchaseOrderOption");
+          } else if (bicPage.getMultipleWebElementsfromField("attachPODocumentLink").size() == 2) {
+            WebElement pbiLink = bicPage.getMultipleWebElementsfromField("attachPODocumentLink").get(1);
+            bicPage.clickUsingLowLevelActions(pbiLink);
+            AssertUtils.assertEquals(bicPage.checkIfElementExistsInPage("purchaseOrderNumber", 10), true,
+                "PO Number text box not Visible");
+            bicPage.populateField("purchaseOrderNumber", RandomStringUtils.randomAlphabetic(6).toUpperCase());
+            bicPage.clickUsingLowLevelActions("attachPurchaseOrderNumberCarrot");
+            AssertUtils.assertEquals(bicPage.checkIfElementExistsInPage("attachPODocumentAgreeCheckBox", 10), true,
+                "PO Agreement checkbox not Visible");
           }
         } catch (Exception e) {
           Util.printInfo("Failed to specify the PO number or No option in LOC flow...");
+          e.printStackTrace();
           driver.navigate().refresh();
           Util.sleep(3000);
           continue;
