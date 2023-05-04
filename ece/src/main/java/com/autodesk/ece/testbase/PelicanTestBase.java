@@ -16,6 +16,7 @@ import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.constants.CommonConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
@@ -248,7 +249,7 @@ public class PelicanTestBase {
     } else {
       contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 20:13:28 UTC";
     }
-    String path = Util.getCorePayloadPath() + "BIC_Update_NextBilling.json";
+    String path = CommonConstants.APP_PAYLOAD_PATH + "BIC_Update_NextBilling.json";
     File rawPayload = new File(path);
     UpdateNextBilling nextBillingJson;
     ObjectMapper om = new ObjectMapper();
@@ -296,7 +297,7 @@ public class PelicanTestBase {
     endDate = Util.customDate("MM/dd/yyyy", 0, +2, 0) + " 20:13:28 UTC";
     expirationDate = Util.customDate("MM/dd/yyyy", +1, +2, 0) + " 20:13:28 UTC";
 
-    String path = Util.getCorePayloadPath() + "BIC_Update_NextBilling.json";
+    String path = CommonConstants.APP_PAYLOAD_PATH  + "BIC_Update_NextBilling.json";
     File rawPayload = new File(path);
     UpdateNextBilling nextBillingJson;
     ObjectMapper om = new ObjectMapper();
