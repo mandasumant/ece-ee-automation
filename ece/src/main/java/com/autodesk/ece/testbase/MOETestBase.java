@@ -1,15 +1,17 @@
 package com.autodesk.ece.testbase;
 
-import static com.autodesk.ece.testbase.BICTestBase.bicPage;
-import static com.autodesk.ece.testbase.BICTestBase.clearTextInputValue;
+import static com.autodesk.eceapp.testbase.EceBICTestBase.bicPage;
+import static com.autodesk.eceapp.testbase.EceBICTestBase.clearTextInputValue;
 import static org.testng.util.Strings.isNullOrEmpty;
-import com.autodesk.ece.constants.BICECEConstants;
-import com.autodesk.ece.testbase.BICTestBase.Names;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.EceAppConstants;
+import com.autodesk.eceapp.testbase.EceBICTestBase;
+import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
-import com.autodesk.testinghub.core.common.CommonConstants;
+import com.autodesk.testinghub.eseapp.constants.CommonConstants;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
@@ -39,13 +41,13 @@ public class MOETestBase {
   private final Page_ moePage;
   private final Map<String, String> testData;
   public WebDriver driver;
-  BICTestBase bicTestBase;
+  EceBICTestBase bicTestBase;
 
   public MOETestBase(GlobalTestBase testbase, LinkedHashMap<String, String> testData) {
     Util.PrintInfo("MOETestBase from ece");
-    moePage = testbase.createPage("PAGE_MOE");
+    moePage = testbase.createPageForApp("PAGE_MOE", EceAppConstants.APP_NAME);
     driver = testbase.getdriver();
-    bicTestBase = new BICTestBase(driver, testbase);
+    bicTestBase = new EceBICTestBase(driver, testbase);
     this.testData = testData;
   }
 
@@ -98,8 +100,8 @@ public class MOETestBase {
     loginToMoe();
 
     // Perform account lookup for the customer's email address that will show as 'account not found'.
-    Names names = BICTestBase.generateFirstAndLastNames();
-    String emailID = BICTestBase.generateUniqueEmailID();
+    Names names = EceBICTestBase.generateFirstAndLastNames();
+    String emailID = EceBICTestBase.generateUniqueEmailID();
     emulateUser(emailID, names);
     data.put(BICECEConstants.FIRSTNAME, names.firstName);
     data.put(BICECEConstants.LASTNAME, names.lastName);
@@ -310,7 +312,7 @@ public class MOETestBase {
 
     address = bicTestBase.getBillingAddress(data);
 
-    Names names = BICTestBase.generateFirstAndLastNames();
+    Names names = EceBICTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password, false);
     data.putAll(names.getMap());
     data.put(BICECEConstants.emailid, emailID);
@@ -351,7 +353,7 @@ public class MOETestBase {
     String constructGuacMoeURL = guacBaseURL + locale + "/" + guacMoeResourceURL;
     System.out.println("constructGuacMoeURL " + constructGuacMoeURL);
 
-    Names names = BICTestBase.generateFirstAndLastNames();
+    Names names = EceBICTestBase.generateFirstAndLastNames();
     bicTestBase.createBICAccount(names, emailID, password, false);
     data.putAll(names.getMap());
     data.put(BICECEConstants.emailid, emailID);
@@ -1123,7 +1125,7 @@ public class MOETestBase {
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
     String oxygenLogOutUrl = data.get("oxygenLogOut");
 
-    Names names = BICTestBase.generateFirstAndLastNames();
+    Names names = EceBICTestBase.generateFirstAndLastNames();
 
     if (System.getProperty("usertype").equals("new")) {
       bicTestBase.createBICAccount(names, emailID, password, false);
@@ -1255,9 +1257,9 @@ public class MOETestBase {
     String copyCartLink = copyCartLinkFromClipboard();
 
     if (isNullOrEmpty(data.get("isReturningUser"))) {
-      Names names = BICTestBase.generateFirstAndLastNames();
+      Names names = EceBICTestBase.generateFirstAndLastNames();
       data.putAll(names.getMap());
-      String emailID = BICTestBase.generateUniqueEmailID();
+      String emailID = EceBICTestBase.generateUniqueEmailID();
       data.put(BICECEConstants.emailid, emailID);
 
       Util.printInfo("Log out with Oxygen direct URL: " + oxygenLogOutUrl);
@@ -1405,8 +1407,8 @@ public class MOETestBase {
   @Step("SFDC : Add a contact to an opportunity")
   private String addContactToOpportunity(String contact) {
 
-    Names names = BICTestBase.generateFirstAndLastNames();
-    String emailID = BICTestBase.generateUniqueEmailID();
+    Names names = EceBICTestBase.generateFirstAndLastNames();
+    String emailID = EceBICTestBase.generateUniqueEmailID();
 
     try {
       if (StringUtils.isNotEmpty(contact)) {

@@ -1,8 +1,9 @@
-package com.autodesk.ece.constants;
+package com.autodesk.eceapp.constants;
 
-import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
 
 public class BICECEConstants extends BICConstants {
+
 
   public static final String EMAIL = "email";
   public static final String PASSWORD = "password";

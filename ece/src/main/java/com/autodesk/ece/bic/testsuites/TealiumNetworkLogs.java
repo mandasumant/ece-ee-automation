@@ -1,7 +1,7 @@
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
+import com.autodesk.eceapp.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
@@ -16,7 +16,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
 
 import java.lang.reflect.Method;
 

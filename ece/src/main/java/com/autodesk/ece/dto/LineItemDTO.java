@@ -1,6 +1,6 @@
 package com.autodesk.ece.dto;
 
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
 import java.util.LinkedHashMap;
 import lombok.Data;
 

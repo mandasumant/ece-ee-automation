@@ -22,6 +22,8 @@
         <testng.version>6.11</testng.version>
         <allure.version>2.7.0</allure.version>
         <aspectj.version>1.8.13</aspectj.version>
+        <core.version>2.5</core.version>
+        <eseapp.version>1.0</eseapp.version>
 
     </properties>
 
@@ -70,7 +72,17 @@
         <dependency>
             <groupId>com.autodesk.testinghub</groupId>
             <artifactId>core</artifactId>
-            <version>2.4</version>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.autodesk.testinghub</groupId>
+            <artifactId>eseapp</artifactId>
+            <version>${eseapp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.autodesk.ece</groupId>
+            <artifactId>eceapp</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
@@ -170,21 +182,30 @@
                                 <artifactItem>
                                     <groupId>com.autodesk.testinghub</groupId>
                                     <artifactId>core</artifactId>
-                                    <version>2.4</version>
+                                    <version>${core.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <includes>**.properties</includes>
+                                    <includes>core/**</includes>
                                     <outputDirectory>${project.build.directory}/</outputDirectory>
                                     <excludes>**/*test.class,**/*.class,</excludes>
                                 </artifactItem>
-
                                 <artifactItem>
                                     <groupId>com.autodesk.testinghub</groupId>
-                                    <artifactId>core</artifactId>
-                                    <version>2.4</version>
+                                    <artifactId>eseapp</artifactId>
+                                    <version>${eseapp.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <includes>localRepoLib/**</includes>
+                                    <includes>eseapp/**</includes>
+                                    <outputDirectory>${project.build.directory}/</outputDirectory>
+                                    <excludes>**/*test.class,**/*.class,</excludes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.autodesk.ece</groupId>
+                                    <artifactId>eceapp</artifactId>
+                                    <version>1.0</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <includes>eceapp/**</includes>
                                     <outputDirectory>${project.build.directory}/</outputDirectory>
                                     <excludes>**/*test.class,**/*.class,</excludes>
                                 </artifactItem>

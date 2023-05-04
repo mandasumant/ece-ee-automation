@@ -1,22 +1,25 @@
-package com.autodesk.ece.testbase;
+package com.autodesk.eceapp.testbase;
 
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.EceAppConstants;
+import com.autodesk.eceapp.utilities.Address;
+import java.util.Objects;
 import static org.testng.util.Strings.isNotNullAndNotEmpty;
 import static org.testng.util.Strings.isNullOrEmpty;
-import com.autodesk.ece.constants.BICECEConstants;
-import com.autodesk.ece.utilities.Address;
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
+import com.autodesk.eceapp.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
-import com.autodesk.testinghub.core.testbase.SAPTestBase;
+import com.autodesk.testinghub.eseapp.testbase.EseSAPTestBase;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.testbase.TestinghubUtil;
 import io.qameta.allure.Step;
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -60,19 +63,19 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.util.Strings;
 
-public class BICTestBase {
+public class EceBICTestBase {
 
   public static Page_ bicPage = null;
   public WebDriver driver;
-  ZipPayTestBase zipTestBase;
-  FinancingTestBase financingTestBase;
+  EceZipPayTestBase zipTestBase;
+  EceFinancingTestBase financingTestBase;
 
-  public BICTestBase(WebDriver driver, GlobalTestBase testbase) {
+  public EceBICTestBase(WebDriver driver, GlobalTestBase testbase) {
     Util.PrintInfo("BICTestBase from ece");
     this.driver = driver;
-    bicPage = testbase.createPage("PAGE_BIC_CART");
-    zipTestBase = new ZipPayTestBase(testbase);
-    financingTestBase = new FinancingTestBase(testbase);
+    bicPage = testbase.createPageForApp("PAGE_BIC_CART", EceAppConstants.APP_NAME);
+    zipTestBase = new EceZipPayTestBase(testbase);
+    financingTestBase = new EceFinancingTestBase(testbase);
   }
 
   public static void clearTextInputValue(WebElement element) {
@@ -1619,7 +1622,7 @@ public class BICTestBase {
         Util.printInfo("Placing Flex Order Attempt: " + attempt++);
       }
 
-      if (isNotNullAndNotEmpty("isNonQuoteFlexOrder")) {
+      if (Strings.isNotNullAndNotEmpty("isNonQuoteFlexOrder")) {
         enterCustomerDetails(address);
         data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
       } else {
@@ -1638,7 +1641,7 @@ public class BICTestBase {
 
       String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
-      if (isNullOrEmpty(data.get("isReturningUser"))) {
+      if (Strings.isNullOrEmpty(data.get("isReturningUser"))) {
         enterBillingDetails(data, address, paymentMethod);
       } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
         paymentMethod = "LOC";
@@ -1660,7 +1663,7 @@ public class BICTestBase {
           driver.navigate().refresh();
         }
       } else {
-        if (isNotNullAndNotEmpty(data.get("isReturningUser"))) {
+        if (Strings.isNotNullAndNotEmpty(data.get("isReturningUser"))) {
           if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 10)) {
             bicPage.clickUsingLowLevelActions("reviewLOCOrder");
             bicPage.waitForElementToDisappear("reviewLOCOrder", 15);
@@ -2490,7 +2493,7 @@ public class BICTestBase {
   public void agreeToTerm() {
     Util.printInfo("Agree Element");
     try {
-      bicPage.selectMainWindow();
+      bicPage.switchToDefaultContent();
       JavascriptExecutor js = (JavascriptExecutor) driver;
       js.executeScript("document.getElementById('order-agreement').click()");
       Util.sleep(1000);
@@ -2589,7 +2592,7 @@ public class BICTestBase {
   public HashMap<String, String> calculateFulfillmentTime(HashMap<String, String> results) {
     String OS = System.getProperty("os.name").toLowerCase();
     PeriodFormatter periodFormatter = PeriodFormat.getDefault();
-    SAPTestBase saptb = new SAPTestBase();
+    EseSAPTestBase saptb = new EseSAPTestBase();
     HashMap<String, String> report = new HashMap<>();
 
     DateTimeFormatter poFormatter =
@@ -2918,7 +2921,7 @@ public class BICTestBase {
         Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
       }
     }
-    ECETestBase.updateTestingHub(results);
+    TestinghubUtil.updateTestingHub(results);
   }
 
   public static class Names {

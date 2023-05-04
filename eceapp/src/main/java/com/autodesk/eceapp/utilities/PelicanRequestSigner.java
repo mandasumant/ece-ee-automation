@@ -1,6 +1,6 @@
-package com.autodesk.ece.utilities;
+package com.autodesk.eceapp.utilities;
 
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.YamlUtil;

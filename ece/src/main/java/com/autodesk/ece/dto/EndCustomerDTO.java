@@ -1,6 +1,6 @@
 package com.autodesk.ece.dto;
 
-import com.autodesk.ece.utilities.Address;
+import com.autodesk.eceapp.utilities.Address;
 import lombok.Data;
 
 public @Data

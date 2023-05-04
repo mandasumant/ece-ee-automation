@@ -1,7 +1,8 @@
-package com.autodesk.ece.testbase;
+package com.autodesk.eceapp.testbase;
 
 import static org.testng.util.Strings.isNotNullAndNotEmpty;
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
@@ -16,14 +17,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class FinancingTestBase {
+public class EceFinancingTestBase {
 
   private final Page_ financingPage;
   private final WebDriver driver;
   private Map<String, String> testData = new HashMap<>();
 
-  public FinancingTestBase(GlobalTestBase testBase) {
-    financingPage = testBase.createPage("PAGE_FINANCING");
+  public EceFinancingTestBase(GlobalTestBase testBase) {
+    financingPage = testBase.createPageForApp("PAGE_FINANCING", EceAppConstants.APP_NAME);
     this.driver = testBase.getdriver();
   }
 

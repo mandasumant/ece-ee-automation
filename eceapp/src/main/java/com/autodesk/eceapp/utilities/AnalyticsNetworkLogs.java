@@ -1,4 +1,4 @@
-package com.autodesk.ece.utilities;
+package com.autodesk.eceapp.utilities;
 
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.utils.AssertUtils;

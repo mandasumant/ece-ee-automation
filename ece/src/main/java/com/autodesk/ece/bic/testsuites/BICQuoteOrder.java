@@ -1,23 +1,20 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.ece.constants.BICECEConstants;
-import com.autodesk.ece.testbase.BICTestBase;
-import com.autodesk.ece.testbase.BICTestBase.Names;
-import com.autodesk.ece.testbase.DatastoreClient;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.ece.testbase.*;
+import com.autodesk.eceapp.testbase.EceBICTestBase;
+import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
-import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.testbase.PWSTestBase;
-import com.autodesk.ece.testbase.PelicanTestBase;
-import com.autodesk.ece.utilities.Address;
-import com.autodesk.ece.utilities.TaxExemptionMappings;
-import com.autodesk.ece.utilities.TaxExemptionMappings.TaxOptions;
+import com.autodesk.eceapp.utilities.Address;
+import com.autodesk.eceapp.utilities.TaxExemptionMappings;
+import com.autodesk.eceapp.utilities.TaxExemptionMappings.TaxOptions;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
-import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
@@ -130,10 +127,10 @@ public class BICQuoteOrder extends ECETestBase {
         ProtectedConfigFile.decrypt(testDataForEachMethod.get("pwsClientSecret")),
         testDataForEachMethod.get("pwsHostname"));
 
-    Names names = BICTestBase.generateFirstAndLastNames();
+    Names names = EceBICTestBase.generateFirstAndLastNames();
     testDataForEachMethod.put(BICECEConstants.FIRSTNAME, names.firstName);
     testDataForEachMethod.put(BICECEConstants.LASTNAME, names.lastName);
-    testDataForEachMethod.put(BICECEConstants.emailid, BICTestBase.generateUniqueEmailID());
+    testDataForEachMethod.put(BICECEConstants.emailid, EceBICTestBase.generateUniqueEmailID());
 
     if (System.getProperty("quantity1") != null) {
       testDataForEachMethod.put(BICECEConstants.FLEX_TOKENS, System.getProperty("quantity1"));
@@ -251,8 +248,8 @@ public class BICQuoteOrder extends ECETestBase {
       address.company = testDataForEachMethod.get("company");
     } else {
       if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-        Names payerNames = BICTestBase.generateFirstAndLastNames();
-        String payerEmail = BICTestBase.generateUniqueEmailID();
+        Names payerNames = EceBICTestBase.generateFirstAndLastNames();
+        String payerEmail = EceBICTestBase.generateUniqueEmailID();
         Util.printInfo("Payer email: " + payerEmail);
         getBicTestBase().goToDotcomSignin(testDataForEachMethod);
         getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
@@ -1010,8 +1007,8 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
     testResults.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
     testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
-    Names secondUser = BICTestBase.generateFirstAndLastNames();
-    String secondUserEmail = BICTestBase.generateUniqueEmailID();
+    Names secondUser = EceBICTestBase.generateFirstAndLastNames();
+    String secondUserEmail = EceBICTestBase.generateUniqueEmailID();
 
     getBicTestBase().goToDotcomSignin(testDataForEachMethod);
     getBicTestBase().createBICAccount(secondUser, secondUserEmail, PASSWORD, true);
@@ -1150,8 +1147,8 @@ public class BICQuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
 
     if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-      Names payerNames = BICTestBase.generateFirstAndLastNames();
-      String payerEmail = BICTestBase.generateUniqueEmailID();
+      Names payerNames = EceBICTestBase.generateFirstAndLastNames();
+      String payerEmail = EceBICTestBase.generateUniqueEmailID();
       Util.printInfo("Payer email: " + payerEmail);
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
       getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
@@ -1476,7 +1473,7 @@ public class BICQuoteOrder extends ECETestBase {
 
     AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button should be present");
 
-    com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+    com.autodesk.testinghub.eseapp.testbase.EseBICTestBase coreBicTestBase = new com.autodesk.testinghub.eseapp.testbase.EseBICTestBase(
         getDriver(), getTestBase());
     coreBicTestBase.navigateToTTRPageForTaxExempt();
 
@@ -1566,7 +1563,7 @@ public class BICQuoteOrder extends ECETestBase {
 
   private String submitECMSTaxExemption(HashMap<String, String> testResults, Address address) throws IOException {
     String flexCode = null;
-    com.autodesk.testinghub.core.testbase.BICTestBase coreBicTestBase = new com.autodesk.testinghub.core.testbase.BICTestBase(
+    com.autodesk.testinghub.eseapp.testbase.EseBICTestBase coreBicTestBase = new com.autodesk.testinghub.eseapp.testbase.EseBICTestBase(
         getDriver(), getTestBase());
 
     HashMap<String, String> dataForTTR = new HashMap<String, String>(testDataForEachMethod) {

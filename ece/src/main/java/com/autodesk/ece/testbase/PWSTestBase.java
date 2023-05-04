@@ -1,7 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.ece.dto.AgentAccountDTO;
 import com.autodesk.ece.dto.AgentContactDTO;
 import com.autodesk.ece.dto.EndCustomerDTO;
@@ -10,9 +10,9 @@ import com.autodesk.ece.dto.LineItemDTO;
 import com.autodesk.ece.dto.OfferDTO;
 import com.autodesk.ece.dto.PurchaserDTO;
 import com.autodesk.ece.dto.QuoteDTO;
-import com.autodesk.ece.utilities.Address;
+import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.sfdc.SFDCAPI;
+import com.autodesk.testinghub.eseapp.sfdc.SFDCAPI;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import com.google.gson.Gson;

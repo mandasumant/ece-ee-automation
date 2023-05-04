@@ -1,8 +1,8 @@
 package com.autodesk.ece.testbase;
 
-import com.autodesk.ece.constants.BICECEConstants;
-import com.autodesk.ece.utilities.PelicanRequestSigner;
-import com.autodesk.ece.utilities.PelicanRequestSigner.PelicanSignature;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.utilities.PelicanRequestSigner;
+import com.autodesk.eceapp.utilities.PelicanRequestSigner.PelicanSignature;
 import com.autodesk.platformautomation.ApiClient;
 import com.autodesk.platformautomation.ApiException;
 import com.autodesk.platformautomation.Configuration;

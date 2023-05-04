@@ -1,12 +1,11 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
-import com.autodesk.testinghub.core.testbase.SAPTestBase;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
+import com.autodesk.testinghub.eseapp.testbase.EseSAPTestBase;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.YamlUtil;
@@ -48,7 +47,7 @@ public class IndirectOrderCreation extends ECETestBase {
       "sap-bicindirect"}, description = "Validate BIC Indirect SAP Order in Portal functionality")
   public void validateBICIndirectSAPOrder() {
     ECETestBase tb = new ECETestBase();
-    SAPTestBase saptb = new SAPTestBase();
+    EseSAPTestBase saptb = new EseSAPTestBase();
 
     String sku = System.getProperty(TestingHubConstants.sku);
     String[] skuList = sku.split(":");

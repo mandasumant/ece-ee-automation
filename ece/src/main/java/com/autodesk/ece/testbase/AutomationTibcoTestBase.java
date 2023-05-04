@@ -1,10 +1,10 @@
 package com.autodesk.ece.testbase;
 
-import com.autodesk.testinghub.core.testbase.TIBCOServiceTestBase;
+import com.autodesk.testinghub.eseapp.testbase.EseTIBCOServiceTestBase;
 import com.autodesk.testinghub.core.utils.Util;
 import io.qameta.allure.Step;
 
-public class AutomationTibcoTestBase extends TIBCOServiceTestBase {
+public class AutomationTibcoTestBase extends EseTIBCOServiceTestBase {
 
   @Step("Tibco : Validate create order @testingHub")
   public boolean waitTillProcessCompletesStatus(String poNumber, String processName) {

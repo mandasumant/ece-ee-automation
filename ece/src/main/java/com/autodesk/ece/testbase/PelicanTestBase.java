@@ -1,18 +1,18 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
-import com.autodesk.ece.constants.BICECEConstants;
-import com.autodesk.ece.utilities.Address;
-import com.autodesk.ece.utilities.PelicanRequestSigner;
-import com.autodesk.ece.utilities.PelicanRequestSigner.PelicanSignature;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.utilities.Address;
+import com.autodesk.eceapp.utilities.PelicanRequestSigner;
+import com.autodesk.eceapp.utilities.PelicanRequestSigner.PelicanSignature;
 import com.autodesk.platformautomation.ApiClient;
 import com.autodesk.platformautomation.ApiException;
 import com.autodesk.platformautomation.Configuration;
 import com.autodesk.platformautomation.bmse2pelicansubscriptionv3.SubscriptionControllerApi;
 import com.autodesk.platformautomation.bmse2pelicansubscriptionv3.models.SubscriptionSuccess;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.bicapiModel.UpdateNextBilling;
-import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.bicapiModel.UpdateNextBilling;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;

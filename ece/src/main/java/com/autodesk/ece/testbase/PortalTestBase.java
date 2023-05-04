@@ -1,12 +1,15 @@
 package com.autodesk.ece.testbase;
 
 import static java.util.Objects.isNull;
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.EceAppConstants;
+import com.autodesk.eceapp.testbase.EceBICTestBase;
+import com.autodesk.eceapp.testbase.EceZipPayTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.core.constants.BICConstants;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.PDFReader;
@@ -56,15 +59,15 @@ public class PortalTestBase {
   private final String accountsPortalQuoteUrl;
   private final String accountPortalBillingInvoicesUrl;
   private final String accountsProductPageUrl;
-  private final ZipPayTestBase zipTestBase;
-  private final BICTestBase bicTestBase;
+  private final EceZipPayTestBase zipTestBase;
+  private final EceBICTestBase bicTestBase;
   public WebDriver driver = null;
 
   public PortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
-    portalPage = testbase.createPage("PAGE_PORTAL");
-    bicTestBase = new BICTestBase(driver, testbase);
-    zipTestBase = new ZipPayTestBase(testbase);
+    portalPage = testbase.createPageForApp("PAGE_PORTAL", EceAppConstants.APP_NAME);
+    bicTestBase = new EceBICTestBase(driver, testbase);
+    zipTestBase = new EceZipPayTestBase(testbase);
 
     String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
     Map<?, ?> loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
@@ -284,7 +287,7 @@ public class PortalTestBase {
             portalPage.getMultipleWebElementsfromField("portalPSDialogGotItButton").get(0));
         debugPageUrl("Clicked on portal 'Got it' button.");
         Util.printInfo("HTML code - After clicking portalPSDialogGotItButton.");
-        BICTestBase.bicPage.waitForElementToDisappear("portalPSDialogGotItButton", 30);
+        EceBICTestBase.bicPage.waitForElementToDisappear("portalPSDialogGotItButton", 30);
       }
     } catch (Exception e) {
       Util.printInfo("Portal - Products and Services dialog does not appear on screen...");
@@ -1216,9 +1219,9 @@ public class PortalTestBase {
       driver.findElement(By.xpath(paymentMethod)).click();
 
       Util.printInfo("Clicking on Paypal checkout button...");
-      BICTestBase.bicPage.selectFrame("paypalCheckoutOptionFrame");
-      Util.waitforPresenceOfElement(BICTestBase.bicPage.getFirstFieldLocator("paypalCheckoutBtn"));
-      BICTestBase.bicPage.clickUsingLowLevelActions("paypalCheckoutBtn");
+      EceBICTestBase.bicPage.selectFrame("paypalCheckoutOptionFrame");
+      Util.waitforPresenceOfElement(EceBICTestBase.bicPage.getFirstFieldLocator("paypalCheckoutBtn"));
+      EceBICTestBase.bicPage.clickUsingLowLevelActions("paypalCheckoutBtn");
 
       Set<String> windows = driver.getWindowHandles();
       for (String window : windows) {
@@ -1227,63 +1230,63 @@ public class PortalTestBase {
 
       driver.manage().window().maximize();
       portalPage.waitForPageToLoad();
-      BICTestBase.bicPage.waitForElementToDisappear("paypalPageLoader", 30);
+      EceBICTestBase.bicPage.waitForElementToDisappear("paypalPageLoader", 30);
 
       String title = driver.getTitle();
       AssertUtils.assertTrue(title.toUpperCase().contains("PayPal".toUpperCase()),
           "Current title [" + title + "] does not contains keyword : PayPal");
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
-      if (BICTestBase.bicPage
+      if (EceBICTestBase.bicPage
           .checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
-        BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
+        EceBICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
       }
 
-      if (BICTestBase.bicPage
+      if (EceBICTestBase.bicPage
           .checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
-        BICTestBase.bicPage
+        EceBICTestBase.bicPage
             .clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
       }
 
       Util.printInfo("Entering paypal user name [" + paypalEmail + "]...");
-      BICTestBase.bicPage.waitForElementVisible(
-          BICTestBase.bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
-      BICTestBase.bicPage.populateField("paypalUsernameField", paypalEmail);
+      EceBICTestBase.bicPage.waitForElementVisible(
+          EceBICTestBase.bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
+      EceBICTestBase.bicPage.populateField("paypalUsernameField", paypalEmail);
 
-      BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
+      EceBICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
       Util.printInfo("Entering paypal password...");
-      BICTestBase.bicPage.populateField("paypalPasswordField",
+      EceBICTestBase.bicPage.populateField("paypalPasswordField",
           ProtectedConfigFile.decrypt(data.get("paypalSsap")));
 
       Util.printInfo("Clicking on login button...");
-      BICTestBase.bicPage.clickUsingLowLevelActions("paypalLoginBtn");
-      BICTestBase.bicPage.waitForElementToDisappear("paypalPageLoader", 30);
+      EceBICTestBase.bicPage.clickUsingLowLevelActions("paypalLoginBtn");
+      EceBICTestBase.bicPage.waitForElementToDisappear("paypalPageLoader", 30);
       Util.sleep(5000);
 
       Util.printInfo("Checking Accept cookies button and clicking on it...");
-      if (BICTestBase.bicPage
+      if (EceBICTestBase.bicPage
           .checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
-        BICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
+        EceBICTestBase.bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
       }
 
       String paymentTypeXpath = "";
       if (System.getProperty("store").equals("STORE-JP")) {
-        paymentTypeXpath = BICTestBase.bicPage.getFirstFieldLocator("paypalPaymentOption")
+        paymentTypeXpath = EceBICTestBase.bicPage.getFirstFieldLocator("paypalPaymentOption")
             .replace(BICECEConstants.PAYMENTOPTION, "Visa");
       } else {
-        paymentTypeXpath = BICTestBase.bicPage.getFirstFieldLocator("paypalPaymentOption")
+        paymentTypeXpath = EceBICTestBase.bicPage.getFirstFieldLocator("paypalPaymentOption")
             .replace(BICECEConstants.PAYMENTOPTION, data.get("paypalPaymentType"));
       }
       driver.findElement(By.xpath(paymentTypeXpath)).click();
 
-      BICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
+      EceBICTestBase.bicPage.executeJavascript("window.scrollBy(0,1000);");
       try {
         Util.printInfo("Clicking on agree and continue button...");
-        BICTestBase.bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+        EceBICTestBase.bicPage.clickUsingLowLevelActions("paypalReviewBtn");
         Util.printInfo("Clicked on agree and continue button.");
         Util.sleep(2000);
-        BICTestBase.bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+        EceBICTestBase.bicPage.clickUsingLowLevelActions("paypalReviewBtn");
         Util.printInfo("Clicked again on agree and continue button.");
         Util.sleep(2000);
       } catch (Exception e) {
@@ -1323,8 +1326,8 @@ public class PortalTestBase {
       driver.findElement(By.xpath(paymentMethod)).click();
 
       Util.printInfo("Waiting for Direct Debit ACH Header...");
-      BICTestBase.bicPage.waitForElementVisible(
-          BICTestBase.bicPage.getMultipleWebElementsfromField("directDebitHead").get(0), 10);
+      EceBICTestBase.bicPage.waitForElementVisible(
+          EceBICTestBase.bicPage.getMultipleWebElementsfromField("directDebitHead").get(0), 10);
 
       // TODO Replace this with condition where we are reading from test class API whether credit card is available or not
       if (portalPage.checkIfElementExistsInPage("portalDebitCardAddLink", 10)) {
@@ -1333,10 +1336,10 @@ public class PortalTestBase {
 
       Util.sleep(3000);
       Util.printInfo("Entering Direct Debit ACH Account Number : " + paymentCardDetails[0]);
-      BICTestBase.bicPage.populateField("achAccNumber", paymentCardDetails[0]);
+      EceBICTestBase.bicPage.populateField("achAccNumber", paymentCardDetails[0]);
 
       Util.printInfo("Entering Direct Debit ACH Routing Number : " + paymentCardDetails[1]);
-      BICTestBase.bicPage.populateField("achRoutingNumber", paymentCardDetails[1]);
+      EceBICTestBase.bicPage.populateField("achRoutingNumber", paymentCardDetails[1]);
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter Direct Debit details to make payment");
@@ -1346,7 +1349,7 @@ public class PortalTestBase {
 
   @Step("Populate credit card details" + GlobalConstants.TAG_TESTINGHUB)
   public void populateCreditCardDetails(String[] paymentCardDetails) {
-    BICTestBase.bicPage.waitForField("creditCardNumberFrame", true, 30000);
+    EceBICTestBase.bicPage.waitForField("creditCardNumberFrame", true, 30000);
 
     if (System.getProperty("store").equals("STORE-JP")) {
       String paymentMethod = portalPage.getFirstFieldLocator(BICECEConstants.PORTAL_PAYMENT_METHOD)
@@ -1367,17 +1370,17 @@ public class PortalTestBase {
       }
 
       Util.sleep(3000);
-      WebElement creditCardNumberFrame = BICTestBase.bicPage
+      WebElement creditCardNumberFrame = EceBICTestBase.bicPage
           .getMultipleWebElementsfromField("creditCardNumberFrame").get(0);
-      WebElement expiryDateFrame = BICTestBase.bicPage
+      WebElement expiryDateFrame = EceBICTestBase.bicPage
           .getMultipleWebElementsfromField("expiryDateFrame").get(0);
-      WebElement securityCodeFrame = BICTestBase.bicPage
+      WebElement securityCodeFrame = EceBICTestBase.bicPage
           .getMultipleWebElementsfromField("securityCodeFrame").get(0);
 
       driver.switchTo().frame(creditCardNumberFrame);
       Util.printInfo("Entering card number : " + paymentCardDetails[0]);
       Util.sleep(2000);
-      BICTestBase.bicPage.populateField("CardNumber", paymentCardDetails[0]);
+      EceBICTestBase.bicPage.populateField("CardNumber", paymentCardDetails[0]);
       driver.switchTo().defaultContent();
       Util.sleep(2000);
 
@@ -1385,14 +1388,14 @@ public class PortalTestBase {
       Util.printInfo(
           "Entering Expiry date : " + paymentCardDetails[1] + "/" + paymentCardDetails[2]);
       Util.sleep(2000);
-      BICTestBase.bicPage
+      EceBICTestBase.bicPage
           .populateField("expirationPeriod", paymentCardDetails[1] + paymentCardDetails[2]);
       driver.switchTo().defaultContent();
       Util.sleep(2000);
       driver.switchTo().frame(securityCodeFrame);
       Util.printInfo("Entering security code : " + paymentCardDetails[3]);
       Util.sleep(2000);
-      BICTestBase.bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
+      EceBICTestBase.bicPage.populateField("PAYMENTMETHOD_SECURITY_CODE", paymentCardDetails[3]);
       driver.switchTo().defaultContent();
     } catch (MetadataException e) {
       e.printStackTrace();
@@ -1407,32 +1410,32 @@ public class PortalTestBase {
     String firstNameXpath = "";
     String lastNameXpath = "";
     if (paymentType.equalsIgnoreCase(BICConstants.paymentTypePayPal)) {
-      firstNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
+      firstNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-      lastNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
+      lastNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
     } else if (paymentType.equalsIgnoreCase(BICConstants.paymentTypeDebitCard)) {
-      firstNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
+      firstNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
-      lastNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
+      lastNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, "ach");
     } else {
-      firstNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
+      firstNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-      lastNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
+      lastNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
     }
 
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
+    EceBICTestBase.clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
     driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get("firstname"));
 
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
+    EceBICTestBase.clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
     driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get("lastname"));
 
     if (data.size() == 6) {
       Util.printInfo("Populating EMEA Billing Details");
       status = populateEMEABillingDetails(data);
-      BICTestBase.bicPage.waitForPageToLoad();
+      EceBICTestBase.bicPage.waitForPageToLoad();
     } else {
       Util.printInfo("Populating NAMER Billing Details");
       status = populateNAMERBillingDetails(data, paymentType, userType);
@@ -1445,20 +1448,20 @@ public class PortalTestBase {
     Util.sleep(3000);
     boolean status = false;
     try {
-      status = BICTestBase.bicPage.waitForElementVisible(
-          BICTestBase.bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0),
+      status = EceBICTestBase.bicPage.waitForElementVisible(
+          EceBICTestBase.bicPage.getMultipleWebElementsfromField("Organization_NameEMEA").get(0),
           60000);
     } catch (MetadataException e) {
       AssertUtils.fail("Organization_NameEMEA is not displayed on page...");
     }
-    BICTestBase.bicPage.populateField("Organization_NameEMEA", address.get(
+    EceBICTestBase.bicPage.populateField("Organization_NameEMEA", address.get(
         BICECEConstants.ORGANIZATION_NAME));
-    BICTestBase.bicPage
+    EceBICTestBase.bicPage
         .populateField("Full_AddressEMEA", address.get(BICECEConstants.FULL_ADDRESS));
-    BICTestBase.bicPage.populateField("CityEMEA", address.get("City"));
-    BICTestBase.bicPage.populateField("ZipcodeEMEA", address.get(BICECEConstants.ZIPCODE));
-    BICTestBase.bicPage.populateField("Phone_NumberEMEA", address.get("phone"));
-    BICTestBase.bicPage.populateField("CountryEMEA", address.get(BICECEConstants.COUNTRY));
+    EceBICTestBase.bicPage.populateField("CityEMEA", address.get("City"));
+    EceBICTestBase.bicPage.populateField("ZipcodeEMEA", address.get(BICECEConstants.ZIPCODE));
+    EceBICTestBase.bicPage.populateField("Phone_NumberEMEA", address.get("phone"));
+    EceBICTestBase.bicPage.populateField("CountryEMEA", address.get(BICECEConstants.COUNTRY));
     return status;
   }
 
@@ -1470,51 +1473,51 @@ public class PortalTestBase {
     switch (paymentType.toUpperCase()) {
 
       case BICConstants.paymentTypePayPal:
-        orgNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
+        orgNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-        fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
+        fullAddrXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-        cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
+        cityXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-        zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
+        zipXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-        phoneXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
+        phoneXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-        countryXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
+        countryXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
-        stateXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
+        stateXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYPAL);
         break;
       case BICConstants.paymentTypeDebitCard:
-        orgNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
+        orgNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-        fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
+        fullAddrXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-        cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
+        cityXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-        zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
+        zipXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-        phoneXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
+        phoneXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-        countryXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
+        countryXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
-        stateXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
+        stateXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.PAYMENT_ACH_LOWERCASE);
         break;
       default:
-        orgNameXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
+        orgNameXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ORGANIZATION_NAME)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-        fullAddrXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
+        fullAddrXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.FULL_ADDRESS)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-        cityXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
+        cityXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.CITY)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-        zipXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
+        zipXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.ZIPCODE)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-        phoneXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
+        phoneXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.PHONE_NUMBER)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-        countryXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
+        countryXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.COUNTRY)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
-        stateXpath = BICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
+        stateXpath = EceBICTestBase.bicPage.getFirstFieldLocator(BICECEConstants.STATE_PROVINCE)
             .replace(BICECEConstants.PAYMENT_PROFILE, BICECEConstants.CREDIT_CARD);
         break;
     }
@@ -1532,13 +1535,13 @@ public class PortalTestBase {
     driver.findElement(By.xpath(orgNameXpath))
         .sendKeys(new RandomStringUtils().random(10, true, true));
 
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
+    EceBICTestBase.clearTextInputValue(driver.findElement(By.xpath(fullAddrXpath)));
     driver.findElement(By.xpath(fullAddrXpath)).sendKeys(address.get(BICECEConstants.FULL_ADDRESS));
 
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
+    EceBICTestBase.clearTextInputValue(driver.findElement(By.xpath(cityXpath)));
     driver.findElement(By.xpath(cityXpath)).sendKeys(address.get(BICECEConstants.CITY));
 
-    BICTestBase.clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
+    EceBICTestBase.clearTextInputValue(driver.findElement(By.xpath(zipXpath)));
     driver.findElement(By.xpath(zipXpath)).sendKeys(address.get(BICECEConstants.ZIPCODE));
 
     driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");

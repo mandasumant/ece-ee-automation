@@ -1,11 +1,13 @@
 package com.autodesk.ece.testbase;
 
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.EceAppConstants;
+import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.core.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
@@ -53,14 +55,14 @@ public class EDUTestBase {
   private final Page_ eduPage;
   private final WebDriver driver;
   private final Map<String, String> testData;
-  BICTestBase bicTestBase;
+  EceBICTestBase bicTestBase;
   MailosaurAPIClient mailosaurAPIClient;
 
   public EDUTestBase(GlobalTestBase testbase, LinkedHashMap<String, String> testData) {
     Util.PrintInfo("EDUTestBase from ece");
-    eduPage = testbase.createPage("PAGE_EDU");
+    eduPage = testbase.createPageForApp("PAGE_EDU", EceAppConstants.APP_NAME);
     driver = testbase.getdriver();
-    bicTestBase = new BICTestBase(driver, testbase);
+    bicTestBase = new EceBICTestBase(driver, testbase);
     mailosaurAPIClient = new MailosaurAPIClient();
     this.testData = testData;
   }
@@ -606,7 +608,7 @@ public class EDUTestBase {
 
   private void registerOxygenUser(HashMap<String, String> results) {
     // Generate a new user email, name, and password
-    String email = BICTestBase.generateMailosaurEmailID();
+    String email = EceBICTestBase.generateMailosaurEmailID();
     results.put(BICConstants.emailid, email);
     String randomString = RandomStringUtils.random(6, true, false);
     String firstName = "FN" + randomString;

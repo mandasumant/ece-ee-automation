@@ -1,15 +1,16 @@
 package com.autodesk.ece.testbase;
 
+import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
-import com.autodesk.testinghub.core.constants.TestingHubConstants;
-import com.autodesk.testinghub.core.database.DBValidations;
-import com.autodesk.testinghub.core.sap.SAPDriverFiori;
-import com.autodesk.testinghub.core.testbase.DynamoDBValidation;
-import com.autodesk.testinghub.core.testbase.SAPTestBase;
-import com.autodesk.testinghub.core.testbase.SFDCTestBase;
-import com.autodesk.testinghub.core.testbase.SOAPTestBase;
-import com.autodesk.testinghub.core.testbase.TestinghubUtil;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
+import com.autodesk.testinghub.eseapp.database.DBValidations;
+import com.autodesk.testinghub.eseapp.sap.SAPDriverFiori;
+import com.autodesk.testinghub.eseapp.testbase.DynamoDBValidation;
+import com.autodesk.testinghub.eseapp.testbase.EseSAPTestBase;
+import com.autodesk.testinghub.eseapp.testbase.EseSFDCTestBase;
+import com.autodesk.testinghub.eseapp.testbase.EseSOAPTestBase;
+import com.autodesk.testinghub.eseapp.testbase.TestinghubUtil;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import java.util.Date;
@@ -23,9 +24,9 @@ public class ECETestBase {
 
   protected static DBValidations dbValtb = null;
   protected static TestinghubUtil thutil = null;
-  protected static SAPTestBase saptb = null;
-  protected SFDCTestBase sfdctb = null;
-  protected SOAPTestBase soaptb = null;
+  protected static EseSAPTestBase saptb = null;
+  protected EseSFDCTestBase sfdctb = null;
+  protected EseSOAPTestBase soaptb = null;
   protected PortalTestBase portaltb = null;
   protected DynamoDBValidation dynamotb = null;
   protected ApigeeTestBase resttb = null;
@@ -37,23 +38,25 @@ public class ECETestBase {
   LinkedHashMap<String, String> localeConfig;
   private WebDriver webdriver = null;
   private GlobalTestBase testbase = null;
-  private BICTestBase bictb = null;
+  private EceBICTestBase bictb = null;
 
   public ECETestBase() {
     System.out.println("into the testing hub. core changes");
     testbase = new GlobalTestBase("ece", "ece", GlobalConstants.BROWSER);
     webdriver = testbase.getdriver();
     dbValtb = new DBValidations();
-    sfdctb = new SFDCTestBase(webdriver);
-    soaptb = new SOAPTestBase();
+    sfdctb = new EseSFDCTestBase(webdriver);
+    soaptb = new EseSOAPTestBase();
     portaltb = new PortalTestBase(testbase);
     resttb = new ApigeeTestBase();
     dynamotb = new DynamoDBValidation();
     pelicantb = new PelicanTestBase();
     subscriptionServiceV4Testbase = new SubscriptionServiceV4TestBase();
     thutil = new TestinghubUtil(testbase);
-    //tibcotb = new AutomationTibcoTestBase();
-    saptb = new SAPTestBase();
+
+//    tibcotb = new AutomationTibcoTestBase();
+    saptb = new EseSAPTestBase();
+
     sapfioritb = new SAPDriverFiori(GlobalConstants.getTESTDATADIR(), webdriver);
   }
 
@@ -73,9 +76,9 @@ public class ECETestBase {
     return new PortalTestBase(testbase);
   }
 
-  public BICTestBase getBicTestBase() {
+  public EceBICTestBase getBicTestBase() {
     if (bictb == null) {
-      bictb = new BICTestBase(webdriver, testbase);
+      bictb = new EceBICTestBase(webdriver, testbase);
     }
     return bictb;
   }

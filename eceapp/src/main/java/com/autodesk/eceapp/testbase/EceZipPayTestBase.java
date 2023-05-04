@@ -1,5 +1,6 @@
-package com.autodesk.ece.testbase;
+package com.autodesk.eceapp.testbase;
 
+import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
@@ -21,7 +22,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ZipPayTestBase {
+public class EceZipPayTestBase {
 
   private static final String ZIP_PAY_USERNAME_KEY = "zipPayUsername";
   private static final String ZIP_PAY_PASSWORD_KEY = "zipPayPassword";
@@ -41,8 +42,8 @@ public class ZipPayTestBase {
   private final WebDriver driver;
   private Map<String, String> testData = new HashMap<>();
 
-  public ZipPayTestBase(GlobalTestBase testBase) {
-    zipPage = testBase.createPage("PAGE_ZIPPAY");
+  public EceZipPayTestBase(GlobalTestBase testBase) {
+    zipPage = testBase.createPageForApp("PAGE_ZIPPAY", EceAppConstants.APP_NAME);
     this.driver = testBase.getdriver();
   }
 

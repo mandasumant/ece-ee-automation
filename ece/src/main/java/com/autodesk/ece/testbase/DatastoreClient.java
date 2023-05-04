@@ -1,9 +1,9 @@
 package com.autodesk.ece.testbase;
 
 import static io.restassured.RestAssured.given;
-import com.autodesk.ece.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.testbase.TestinghubUtil;
+import com.autodesk.testinghub.eseapp.testbase.TestinghubUtil;
 import com.autodesk.testinghub.core.utils.Util;
 import com.google.gson.Gson;
 import io.restassured.path.json.JsonPath;

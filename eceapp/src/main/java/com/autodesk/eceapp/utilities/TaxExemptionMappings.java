@@ -1,4 +1,4 @@
-package com.autodesk.ece.utilities;
+package com.autodesk.eceapp.utilities;
 
 import java.util.Map;
 
