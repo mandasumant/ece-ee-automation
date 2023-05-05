@@ -9,13 +9,13 @@ import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
-import com.autodesk.testinghub.eseapp.constants.CommonConstants;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.CommonConstants;
 import io.qameta.allure.Step;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -199,8 +199,9 @@ public class MOETestBase {
       if (StringUtils.isNotEmpty(sku)) {
         Util.printInfo("Associating Products to Opty: " + sku);
 
-        moePage.click("titleProducts");
+        openOperationalTab();
 
+        moePage.checkIfElementExistsInPage("manageProducts", 30);
         moePage.click("manageProducts");
         moePage.waitForPageToLoad();
 
@@ -831,7 +832,6 @@ public class MOETestBase {
     return status;
   }
 
-
   @Step("Login to Portal with user account")
   private void loginToPortalWithUserAccount(LinkedHashMap<String, String> data, String emailID,
       String password) {
@@ -1424,7 +1424,10 @@ public class MOETestBase {
             AssertUtils.fail("Unable to add a contact to the Opportunity.");
           }
 
+          openOperationalTab();
+
           Util.printInfo("Clicking on cta: Manage Contact Roles. Attempt no. " + attempt + " to add a contact.");
+          moePage.checkIfElementExistsInPage("manageContactRoles", 30);
           moePage.click("manageContactRoles");
           moePage.waitForPageToLoad();
 
@@ -1513,9 +1516,11 @@ public class MOETestBase {
       if (StringUtils.isNotEmpty(plc)) {
         Util.printInfo("Associating Products to Opty: " + plc);
 
+        openOperationalTab();
+
         moePage.checkIfElementExistsInPage("manageProducts", 30);
         moePage.click("manageProducts");
-        Util.sleep(10000);
+        moePage.waitForPageToLoad();
 
         Util.printInfo("Switch iFrame to click on Add Products Tab");
         switchToFrame("//li[@title='Add Products']/a");
@@ -1668,4 +1673,26 @@ public class MOETestBase {
     }
   }
 
+  @Step("SFDC: Open Operational Tab" + GlobalConstants.TAG_TESTINGHUB)
+  public void openOperationalTab() throws MetadataException {
+    Util.sleep(5000);
+
+    if (!moePage.checkIfElementExistsInPage("manageProducts", 20)) {
+      try {
+        Util.printInfo("Open Related section");
+        WebElement relatedTab = driver.findElement(
+            By.xpath("//a[@data-label=\"Related\" and contains(text(), \"Related\")]"));
+        relatedTab.click();
+        Util.sleep(5000);
+
+        WebElement operationalTab = driver.findElement(
+            By.xpath("//a[@data-label=\"Operational\" and contains(text(), \"Operational\")]"));
+        operationalTab.click();
+        Util.sleep(5000);
+
+      } catch (Exception e) {
+        AssertUtils.fail("Unable to access Operational section");
+      }
+    }
+  }
 }
