@@ -391,17 +391,16 @@ public class EceBICTestBase {
       Assert.fail("Failed to get Cart URL from DotCom.");
     }
 
-    bicPage.clickToSubmit("guacAddToCart", 3000);
-
-    //TODO Additional validations will be added in ECEEPLT-6590
     try {
-      if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
-        Float subscriptionAmount = Optional
-            .of(bicPage.getMultipleTextValuesfromField("subscriptionPrice")[0])
-            .map(price -> price.replaceAll("[^\\d.]", "").trim())
-            .map(Float::valueOf)
-            .get();
+      Float subscriptionAmount = Optional
+          .of(bicPage.getMultipleTextValuesfromField("subscriptionPrice")[0])
+          .map(price -> price.replaceAll("[^\\d.]", "").trim())
+          .map(Float::valueOf)
+          .get();
 
+      bicPage.clickToSubmit("guacAddToCart", 3000);
+
+      if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
         String checkoutPrice = bicPage.checkIfElementExistsInPage("minicartCheckoutDiscountedPrice", 3)
             ? bicPage.getMultipleTextValuesfromField("minicartCheckoutDiscountedPrice")[0]
             : bicPage.getMultipleTextValuesfromField("minicartCheckoutCalculatedPrice")[0];
@@ -426,7 +425,7 @@ public class EceBICTestBase {
       }
     } catch (MetadataException e) {
       Util.printError(e.getMessage());
-      AssertUtils.fail("Unable to click mini cart checkout button.");
+      AssertUtils.fail("Mini cart validation failed.");
     }
 
     try {
