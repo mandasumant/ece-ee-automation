@@ -2662,6 +2662,7 @@ public class EceBICTestBase {
 
     bicPage.navigateToURL(constructDotComURL);
     Util.sleep(10000);
+    validateNetworkLogsOnEachPage(constructDotComURL);
     bicPage.waitForFieldPresent("signInButton", 10000);
     bicPage.click("signInButton");
   }
@@ -2672,6 +2673,7 @@ public class EceBICTestBase {
 
     bicPage.navigateToURL(data.get("oxygenLanguageURL"));
     Util.sleep(2000);
+    validateNetworkLogsOnEachPage("oxygenLanguageURL");
     Util.printInfo("The current locale is " + locale);
     try {
       if (Strings.isNotNullAndNotEmpty(locale)) {
@@ -2683,6 +2685,7 @@ public class EceBICTestBase {
         if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG)) {
           bicPage.navigateToURL(data.get("oxygenLanguageURL"));
           Util.sleep(2000);
+          validateNetworkLogsOnEachPage("oxygenLanguageURL");
 
           Select selection = new Select(driver.findElement(By.className("input-container__select")));
           selection.selectByValue(locale);

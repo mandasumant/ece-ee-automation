@@ -80,6 +80,7 @@ public class EDUTestBase {
 
     // Navigate to education site and click on "Get Started"
     eduPage.navigateToURL(testData.get("eduLandingPage"));
+    bicTestBase.validateNetworkLogsOnEachPage("eduLandingPage");
     eduPage.click("getStarted");
     eduPage.waitForField("createAccountEDU", true, 5000);
     eduPage.click("createAccountEDU");
@@ -163,6 +164,7 @@ public class EDUTestBase {
 
     // Navigate to education site and click on "Get Started"
     eduPage.navigateToURL(testData.get("eduLandingPage"));
+    bicTestBase.validateNetworkLogsOnEachPage("eduLandingPage");
     eduPage.click("getStarted");
 
     //pickSelectOption(BICECEConstants.EDU_ROLE, EDU_USER_CHOICES.get(userType));
@@ -311,6 +313,7 @@ public class EDUTestBase {
   public void loginUser(String username, String password) {
     // Navigate to education site and click on "Get Started"
     eduPage.navigateToURL(testData.get("eduLandingPage"));
+    bicTestBase.validateNetworkLogsOnEachPage("eduLandingPage");
     eduPage.click("getStarted");
 
     eduPage.waitForField("eduSignIn", true, 5000);
