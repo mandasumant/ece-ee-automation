@@ -13,6 +13,7 @@ import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
+import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.constants.CommonConstants;
@@ -29,7 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -201,7 +201,7 @@ public class MOETestBase {
 
         openOperationalTab();
 
-        moePage.checkIfElementExistsInPage("manageProducts", 30);
+        Util.waitforPresenceOfElement(moePage, "manageProducts");
         moePage.click("manageProducts");
         moePage.waitForPageToLoad();
 
@@ -215,12 +215,11 @@ public class MOETestBase {
 
         moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
 
-        Util.printInfo("Select product.");
-        WebElement checkbox = driver.findElement(
-            By.xpath("//input[@value=\"" + sku + "\"]"));
-        moePage.waitForElementVisible(checkbox, 60);
-        checkbox.click();
-        Util.sleep(5000);
+        moePage.scrollIntoViewOfMetadataElement("checkbox");
+        Util.sleep(3000);
+        Util.printInfo("Clicking on product Checkbox...");
+        moePage.clickUsingJavaScriptExecutor("checkbox");
+        Util.printInfo("Clicked on product Checkbox");
 
         moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
 
@@ -234,15 +233,12 @@ public class MOETestBase {
 
         Util.printInfo("Entered SKU and quantity in the Add Product");
 
-        moePage.checkIfElementExistsInPage("addProductsButton", 30);
-
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript(
-            "document.querySelectorAll(\"button[name=AddProductsToCart]\")[0].click()");
+        Util.waitforPresenceOfElement(moePage, "addProductsButton");
+        moePage.clickUsingJavaScriptExecutor("addProductsButton");
         Util.printInfo("Clicked on cta: Add Products");
         Util.sleep(30000);
 
-        moePage.checkIfElementExistsInPage("okButton", 40);
+        Util.waitforPresenceOfElement(moePage, "okButton");
         moePage.clickUsingLowLevelActions("okButton");
         Util.printInfo("Clicked on cta: OK");
         Util.sleep(5000);
@@ -614,7 +610,7 @@ public class MOETestBase {
     // TODO: add try catch block to validate if error modal loaded
     // Note: R2.0.2 - Quote feature not fully implemented under INT env.
     try {
-      moePage.checkIfElementExistsInPage("moeSendQuote", 10);
+      Util.waitforPresenceOfElement(moePage, "moeSendQuote");
       moePage.click("moeSendQuote");
       bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     } catch (Exception e) {
@@ -868,7 +864,7 @@ public class MOETestBase {
   @Step("Click on Copy Cart link and return the value from clipboard.")
   public String copyCartLinkFromClipboard() throws Exception {
     Util.printInfo("Clicking on 'Copy cart link'.");
-    moePage.checkIfElementExistsInPage("moeCopyCartLink", 10);
+    Util.waitforPresenceOfElement(moePage, "moeCopyCartLink");
     moePage.clickUsingLowLevelActions("moeCopyCartLink");
     Util.sleep(2000);
 
@@ -1030,7 +1026,7 @@ public class MOETestBase {
     Util.sleep(5000);
 
     Util.printInfo("Clicking on cta: Continue");
-    moePage.checkIfElementExistsInPage("moeCustomerDetailsContinue", 30);
+    Util.waitforPresenceOfElement(moePage, "moeCustomerDetailsContinue");
     moePage.clickUsingLowLevelActions("moeCustomerDetailsContinue");
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
 
@@ -1427,11 +1423,11 @@ public class MOETestBase {
           openOperationalTab();
 
           Util.printInfo("Clicking on cta: Manage Contact Roles. Attempt no. " + attempt + " to add a contact.");
-          moePage.checkIfElementExistsInPage("manageContactRoles", 30);
+          Util.waitforPresenceOfElement(moePage, "manageContactRoles");
           moePage.click("manageContactRoles");
           moePage.waitForPageToLoad();
 
-          moePage.checkIfElementExistsInPage("contactRolesHeading", 10);
+          Util.waitforPresenceOfElement(moePage, "contactRolesHeading");
           moePage.clickUsingLowLevelActions("contactRolesHeading");
 
           moePage.clickUsingLowLevelActions("addContactRoles");
@@ -1440,9 +1436,9 @@ public class MOETestBase {
 
           if (System.getProperty("usertype").equals("new")) {
             Util.printInfo("Associating new contact roles to Opty: " + emailID);
-            moePage.checkIfElementExistsInPage("createNewContactLink", 15);
+            Util.waitforPresenceOfElement(moePage, "createNewContactLink");
             moePage.clickUsingLowLevelActions("createNewContactLink");
-            moePage.checkIfElementExistsInPage("contactFirstNameInput", 15);
+            Util.waitforPresenceOfElement(moePage, "contactFirstNameInput");
             moePage.clickUsingLowLevelActions("contactFirstNameInput");
             moePage.populateField("contactFirstNameInput", names.firstName);
             moePage.clickUsingLowLevelActions("contactLastNameInput");
@@ -1461,7 +1457,7 @@ public class MOETestBase {
           } else {
             Util.printInfo("Associating existing contact roles to Opty: " + contact);
 
-            moePage.checkIfElementExistsInPage("contactRolesInput", 10);
+            Util.waitforPresenceOfElement(moePage, "contactRolesInput");
             moePage.clickUsingLowLevelActions("contactRolesInput");
             moePage.populateField("contactRolesInput", contact);
             Util.sleep(40000);
@@ -1474,10 +1470,10 @@ public class MOETestBase {
           }
           moePage.waitForPageToLoad();
 
-          moePage.checkIfElementExistsInPage("contactRolesHeading", 30);
+          Util.waitforPresenceOfElement(moePage, "contactRolesHeading");
           moePage.clickUsingLowLevelActions("contactRolesHeading");
 
-          moePage.checkIfElementExistsInPage("checkPrimaryContactCheckbox", 10);
+          Util.waitforPresenceOfElement(moePage, "checkPrimaryContactCheckbox");
           moePage.clickUsingLowLevelActions("checkPrimaryContactCheckbox");
           Util.sleep(2000);
 
@@ -1518,7 +1514,7 @@ public class MOETestBase {
 
         openOperationalTab();
 
-        moePage.checkIfElementExistsInPage("manageProducts", 30);
+        Util.waitforPresenceOfElement(moePage, "manageProducts");
         moePage.click("manageProducts");
         moePage.waitForPageToLoad();
 
@@ -1527,52 +1523,28 @@ public class MOETestBase {
         Util.sleep(5000);
 
         moePage.populateField("productSearch", plc);
-
         moePage.clickUsingLowLevelActions("productSearchButton");
-        Util.sleep(5000);
-
         moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
 
         Util.printInfo("Open Flex product.");
-        WebElement openFlexProduct = driver.findElement(
-            By.xpath(moePage.getFirstFieldLocator("openProductFound")));
-
-        Util.printInfo("Scroll to Flex product");
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].scrollIntoView();", openFlexProduct);
-        Util.sleep(5000);
-
-        int attempt = 0;
-
-        while (attempt < 4) {
-          try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-            wait.until(ExpectedConditions.visibilityOf(openFlexProduct));
-
-            openFlexProduct.click();
-            Util.sleep(5000);
-
-            moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
-
-            wait.until(ExpectedConditions.invisibilityOf(openFlexProduct));
-            Util.printInfo("Flex product opened.");
-            break;
-          } catch (TimeoutException e) {
-            e.printStackTrace();
-            if (attempt == 3) {
-              AssertUtils.fail("Failed to open Flex product.");
-            }
-            Util.printInfo("Unable to open Flex product. Retrying! Attempt #" + attempt);
-            attempt++;
-          }
+        Util.waitforPresenceOfElement(moePage, "flexOfferToggle");
+        moePage.clickUsingLowLevelActions("flexOfferToggle");
+        Util.printInfo("Flex product opened.");
+        moePage.waitForPageToLoad();
+        if (!moePage.isFieldPresent("flexOffer")) {
+          ScreenCapture.getInstance().captureFullScreenshot();
+          String error = moePage.getValueFromGUI("offeringSection");
+          AssertUtils.fail(
+              "Flex product not available from offering section. Offer details error: " + error);
         }
 
-        Util.printInfo("Select Flex checkbox");
-        WebElement checkbox = driver.findElement(
-            By.xpath(moePage.getFirstFieldLocator("checkbox")));
-        moePage.waitForElementVisible(checkbox, 60);
-        checkbox.click();
-        Util.sleep(2000);
+        moePage.scrollIntoViewOfMetadataElement("checkbox");
+        Util.sleep(3000);
+        Util.printInfo("Clicking on Flex product Checkbox...");
+        moePage.clickUsingJavaScriptExecutor("checkbox");
+        Util.printInfo("Clicked on Flex product Checkbox");
+
+        moePage.waitForElementToDisappear("sfdcLoadingSpinner", 60);
 
         try {
           Boolean isAlertModalVisible = true;
@@ -1603,7 +1575,7 @@ public class MOETestBase {
             moePage.sendKeysInTextFieldSlowly("estimatedUnit", "100");
             Util.sleep(3000);
 
-            moePage.checkIfElementExistsInPage("addProductsButton", 20);
+            Util.waitforPresenceOfElement(moePage, "addProductsButton");
             moePage.clickUsingLowLevelActions("addProductsButton");
             bicTestBase.waitForLoadingSpinnerToComplete("sfdcLoadingSpinner");
 
