@@ -407,24 +407,25 @@ def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
     }
 
     script {
-            println("Building Testing Hub API Input Map - accountportal")
-            def testingHubInputMap = [:]
-            def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
-            testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
-            testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
-            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-                    '{"displayname":"MOAB - Reseller  Pay invoices Japan with Cash - Japan","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash - Japan","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16938},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-JP","purchaserEmail":"Reseller_JP_DCLE_zLGQXO@letscheck.pw","csn":"5500971276","sku":"default:1","email":"","locale":"ja_JP"}}' +
-                    '],"workstreamname":"dclecjt"}'
-            println("Starting Testing Hub API Call - accountportal")
+        println("Building Testing Hub API Input Map - accountportal")
+        def testingHubInputMap = [:]
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                '{"displayname":"MOAB - Reseller  Pay invoices Japan with Cash - Japan","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash - Japan","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16938"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-JP","purchaserEmail":"Reseller_JP_DCLE_zLGQXO@letscheck.pw","csn":"5500971276","sku":"default:1","email":"","locale":"ja_JP"}}' +
+                '],"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - accountportal")
 
-            if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-                println('Testing Hub API called successfully - accountportal')
-            } else {
-                currentBuild.result = 'FAILURE'
-                println('Testing Hub API call failed - accountportal')
-            }
- }
+        if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+            println('Testing Hub API called successfully - accountportal')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - accountportal')
+        }
+    }
 }
+
 def triggerCJT(def serviceBuildHelper, String env) {
     echo 'Initiating Customer Lifecycle Tests - Regression'
     script {
@@ -726,7 +727,7 @@ def triggerAnalytics(def serviceBuildHelper, String env) {
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","abhijit.rajurkar@autodesk.com","adam.hill@autodesk.com"],"testcases":[' +
-                '{"displayname":"MOAB - Reseller  Pay invoices with Cash & CM - US","testcasename":"4e084fce","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","applyCM":"Y","sku":"default:1","applyAnalytics":"True","email":"","locale":"en_US"}}' +
+                '{"displayname":"MOAB - Reseller  Pay invoices with Cash & CM - US","testcasename":"4e084fce","description":"MOAB - Reseller Pay invoices with Cash & CM - US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","applyCM":"Y","sku":"default:1","applyAnalytics":"True","email":"","locale":"en_US"}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - accountportal")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
