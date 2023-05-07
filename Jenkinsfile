@@ -385,10 +385,10 @@ def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
                 '{"displayname":"BiC order Flex - Japan Credit Card","testcasename":"d27c5060","description":"BiC order Flex - Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16014"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111","sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"BiC order Flex Estimator - Japan Paypal","testcasename":"fbf7fe55","description":"BiC order Flex - Japan Paypal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16015"},"testdata":{"usertype":"new","password":"","payment":"PAYPAL","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"BiC Flex Direct Order Refund Japan Credit Card","testcasename":"a1c54974","description":"Flex Direct Order Refund Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexdirect-new-refund","testMethod":"validateFlexOrderNewCartRefund","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16016"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
-                '{"displayname":"Quote 2 Order - Japan Credit Card ","testcasename":"9d3de1c2","description":"Quote 2 Order - Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16017"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1",pullFromDataStore":"True","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
-                '{"displayname":"Quote 2 Order Multi line item Order Japan Credit Card","testcasename":"e803e4a4","description":"Quote 2 Order Multi line item Order Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"multiline-quoteorder","testMethod":"validateMultiLineItemQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16018"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD",pullFromDataStore":"True","store":"STORE-JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO","sku":"default:1","email":"","locale":"ja_JP","quantity1":"2000","quantity2":"4000","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
-                '{"displayname":"Quote 2 Order SUS and Quote Orders Japan Credit Card","testcasename":"c5558739","description":"Quote 2 Order SUS and Quote Orders Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-sus-quote-orders","testMethod":"validateBicSUSAndQuoteOrders","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16019"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD",pullFromDataStore":"True","store":"STORE-JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO","sku":"default:1","email":"","locale":"ja_JP","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
-                '{"displayname":"LOC Q2O Same Purchaser & Payer - Japan","testcasename":"9d3de1c2","description":"LOC Q2O Same Purchaser & Payer - Japan","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16020"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD",pullFromDataStore":"True","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO","emailType":"biz","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
+                '{"displayname":"Quote 2 Order - Japan Credit Card ","testcasename":"9d3de1c2","description":"Quote 2 Order - Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16017"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","pullFromDataStore":"True","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
+                '{"displayname":"Quote 2 Order Multi line item Order Japan Credit Card","testcasename":"e803e4a4","description":"Quote 2 Order Multi line item Order Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"multiline-quoteorder","testMethod":"validateMultiLineItemQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16018"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","pullFromDataStore":"True","store":"STORE-JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO","sku":"default:1","email":"","locale":"ja_JP","quantity1":"2000","quantity2":"4000","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
+                '{"displayname":"Quote 2 Order SUS and Quote Orders Japan Credit Card","testcasename":"c5558739","description":"Quote 2 Order SUS and Quote Orders Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-sus-quote-orders","testMethod":"validateBicSUSAndQuoteOrders","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16019"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","pullFromDataStore":"True","store":"STORE-JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO","sku":"default:1","email":"","locale":"ja_JP","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
+                '{"displayname":"LOC Q2O Same Purchaser & Payer - Japan","testcasename":"9d3de1c2","description":"LOC Q2O Same Purchaser & Payer - Japan","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16020"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","pullFromDataStore":"True","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO","emailType":"biz","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Japan/Tokyo"}},' +
                 '{"displayname":"LOC Q2O Pay Invoice Same Purchaser & Payer - JP","testcasename":"9329504a","description":"LOC Q2O Pay Invoice Same Purchaser & Payer - JP","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16021"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","emailType":"biz","timezone":"Japan/Tokyo"}},' +
                 '{"displayname":"MOE O2P Order JP - Agent - New ","testcasename":"e2ea9875","description":"MOE O2P Order JP - Agent - New user","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdmAgent-moe","testMethod":"validateMoeOdmOpportunityFlowAgent","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16022"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111","locale":"ja_JP"}},' +
                 '{"displayname":"MOE O2P Order JP - Agent - New - Konbini","testcasename":"e2ea9875","description":"MOE O2P Order JP - Agent - New user - Konbini","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdmAgent-moe","testMethod":"validateMoeOdmOpportunityFlowAgent","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16022"},"testdata":{"usertype":"new","password":"","payment":"KONBINI","store":"STORE-JP","store_type":"FAMILY_MART","sku":"default:1","email":"","sapValidation":"' + params.INVOICE_VALIDATION + '","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111","locale":"ja_JP"}},' +
@@ -407,24 +407,25 @@ def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
     }
 
     script {
-            println("Building Testing Hub API Input Map - accountportal")
-            def testingHubInputMap = [:]
-            def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
-            testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
-            testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
-            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
-                    '{"displayname":"MOAB - Reseller  Pay invoices Japan with Cash & CM - US","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16938},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-JP","purchaserEmail":"Reseller_JP_DCLE_zLGQXO@letscheck.pw","csn":"5500971276","sku":"default:1","email":"","locale":"ja_JP"}}' +
-                    '],"workstreamname":"dclecjt"}'
-            println("Starting Testing Hub API Call - accountportal")
+        println("Building Testing Hub API Input Map - accountportal")
+        def testingHubInputMap = [:]
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                '{"displayname":"MOAB - Reseller  Pay invoices Japan with Cash & CM - US","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"8305","jiraId":"APLR2PMO-16938}","testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-JP","purchaserEmail":"Reseller_JP_DCLE_zLGQXO@letscheck.pw","csn":"5500971276","sku":"default:1","email":"","locale":"ja_JP"}}' +
+                '],"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - accountportal")
 
-            if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-                println('Testing Hub API called successfully - accountportal')
-            } else {
-                currentBuild.result = 'FAILURE'
-                println('Testing Hub API call failed - accountportal')
-            }
- }
+        if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+            println('Testing Hub API called successfully - accountportal')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - accountportal')
+        }
+    }
 }
+
 def triggerCJT(def serviceBuildHelper, String env) {
     echo 'Initiating Customer Lifecycle Tests - Regression'
     script {
@@ -670,19 +671,70 @@ def triggerAnalytics(def serviceBuildHelper, String env) {
                 '{"displayname":"WAPE GDPR Validation - GDPR Site - 008 - Cookies Valid - Next Page - After Consent","testcasename":"ecf50dad","description":"WAPE GDPR Validation - GDPR Site - 008 - Cookies Valid - Next Page - After Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-cookies-after-next-page-load","testMethod":"validateGDPRCookiesOnNextPageLoad","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
                 '{"displayname":"WAPE GDPR Validation - GDPR Site - 009 - Footer Banner Hidden - Next Page - After Consent","testcasename":"e0bc731f","description":"WAPE GDPR Validation - GDPR Site - 009 - Footer Banner Hidden - Next Page - After Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-footer-banner-after-next-page-load","testMethod":"validateGDPRFooterBannerOnNextPageLoad","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
                 '{"displayname":"WAPE GDPR Validation - GDPR Site - 010 - All Tags - Next Page - After Consent","testcasename":"21ff36cf","description":"WAPE GDPR Validation - GDPR Site - 010 - All Tags - Next Page - After Consent","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"GDPR-mandatory-tags-fired-after-next-page-load","testMethod":"validateGdprMandatoryTagsFiredOnNextPageLoad","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
-                '{"displayname":"BiC order Flex","testcasename":"d27c5060","description":"BiC order new Flex","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","applyAnalytics":"True","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
-                '{"displayname":"GUAC - BiC Native Multi line item Order","testcasename":"validateMultiLineItemBicNativeOrder","description":"BiC Native Multi line item Order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-multiline-bicorder","testMethod":"validateMultiLineItemBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","applyAnalytics":"True","address":"Autodesk@2300 Woodcrest Pl@Birmingham@35209@9916800100@United States@Alabama", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
-                '{"displayname":"LOC Q2O CJT Pay Invoice - AUS Northern Territory(en_AU)","testcasename":"9329504a","description":"LOC Quote 2 Order Same Purchaser & Payer - AUS(en_AU)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13868"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_AU","applyAnalytics":"True","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","timezone":"Australia/Sydney"}},' +
-                '{"displayname":"MOAB - Reseller  Pay invoices with Cash & CM - US","testcasename":"4e084fce","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","applyCM":"Y","sku":"default:1","applyAnalytics":"True","email":"","locale":"en_US"}},' +
-                '{"displayname":"Educator Flow - Existing User","testcasename":"76cb6265","description":"Validate existing educator user still has EDU status","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"validate-existing-user","testMethod":"validateExistingUser","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","applyAnalytics":"True","existingUserType":"educator"},"notsupportedenv":[],"wiki":""},' +
-                '{"displayname":"EDU - Student Flow","testcasename":"validateNewStudentSubscription","description":"Student Subscription flow","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"validate-student-subscription","testMethod":"validateNewStudentSubscription","parameters":{"application":"ece"},"testdata":{"usertype":"new","payment":"ACH","password":"","store":"STORE-NAMER","applyAnalytics":"True","sku":"default:1","email":""}}' +
+                '{"displayname":"GUAC - BiC Native Multi line item Order","testcasename":"validateMultiLineItemBicNativeOrder","description":"BiC Native Multi line item Order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-multiline-bicorder","testMethod":"validateMultiLineItemBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","isTaxed":"Y","applyAnalytics":"True","address":"Autodesk@2300 Woodcrest Pl@Birmingham@35209@9916800100@United States@Alabama", "sapValidation":"' + params.INVOICE_VALIDATION + '"}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - estore")
-        if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+        execution_id = serviceBuildHelper.ambassadorService.callTestingHub(testingHubInputMap)
+        if (execution_id != null) {
             println('Testing Hub API called successfully - estore - Analytics')
         } else {
             currentBuild.result = 'FAILURE'
             println('Testing Hub API call failed - estore - Analytics')
+        }
+    }
+    script {
+        if (env == "STG") {
+            println("Building Testing Hub API Input Map - EDU")
+            def testingHubInputMap = [:]
+            def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+            testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+            testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/edu/testcase'
+            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","abhijit.rajurkar@autodesk.com","adam.hill@autodesk.com"],"testcases":[' +
+                    '{"displayname":"Educator Flow - Existing User","testcasename":"76cb6265","description":"Validate existing educator user still has EDU status","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"validate-existing-user","testMethod":"validateExistingUser","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"","applyAnalytics":"True","existingUserType":"educator"},"notsupportedenv":[],"wiki":""},' +
+                    '{"displayname":"EDU - Student Flow","testcasename":"validateNewStudentSubscription","description":"Student Subscription flow","testClass":"com.autodesk.ece.bic.testsuites.EDUUserFlows","testGroup":"validate-student-subscription","testMethod":"validateNewStudentSubscription","parameters":{"application":"ece"},"testdata":{"usertype":"new","payment":"ACH","password":"","store":"STORE-NAMER","applyAnalytics":"True","sku":"default:1","email":""}}' +
+                    '],"workstreamname":"dclecjt"}'
+            println("Starting Testing Hub API Call - EDU Tests")
+            if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+                println('Testing Hub API called successfully - edu - Analytics')
+            } else {
+                currentBuild.result = 'FAILURE'
+                println('Testing Hub API call failed - edu - Analytics')
+            }
+        }
+    }
+    script {
+        println("Building Testing Hub API Input Map - flex")
+        def testingHubInputMap = [:]
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","abhijit.rajurkar@autodesk.com","adam.hill@autodesk.com"],"testcases":[' +
+                '{"displayname":"BiC order Flex","testcasename":"d27c5060","description":"BiC order new Flex","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","applyAnalytics":"True","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
+                '{"displayname":"LOC Q2O CJT Pay Invoice - AUS Northern Territory(en_AU)","testcasename":"9329504a","description":"LOC Quote 2 Order Same Purchaser & Payer - AUS(en_AU)","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-loc-payinvoice","testMethod":"validateLocPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7206","jiraId":"APLR2PMO-13868"},"testdata":{"usertype":"new","password":"","payment":"LOC","newPaymentType":"CREDITCARD","store":"STORE-AUS","sku":"default:1","email":"","emailType":"biz","isTaxed":"Y","locale":"en_AU","applyAnalytics":"True","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","timezone":"Australia/Sydney"}}' +
+                '],"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - flex")
+        if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+            println('Testing Hub API called successfully - flex - Analytics')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - flex - Analytics')
+        }
+    }
+    script {
+        println("Building Testing Hub API Input Map - accountportal")
+        def testingHubInputMap = [:]
+        def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+        testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","abhijit.rajurkar@autodesk.com","adam.hill@autodesk.com"],"testcases":[' +
+                '{"displayname":"MOAB - Reseller  Pay invoices with Cash & CM - US","testcasename":"4e084fce","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","applyCM":"Y","sku":"default:1","applyAnalytics":"True","email":"","locale":"en_US"}}' +
+                '],"workstreamname":"dclecjt"}'
+        println("Starting Testing Hub API Call - accountportal")
+        if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+            println('Testing Hub API called successfully - accountportal - Analytics')
+        } else {
+            currentBuild.result = 'FAILURE'
+            println('Testing Hub API call failed - accountportal - Analytics')
         }
     }
 }
