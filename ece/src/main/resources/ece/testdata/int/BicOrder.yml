@@ -405,3 +405,6 @@ validateGdprMandatoryTagsFiredOnNextPageLoad:
   GdprAdobeAnalytics: "smetrics.autodesk.com/b/ss"
   GdprGoogleAnalytics: "google-analytics.com/collect"
   GdprTwitterAnalytics: "https://static.ads-twitter.com/uwt.js"
+
+validateAddingMultiProductMiniCart:
+  multiProduct2: "3ds-max"

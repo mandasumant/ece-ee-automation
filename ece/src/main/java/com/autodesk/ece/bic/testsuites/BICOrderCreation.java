@@ -1346,6 +1346,19 @@ public class BICOrderCreation extends ECETestBase {
     }
   }
 
+  @Test(groups = {"bic-multiproduct-minicart"}, description = "Validation of Adding Multi Product to mini cart")
+  public void validateAddingMultiProductMiniCart() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    HashMap<String, String> results = getBicTestBase()
+            .createMultiProductOrderMiniCart(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+    testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+  }
+
   private void triggerPelicanRenewalJob(HashMap<String, String> results) {
     PelicanTestBase pelicanTB = new PelicanTestBase();
     pelicanTB.renewSubscription(results);

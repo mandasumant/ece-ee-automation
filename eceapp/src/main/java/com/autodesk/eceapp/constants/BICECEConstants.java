@@ -252,4 +252,8 @@ public class BICECEConstants extends BICConstants {
   public static final String CD8 = "cd8";
   public static final String CD9 = "cd9";
   public static final String APPLY_ANALYTICS = "applyAnalytics";
+  public static final String MINI_CART_MULTI_PRODUCT = "miniCartMultiProduct";
+  public static final String MAX_3DS = "3ds Max";
+  public static final String AUTO_CAD = "AutoCAD";
+
 }

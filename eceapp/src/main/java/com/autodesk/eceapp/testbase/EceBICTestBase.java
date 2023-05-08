@@ -379,7 +379,7 @@ public class EceBICTestBase {
   }
 
   @Step("Adding Product to Cart from DotCom")
-  public String subscribeAndAddToCart() {
+  public String subscribeAndAddToCart(LinkedHashMap<String, String> data) {
     String url = null;
 
     Util.sleep(5000);
@@ -400,7 +400,16 @@ public class EceBICTestBase {
 
       bicPage.clickToSubmit("guacAddToCart", 3000);
 
-      if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
+      if (data.containsKey(BICECEConstants.MINI_CART_MULTI_PRODUCT)) {
+        addProductToMiniCart(data);
+        Util.printInfo("Making sure that we can see selected products on the page");
+        List<WebElement> productsList = driver.findElements(By.xpath("//h5[@class=\"container-cart-MuiTypography-root\"]"));
+        AssertUtils.assertTrue(BICECEConstants.MAX_3DS + " is present on the page ", productsList.get(0).getText().contains(BICECEConstants.MAX_3DS));
+        AssertUtils.assertTrue(BICECEConstants.AUTO_CAD + " is present on the page ", productsList.get(1).getText().contains(BICECEConstants.AUTO_CAD));
+        bicPage.clickToSubmit("minicartCheckoutButton", 3000);
+      }
+
+      else if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
         String checkoutPrice = bicPage.checkIfElementExistsInPage("minicartCheckoutDiscountedPrice", 3)
             ? bicPage.getMultipleTextValuesfromField("minicartCheckoutDiscountedPrice")[0]
             : bicPage.getMultipleTextValuesfromField("minicartCheckoutCalculatedPrice")[0];
@@ -1511,7 +1520,7 @@ public class EceBICTestBase {
         } else {
           selectMonthlySubscription(driver);
         }
-        constructGuacURL = subscribeAndAddToCart();
+        constructGuacURL = subscribeAndAddToCart(data);
         priceId = StringUtils.substringBetween(constructGuacURL, "priceIds=", "&");
       }
     } else {
@@ -2924,6 +2933,47 @@ public class EceBICTestBase {
       }
     }
     TestinghubUtil.updateTestingHub(results);
+  }
+
+  @Step("Add Multiple Products and Terms to Mini Cart" + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createMultiProductOrderMiniCart(LinkedHashMap<String, String> data)
+          throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    Map<String, String> address = null;
+    String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+    String emailID = generateUniqueEmailID();
+    data.put(BICECEConstants.emailid, emailID);
+    data.put(BICECEConstants.MINI_CART_MULTI_PRODUCT, "true");
+
+    navigateToCart(data);
+
+    Names names = generateFirstAndLastNames();
+    createBICAccount(names, emailID, password, false);
+    data.putAll(names.getMap());
+    address = getBillingAddress(data);
+
+    enterBillingDetails(data, address, paymentMethod);
+
+    submitOrder(data);
+
+    String orderNumber = getOrderNumber(data);
+    printConsole(orderNumber, data, address);
+    results.put(BICConstants.emailid, emailID);
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
+  public void addProductToMiniCart(LinkedHashMap<String, String> data) {
+    try {
+      String currentURL = driver.getCurrentUrl();
+      String editURL = currentURL.replace(data.get(BICECEConstants.PRODUCT_NAME), data.get(BICECEConstants.PRODUCT_NAME_2));
+      driver.navigate().to(editURL);
+      bicPage.clickToSubmit("guacAddToCart", 3000);
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
   }
 
   public static class Names {
