@@ -3,9 +3,9 @@ package com.autodesk.eceapp.testbase;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.utilities.Address;
+import com.autodesk.eceapp.utilities.NumberUtil;
+import java.text.MessageFormat;
 import java.util.Objects;
-import static org.testng.util.Strings.isNotNullAndNotEmpty;
-import static org.testng.util.Strings.isNullOrEmpty;
 import com.autodesk.eceapp.utilities.AnalyticsNetworkLogs;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
@@ -394,9 +394,10 @@ public class EceBICTestBase {
     try {
       Float subscriptionAmount = Optional
           .of(bicPage.getMultipleTextValuesfromField("subscriptionPrice")[0])
-          .map(price -> price.replaceAll("[^\\d.]", "").trim())
-          .map(Float::valueOf)
-          .get();
+          .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
+          .orElse(null);
+      Util.printInfo(MessageFormat.format("Subscription Amount: [{0}]", subscriptionAmount));
+      AssertUtils.assertTrue(subscriptionAmount != null, "Subscription Price cannot be null");
 
       bicPage.clickToSubmit("guacAddToCart", 3000);
 
@@ -410,24 +411,28 @@ public class EceBICTestBase {
       }
 
       else if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
+        Util.printInfo(MessageFormat.format("Minicart checkout page opened. Locale: [{0}]", data.get(BICECEConstants.LOCALE)));
+
         String checkoutPrice = bicPage.checkIfElementExistsInPage("minicartCheckoutDiscountedPrice", 3)
             ? bicPage.getMultipleTextValuesfromField("minicartCheckoutDiscountedPrice")[0]
             : bicPage.getMultipleTextValuesfromField("minicartCheckoutCalculatedPrice")[0];
+        Util.printInfo(MessageFormat.format("Checkout Price: [{0}]", checkoutPrice));
 
         Float minicartCheckoutPrice = Optional
             .of(checkoutPrice.trim())
-            .map(price -> price.replaceAll("[^\\d.]", "").trim())
-            .map(Float::valueOf)
-            .get();
-        AssertUtils.assertEquals(subscriptionAmount, minicartCheckoutPrice,
+            .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
+            .orElse(null);
+        Util.printInfo(MessageFormat.format("Minicart Checkout Price: [{0}]", minicartCheckoutPrice));
+        AssertUtils.assertTrue(minicartCheckoutPrice != null, "Minicart Checkout Price cannot be null");
+        AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(minicartCheckoutPrice),
             "Subscription amount should be same as minicart checkout price");
 
         Float minicartSubTotalPrice = Optional
             .of(bicPage.getMultipleTextValuesfromField("minicartSubTotal")[0].trim())
-            .map(price -> price.replaceAll("[^\\d.]", "").trim())
-            .map(Float::valueOf)
-            .get();
-        AssertUtils.assertEquals(subscriptionAmount, minicartSubTotalPrice,
+            .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
+            .orElse(null);
+        AssertUtils.assertTrue(minicartSubTotalPrice != null, "Minicart SubTotal Price cannot be null");
+        AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(minicartSubTotalPrice),
             "Subscription amount should be same as minicart subtotal price");
 
         bicPage.clickToSubmit("minicartCheckoutButton", 3000);
