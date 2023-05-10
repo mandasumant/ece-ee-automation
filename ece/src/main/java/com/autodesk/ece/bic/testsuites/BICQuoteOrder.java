@@ -1,26 +1,29 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.ece.testbase.*;
-import com.autodesk.eceapp.testbase.EceBICTestBase;
-import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
+import com.autodesk.ece.testbase.DatastoreClient;
 import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
+import com.autodesk.ece.testbase.ECETestBase;
+import com.autodesk.ece.testbase.PWSTestBase;
+import com.autodesk.ece.testbase.PelicanTestBase;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.testbase.EceBICTestBase;
+import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.eceapp.utilities.TaxExemptionMappings;
 import com.autodesk.eceapp.utilities.TaxExemptionMappings.TaxOptions;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
-import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.restassured.path.json.JsonPath;
@@ -207,7 +210,7 @@ public class BICQuoteOrder extends ECETestBase {
             .orderNumber(BigInteger.valueOf(0))
             .paymentType("")
             .locale(locale)
-            .address(System.getProperty(BICECEConstants.ADDRESS))
+            .address(getSerializedBillingAddress())
             .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
 
           if(isMultiLineItem) {
@@ -368,7 +371,7 @@ public class BICQuoteOrder extends ECETestBase {
             .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
             .quoteId(testDataForEachMethod.get(BICECEConstants.QUOTE_ID))
             .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-            .address(System.getProperty(BICECEConstants.ADDRESS))
+            .address(getSerializedBillingAddress())
             .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
 
         if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
@@ -537,7 +540,7 @@ public class BICQuoteOrder extends ECETestBase {
           .emailId(results.get(BICConstants.emailid))
           .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
           .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-          .address(System.getProperty(BICECEConstants.ADDRESS)).build());
+          .address(getSerializedBillingAddress()).build());
       testResults.put("Stored order data ID", orderData.getId().toString());
       updateTestingHub(testResults);
     } catch (Exception e) {
@@ -738,7 +741,7 @@ public class BICQuoteOrder extends ECETestBase {
             .orderNumber(new BigInteger(results.get(BICECEConstants.ORDER_ID)))
             .quoteId(testDataForEachMethod.get(BICECEConstants.QUOTE_ID))
             .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-            .address(System.getProperty(BICECEConstants.ADDRESS))
+            .address(getSerializedBillingAddress())
             .scenario("Multi Line Item").build());
         testResults.put("Stored order data ID", orderData.getId().toString());
         updateTestingHub(testResults);
@@ -1048,7 +1051,7 @@ public class BICQuoteOrder extends ECETestBase {
             .orderNumber(new BigInteger(results.get(BICECEConstants.orderNumber)))
             .quoteId(quoteId)
             .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
-            .address(System.getProperty(BICECEConstants.ADDRESS))
+            .address(getSerializedBillingAddress())
             .scenario("Multi Invoice")
             .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString()).build());
         testResults.put("Stored order data ID", orderData.getId().toString());
@@ -1425,7 +1428,7 @@ public class BICQuoteOrder extends ECETestBase {
     AssertUtils.assertTrue(getBicTestBase().isTTRButtonPresentInCart(), "Tax exception button should be present");
   }
 
-  private Address getBillingAddress() {
+  private String getSerializedBillingAddress() {
     String billingAddress;
     String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
     if (addressViaParam != null && !addressViaParam.isEmpty()) {
@@ -1434,7 +1437,11 @@ public class BICQuoteOrder extends ECETestBase {
     } else {
       billingAddress = testDataForEachMethod.get(BICECEConstants.ADDRESS);
     }
+    return billingAddress;
+  }
 
+  private Address getBillingAddress() {
+    String billingAddress = getSerializedBillingAddress();
     return new Address(billingAddress);
   }
 
