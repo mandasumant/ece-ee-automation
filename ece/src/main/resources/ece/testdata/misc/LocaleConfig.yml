@@ -142,7 +142,7 @@ LocaleConfig:
     storeName: "STORE-JP"
     currencyStore: "JPY"
     countryDomain: ".co.jp"
-    paymentMethods: "CREDITCARD,MASTERCARD,AMEX,JCB,PAYPAL,CASH,KONBINI"
+    paymentMethods: "CREDITCARD,MASTERCARD,AMEX,JCB,PAYPAL,CASH,KONBINI,ATM"
     address: "Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@163-8001@03-5321-1111@Japan@TOKYO"
     isTaxed: "Y"
     quoteAgentCsnAccount: "0070069961"

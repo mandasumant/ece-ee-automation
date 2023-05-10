@@ -478,6 +478,9 @@ public class EceBICTestBase {
         case BICECEConstants.PAYMENT_TYPE_ZIP:
           paymentProfile = BICECEConstants.ALTERNATE_PAYMENT_METHODS;
           break;
+        case BICECEConstants.PAYMENT_ATM_BANK_TRANSFER:
+          paymentProfile = BICECEConstants.BANK_TRANSFER_PAYMENT_METHOD;
+          break;
         default:
           paymentProfile = BICECEConstants.CREDIT_CARD;
           break;
@@ -631,6 +634,9 @@ public class EceBICTestBase {
         case BICECEConstants.PAYMENT_KONBINI:
         case BICECEConstants.PAYMENT_TYPE_ZIP:
           paymentTypeToken = BICECEConstants.ALTERNATE_PAYMENT_METHODS;
+          break;
+        case BICECEConstants.PAYMENT_ATM_BANK_TRANSFER:
+          paymentTypeToken = BICECEConstants.BANK_TRANSFER_PAYMENT_METHOD;
           break;
         default:
           paymentTypeToken = BICECEConstants.CREDIT_CARD;
@@ -1325,6 +1331,9 @@ public class EceBICTestBase {
           case BICECEConstants.PAYMENT_KONBINI:
             selectKonbiniPayment();
             selectConvenienceStoreType();
+            break;
+          case BICECEConstants.PAYMENT_ATM_BANK_TRANSFER:
+            selectAtmBankTransferPayment();
             break;
           default:
             populatePaymentDetails(paymentCardDetails);
@@ -2895,6 +2904,16 @@ public class EceBICTestBase {
       bicPage.clickUsingLowLevelActions("konbiniRadioButton");
     } else {
       AssertUtils.fail("Unable to click on Konbini payment method");
+    }
+  }
+
+  public void selectAtmBankTransferPayment() throws MetadataException {
+    Util.printInfo("Clicking on ATM Bank Transfer Payment Tab...");
+    if (bicPage.checkIfElementExistsInPage("atmBankTransfer", 20)) {
+      Util.printInfo("ATM Bank Transfer payment method tab is visible");
+      bicPage.clickUsingLowLevelActions("atmBankTransfer");
+    } else {
+      AssertUtils.fail("Unable to click on ATM Bank Transfer payment method");
     }
   }
 
