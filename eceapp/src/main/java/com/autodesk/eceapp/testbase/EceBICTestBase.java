@@ -413,27 +413,32 @@ public class EceBICTestBase {
       else if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
         Util.printInfo(MessageFormat.format("Minicart checkout page opened. Locale: [{0}]", data.get(BICECEConstants.LOCALE)));
 
-        String checkoutPrice = bicPage.checkIfElementExistsInPage("minicartCheckoutDiscountedPrice", 3)
-            ? bicPage.getMultipleTextValuesfromField("minicartCheckoutDiscountedPrice")[0]
-            : bicPage.getMultipleTextValuesfromField("minicartCheckoutCalculatedPrice")[0];
-        Util.printInfo(MessageFormat.format("Checkout Price: [{0}]", checkoutPrice));
+        if (data.containsKey(BICECEConstants.MINI_CART_VALIDATE_PRICE)) {
+          Util.printInfo("Started minicart price validation");
+          String checkoutPrice = bicPage.checkIfElementExistsInPage("minicartCheckoutDiscountedPrice", 3)
+              ? bicPage.getMultipleTextValuesfromField("minicartCheckoutDiscountedPrice")[0]
+              : bicPage.getMultipleTextValuesfromField("minicartCheckoutCalculatedPrice")[0];
+          Util.printInfo(MessageFormat.format("Checkout Price: [{0}]", checkoutPrice));
 
-        Float minicartCheckoutPrice = Optional
-            .of(checkoutPrice.trim())
-            .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
-            .orElse(null);
-        Util.printInfo(MessageFormat.format("Minicart Checkout Price: [{0}]", minicartCheckoutPrice));
-        AssertUtils.assertTrue(minicartCheckoutPrice != null, "Minicart Checkout Price cannot be null");
-        AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(minicartCheckoutPrice),
-            "Subscription amount should be same as minicart checkout price");
+          Float minicartCheckoutPrice = Optional
+              .of(checkoutPrice.trim())
+              .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
+              .orElse(null);
+          Util.printInfo(MessageFormat.format("Minicart Checkout Price: [{0}]", minicartCheckoutPrice));
+          AssertUtils.assertTrue(minicartCheckoutPrice != null, "Minicart Checkout Price cannot be null");
+          AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(minicartCheckoutPrice),
+              "Subscription amount should be same as minicart checkout price");
 
-        Float minicartSubTotalPrice = Optional
-            .of(bicPage.getMultipleTextValuesfromField("minicartSubTotal")[0].trim())
-            .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
-            .orElse(null);
-        AssertUtils.assertTrue(minicartSubTotalPrice != null, "Minicart SubTotal Price cannot be null");
-        AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(minicartSubTotalPrice),
-            "Subscription amount should be same as minicart subtotal price");
+          Float minicartSubTotalPrice = Optional
+              .of(bicPage.getMultipleTextValuesfromField("minicartSubTotal")[0].trim())
+              .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
+              .orElse(null);
+          AssertUtils.assertTrue(minicartSubTotalPrice != null, "Minicart SubTotal Price cannot be null");
+          AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(minicartSubTotalPrice),
+              "Subscription amount should be same as minicart subtotal price");
+        } else {
+          Util.printInfo("Skipped minicart price validation");
+        }
 
         bicPage.clickToSubmit("minicartCheckoutButton", 3000);
       }

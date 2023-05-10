@@ -255,5 +255,5 @@ public class BICECEConstants extends BICConstants {
   public static final String MINI_CART_MULTI_PRODUCT = "miniCartMultiProduct";
   public static final String MAX_3DS = "3ds Max";
   public static final String AUTO_CAD = "AutoCAD";
-
+  public static final String MINI_CART_VALIDATE_PRICE = "minicartValidatePrice";
 }

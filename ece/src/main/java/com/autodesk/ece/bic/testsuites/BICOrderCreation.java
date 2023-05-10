@@ -195,6 +195,7 @@ public class BICOrderCreation extends ECETestBase {
   public void validateBicNativeOrder() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
+    testDataForEachMethod.put(BICECEConstants.MINI_CART_VALIDATE_PRICE, "true");
     HashMap<String, String> results = getBicTestBase().createGUACBICOrderDotCom(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
