@@ -3,22 +3,20 @@ package com.autodesk.eceapp.testbase;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.utilities.Address;
-import com.autodesk.eceapp.utilities.NumberUtil;
-import java.text.MessageFormat;
-import java.util.Objects;
 import com.autodesk.eceapp.utilities.AnalyticsNetworkLogs;
+import com.autodesk.eceapp.utilities.NumberUtil;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
-import com.autodesk.testinghub.eseapp.testbase.EseSAPTestBase;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.testbase.EseSAPTestBase;
 import com.autodesk.testinghub.eseapp.testbase.TestinghubUtil;
 import io.qameta.allure.Step;
 import java.awt.AWTException;
@@ -26,6 +24,7 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
@@ -404,14 +403,16 @@ public class EceBICTestBase {
       if (data.containsKey(BICECEConstants.MINI_CART_MULTI_PRODUCT)) {
         addProductToMiniCart(data);
         Util.printInfo("Making sure that we can see selected products on the page");
-        List<WebElement> productsList = driver.findElements(By.xpath("//h5[@class=\"container-cart-MuiTypography-root\"]"));
-        AssertUtils.assertTrue(BICECEConstants.MAX_3DS + " is present on the page ", productsList.get(0).getText().contains(BICECEConstants.MAX_3DS));
-        AssertUtils.assertTrue(BICECEConstants.AUTO_CAD + " is present on the page ", productsList.get(1).getText().contains(BICECEConstants.AUTO_CAD));
+        List<WebElement> productsList = driver.findElements(
+            By.xpath("//h5[@class=\"container-cart-MuiTypography-root\"]"));
+        AssertUtils.assertTrue(BICECEConstants.MAX_3DS + " is present on the page ",
+            productsList.get(0).getText().contains(BICECEConstants.MAX_3DS));
+        AssertUtils.assertTrue(BICECEConstants.AUTO_CAD + " is present on the page ",
+            productsList.get(1).getText().contains(BICECEConstants.AUTO_CAD));
         bicPage.clickToSubmit("minicartCheckoutButton", 3000);
-      }
-
-      else if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
-        Util.printInfo(MessageFormat.format("Minicart checkout page opened. Locale: [{0}]", data.get(BICECEConstants.LOCALE)));
+      } else if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
+        Util.printInfo(
+            MessageFormat.format("Minicart checkout page opened. Locale: [{0}]", data.get(BICECEConstants.LOCALE)));
 
         if (data.containsKey(BICECEConstants.MINI_CART_VALIDATE_PRICE)) {
           Util.printInfo("Started minicart price validation");
@@ -2574,7 +2575,7 @@ public class EceBICTestBase {
     setStorageData();
   }
 
-  private void closeGetHelpPopup() {
+  public void closeGetHelpPopup() {
     try {
       WebElement getHelpIframe = bicPage
           .getMultipleWebElementsfromField(BICECEConstants.GET_HELP_IFRAME).get(0);
@@ -2950,13 +2951,16 @@ public class EceBICTestBase {
   public void validateNetworkLogsOnEachPage(String URL) {
     HashMap<String, String> results = new HashMap<>();
     Boolean shouldValidateNetworkLogs =
-            !Objects.isNull(System.getProperty(BICECEConstants.APPLY_ANALYTICS)) ? Boolean.valueOf(
-                    System.getProperty(BICECEConstants.APPLY_ANALYTICS)) : false;
+        !Objects.isNull(System.getProperty(BICECEConstants.APPLY_ANALYTICS)) ? Boolean.valueOf(
+            System.getProperty(BICECEConstants.APPLY_ANALYTICS)) : false;
     if (shouldValidateNetworkLogs) {
       try {
-        results.put("Google", AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.GOOGLE_ANALYTICS, URL));
-        results.put("Tealium", AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.TEALIUM_ANALYTICS, URL));
-        results.put("Adobe", AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.ADOBE_ANALYTICS, URL));
+        results.put("Google",
+            AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.GOOGLE_ANALYTICS, URL));
+        results.put("Tealium",
+            AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.TEALIUM_ANALYTICS, URL));
+        results.put("Adobe",
+            AnalyticsNetworkLogs.getObject().fetchAndFilterNetworkLogs(BICECEConstants.ADOBE_ANALYTICS, URL));
       } catch (Exception e) {
         Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
       }
@@ -2966,7 +2970,7 @@ public class EceBICTestBase {
 
   @Step("Add Multiple Products and Terms to Mini Cart" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createMultiProductOrderMiniCart(LinkedHashMap<String, String> data)
-          throws MetadataException {
+      throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     Map<String, String> address = null;
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
@@ -2997,7 +3001,8 @@ public class EceBICTestBase {
   public void addProductToMiniCart(LinkedHashMap<String, String> data) {
     try {
       String currentURL = driver.getCurrentUrl();
-      String editURL = currentURL.replace(data.get(BICECEConstants.PRODUCT_NAME), data.get(BICECEConstants.PRODUCT_NAME_2));
+      String editURL = currentURL.replace(data.get(BICECEConstants.PRODUCT_NAME),
+          data.get(BICECEConstants.PRODUCT_NAME_2));
       driver.navigate().to(editURL);
       bicPage.clickToSubmit("guacAddToCart", 3000);
     } catch (Exception e) {

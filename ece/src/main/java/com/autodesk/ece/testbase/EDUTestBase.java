@@ -7,11 +7,11 @@ import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import io.qameta.allure.Step;
 import java.io.File;
 import java.net.URISyntaxException;
@@ -519,8 +519,11 @@ public class EDUTestBase {
     boolean assignmentSuccess = false;
     int assignmentAttemptCount = 0;
 
+    bicTestBase.closeGetHelpPopup();
+
     while (!assignmentSuccess) {
       eduPage.clickUsingLowLevelActions("educationClassLabTab");
+      Util.waitforPresenceOfElement(eduPage, "subscriptionAcceptButton");
       eduPage.clickUsingLowLevelActions("subscriptionAcceptButton");
       Util.sleep(5000);
 
