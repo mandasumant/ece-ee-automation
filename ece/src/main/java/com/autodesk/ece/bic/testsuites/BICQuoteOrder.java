@@ -247,7 +247,12 @@ public class BICQuoteOrder extends ECETestBase {
 
     if (shouldPullFromDataStore) {
       loadQuoteDataFromP78();
-      address = new Address(testDataForEachMethod.get("address"));
+      if (Strings.isNotNullAndNotEmpty(testDataForEachMethod.get(BICECEConstants.ADDRESS))) {
+        address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+      } else if (Strings.isNotNullAndNotEmpty(System.getProperty(BICECEConstants.ADDRESS))) {
+        address = new Address(System.getProperty(BICECEConstants.ADDRESS));
+      }
+
       address.company = testDataForEachMethod.get("company");
     } else {
       if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
@@ -651,7 +656,12 @@ public class BICQuoteOrder extends ECETestBase {
 
     if (shouldPullFromDataStore) {
       loadQuoteDataFromP78();
-      address = new Address(testDataForEachMethod.get("address"));
+      if (Strings.isNotNullAndNotEmpty(testDataForEachMethod.get(BICECEConstants.ADDRESS))) {
+        address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+      } else if (Strings.isNotNullAndNotEmpty(System.getProperty(BICECEConstants.ADDRESS))) {
+        address = new Address(System.getProperty(BICECEConstants.ADDRESS));
+      }
+
       address.company = testDataForEachMethod.get("company");
     } else {
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
@@ -1558,10 +1568,10 @@ public class BICQuoteOrder extends ECETestBase {
       Response quoteDetails = pwsTestBase.getQuoteDetails(
           testDataForEachMethod.get("quoteAgentCsnAccount"), order.getQuoteId());
 
-      testDataForEachMethod.put("firstname",quoteDetails.jsonPath().getString("purchaser.firstName"));
-      testDataForEachMethod.put("lastname",quoteDetails.jsonPath().getString("purchaser.lastName"));
-      testDataForEachMethod.put("company",quoteDetails.jsonPath().getString("endCustomer.name"));
-      testDataForEachMethod.put("address",order.getAddress());
+      testDataForEachMethod.put("firstname", quoteDetails.jsonPath().getString("purchaser.firstName"));
+      testDataForEachMethod.put("lastname", quoteDetails.jsonPath().getString("purchaser.lastName"));
+      testDataForEachMethod.put("company", quoteDetails.jsonPath().getString("endCustomer.name"));
+      testDataForEachMethod.put("address", order.getAddress());
 
     } catch (Exception e) {
       AssertUtils.fail("Failed to fetch data from P78, for Quote Orders");
