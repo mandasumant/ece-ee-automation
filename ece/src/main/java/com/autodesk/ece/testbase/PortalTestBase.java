@@ -2036,6 +2036,12 @@ public class PortalTestBase {
     if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)) {
       bicTestBase.clickMandateAgreementCheckbox();
     }
+    if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_ATM_BANK_TRANSFER)) {
+      Util.printInfo("Clicking on Save Button of ATM Payment Tab");
+      Util.sleep(5000);
+      portalPage.clickUsingLowLevelActions("portalCardSaveBtn");
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
     submitPayment();
     return false;
   }
@@ -2044,7 +2050,9 @@ public class PortalTestBase {
   public void submitPayment() throws Exception {
     try {
       portalPage.waitForFieldPresent("submitPaymentButton", 15000);
+      Util.printInfo("Clicking on Submit Payment Button");
       portalPage.clickUsingLowLevelActions("submitPaymentButton");
+      bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
       if (portalPage.checkIfElementExistsInPage("paymentSuccessMessage", 10)) {
         Util.printInfo("Payment for Invoice is successfully Completed");
       } else {
