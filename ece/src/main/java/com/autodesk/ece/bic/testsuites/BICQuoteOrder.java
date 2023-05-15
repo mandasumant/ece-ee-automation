@@ -383,6 +383,10 @@ public class BICQuoteOrder extends ECETestBase {
           builder.scenario("Different Payer");
         }
 
+        if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
+          builder.tenant(System.getProperty(BICECEConstants.TENANT));
+        }
+
         OrderData orderData = dsClient.queueOrder(builder.build());
         testResults.put("Stored order data ID", orderData.getId().toString());
         updateTestingHub(testResults);
