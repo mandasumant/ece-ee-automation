@@ -442,6 +442,7 @@ public class EceBICTestBase {
         }
 
         bicPage.clickToSubmit("minicartCheckoutButton", 3000);
+        bicPage.waitForPageToLoad();
       }
     } catch (MetadataException e) {
       Util.printError(e.getMessage());
@@ -1539,6 +1540,7 @@ public class EceBICTestBase {
 
         try {
           bicPage.clickUsingLowLevelActions("buyTokensButton");
+          bicPage.waitForPageToLoad();
         } catch (WebDriverException e) {
           Util.printInfo(e.getMessage());
         }
