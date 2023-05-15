@@ -1642,13 +1642,21 @@ public class EceBICTestBase {
         + currency;
   }
 
+
   @Step("Placing the Flex Order" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> placeFlexOrder(LinkedHashMap<String, String> data) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
     Map<String, String> address = getBillingAddress(data);
+
     int attempt = 0;
     Boolean isOrderCaptured = false;
+    Util.printInfo("Checking for Continue button");
+
+    if(bicPage.checkIfElementExistsInPage("cartContinueButton",15)){
+      Util.printInfo("Clicking on Continue button");
+      bicPage.clickUsingLowLevelActions("cartContinueButton");
+    }
 
     while (!isOrderCaptured) {
 

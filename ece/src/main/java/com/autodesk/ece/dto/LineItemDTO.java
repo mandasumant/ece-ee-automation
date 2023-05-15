@@ -7,7 +7,7 @@ import lombok.Data;
 public @Data
 class LineItemDTO {
 
-  private Float quantity;
+  private Integer quantity;
   private String offeringId;
   private String orderAction = "New";
   private String subscriptionStartDate;
@@ -15,7 +15,7 @@ class LineItemDTO {
 
   public LineItemDTO(LinkedHashMap<String, String> data) {
     this.offeringId = data.get(BICECEConstants.OFFERING_ID);
-    this.quantity = new Float(Integer.valueOf(data.get(BICECEConstants.FLEX_TOKENS)));
+    this.quantity = Integer.valueOf(data.get(BICECEConstants.FLEX_TOKENS));
     //this.subscriptionStartDate = data.get(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE);
   }
 }

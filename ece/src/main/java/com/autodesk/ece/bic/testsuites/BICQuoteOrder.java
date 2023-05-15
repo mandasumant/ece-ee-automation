@@ -200,7 +200,7 @@ public class BICQuoteOrder extends ECETestBase {
     justQuoteDeails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
     justQuoteDeails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
 
-    if(shouldPushToDataStore) {
+    if (shouldPushToDataStore) {
       try {
         DatastoreClient dsClient = new DatastoreClient();
         NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
@@ -213,17 +213,17 @@ public class BICQuoteOrder extends ECETestBase {
             .address(getSerializedBillingAddress())
             .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
 
-          if(isMultiLineItem) {
-            builder.scenario(BICECEConstants.MULTI_LINE_ITEM);
-          } else if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-            builder.scenario(BICECEConstants.DIFFERENT_PAYER);
-          } else {
-            builder.scenario(BICECEConstants.SAME_PAYER);
-          }
+        if (isMultiLineItem) {
+          builder.scenario(BICECEConstants.MULTI_LINE_ITEM);
+        } else if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+          builder.scenario(BICECEConstants.DIFFERENT_PAYER);
+        } else {
+          builder.scenario(BICECEConstants.SAME_PAYER);
+        }
 
-          if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
-            builder.tenant(System.getProperty(BICECEConstants.TENANT));
-          }
+        if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
+          builder.tenant(System.getProperty(BICECEConstants.TENANT));
+        }
 
         OrderData orderData = dsClient.queueOrder(builder.build());
       } catch (Exception e) {
@@ -245,14 +245,12 @@ public class BICQuoteOrder extends ECETestBase {
         !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) ? Boolean.valueOf(
             System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) : false;
 
-    if (shouldPullFromDataStore) {
-      loadQuoteDataFromP78();
+    if (shouldPullFromDataStore &&  loadQuoteDataFromP78()) {
       if (Strings.isNotNullAndNotEmpty(testDataForEachMethod.get(BICECEConstants.ADDRESS))) {
         address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
       } else if (Strings.isNotNullAndNotEmpty(System.getProperty(BICECEConstants.ADDRESS))) {
         address = new Address(System.getProperty(BICECEConstants.ADDRESS));
       }
-
       address.company = testDataForEachMethod.get("company");
     } else {
       if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
@@ -418,7 +416,6 @@ public class BICQuoteOrder extends ECETestBase {
     if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
       results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
     }
-
 
     if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
       String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType")
@@ -658,8 +655,7 @@ public class BICQuoteOrder extends ECETestBase {
         !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) ? Boolean.valueOf(
             System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) : false;
 
-    if (shouldPullFromDataStore) {
-      loadQuoteDataFromP78();
+    if (shouldPullFromDataStore && loadQuoteDataFromP78()) {
       if (Strings.isNotNullAndNotEmpty(testDataForEachMethod.get(BICECEConstants.ADDRESS))) {
         address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
       } else if (Strings.isNotNullAndNotEmpty(System.getProperty(BICECEConstants.ADDRESS))) {
@@ -1547,7 +1543,7 @@ public class BICQuoteOrder extends ECETestBase {
   }
 
 
-  private void loadQuoteDataFromP78() {
+  private boolean loadQuoteDataFromP78() {
     DatastoreClient dsClient = new DatastoreClient();
     OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder();
 
@@ -1555,7 +1551,7 @@ public class BICQuoteOrder extends ECETestBase {
         .name(BICECEConstants.QUOTE_TEST_NAME)
         .locale(locale);
 
-    if(Objects.equals(System.getProperty(BICECEConstants.IS_MULTILINE), BICECEConstants.TRUE)) {
+    if (Objects.equals(System.getProperty(BICECEConstants.IS_MULTILINE), BICECEConstants.TRUE)) {
       builder.scenario(BICECEConstants.MULTI_LINE_ITEM);
     } else if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
       builder.scenario(BICECEConstants.DIFFERENT_PAYER);
@@ -1578,9 +1574,12 @@ public class BICQuoteOrder extends ECETestBase {
       testDataForEachMethod.put("address", order.getAddress());
 
     } catch (Exception e) {
-      AssertUtils.fail("Failed to fetch data from P78, for Quote Orders");
+      Util.printInfo("Failed to fetch data from P78, for Quote Orders. Creating via PWS");
+      return false;
     }
-  }
+    return true;
+   }
+
 
   private String submitECMSTaxExemption(HashMap<String, String> testResults, Address address) throws IOException {
     String flexCode = null;

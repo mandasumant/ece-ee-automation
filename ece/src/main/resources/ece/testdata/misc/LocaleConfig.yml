@@ -71,6 +71,16 @@ LocaleConfig:
     maxAmountPBI: "140,640.00"
     paypalEmail: "paypal-buyer-emea@ssttest.net"
 
+  en_NZ:
+    region: "ENNZ"
+    storeName: "STORE-NZ"
+    currencyStore: "NZD"
+    countryDomain: ".co.nz"
+    paymentMethods: "CREDITCARD,PAYPAL"
+    address: "AutodeskAU@211 Kinsey Terrace@Sumner@8081@397202088@New Zealand@Christchurch"
+    isTaxed: "Y"
+    paypalEmail: "paypal-buyer-emea@ssttest.net"
+
   nl_NL:
     region: "NLNL"
     storeName: "STORE-EU"
