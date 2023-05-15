@@ -850,27 +850,35 @@ public class EceBICTestBase {
   @Step("Populate BACS payment details")
   public void populateBACSPaymentDetails(String[] paymentCardDetails, Map<String, String> address,
       Map<String, String> data) {
-
-    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
-
     try {
-      Util.printInfo("Clicking on Direct Debit BACS tab...");
-      bicPage.clickUsingLowLevelActions("directDebitBACSTab");
-      populateBillingAddress(address, data);
-
-      Util.printInfo("Entering Direct Debit BACS Account Number : " + paymentCardDetails[0]);
-      bicPage.populateField("bacsAccNumber", paymentCardDetails[0]);
-
-      Util.printInfo("Entering Direct Debit BACS Sort Code : " + paymentCardDetails[0]);
-      bicPage.populateField("bacsAccSortCode", paymentCardDetails[1]);
-
-      bicPage.clickUsingLowLevelActions("bacsAgreementCheckbox1");
-      Util.sleep(2000);
-      bicPage.clickUsingLowLevelActions("bacsAgreementCheckbox2");
-
+      bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
+      if (bicPage.waitForFieldPresent("directDebitBACSTab", 5000)) {
+        Util.printInfo("Clicking on Direct Debit BACS tab...");
+        bicPage.clickUsingLowLevelActions("directDebitBACSTab");
+      }
     } catch (MetadataException e) {
       e.printStackTrace();
-      AssertUtils.fail("Unable to enter Direct Debit (BACS) details to make payment");
+      AssertUtils.fail("Unable to Click on Direct Debit (BACS) Payment Tab");
+    }
+
+    if (!bicPage.isFieldVisible("invoicePaymentEdit")) {
+      try {
+        populateBillingAddress(address, data);
+
+        Util.printInfo("Entering Direct Debit BACS Account Number : " + paymentCardDetails[0]);
+        bicPage.populateField("bacsAccNumber", paymentCardDetails[0]);
+
+        Util.printInfo("Entering Direct Debit BACS Sort Code : " + paymentCardDetails[0]);
+        bicPage.populateField("bacsAccSortCode", paymentCardDetails[1]);
+
+        bicPage.clickUsingLowLevelActions("bacsAgreementCheckbox1");
+        Util.sleep(2000);
+        bicPage.clickUsingLowLevelActions("bacsAgreementCheckbox2");
+
+      } catch (MetadataException e) {
+        e.printStackTrace();
+        AssertUtils.fail("Unable to enter Direct Debit (BACS) details to make payment");
+      }
     }
   }
 
