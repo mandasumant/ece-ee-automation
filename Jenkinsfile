@@ -566,18 +566,35 @@ def triggerCJT(def serviceBuildHelper, String env) {
                 '{"displayname":"Account Portal - Change Payment","testcasename":"validateBICChangePaymentProfile","description":"Change Payment from Portal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-changePayment","testMethod":"validateBICChangePaymentProfile","parameters":{"application":"ece"},"testdata":{"usertype":"existing","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}},' +
                 '{"displayname":"Account Portal - Switch Term","testcasename":"validateBicNativeOrderSwitchTerm","description":"Switch Term for BiC Order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder-switch-term","testMethod":"validateBicNativeOrderSwitchTerm","parameters":{"application":"ece","payment":"VISA","store":"STORE-NAMER"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}},' +
                 '{"displayname":"Account Portal - Restart Subscription","testcasename":"validateRestartSubscription","description":"Restart a Canceled Subscription","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-restart-subscription","testMethod":"validateRestartSubscription","parameters":{"application":"ece","payment":"VISA","store":"STORE-NAMER"},"testdata":{}},' +
-                '{"displayname":"Account Portal - Align Billing","testcasename":"validateAlignBilling","description":"Align 2 Subscriptions to same Renewal from Portal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-align-billing","testMethod":"validateAlignBilling","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}},' +
-                '{"displayname":"MOAB - Reseller  Pay invoices with Cash - US","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash - US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","sku":"default:1","email":"","locale":"en_US"}},' +
-                '{"displayname":"MOAB - Reseller  Pay invoices with Cash & CM - US","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","applyCM":"Y","sku":"default:1","email":"","locale":"en_US"}},' +
-                '{"displayname":"MOAB - Reseller  Pay invoices with BACS - UK","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with BACS- UK","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"BACS","store":"STORE-UK","purchaserEmail":"Reseller_UK_DCLE_2ZgMkv@letscheck.pw","csn":"5500971062","sku":"default:1","email":"","locale":"en_GB"}}' +
+                '{"displayname":"Account Portal - Align Billing","testcasename":"validateAlignBilling","description":"Align 2 Subscriptions to same Renewal from Portal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-align-billing","testMethod":"validateAlignBilling","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":""}}' +
                 '],"workstreamname":"dclecjt"}'
         println("Starting Testing Hub API Call - accountportal")
-
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
             println('Testing Hub API called successfully - accountportal')
         } else {
             currentBuild.result = 'FAILURE'
             println('Testing Hub API call failed - accountportal')
+        }
+    }
+    script {
+        if (env == "STG") {
+            println("Building Testing Hub API Input Map - accountportal")
+            def testingHubInputMap = [:]
+            def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
+            testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
+            testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
+            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                    '{"displayname":"MOAB - Reseller  Pay invoices with Cash - US","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash - US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","sku":"default:1","email":"","locale":"en_US"}},' +
+                    '{"displayname":"MOAB - Reseller  Pay invoices with Cash & CM - US","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"Reseller_US_DCLE_i4lJmK@letscheck.pw","csn":"5500971254","applyCM":"Y","sku":"default:1","email":"","locale":"en_US"}},' +
+                    '{"displayname":"MOAB - Reseller  Pay invoices with BACS - UK","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with BACS- UK","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"BACS","store":"STORE-UK","purchaserEmail":"Reseller_UK_DCLE_2ZgMkv@letscheck.pw","csn":"5500971062","sku":"default:1","email":"","locale":"en_GB"}}' +
+                    '],"workstreamname":"dclecjt"}'
+            println("Starting Testing Hub API Call - accountportal")
+            if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
+                println('Testing Hub API called successfully - accountportal')
+            } else {
+                currentBuild.result = 'FAILURE'
+                println('Testing Hub API call failed - accountportal')
+            }
         }
     }
     script {
