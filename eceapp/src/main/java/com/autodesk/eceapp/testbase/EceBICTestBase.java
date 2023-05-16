@@ -1540,7 +1540,6 @@ public class EceBICTestBase {
 
         try {
           bicPage.clickUsingLowLevelActions("buyTokensButton");
-          bicPage.waitForPageToLoad();
         } catch (WebDriverException e) {
           Util.printInfo(e.getMessage());
         }
@@ -1557,6 +1556,7 @@ public class EceBICTestBase {
       Assert.fail("Environment is neither STG or INT in Maven parameter.");
     }
 
+    bicPage.waitForPageToLoad();
     setStorageData();
 
     return priceId;
