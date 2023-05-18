@@ -1887,6 +1887,7 @@ public class EceBICTestBase {
       js.executeScript("window.localStorage.setItem(\"nonsensitiveUserLocationModalViewed\",\"true\");");
 
       driver.navigate().refresh();
+      bicPage.waitForPageToLoad();
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       e2.printStackTrace();

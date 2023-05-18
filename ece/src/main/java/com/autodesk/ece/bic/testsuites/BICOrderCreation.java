@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1295,6 +1296,7 @@ public class BICOrderCreation extends ECETestBase {
    */
   @Test(groups = {"bic-multiline-bicorder"}, description = "Validation of Create Multiline item BIC Order")
   public void validateMultiLineItemBicNativeOrder() throws MetadataException {
+    getDriver().manage().timeouts().pageLoadTimeout(Duration.ofMinutes(3L));
     HashMap<String, String> testResults = new HashMap<String, String>();
     startTime = System.nanoTime();
 
