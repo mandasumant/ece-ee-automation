@@ -853,9 +853,12 @@ public class EceBICTestBase {
       Map<String, String> data) {
     try {
       bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
-      if (bicPage.waitForFieldPresent("directDebitBACSTab", 5000)) {
+      if (bicPage.checkIfElementExistsInPage("directDebitBACSTab", 10)) {
         Util.printInfo("Clicking on Direct Debit BACS tab...");
         bicPage.clickUsingLowLevelActions("directDebitBACSTab");
+      } else {
+        Util.printInfo("Clicking on Direct Debit BACS radio button...");
+        bicPage.clickUsingLowLevelActions("bacsRadioButton");
       }
     } catch (MetadataException e) {
       e.printStackTrace();
@@ -864,7 +867,10 @@ public class EceBICTestBase {
 
     if (!bicPage.isFieldVisible("invoicePaymentEdit")) {
       try {
-        populateBillingAddress(address, data);
+        boolean isCustomerDetailsComplete = bicPage.checkIfElementExistsInPage("customerDetailsComplete", 10);
+        if (!isCustomerDetailsComplete) {
+          populateBillingAddress(address, data);
+        }
 
         Util.printInfo("Entering Direct Debit BACS Account Number : " + paymentCardDetails[0]);
         bicPage.populateField("bacsAccNumber", paymentCardDetails[0]);
@@ -1655,7 +1661,7 @@ public class EceBICTestBase {
     Boolean isOrderCaptured = false;
     Util.printInfo("Checking for Continue button");
 
-    if(bicPage.checkIfElementExistsInPage("cartContinueButton",15)){
+    if (bicPage.checkIfElementExistsInPage("cartContinueButton", 15)) {
       Util.printInfo("Clicking on Continue button");
       bicPage.clickUsingLowLevelActions("cartContinueButton");
     }
