@@ -890,10 +890,9 @@ public class EceBICTestBase {
   }
 
   @Step("Populate Sepa payment details")
-  public void populateSepaPaymentDetails(String[] paymentCardDetails) {
-    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
-
+  public void populateSepaPaymentDetails(HashMap<String, String> data, String[] paymentCardDetails) throws MetadataException {
     try {
+      bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
       Util.printInfo("Clicking on Sepa tab.");
       JavascriptExecutor js = (JavascriptExecutor) driver;
       String sepaTab = bicPage.getFirstFieldLocator("sepaPaymentTab");
@@ -901,19 +900,31 @@ public class EceBICTestBase {
 
       Util.printInfo("Waiting for Sepa header.");
       bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
-
-      Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
-      bicPage.clickUsingLowLevelActions("sepaIbanNumber");
-      bicPage.populateField("sepaIbanNumber", paymentCardDetails[0]);
-
-      Util.printInfo("Entering SEPA profile name : " + paymentCardDetails[0]);
-      bicPage.populateField("sepaProfileName", paymentCardDetails[1]);
-    } catch (MetadataException e) {
+              bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
+    }
+    catch (MetadataException e) {
       e.printStackTrace();
-      AssertUtils.fail("Unable to enter SEPA payment information to make payment");
+      AssertUtils.fail("Unable to SEPA Payment Tab");
+    }
+
+    if (!bicPage.isFieldVisible("invoicePaymentEdit")) {
+      try {
+        Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
+        bicPage.clickUsingLowLevelActions("sepaIbanNumber");
+        bicPage.populateField("sepaIbanNumber", paymentCardDetails[0]);
+
+        Util.printInfo("Entering SEPA profile name : " + paymentCardDetails[0]);
+        bicPage.populateField("sepaProfileName", paymentCardDetails[1]);
+      } catch (MetadataException e) {
+        e.printStackTrace();
+        AssertUtils.fail("Unable to enter SEPA payment information to make payment");
+      }
     }
     Util.sleep(20000);
+    if (bicPage.checkIfElementExistsInPage("mandateAgreementCheckbox", 20)) {
+      clickMandateAgreementCheckbox();
+      data.put(BICECEConstants.MANDATE_AGREEMENT_CHECKED, BICECEConstants.TRUE);
+    }
   }
 
   @Step("Populate GiroPay payment details")
@@ -1325,7 +1336,7 @@ public class EceBICTestBase {
             data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
             break;
           case BICECEConstants.PAYMENT_TYPE_SEPA:
-            populateSepaPaymentDetails(paymentCardDetails);
+            populateSepaPaymentDetails(data, paymentCardDetails);
             break;
           case BICECEConstants.PAYMENT_TYPE_GIROPAY:
             populateGiroPayPaymentDetails(paymentCardDetails, address, data);

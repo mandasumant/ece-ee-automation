@@ -2033,7 +2033,7 @@ public class PortalTestBase {
     Util.sleep(5000);
     bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
         data.get(BICECEConstants.PAYMENT_TYPE));
-    if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)) {
+    if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20) && !data.get(BICECEConstants.MANDATE_AGREEMENT_CHECKED).equals(BICECEConstants.TRUE)) {
       bicTestBase.clickMandateAgreementCheckbox();
     }
     if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_ATM_BANK_TRANSFER)) {
