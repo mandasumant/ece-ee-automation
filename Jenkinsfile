@@ -596,14 +596,13 @@ def triggerCJT(def serviceBuildHelper, String env) {
                 currentBuild.result = 'FAILURE'
                 println('Testing Hub API call failed - accountportal')
             }
-        }
-        else if (env == "INT") {
+        } else if (env == "INT") {
             println("Building Testing Hub API Input Map - accountportal")
             def testingHubInputMap = [:]
             def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
             testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
             testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
-            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"CLT Regression on ' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
                     '{"displayname":"MOAB - Reseller  Pay invoices with Cash - US","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash - US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"thpu7OwL5kk97h@letscheck.pw","csn":"5501308785","sku":"default:1","email":"","locale":"en_US"}},' +
                     '{"displayname":"MOAB - Reseller  Pay invoices with Cash & CM - US","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash & CM- US","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-NAMER","purchaserEmail":"thpu7OwL5kk97h@letscheck.pw","csn":"5501308785","applyCM":"Y","sku":"default:1","email":"","locale":"en_US"}},' +
                     '{"displayname":"MOAB - Reseller  Pay invoices with BACS - UK","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with BACS- UK","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"7262","jiraId":"APLR2PMO-14311"},"testdata":{"usertype":"new","password":"","payment":"BACS","store":"STORE-UK","purchaserEmail":"thpumurxsSnXxe@letscheck.pw","csn":"5501308790","sku":"default:1","email":"","locale":"en_GB"}},' +
