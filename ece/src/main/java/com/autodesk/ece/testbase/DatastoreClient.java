@@ -3,7 +3,7 @@ package com.autodesk.ece.testbase;
 import static io.restassured.RestAssured.given;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.eseapp.testbase.TestinghubUtil;
+import com.autodesk.testinghub.eseapp.testbase.EseTestBase;
 import com.autodesk.testinghub.core.utils.Util;
 import com.google.gson.Gson;
 import io.restassured.path.json.JsonPath;
@@ -30,7 +30,7 @@ public class DatastoreClient {
     String displayName = System.getProperty("displayName");
 
     if (Objects.isNull(displayName)) {
-      String transactionDetails = TestinghubUtil.getTransactionOutput();
+      String transactionDetails = EseTestBase.getTransactionOutput();
       JsonPath js = new JsonPath(transactionDetails);
       return js.getString("name");
     }

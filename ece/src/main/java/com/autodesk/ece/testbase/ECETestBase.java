@@ -10,7 +10,7 @@ import com.autodesk.testinghub.eseapp.testbase.DynamoDBValidation;
 import com.autodesk.testinghub.eseapp.testbase.EseSAPTestBase;
 import com.autodesk.testinghub.eseapp.testbase.EseSFDCTestBase;
 import com.autodesk.testinghub.eseapp.testbase.EseSOAPTestBase;
-import com.autodesk.testinghub.eseapp.testbase.TestinghubUtil;
+import com.autodesk.testinghub.eseapp.testbase.EseTestBase;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
 import java.util.Date;
@@ -23,7 +23,7 @@ import org.testng.util.Strings;
 public class ECETestBase {
 
   protected static DBValidations dbValtb = null;
-  protected static TestinghubUtil thutil = null;
+  protected static EseTestBase thutil = null;
   protected static EseSAPTestBase saptb = null;
   protected EseSFDCTestBase sfdctb = null;
   protected EseSOAPTestBase soaptb = null;
@@ -52,7 +52,7 @@ public class ECETestBase {
     dynamotb = new DynamoDBValidation();
     pelicantb = new PelicanTestBase();
     subscriptionServiceV4Testbase = new SubscriptionServiceV4TestBase();
-    thutil = new TestinghubUtil(testbase);
+    thutil = new EseTestBase(testbase);
 
 //    tibcotb = new AutomationTibcoTestBase();
     saptb = new EseSAPTestBase();
@@ -61,7 +61,7 @@ public class ECETestBase {
   }
 
   public static void updateTestingHub(HashMap<String, String> results) {
-    TestinghubUtil.updateTestingHub(results);
+    EseTestBase.updateTestingHub(results);
   }
 
   public GlobalTestBase getTestBase() {
@@ -83,7 +83,7 @@ public class ECETestBase {
     return bictb;
   }
 
-  public TestinghubUtil getTestingHubUtil() {
+  public EseTestBase getTestingHubUtil() {
     return thutil;
   }
 

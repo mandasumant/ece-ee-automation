@@ -16,7 +16,7 @@ import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
-import com.autodesk.testinghub.eseapp.constants.CommonConstants;
+import com.autodesk.testinghub.eseapp.constants.EseCommonConstants;
 import io.qameta.allure.Step;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -458,15 +458,15 @@ public class MOETestBase {
           By.xpath(moePage.getFirstFieldLocator(BICECEConstants.MOE_LOGIN_USERNAME_FIELD))));
       moePage.click(BICECEConstants.MOE_LOGIN_USERNAME_FIELD);
       moePage.populateField(BICECEConstants.MOE_LOGIN_USERNAME_FIELD,
-          CommonConstants.serviceUser);
+          EseCommonConstants.serviceUser);
       moePage.click("moeLoginButton");
       wait.until(ExpectedConditions.visibilityOfElementLocated(
           By.xpath(moePage.getFirstFieldLocator(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD))));
       moePage.click(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD);
-      moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, CommonConstants.serviceUserPw);
+      moePage.populateField(BICECEConstants.MOE_LOGIN_PASSWORD_FIELD, EseCommonConstants.serviceUserPw);
       moePage.click("moeLoginButton");
     } else {
-      bicTestBase.loginToOxygen(CommonConstants.serviceUser, CommonConstants.serviceUserPw);
+      bicTestBase.loginToOxygen(EseCommonConstants.serviceUser, EseCommonConstants.serviceUserPw);
     }
 
     bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");

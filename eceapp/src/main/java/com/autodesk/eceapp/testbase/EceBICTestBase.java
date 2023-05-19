@@ -17,7 +17,7 @@ import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.testbase.EseSAPTestBase;
-import com.autodesk.testinghub.eseapp.testbase.TestinghubUtil;
+import com.autodesk.testinghub.eseapp.testbase.EseTestBase;
 import io.qameta.allure.Step;
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -3001,7 +3001,7 @@ public class EceBICTestBase {
         Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
       }
     }
-    TestinghubUtil.updateTestingHub(results);
+    EseTestBase.updateTestingHub(results);
   }
 
   @Step("Add Multiple Products and Terms to Mini Cart" + GlobalConstants.TAG_TESTINGHUB)

@@ -9,8 +9,8 @@ import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.eseapp.constants.CommonConstants;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.EseCommonConstants;
 import com.autodesk.testinghub.eseapp.constants.PWSConstants;
 import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -217,8 +217,8 @@ public class MOABOrder extends ECETestBase {
     if (Strings.isNotNullAndNotEmpty(orderNumber)) {
       testDataForEachMethod.put(TestingHubConstants.orderNumber, orderNumber);
       testDataForEachMethod.put("reason", reasonCode);
-      saptb.logonSAP(CommonConstants.sapServer, CommonConstants.sapSystemNumber, CommonConstants.sapClient,
-          CommonConstants.sapLang);
+      saptb.logonSAP(EseCommonConstants.sapServer, EseCommonConstants.sapSystemNumber, EseCommonConstants.sapClient,
+              EseCommonConstants.sapLang);
       orderNumber = saptb.createReturnOrder(testDataForEachMethod);
       HashMap<String, String> initialOrderDetails = new HashMap<String, String>();
       initialOrderDetails.put("ordernumber", orderNumber);
