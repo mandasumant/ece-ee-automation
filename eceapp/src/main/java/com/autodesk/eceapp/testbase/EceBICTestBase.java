@@ -960,7 +960,7 @@ public class EceBICTestBase {
       Util.printInfo("Entering Giropay bank name : " + paymentCardDetails[0]);
       bicPage.populateField("giroPayBankName", paymentCardDetails[0]);
       Util.sleep(2000);
-      Util.printInfo("Selecting the bank name :");
+      Util.printInfo("Selecting the bank name");
       bicPage.clickUsingLowLevelActions("giroPayBankNameSelection");
       Util.sleep(2000);
 
@@ -976,7 +976,7 @@ public class EceBICTestBase {
       int x = (dimension.getWidth() / 2) + 20;
       int y = (dimension.getHeight() / 10) + 50;
 
-      Util.sleep(2000);
+      Util.sleep(10000);
       if (bicPage.checkIfElementExistsInPage("giroPayAssume", 10)) {
         Util.printInfo("Clicking on the assume button");
         bicPage.clickUsingLowLevelActions("giroPayAssume");
@@ -995,6 +995,7 @@ public class EceBICTestBase {
       bicPage.populateField("giroPayScExtension", paymentCardDetails[2]);
       bicPage.populateField("giroPayCustomerName", paymentCardDetails[3]);
       bicPage.populateField("giroPayCustomerAban", paymentCardDetails[4]);
+      Util.sleep(10000);
       bicPage.clickUsingLowLevelActions("giroPaySubmit");
     } catch (MetadataException | AWTException e) {
       e.printStackTrace();
@@ -2580,6 +2581,13 @@ public class EceBICTestBase {
 
     if (bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK)) {
       bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
+      waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
+
+    if (bicPage.isFieldPresent(BICECEConstants.BIC_AGREE)) {
+      bicPage.clickUsingJavaScriptExecutor(BICECEConstants.BIC_AGREE);
+      Util.printInfo("Clicking Continue Button on Terms of service");
+      bicPage.clickUsingJavaScriptExecutor("termsContinueButton");
       waitForLoadingSpinnerToComplete("loadingSpinner");
     }
 
