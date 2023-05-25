@@ -923,7 +923,6 @@ public class EceBICTestBase {
     Util.sleep(20000);
     if (bicPage.checkIfElementExistsInPage("mandateAgreementCheckbox", 20)) {
       clickMandateAgreementCheckbox();
-      data.put(BICECEConstants.MANDATE_AGREEMENT_CHECKED, BICECEConstants.TRUE);
     }
   }
 

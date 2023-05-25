@@ -104,7 +104,6 @@ public class BICECEConstants extends BICConstants {
   public static final String ENTER_BILLING_DETAILS = "Enter billing details";
   public static final String AFTER_ENTERING_BILLING_DETAILS = "After entering billing details";
   public static final String BILLING_DETAILS_ADDED = "billingDetailAdded";
-  public static final String MANDATE_AGREEMENT_CHECKED = "mandateAgreementCheckboxChecked";
   public static final String ORDER_NUMBER = "OrderNumber  :: ";
   public static final String DOWNLOAD_FREE_TRIAL_LOGIN_FRAME = "downloadFreeTrialLoginFrame";
   public static final String MOE_LOGIN_USERNAME_FIELD = "moeLoginUsernameField";
