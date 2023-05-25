@@ -884,14 +884,8 @@ public class MOETestBase {
 
     // Navigate to Copy Cart URL
     bicTestBase.getUrl(copyCartLink);
-    moePage.waitForPageToLoad();
 
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    Util.printInfo("Set session storage data 'OPTOUTMULTI_TYPE' from 'loginToCheckoutWithUserAccount'.");
-    js.executeScript("document.cookie=\"OPTOUTMULTI_TYPE=A\";");
-    Util.printInfo("Session Storage: set 'nonsensitiveHasNonLocalModalLaunched' to true.");
-    js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
-    moePage.refresh();
+    bicTestBase.setStorageData();
 
     // Create new user and sign in
     bicTestBase.createBICAccount(names, emailID, password, false);
@@ -1283,6 +1277,8 @@ public class MOETestBase {
 
       bicTestBase.getUrl(copyCartLink);
 
+      bicTestBase.setStorageData();
+
       bicTestBase.loginAccount(data);
 
       results.put(BICConstants.emailid, emailID);
@@ -1354,9 +1350,6 @@ public class MOETestBase {
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("window.sessionStorage.clear();");
     js.executeScript("window.localStorage.clear();");
-    driver.navigate().refresh();
-    Util.sleep(5000);
-    bicTestBase.setStorageData();
   }
 
   @Step("SFDC : Validate the Opportunity is closed " + GlobalConstants.TAG_TESTINGHUB)
