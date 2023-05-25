@@ -439,7 +439,8 @@ public class BICQuoteOrder extends ECETestBase {
         portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
             PASSWORD);
 
-        double invoiceTotalBeforePayment = portaltb.selectInvoiceAndValidateCreditMemoWithoutPONumber(false);
+        double invoiceTotalBeforePayment = portaltb.selectInvoiceAndValidateCreditMemoWithoutPONumber(
+            false, testDataForEachMethod.get(BICECEConstants.LOCALE));
         isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
         if (isLoggedOut == false) {
           portaltb.verifyInvoiceTotalAfterPayment(invoiceTotalBeforePayment);

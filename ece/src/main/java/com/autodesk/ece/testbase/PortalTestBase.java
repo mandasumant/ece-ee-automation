@@ -5,6 +5,7 @@ import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceZipPayTestBase;
+import com.autodesk.eceapp.utilities.NumberUtil;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
@@ -2239,7 +2240,7 @@ public class PortalTestBase {
   }
 
   @Step("Select invoice and credit memo validations without PO Number" + GlobalConstants.TAG_TESTINGHUB)
-  public double selectInvoiceAndValidateCreditMemoWithoutPONumber(Boolean shouldWaitForInvoice) throws Exception {
+  public double selectInvoiceAndValidateCreditMemoWithoutPONumber(Boolean shouldWaitForInvoice, String locale) throws Exception {
     openPortalURL(accountPortalBillingInvoicesUrl);
     if (shouldWaitForInvoice) {
       waitForInvoicePageLoadToVisible();
@@ -2253,7 +2254,7 @@ public class PortalTestBase {
     int invoiceCount = Integer.parseInt(portalPage.getValueFromGUI("invoicePageTableTitle").replaceAll("[^0-9]", ""));
     if (invoiceCount > 1) {
       selectAllInvoiceCheckBox();
-      invoiceAmount = getInvoiceAmount(invoiceCount);
+      invoiceAmount = getInvoiceAmount(invoiceCount, locale);
       selectAllInvoicesPayButton();
     } else {
       invoiceNumber = portalPage.getMultipleWebElementsfromField("invoiceNumbers").get(0).getText()
@@ -2261,7 +2262,7 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("invoiceNumbers");
       Util.sleep(5000);
       List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
-      invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
+      invoiceAmount = NumberUtil.convert(amounts.get(0).getText(), locale);
 
       if (portalPage.checkIfElementExistsInPage("invoicePagePay", 10)) {
         portalPage.click("invoicePagePay");
@@ -2308,12 +2309,11 @@ public class PortalTestBase {
     return invoiceAmount;
   }
 
-  public double getInvoiceAmount(int invoiceCount) throws MetadataException {
+  public double getInvoiceAmount(int invoiceCount, String locale) throws MetadataException {
     double invoiceAmount = 0.00;
     List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
     for (int i = 0; i < invoiceCount; i++) {
-      invoiceAmount =
-          invoiceAmount + Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
+      invoiceAmount = NumberUtil.convert(amounts.get(0).getText(), locale);
     }
     return invoiceAmount;
   }
