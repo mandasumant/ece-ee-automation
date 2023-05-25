@@ -333,6 +333,11 @@ public class EDUTestBase {
     try {
       if (eduPage.checkIfElementExistsInPage("eduSkipTFA", 10)) {
         eduPage.click("eduSkipTFA");
+      } else if (bicTestBase.bicPage.checkIfElementExistsInPage("termsContinueButton", 10)) {
+        Util.printInfo("Terms of service is displayed");
+        eduPage.clickUsingLowLevelActions("newUserAgree");
+        bicTestBase.bicPage.clickUsingLowLevelActions("termsContinueButton");
+        eduPage.waitForPageToLoad();
       }
     } catch (MetadataException e) {
       e.printStackTrace();
