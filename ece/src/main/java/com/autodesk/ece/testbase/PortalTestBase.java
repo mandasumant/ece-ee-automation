@@ -2262,7 +2262,11 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("invoiceNumbers");
       Util.sleep(5000);
       List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("invoicePageTotal");
-      invoiceAmount = NumberUtil.convert(amounts.get(0).getText(), locale);
+      if (System.getProperty("store").equals("STORE-JP")) {
+        invoiceAmount = NumberUtil.convert(amounts.get(0).getText(), locale);
+      } else {
+        invoiceAmount = Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
+      }
 
       if (portalPage.checkIfElementExistsInPage("invoicePagePay", 10)) {
         portalPage.click("invoicePagePay");
@@ -2313,7 +2317,11 @@ public class PortalTestBase {
     double invoiceAmount = 0.00;
     List<WebElement> amounts = portalPage.getMultipleWebElementsfromField("paymentTotalList");
     for (int i = 0; i < invoiceCount; i++) {
-      invoiceAmount = NumberUtil.convert(amounts.get(0).getText(), locale);
+      if (System.getProperty("store").equals("STORE-JP")) {
+        invoiceAmount = NumberUtil.convert(amounts.get(0).getText(), locale);
+      } else {
+        invoiceAmount = invoiceAmount + Double.parseDouble(amounts.get(0).getText().replaceAll("[^0-9]", ""));
+      }
     }
     return invoiceAmount;
   }
