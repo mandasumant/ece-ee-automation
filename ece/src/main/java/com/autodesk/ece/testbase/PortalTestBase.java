@@ -2034,6 +2034,11 @@ public class PortalTestBase {
     Util.sleep(5000);
     bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
         data.get(BICECEConstants.PAYMENT_TYPE));
+
+    if ((data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD))) {
+      return false;
+    }
+
     if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20) && (!portalPage.checkIfElementExistsInPage("mandateAgreementChecked", 20))) {
       bicTestBase.clickMandateAgreementCheckbox();
     }

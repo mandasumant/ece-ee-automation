@@ -52,6 +52,7 @@ public class BICQuoteOrder extends ECETestBase {
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
+  Map<?, ?> bankInformationByLocaleYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
@@ -67,6 +68,7 @@ public class BICQuoteOrder extends ECETestBase {
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String localeConfigFile = "LOCALE_CONFIG";
     localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
+    bankInformationByLocaleYaml = YamlUtil.loadYmlUsingTestManifest("BANK_INFORMATION_BY_LOCALE");
   }
 
   @BeforeMethod(alwaysRun = true)
@@ -161,6 +163,9 @@ public class BICQuoteOrder extends ECETestBase {
       testDataForEachMethod.put(BICECEConstants.CREDIT_MEMO, System.getProperty("creditMemo"));
     }
 
+    // Load test data for wire transfer
+    LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get("BankInformationByLocale");
+    testDataForEachMethod.putAll(bankInformationMap.get("customer").get(locale));
   }
 
   @Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
@@ -442,7 +447,12 @@ public class BICQuoteOrder extends ECETestBase {
         double invoiceTotalBeforePayment = portaltb.selectInvoiceAndValidateCreditMemoWithoutPONumber(
             false, testDataForEachMethod.get(BICECEConstants.LOCALE));
         isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
-        if (isLoggedOut == false) {
+
+        if ((testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD))) {
+          return;
+        }
+
+        if (!isLoggedOut) {
           portaltb.verifyInvoiceTotalAfterPayment(invoiceTotalBeforePayment);
         }
 

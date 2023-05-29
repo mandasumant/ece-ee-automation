@@ -73,6 +73,8 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYMENT_TYPE_ZIP = "ZIP";
   public static final String ALTERNATE_PAYMENT_METHODS = "alternate-payment-methods";
   public static final String BANK_TRANSFER_PAYMENT_METHOD = "bank-transfer";
+
+  public static final String WIRE_TRANSFER_PAYMENT_METHOD = "WIRE_TRANSFER";
   public static final String FIRSTNAME = "firstname";
   public static final String PAYPAL = "paypal";
   public static final String PAYPAL_EMAIL = "paypalEmail";

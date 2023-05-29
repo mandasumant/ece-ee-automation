@@ -46,6 +46,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.json.simple.JSONObject;
+import org.jsoup.Jsoup;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -1362,6 +1363,9 @@ public class EceBICTestBase {
           case BICECEConstants.PAYMENT_ATM_BANK_TRANSFER:
             selectAtmBankTransferPayment();
             break;
+          case BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD:
+            selectWireTransferPaymentTab(data);
+            break;
           default:
             populatePaymentDetails(paymentCardDetails);
             break;
@@ -2046,6 +2050,11 @@ public class EceBICTestBase {
       Map<String, String> address, String paymentMethod) throws MetadataException {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     selectPaymentProfile(data, paymentCardDetails, address);
+
+    if ((data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD))) {
+      return;
+    }
+
     Util.sleep(2000);
     Util.printInfo("Checking if submit payment button enabled or not");
     WebElement submitPaymentButton = bicPage.getMultipleWebElementsfromField("submitPaymentButton").get(0);
@@ -2959,6 +2968,64 @@ public class EceBICTestBase {
     } else {
       AssertUtils.fail("Unable to click on ATM Bank Transfer payment method");
     }
+  }
+
+  public void selectWireTransferPaymentTab(Map<String, String> data) throws MetadataException {
+    Util.printInfo("Selecting BANK TRANSFER (WIRE TRANSFER) Payment");
+    if (bicPage.checkIfElementExistsInPage("wireTransferTab", 20)) {
+      Util.printInfo("BANK TRANSFER (WIRE TRANSFER) payment method tab is visible");
+      bicPage.clickUsingLowLevelActions("wireTransferTab");
+    }
+    else if (bicPage.checkIfElementExistsInPage("wireTransferRadioButton", 20)) {
+      Util.printInfo("BANK TRANSFER (WIRE TRANSFER) payment method radio button visible");
+      bicPage.clickUsingLowLevelActions("wireTransferRadioButton");
+    }
+    else {
+      AssertUtils.fail("BANK TRANSFER payment tab is not available.");
+    }
+
+    Util.sleep(3000);
+
+    data.forEach((key, value) -> {
+      if (key.startsWith("wireBank")) {
+        final String[] selectorArray = value.split("\\|");
+        final String selectorText = selectorArray[0].trim();
+        final String valueToVerify = selectorArray.length > 1 ? selectorArray[1].trim() : null;
+        switch (key) {
+          case "wireBankHeader":
+            final String headerSelector = bicPage.getFirstFieldLocator("wireBankHeader").replace("<SELECTOR_TEXT>", selectorText);
+            AssertUtils.assertTrue(driver.findElement(By.xpath(headerSelector)).isDisplayed(), "Bank Information header is not displayed");
+            break;
+          case "wireBankNameAndAddress":
+          case "wireBankAccountNumber":
+          case "wireBankAbaRoutingNumber":
+          case "wireBankSwiftCode":
+          case "wireBankAccountName":
+          case "wireBankNumber":
+          case "wireBankBranchNumber":
+          case "wireBankTransitNumber":
+          case "wireBankIban":
+            assertWireTransferInformation(selectorText, valueToVerify);
+            break;
+          case "wireBankRemittanceAdviceEmail":
+            final String contactMessageSelector = bicPage.getFirstFieldLocator("wireBankRemittanceAdviceEmail").replace("<SELECTOR_TEXT>", selectorText);
+            final String contactMessage = driver.findElement(By.xpath(contactMessageSelector)).getText().trim();
+            AssertUtils.assertEquals(selectorText + " is incorrect", Jsoup.parse(contactMessage).text().trim(), valueToVerify);
+            break;
+          default:
+            AssertUtils.fail(MessageFormat.format("[{0}] is defined in BankInformationByLocale.yml file but is not used.", key));
+            break;
+        }
+      }
+    });
+
+    AssertUtils.assertTrue(bicPage.checkIfElementExistsInPage("wireBankTransferPrintButton", 20));
+  }
+
+  private void assertWireTransferInformation(final String selectorText, final String valueToVerify) {
+    final String nameAndAddressSelector = bicPage.getFirstFieldLocator("wireBankDetails").replace("<SELECTOR_TEXT>", selectorText);
+    final String nameAndAddress = driver.findElement(By.xpath(nameAndAddressSelector)).getText().trim();
+    AssertUtils.assertEquals(selectorText + " is incorrect", Jsoup.parse(nameAndAddress).text().trim(), valueToVerify);
   }
 
   public void selectPaypalPayment() throws MetadataException {
