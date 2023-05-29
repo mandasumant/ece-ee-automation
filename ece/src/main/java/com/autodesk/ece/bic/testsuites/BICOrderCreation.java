@@ -1,20 +1,21 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.ece.testbase.DatastoreClient;
 import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.ECETestBase;
+import com.autodesk.ece.testbase.NEWTAccessTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
+import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
-import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.google.common.base.Strings;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
@@ -218,6 +219,9 @@ public class BICOrderCreation extends ECETestBase {
 
       // Get find Subscription ById
       results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+      NEWTAccessTestBase newtTb = new NEWTAccessTestBase();
+      newtTb.getEntitlementsForUser(results.get(BICConstants.oxid));
 
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

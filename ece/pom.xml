@@ -70,6 +70,13 @@
         </dependency>
 
         <dependency>
+            <artifactId>bilinsm-Access-NEWT-java-client</artifactId>
+            <groupId>com.autodesk.platformautomation.bilinsmAccessNEWT</groupId>
+            <scope>compile</scope>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.autodesk.testinghub</groupId>
             <artifactId>core</artifactId>
             <version>${core.version}</version>
