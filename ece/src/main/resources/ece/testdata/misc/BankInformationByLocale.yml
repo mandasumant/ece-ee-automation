@@ -35,3 +35,41 @@ BankInformationByLocale:
       wireBankAccountNumber: "口座番号 | 7282902"
       wireBankAccountName: "口座名義 | オートデスク(カ"
       wireBankRemittanceAdviceEmail: "ヘルプが必要な場合は | ヘルプが必要な場合は、ar.group@autodesk.com に電子メールでお問い合せください。"
+
+  reseller:
+    en_US:
+      wireBankHeader: "Bank information"
+      wireBankNameAndAddress: "Name/address | Citibank N.A. (New York) 111 Wall St New York, NY 10043"
+      wireBankAccountNumber: "Account no. | 40571369"
+      wireBankAbaRoutingNumber: "ABA/Routing no. | 021000089"
+      wireBankSwiftCode: "Swift code | CITIUS33"
+      wireBankAccountName: "Account name | Autodesk Inc."
+      wireBankRemittanceAdviceEmail: "If you need help | If you need help, email ar.group@autodesk.com."
+
+    en_CA:
+      wireBankHeader: "Bank information"
+      wireBankNameAndAddress: "Name/address | Citibank N.A., Canadian Branch 123 Front Street West Toronto, Ontario M5J 2M3"
+      wireBankAccountNumber: "Account no. | 2012547001"
+      wireBankNumber: "Bank number | 328"
+      wireBankBranchNumber: "Branch number | 20012"
+      wireBankTransitNumber: "Transit number | 20012-328"
+      wireBankSwiftCode: "Swift code | CITICATTBCH"
+      wireBankAccountName: "Account name | Autodesk Inc."
+      wireBankRemittanceAdviceEmail: "If you need help | If you need help, email ar.group@autodesk.com."
+
+    en_AU:
+      wireBankHeader: "Bank information"
+      wireBankNameAndAddress: "Name/address | Citibank Limited 1 Margaret Street Sydney, NSW 2000"
+      wireBankNumber: "BSB | 242-000"
+      wireBankAccountNumber: "Account no. | 204634009"
+      wireBankAccountName: "Account name | Autodesk Australia Pty Ltd."
+      wireBankRemittanceAdviceEmail: "If you need help | If you need help, email ar.group@autodesk.com."
+
+    it_IT:
+      wireBankHeader: "Bank information"
+      wireBankNameAndAddress: "Name/address | Citibank Europe PLC 1 North Wall Quay, Dublin 1 D01 T8Y1 Ireland"
+      wireBankAccountNumber: "Account no. | 24056007"
+      wireBankSwiftCode: "Swift code | CITIIE2X"
+      wireBankIban: "IBAN | IE47CITI99005124056007"
+      wireBankAccountName: "Account name | Autodesk Ireland Operations Limited"
+      wireBankRemittanceAdviceEmail: "If you need help | If you need help, email ar.group@autodesk.com."

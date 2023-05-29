@@ -44,6 +44,7 @@ public class MOABOrder extends ECETestBase {
   long startTime;
   LinkedHashMap<String, String> testDataForEachMethod = null;
   Map<?, ?> localeConfigYaml = null;
+  Map<?, ?> bankInformationByLocaleYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = null;
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
@@ -57,6 +58,7 @@ public class MOABOrder extends ECETestBase {
     loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
     String localeConfigFile = "LOCALE_CONFIG";
     localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
+    bankInformationByLocaleYaml = YamlUtil.loadYmlUsingTestManifest("BANK_INFORMATION_BY_LOCALE");
   }
 
   @BeforeMethod(alwaysRun = true)
@@ -98,6 +100,10 @@ public class MOABOrder extends ECETestBase {
     testDataForEachMethod.put("paymentType", paymentType);
 
     PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
+
+    // Load test data for wire transfer
+    LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get("BankInformationByLocale");
+    testDataForEachMethod.putAll(bankInformationMap.get("reseller").get(locale));
   }
 
   @Test(groups = {"moab-payinvoice"}, description = "Validation for MOAB Pay Invoice")
