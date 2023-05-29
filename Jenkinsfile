@@ -222,36 +222,24 @@ pipeline {
         stage('Apollo R2.1.1') {
             when {
                 branch 'master'
-                anyOf {
-                    triggeredBy 'TimerTrigger'
-                    expression {
-                        params.APOLLO_R2_1_1 == true
-                    }
+                expression {
+                    params.APOLLO_R2_1_1 == true
                 }
             }
             steps {
                 triggerApolloR2_1_1(serviceBuildHelper, 'INT')
-                script {
-                    sh 'sleep 600'
-                }
             }
         }
 
         stage('Apollo R2.1.2') {
             when {
                 branch 'master'
-                anyOf {
-                    triggeredBy 'TimerTrigger'
-                    expression {
-                        params.APOLLO_R2_1_2 == true
-                    }
+                expression {
+                    params.APOLLO_R2_1_2 == true
                 }
             }
             steps {
                 triggerApolloR2_1_2(serviceBuildHelper, 'INT')
-                script {
-                    sh 'sleep 600'
-                }
             }
         }
 
@@ -396,22 +384,21 @@ def triggerApolloR2_3CreateCreditMemo(def serviceBuildHelper) {
 def triggerApolloR2_1_1(def serviceBuildHelper, String env) {
     echo 'Initiating Apollo R2.1.1'
     script {
-        println("Building Testing Hub API Input Map - All")
-
-        def addresses = readJSON file: "./testdata/addresses.json"
-
+        println("Building Testing Hub API Input Map - eStore")
         def testingHubInputMap = [:]
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionname":"Apollo: R2.1.1 on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                //TODO: placeholder for validation only. To be removed.
+                '{"displayname":"GUAC - BiC Native Order US","testcasename":"validateBicNativeOrder","description":"BiC Native Order - US ","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"VISA","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}}' +
                 '],"workstreamname":"dclecjt"}'
-        println("Starting Testing Hub API Call - estore - All")
+        println("Starting Testing Hub API Call - eStore")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-            println('Testing Hub API called successfully - estore - All')
+            println('Testing Hub API called successfully - eStore')
         } else {
             currentBuild.result = 'FAILURE'
-            println('Testing Hub API call failed - estore - All')
+            println('Testing Hub API call failed - eStore')
         }
     }
 }
@@ -419,22 +406,24 @@ def triggerApolloR2_1_1(def serviceBuildHelper, String env) {
 def triggerApolloR2_1_2(def serviceBuildHelper, String env) {
     echo 'Initiating Apollo R2.1.2'
     script {
-        println("Building Testing Hub API Input Map - All")
+        println("Building Testing Hub API Input Map - O2P")
 
         def addresses = readJSON file: "./testdata/addresses.json"
 
         def testingHubInputMap = [:]
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
-        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
+        testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/o2p/testcase'
         testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionname":"Apollo: R2.1.2 on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"testcases":[' +
+                //TODO: placeholder for validation only. To be removed.
+                '{"displayname":"Flex Direct Order - AU - CC","testcasename":"4ef43ece","description":"Flex Direct Order - AU - CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece"},"testdata":{"usertype":"new","email":"","password":"","sku":"default:1","payment":"CREDITCARD","store":"STORE-AUS","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Australia/Sydney"}}' +
                 '],"workstreamname":"dclecjt"}'
-        println("Starting Testing Hub API Call - estore - All")
+        println("Starting Testing Hub API Call - O2P")
         if (serviceBuildHelper.ambassadorService.callTestingHubApi(testingHubInputMap)) {
-            println('Testing Hub API called successfully - estore - All')
+            println('Testing Hub API called successfully - O2P')
         } else {
             currentBuild.result = 'FAILURE'
-            println('Testing Hub API call failed - estore - All')
+            println('Testing Hub API call failed - O2P')
         }
     }
 }
@@ -447,7 +436,7 @@ def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionname":"Apollo: Apollo R2.0.5 Japan orders on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","piyush.laddha@autodesk.com","Satish.Jupalli@autodesk.com","keshav.prasad.kuruva@autodesk.com","Ameko.Chen@autodesk.com","pavan.venkatesh.malyala@autodesk.com","ramanathan.kasiviswanathan@autodesk.com","arivuchelvan.pandian@autodesk.com","roshan.nampeli@autodesk.com","Joe.Mcqueeney@autodesk.com","tanner.hirakida@autodesk.com","vishal.kaul@autodesk.com","jeong.sohn@autodesk.com","cherry.ngo@autodesk.com"],"jiraTestCycleId":"30825","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionname":"Apollo: R2.0.5 Japan orders on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","piyush.laddha@autodesk.com","Satish.Jupalli@autodesk.com","keshav.prasad.kuruva@autodesk.com","Ameko.Chen@autodesk.com","pavan.venkatesh.malyala@autodesk.com","ramanathan.kasiviswanathan@autodesk.com","arivuchelvan.pandian@autodesk.com","roshan.nampeli@autodesk.com","Joe.Mcqueeney@autodesk.com","tanner.hirakida@autodesk.com","vishal.kaul@autodesk.com","jeong.sohn@autodesk.com","cherry.ngo@autodesk.com"],"jiraTestCycleId":"30825","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
                 '{"displayname":"GUAC - BiC Native Order JP CC","testcasename":"validateBicNativeOrder","description":"GUAC - BiC Native Order JP CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"8794","jiraId":"APLR2PMO-16011"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@160-0022@03-5321-1111"}},' +
                 '{"displayname":"GUAC - BiC Native Order JP PAYPAL","testcasename":"validateBicNativeOrder","description":"GUAC - BiC Native Order JP PAYPAL","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece","jiraTestFolderId":"8794","jiraId":"APLR2PMO-16012"},"testdata":{"usertype":"new","password":"","payment":"PAYPAL","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@160-0022@03-5321-1111"}},' +
                 '{"displayname":"GUAC - MOE order JP CC","testcasename":"validateBicNativeOrderMoe","description":"MOE order JP CC","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-nativeorder-moe","testMethod":"validateBicNativeOrderMoe","parameters":{"application":"ece","jiraTestFolderId":"8794","jiraId":"APLR2PMO-16013"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","locale":"ja_JP","sku":"default:1","email":"","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@160-0022@03-5321-1111","timezone":"Japan/Tokyo"}},' +
@@ -472,7 +461,7 @@ def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"30825","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":" ' + env + ' ","executionname":"Apollo: R2.0.5 Japan orders on ' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"30825","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
                 '{"displayname":"BiC order Flex - Japan Credit Card","testcasename":"d27c5060","description":"BiC order Flex - Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece","jiraTestFolderId":"8794","jiraId":"APLR2PMO-16014"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@160-0022@03-5321-1111","sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"BiC order Flex Estimator - Japan Paypal","testcasename":"fbf7fe55","description":"BiC order Flex - Japan Paypal","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"flex-token-estimator","testMethod":"validateFlexTokenEstimatorTool","parameters":{"application":"ece","jiraTestFolderId":"8794","jiraId":"APLR2PMO-16015"},"testdata":{"usertype":"new","password":"","payment":"PAYPAL","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@160-0022@03-5321-1111", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"BiC Flex Direct Order Refund Japan Credit Card","testcasename":"a1c54974","description":"Flex Direct Order Refund Japan CC","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexdirect-new-refund","testMethod":"validateFlexOrderNewCartRefund","parameters":{"application":"ece","jiraTestFolderId":"8794","jiraId":"APLR2PMO-16016"},"testdata":{"usertype":"new","password":"","payment":"CREDITCARD","store":"STORE-JP","sku":"default:1","email":"","locale":"ja_JP","address":"Autodesk@2-8-1 Nishi Shinjuku@Shinjuku Ku@160-0022@03-5321-1111", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
@@ -496,14 +485,13 @@ def triggerApolloR2_0_5(def serviceBuildHelper, String env) {
             println('Testing Hub API call failed - flex - All')
         }
     }
-
     script {
         println("Building Testing Hub API Input Map - accountportal")
         def testingHubInputMap = [:]
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/accountportal/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"30825","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Apollo: R2.0.5 Japan orders on ' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com"],"jiraTestCycleId":"30825","jiraPAT":"' + params.JIRAPAT + '","testcases":[' +
                 '{"displayname":"MOAB - Reseller  Pay invoices Japan with Cash - Japan","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with Cash - Japan","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"8794","jiraId":"APLR2PMO-16938"},"testdata":{"usertype":"new","password":"","payment":"CASH","store":"STORE-JP","purchaserEmail":"Reseller_JP_DCLE_zLGQXO@letscheck.pw","csn":"5500971276","sku":"default:1","email":"","locale":"ja_JP"}},' +
                 '{"displayname":"MOAB - Reseller  Pay invoices Japan with ATM - Japan","testcasename":"26497eda","description":"MOAB - Reseller Pay invoices with ATM - Japan","testClass":"com.autodesk.ece.bic.testsuites.MOABOrder","testGroup":"moab-payinvoice","testMethod":"validateMOABPayInvoice","parameters":{"application":"ece","jiraTestFolderId":"8794","jiraId":"APLR2PMO-16938"},"testdata":{"usertype":"new","password":"","payment":"ATM","store":"STORE-JP","purchaserEmail":"Reseller_JP_DCLE_zLGQXO@letscheck.pw","csn":"5500971276","sku":"default:1","email":"","locale":"ja_JP"}}' +
                 '],"workstreamname":"dclecjt"}'
@@ -725,7 +713,7 @@ def triggerFinancing(def serviceBuildHelper, String env) {
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Financing Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com", "cherry.ngo@autodesk.com"],"testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Financing Regression on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com", "cherry.ngo@autodesk.com"],"testcases":[' +
                 '{"displayname":"BiC Financing Order","testcasename":"validateBicNativeOrder","description":"BiC Financing Order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-nativeorder","testMethod":"validateBicNativeOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":"", "sapValidation":"' + params.INVOICE_VALIDATION + '"}},' +
                 '{"displayname":"BiC Financing Flex Order","testcasename":"34de7a6d","description":"BiC Financing Flex Order","testClass":"com.autodesk.ece.bic.testsuites.BICOrderCreation","testGroup":"bic-flexorder-new","testMethod":"validateFlexOrderNewCart","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""}},' +
                 '{"displayname":"BiC Financing Canceled Order","testcasename":"validateBicNativeFinancingCanceledOrder","description":"BiC Financing Order Canceled","testClass":"com.autodesk.ece.bic.testsuites.BICFinancingOrder","testGroup":"bic-financing-canceled","testMethod":"validateBicNativeFinancingCanceledOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""}},' +
@@ -750,7 +738,7 @@ def triggerFinancing(def serviceBuildHelper, String env) {
             def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
             testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
             testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com", "cherry.ngo@autodesk.com"],"testcases":[' +
+            testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Financing Regression on ' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com", "cherry.ngo@autodesk.com"],"testcases":[' +
                     '{"displayname":"BiC Financing Renew Order","testcasename":"783c495f","description":"BiC Financing Renew Order","testClass":"com.autodesk.ece.bic.testsuites.BICFinancingOrder","testGroup":"bic-financing-renew-order","testMethod":"validateBicNativeFinancingRenewalOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":""}}' +
                     '],"workstreamname":"dclecjt"}'
             println("Starting Testing Hub API Call - estore")
@@ -768,7 +756,7 @@ def triggerFinancing(def serviceBuildHelper, String env) {
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/flex/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com"],"testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Financing Regression on ' + env + '","executionid":"' + execution_id + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","pavan.venkatesh.malyala@autodesk.com","jeong.sohn@autodesk.com","anjani.singh@autodesk.com"],"testcases":[' +
                 '{"displayname":"BiC Financing Q2O Order","testcasename":"9d3de1c2","description":"BiC Financing Q2O Order","testClass":"com.autodesk.ece.bic.testsuites.BICQuoteOrder","testGroup":"bic-quoteorder","testMethod":"validateBicQuoteOrder","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":"","timezone":"America/New_York"}},' +
                 '{"displayname":"MOE Financing ODM DTC O2P Order - Customer","testcasename":"28d21011","description":"MOE Financing ODM DTC O2P Order - Customer","testClass":"com.autodesk.ece.bic.testsuites.MOEOrderFlows","testGroup":"bic-basicFlowOdmDtcCustomer-moe","testMethod":"validateMoeOdmDtcFlowCustomer","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":"","payment":"FINANCING","store":"STORE-NAMER","sku":"default:1","email":"","quantity":"400","timezone":"America/New_York"}}' +
                 '],"workstreamname":"dclecjt"}'
@@ -790,7 +778,7 @@ def triggerAnalytics(def serviceBuildHelper, String env) {
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
         testingHubInputMap.testingHubApiEndpoint = 'https://api.testinghub.autodesk.com/hosting/v1/project/estore/testcase'
-        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Analytics Regression on ' + env + '", "notificationemail":["ece.dcle.platform.automation@autodesk.com","abhijit.rajurkar@autodesk.com","adam.hill@autodesk.com"],"testcases":[' +
+        testingHubInputMap.testingHubApiPayload = '{"env":"' + env + '","executionname":"Analytics Regression on ' + env + '","notificationemail":["ece.dcle.platform.automation@autodesk.com","abhijit.rajurkar@autodesk.com","adam.hill@autodesk.com"],"testcases":[' +
                 '{"displayname":"WAPE Health Monitor - 001 - Tealium","testcasename":"5810b037","description":"WAPE Health Monitor - 001 - Tealium","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"tealium-network-logs","testMethod":"validateTealiumNetworkLogs","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
                 '{"displayname":"WAPE Health Monitor - 002 - Google Analytics","testcasename":"3fe26a1b","description":"WAPE Health Monitor - 002 - Google Analytics","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"google-network-logs","testMethod":"validateGoogleNetworkLogsAndTags","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
                 '{"displayname":"WAPE Health Monitor - 003 - Adobe Analytics","testcasename":"3a9c7241","description":"WAPE Health Monitor - 003 - Adobe Analytics","testClass":"com.autodesk.ece.bic.testsuites.TealiumNetworkLogs","testGroup":"adobe-network-logs","testMethod":"validateAdobeNetworkLogsAndTags","parameters":{"application":"ece"},"testdata":{"usertype":"new","password":""}},' +
