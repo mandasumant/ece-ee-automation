@@ -1096,11 +1096,8 @@ public class EceBICTestBase {
 
       bicPage.scrollToBottomOfPage();
 
-      String paymentTypeXpath = "";
-      if (System.getProperty("store").equals("STORE-NAMER")) {
-        paymentTypeXpath = bicPage.getFirstFieldLocator("paypalPaymentOption")
-            .replace("<PAYMENTOPTION>", data.get("paypalPaymentType"));
-        driver.findElement(By.xpath(paymentTypeXpath)).click();
+      if (System.getProperty("store").equals("STORE-NAMER") && !bicPage.checkIfElementExistsInPage("creditUnionPaymentSelected", 10)) {
+        bicPage.clickUsingLowLevelActions("creditUnionPaymentButton");
       }
 
       Util.sleep(2000);
