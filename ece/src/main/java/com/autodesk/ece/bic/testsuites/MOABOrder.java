@@ -65,9 +65,9 @@ public class MOABOrder extends ECETestBase {
   @SuppressWarnings("unchecked")
   public void beforeTestMethod(Method name) {
     LinkedHashMap<String, String> defaultValues = (LinkedHashMap<String, String>) loadYaml
-        .get("default");
+            .get("default");
     LinkedHashMap<String, String> testCaseData = (LinkedHashMap<String, String>) loadYaml
-        .get(name.getName());
+            .get(name.getName());
     defaultValues.putAll(testCaseData);
     testDataForEachMethod = defaultValues;
     locale = System.getProperty(BICECEConstants.LOCALE);
@@ -102,8 +102,10 @@ public class MOABOrder extends ECETestBase {
     PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
 
     // Load test data for wire transfer
-    LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get("BankInformationByLocale");
-    testDataForEachMethod.putAll(bankInformationMap.get("reseller").get(locale));
+    if (System.getProperty(BICECEConstants.PAYMENT).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD) || System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD)) {
+      LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get("BankInformationByLocale");
+      testDataForEachMethod.putAll(bankInformationMap.get("reseller").get(locale));
+    }
   }
 
   @Test(groups = {"moab-payinvoice"}, description = "Validation for MOAB Pay Invoice")

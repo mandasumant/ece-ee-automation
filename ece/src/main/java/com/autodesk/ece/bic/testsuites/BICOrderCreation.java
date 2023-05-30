@@ -140,7 +140,7 @@ public class BICOrderCreation extends ECETestBase {
     String paymentType = System.getProperty("payment");
     Util.printInfo("Current Payment Type is : " + paymentType);
 
-    String newPaymentType = System.getProperty("newPaymentType");
+    String newPaymentType = System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE);
 
     if (newPaymentType == null || newPaymentType.isEmpty()) {
       String[] paymentTypes = localeDataMap.get(locale).get(BICECEConstants.PAYMENT_METHODS)

@@ -164,8 +164,10 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     // Load test data for wire transfer
-    LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get("BankInformationByLocale");
-    testDataForEachMethod.putAll(bankInformationMap.get("customer").get(locale));
+    if (System.getProperty(BICECEConstants.PAYMENT).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD) || System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD)) {
+      LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get("BankInformationByLocale");
+      testDataForEachMethod.putAll(bankInformationMap.get("customer").get(locale));
+    }
   }
 
   @Test(groups = {"bic-quoteonly"}, description = "Validation of Create BIC Quote Order")
@@ -423,7 +425,7 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
-      String paymentType = System.getProperty("newPaymentType") != null ? System.getProperty("newPaymentType")
+      String paymentType = System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE) != null ? System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE)
           : System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER")
               ? BICECEConstants.VISA
               : BICECEConstants.CREDITCARD;
