@@ -2035,7 +2035,7 @@ public class PortalTestBase {
     bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
         data.get(BICECEConstants.PAYMENT_TYPE));
 
-    if ((data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD))) {
+    if (BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equalsIgnoreCase(data.get(BICECEConstants.PAYMENT_TYPE))) {
       return false;
     }
 
@@ -2410,7 +2410,7 @@ public class PortalTestBase {
   }
 
   public void verifyPaidInvoiceStatus(ArrayList<String> expectedInvoiceNumbersList) throws Exception {
-    if ((!System.getProperty(BICECEConstants.PAYMENT).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD))) {
+    if ((!BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equalsIgnoreCase(System.getProperty(BICECEConstants.PAYMENT)))) {
       viewAllInvoices();
       try {
         Util.sleep(5000);

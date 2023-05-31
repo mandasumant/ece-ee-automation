@@ -2049,7 +2049,7 @@ public class EceBICTestBase {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     selectPaymentProfile(data, paymentCardDetails, address);
 
-    if ((data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD))) {
+    if ((BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equalsIgnoreCase(data.get(BICECEConstants.PAYMENT_TYPE)))) {
       return;
     }
 

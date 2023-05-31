@@ -102,7 +102,7 @@ public class MOABOrder extends ECETestBase {
     PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
 
     // Load test data for wire transfer
-    if (System.getProperty(BICECEConstants.PAYMENT).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD) || System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD)) {
+    if (BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equals(System.getProperty(BICECEConstants.PAYMENT)) || BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equals(System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE))) {
       Util.printInfo(" Loading Bank Information for Payment Type: " + BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD + " From YAML File " );
       LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get("BankInformationByLocale");
       testDataForEachMethod.putAll(bankInformationMap.get("reseller").get(locale));
