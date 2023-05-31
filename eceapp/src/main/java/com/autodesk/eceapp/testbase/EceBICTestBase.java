@@ -410,39 +410,39 @@ public class EceBICTestBase {
             productsList.get(0).getText().contains(BICECEConstants.MAX_3DS));
         AssertUtils.assertTrue(BICECEConstants.AUTO_CAD + " is present on the page ",
             productsList.get(1).getText().contains(BICECEConstants.AUTO_CAD));
-        bicPage.clickToSubmit("minicartCheckoutButton", 3000);
-      } else if (bicPage.checkIfElementExistsInPage("minicartCheckoutButton", 3)) {
+        bicPage.clickToSubmit("miniCartCheckoutButton", 3000);
+      } else if (bicPage.checkIfElementExistsInPage("miniCartCheckoutButton", 3)) {
         Util.printInfo(
-            MessageFormat.format("Minicart checkout page opened. Locale: [{0}]", data.get(BICECEConstants.LOCALE)));
+            MessageFormat.format("Mini Cart checkout page opened. Locale: [{0}]", data.get(BICECEConstants.LOCALE)));
 
         if (data.containsKey(BICECEConstants.MINI_CART_VALIDATE_PRICE)) {
-          Util.printInfo("Started minicart price validation");
-          String checkoutPrice = bicPage.checkIfElementExistsInPage("minicartCheckoutDiscountedPrice", 3)
-              ? bicPage.getMultipleTextValuesfromField("minicartCheckoutDiscountedPrice")[0]
-              : bicPage.getMultipleTextValuesfromField("minicartCheckoutCalculatedPrice")[0];
+          Util.printInfo("Started Mini Cart price validation");
+          String checkoutPrice = bicPage.checkIfElementExistsInPage("miniCartCheckoutDiscountedPrice", 3)
+              ? bicPage.getMultipleTextValuesfromField("miniCartCheckoutDiscountedPrice")[0]
+              : bicPage.getMultipleTextValuesfromField("miniCartCheckoutCalculatedPrice")[0];
           Util.printInfo(MessageFormat.format("Checkout Price: [{0}]", checkoutPrice));
 
-          Float minicartCheckoutPrice = Optional
+          Float miniCartCheckoutPrice = Optional
               .of(checkoutPrice.trim())
               .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
               .orElse(null);
-          Util.printInfo(MessageFormat.format("Minicart Checkout Price: [{0}]", minicartCheckoutPrice));
-          AssertUtils.assertTrue(minicartCheckoutPrice != null, "Minicart Checkout Price cannot be null");
-          AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(minicartCheckoutPrice),
-              "Subscription amount should be same as minicart checkout price");
+          Util.printInfo(MessageFormat.format("Mini Cart Checkout Price: [{0}]", miniCartCheckoutPrice));
+          AssertUtils.assertTrue(miniCartCheckoutPrice != null, "Mini Cart Checkout Price cannot be null");
+          AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(miniCartCheckoutPrice),
+              "Subscription amount should be same as Mini Cart checkout price");
 
-          Float minicartSubTotalPrice = Optional
-              .of(bicPage.getMultipleTextValuesfromField("minicartSubTotal")[0].trim())
+          Float miniCartSubTotalPrice = Optional
+              .of(bicPage.getMultipleTextValuesfromField("miniCartSubTotal")[0].trim())
               .map(price -> NumberUtil.convert(price, data.get(BICECEConstants.LOCALE)))
               .orElse(null);
-          AssertUtils.assertTrue(minicartSubTotalPrice != null, "Minicart SubTotal Price cannot be null");
-          AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(minicartSubTotalPrice),
-              "Subscription amount should be same as minicart subtotal price");
+          AssertUtils.assertTrue(miniCartSubTotalPrice != null, "Mini Cart SubTotal Price cannot be null");
+          AssertUtils.assertEquals(Math.round(subscriptionAmount), Math.round(miniCartSubTotalPrice),
+              "Subscription amount should be same as Mini Cart subtotal price");
         } else {
-          Util.printInfo("Skipped minicart price validation");
+          Util.printInfo("Skipped Mini Cart price validation");
         }
 
-        bicPage.clickToSubmit("minicartCheckoutButton", 3000);
+        bicPage.clickToSubmit("miniCartCheckoutButton", 3000);
         bicPage.waitForPageToLoad();
       }
     } catch (MetadataException e) {
@@ -891,7 +891,8 @@ public class EceBICTestBase {
   }
 
   @Step("Populate Sepa payment details")
-  public void populateSepaPaymentDetails(HashMap<String, String> data, String[] paymentCardDetails) throws MetadataException {
+  public void populateSepaPaymentDetails(HashMap<String, String> data, String[] paymentCardDetails)
+      throws MetadataException {
     try {
       bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
       Util.printInfo("Clicking on Sepa tab.");
@@ -901,9 +902,8 @@ public class EceBICTestBase {
 
       Util.printInfo("Waiting for Sepa header.");
       bicPage.waitForElementVisible(
-              bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
-    }
-    catch (MetadataException e) {
+          bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
+    } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to SEPA Payment Tab");
     }
@@ -1096,7 +1096,8 @@ public class EceBICTestBase {
 
       bicPage.scrollToBottomOfPage();
 
-      if (System.getProperty("store").equals("STORE-NAMER") && !bicPage.checkIfElementExistsInPage("creditUnionPaymentSelected", 10)) {
+      if (System.getProperty("store").equals("STORE-NAMER") && !bicPage.checkIfElementExistsInPage(
+          "creditUnionPaymentSelected", 10)) {
         bicPage.clickUsingLowLevelActions("creditUnionPaymentButton");
       }
 
@@ -2972,12 +2973,10 @@ public class EceBICTestBase {
     if (bicPage.checkIfElementExistsInPage("wireTransferTab", 20)) {
       Util.printInfo("BANK TRANSFER (WIRE TRANSFER) payment method tab is visible");
       bicPage.clickUsingLowLevelActions("wireTransferTab");
-    }
-    else if (bicPage.checkIfElementExistsInPage("wireTransferRadioButton", 20)) {
+    } else if (bicPage.checkIfElementExistsInPage("wireTransferRadioButton", 20)) {
       Util.printInfo("BANK TRANSFER (WIRE TRANSFER) payment method radio button visible");
       bicPage.clickUsingLowLevelActions("wireTransferRadioButton");
-    }
-    else {
+    } else {
       AssertUtils.fail("BANK TRANSFER payment tab is not available.");
     }
 
@@ -2990,8 +2989,10 @@ public class EceBICTestBase {
         final String valueToVerify = selectorArray.length > 1 ? selectorArray[1].trim() : null;
         switch (key) {
           case "wireBankHeader":
-            final String headerSelector = bicPage.getFirstFieldLocator("wireBankHeader").replace("<SELECTOR_TEXT>", selectorText);
-            AssertUtils.assertTrue(driver.findElement(By.xpath(headerSelector)).isDisplayed(), "Bank Information header is not displayed");
+            final String headerSelector = bicPage.getFirstFieldLocator("wireBankHeader")
+                .replace("<SELECTOR_TEXT>", selectorText);
+            AssertUtils.assertTrue(driver.findElement(By.xpath(headerSelector)).isDisplayed(),
+                "Bank Information header is not displayed");
             break;
           case "wireBankNameAndAddress":
           case "wireBankAccountNumber":
@@ -3005,12 +3006,15 @@ public class EceBICTestBase {
             assertWireTransferInformation(selectorText, valueToVerify);
             break;
           case "wireBankRemittanceAdviceEmail":
-            final String contactMessageSelector = bicPage.getFirstFieldLocator("wireBankRemittanceAdviceEmail").replace("<SELECTOR_TEXT>", selectorText);
+            final String contactMessageSelector = bicPage.getFirstFieldLocator("wireBankRemittanceAdviceEmail")
+                .replace("<SELECTOR_TEXT>", selectorText);
             final String contactMessage = driver.findElement(By.xpath(contactMessageSelector)).getText().trim();
-            AssertUtils.assertEquals(selectorText + " is incorrect", Jsoup.parse(contactMessage).text().trim(), valueToVerify);
+            AssertUtils.assertEquals(selectorText + " is incorrect", Jsoup.parse(contactMessage).text().trim(),
+                valueToVerify);
             break;
           default:
-            AssertUtils.fail(MessageFormat.format("[{0}] is defined in BankInformationByLocale.yml file but is not used.", key));
+            AssertUtils.fail(
+                MessageFormat.format("[{0}] is defined in BankInformationByLocale.yml file but is not used.", key));
             break;
         }
       }
@@ -3020,7 +3024,8 @@ public class EceBICTestBase {
   }
 
   private void assertWireTransferInformation(final String selectorText, final String valueToVerify) {
-    final String nameAndAddressSelector = bicPage.getFirstFieldLocator("wireBankDetails").replace("<SELECTOR_TEXT>", selectorText);
+    final String nameAndAddressSelector = bicPage.getFirstFieldLocator("wireBankDetails")
+        .replace("<SELECTOR_TEXT>", selectorText);
     final String nameAndAddress = driver.findElement(By.xpath(nameAndAddressSelector)).getText().trim();
     AssertUtils.assertEquals(selectorText + " is incorrect", Jsoup.parse(nameAndAddress).text().trim(), valueToVerify);
   }
@@ -3115,6 +3120,41 @@ public class EceBICTestBase {
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
+  }
+
+  @Step("Delete product from Mini Cart" + GlobalConstants.TAG_TESTINGHUB)
+  public void deleteProductFromMiniCart(LinkedHashMap<String, String> data)
+      throws MetadataException {
+
+    navigateToDotComPage(data);
+
+    selectMonthlySubscription(driver);
+
+    bicPage.clickToSubmit("guacAddToCart", 3000);
+
+    WebElement miniCartDrawer = (new WebDriverWait(driver, Duration.ofSeconds(60)).until(
+        ExpectedConditions.presenceOfElementLocated(By.xpath(bicPage.getFirstFieldLocator("miniCartHeader")))));
+
+    AssertUtils.assertTrue(miniCartDrawer.isDisplayed(), "Mini Cart not displayed");
+
+    String currentURL = driver.getCurrentUrl();
+
+    Util.waitforPresenceOfElement(bicPage, "miniCartRemoveItem");
+    bicPage.clickUsingLowLevelActions("miniCartRemoveItem");
+    bicPage.waitForElementToDisappear("miniCartRemoveItem", 10);
+
+    WebElement miniCartContentHeader = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("miniCartContentHeader")));
+    AssertUtils.assertTrue(
+        miniCartContentHeader.getText().contains("Your cart is empty"), "Empty cart heading not displayed");
+
+    bicPage.clickUsingLowLevelActions("miniCartContinueShopping");
+    bicPage.waitForElementToDisappear("miniCartContinueShopping", 10);
+
+    AssertUtils.assertTrue(!miniCartDrawer.isDisplayed(), "Mini Cart is displayed");
+
+    AssertUtils.assertEquals(currentURL, driver.getCurrentUrl());
+
   }
 
   public static class Names {

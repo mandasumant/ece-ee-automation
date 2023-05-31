@@ -408,3 +408,6 @@ validateGdprMandatoryTagsFiredOnNextPageLoad:
 
 validateAddingMultiProductMiniCart:
   multiProduct2: "3ds-max"
+
+validateDeleteProductFromMiniCart:
+  productID: *NativeOrderPriceID

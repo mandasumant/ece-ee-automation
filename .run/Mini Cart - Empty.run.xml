@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Mini Cart - Empty" type="Application" factoryName="Application" folderName="Dotcom">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
+    <module name="ece" />
+    <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -Dapplication=ece -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=&quot;STG&quot; -Duserid=&quot;svc_s_platform_autob@autodesk.com&quot; -DtestGroup=&quot;bic-delete-product-minicart&quot; -Dclass.name=&quot;com.autodesk.ece.bic.testsuites.BICOrderCreation&quot; -Dsku=&quot;default:1&quot; -Dstore=&quot;STORE-NAMER&quot; -Dchannel=&quot;BIC&quot;" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ece" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

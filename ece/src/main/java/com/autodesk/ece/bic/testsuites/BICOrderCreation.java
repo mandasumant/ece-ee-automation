@@ -671,7 +671,8 @@ public class BICOrderCreation extends ECETestBase {
       Util.sleep(120000);
     }
 
-    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS) && !testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_KONBINI)) {
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)
+        && !testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_KONBINI)) {
       // Getting a PurchaseOrder details from pelican
       results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
@@ -1358,11 +1359,20 @@ public class BICOrderCreation extends ECETestBase {
     HashMap<String, String> testResults = new HashMap<String, String>();
 
     HashMap<String, String> results = getBicTestBase()
-            .createMultiProductOrderMiniCart(testDataForEachMethod);
+        .createMultiProductOrderMiniCart(testDataForEachMethod);
     results.putAll(testDataForEachMethod);
 
     testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
     testResults.put(BICConstants.orderNumber, results.get(BICConstants.orderNumber));
+    updateTestingHub(testResults);
+  }
+
+  @Test(groups = {"bic-delete-product-minicart"}, description = "Validation of deleting product from mini cart")
+  public void validateDeleteProductFromMiniCart() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+
+    getBicTestBase().deleteProductFromMiniCart(testDataForEachMethod);
+
     updateTestingHub(testResults);
   }
 
