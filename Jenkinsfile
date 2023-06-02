@@ -205,7 +205,6 @@ pipeline {
             when {
                 branch 'master'
                 anyOf {
-                    triggeredBy 'TimerTrigger'
                     expression {
                         params.APOLLO_R2_0_5 == true
                     }
