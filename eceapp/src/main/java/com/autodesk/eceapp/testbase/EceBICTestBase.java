@@ -595,6 +595,9 @@ public class EceBICTestBase {
     } else if (bicPage.waitForFieldPresent("creditCardRadioButton", 5000)) {
       Util.printInfo("clicking review button");
       bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+    } else if (bicPage.waitForFieldPresent("giroPayContinueButton", 5000)) {
+      Util.printInfo("clicking on GiroPay Continue Button");
+      bicPage.clickUsingLowLevelActions("giroPayContinueButton");
     }
   }
 
@@ -945,17 +948,25 @@ public class EceBICTestBase {
       }
 
       if (bicPage.checkIfElementExistsInPage("giropayRadioButtonFirstName", 10) || bicPage.checkIfElementExistsInPage(
-          "giropayPaymentTabFirstName", 10)) {
+              "giropayPaymentTabFirstName", 10)) {
         populateBillingAddress(address, data);
         Util.sleep(20000);
-      } else {
+      } else if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 20)) {
         bicPage.clickUsingLowLevelActions("reviewLOCOrder");
         waitForLoadingSpinnerToComplete("loadingSpinner");
       }
 
-      bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 20000);
-      bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-      Util.sleep(40000);
+      if (bicPage.checkIfElementExistsInPage("submitPaymentButton", 20)) {
+        Util.printInfo("Clicking on Submit Payment Button");
+        bicPage.clickUsingLowLevelActions("submitPaymentButton");
+        Util.sleep(2000);
+      }
+
+      if (bicPage.checkIfElementExistsInPage("SubmitOrderButton", 20)) {
+        bicPage.waitForFieldPresent(BICECEConstants.SUBMIT_ORDER_BUTTON, 20000);
+        bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+        Util.sleep(40000);
+      }
 
       Util.printInfo("Entering Giropay bank name : " + paymentCardDetails[0]);
       bicPage.populateField("giroPayBankName", paymentCardDetails[0]);

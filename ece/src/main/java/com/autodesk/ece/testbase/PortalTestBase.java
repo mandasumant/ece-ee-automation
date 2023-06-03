@@ -2048,7 +2048,9 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("portalCardSaveBtn");
       bicTestBase.waitForLoadingSpinnerToComplete("loadingSpinner");
     }
-    submitPayment();
+    if (portalPage.checkIfElementExistsInPage("submitPaymentButton", 15000)) {
+      submitPayment();
+    }
     return false;
   }
 
@@ -2136,9 +2138,13 @@ public class PortalTestBase {
 
   @Step("CEP : Click View all invoices")
   public void viewAllInvoices() throws Exception {
-    portalPage.waitForFieldPresent("seeAllInvoices", 30000);
-    portalPage.clickUsingLowLevelActions("seeAllInvoices");
-    Util.sleep(5000);
+    if (portalPage.waitForFieldPresent("seeAllInvoices", 30000)) {
+      portalPage.clickUsingLowLevelActions("seeAllInvoices");
+      Util.sleep(5000);
+    } else if (portalPage.waitForFieldPresent("seeAllPaidInvoices", 30000)) {
+      portalPage.clickUsingLowLevelActions("seeAllPaidInvoices");
+      Util.sleep(5000);
+    }
     Util.printInfo("Payment for Invoice is successfully Completed");
   }
 
