@@ -182,6 +182,7 @@ public class BICECEConstants extends BICConstants {
   public static final String OFFERING_ID = "offeringId";
   public static final String FLEX_TOKENS = "tokens";
   public static final String TERM = "term";
+  public static final String TERM_CODE = "termCode";
   public static final String ACCESS_MODEL = "accessModel";
   public static final String PO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
   public static final String SUB_DATE_FORMAT = "MM/dd/yyyy HH:mm:ss z";

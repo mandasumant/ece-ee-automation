@@ -1,4 +1,4 @@
-package com.autodesk.ece.dto;
+package com.autodesk.ece.dto.quote;
 
 import com.autodesk.eceapp.utilities.Address;
 import lombok.Data;

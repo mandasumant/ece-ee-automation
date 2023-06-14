@@ -1,4 +1,4 @@
-package com.autodesk.ece.dto;
+package com.autodesk.ece.dto.quote.v1;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
 import java.util.LinkedHashMap;

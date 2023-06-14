@@ -1,5 +1,6 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.ece.dto.QuoteDetails;
 import com.autodesk.ece.testbase.DatastoreClient;
 import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
 import com.autodesk.ece.testbase.DatastoreClient.OrderData;
@@ -27,7 +28,6 @@ import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -1579,12 +1579,12 @@ public class BICQuoteOrder extends ECETestBase {
       testDataForEachMethod.put(BICECEConstants.QUOTE_ID, order.getQuoteId());
       testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
 
-      Response quoteDetails = pwsTestBase.getQuoteDetails(
+      QuoteDetails quoteDetails = pwsTestBase.getQuoteDetails(
           testDataForEachMethod.get("quoteAgentCsnAccount"), order.getQuoteId());
 
-      testDataForEachMethod.put("firstname", quoteDetails.jsonPath().getString("purchaser.firstName"));
-      testDataForEachMethod.put("lastname", quoteDetails.jsonPath().getString("purchaser.lastName"));
-      testDataForEachMethod.put("company", quoteDetails.jsonPath().getString("endCustomer.name"));
+      testDataForEachMethod.put("firstname", quoteDetails.getPurchaserFirstName());
+      testDataForEachMethod.put("lastname", quoteDetails.getPurchaserLastName());
+      testDataForEachMethod.put("company", quoteDetails.getEndCustomerName());
       testDataForEachMethod.put("address", order.getAddress());
 
     } catch (Exception e) {

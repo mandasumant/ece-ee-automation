@@ -1,4 +1,4 @@
-package com.autodesk.ece.dto;
+package com.autodesk.ece.dto.quote.v2;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
 import java.util.LinkedHashMap;
@@ -7,10 +7,10 @@ import lombok.Data;
 public @Data
 class LineItemDTO {
 
-  private Integer quantity;
   private String offeringId;
-  private String orderAction = "New";
-  private String subscriptionStartDate;
+  private String action = "New";
+  private Integer quantity;
+  private String startDate;
   private OfferDTO offer;
 
   public LineItemDTO(LinkedHashMap<String, String> data) {
