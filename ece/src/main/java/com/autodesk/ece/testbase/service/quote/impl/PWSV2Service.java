@@ -10,6 +10,7 @@ import com.autodesk.ece.dto.PWSAccessInfo;
 import com.autodesk.ece.dto.quote.PurchaserDTO;
 import com.autodesk.ece.dto.QuoteDetails;
 import com.autodesk.ece.dto.quote.v2.LineItemDTO;
+import com.autodesk.ece.dto.quote.v2.OfferItemDTO;
 import com.autodesk.ece.dto.quote.v2.PrimaryAdminDTO;
 import com.autodesk.ece.dto.quote.v2.QuoteDTO;
 import com.autodesk.ece.testbase.service.quote.QuoteService;
@@ -58,21 +59,10 @@ public class PWSV2Service implements QuoteService {
     AgentContactDTO agentContact = new AgentContactDTO(agentContactEmail);
     PrimaryAdminDTO primaryAdmin = new PrimaryAdminDTO(agentContactEmail);
     AgentAccountDTO agentAccount = new AgentAccountDTO(csn);
-    OfferDTO offer = new OfferDTO(data);
-    LineItemDTO lineItem = new LineItemDTO(data);
-    List<LineItemDTO> lineItems = new ArrayList<>();
-    lineItem.setOffer(offer);
-    lineItems.add(lineItem);
-    if (isMultiLineItem) {
-      if (System.getProperty("quantity2") != null) {
-        data.put(BICECEConstants.FLEX_TOKENS, System.getProperty("quantity2"));
-      } else {
-        data.put(BICECEConstants.FLEX_TOKENS, "4000");
-      }
-      LineItemDTO lineItemTwo = new LineItemDTO(data);
-      lineItemTwo.setOffer(offer);
-      lineItems.add(lineItemTwo);
-    }
+
+    List<LineItemDTO> lineItems = data.get(BICECEConstants.QUOTE_SUS_PRODUCT) != null
+        ? PwsQuoteDataBuilder.getLineItems(data.get(BICECEConstants.QUOTE_SUS_PRODUCT), data.get(BICECEConstants.TERM))
+        : getFlexLineItems(isMultiLineItem, data);
 
     EndCustomerDTO endCustomer = null;
     if (System.getProperty("existingCSN") != null) {
@@ -304,5 +294,42 @@ public class PWSV2Service implements QuoteService {
       .endCustomerCountryCode(jsonPath.getString("endCustomer.countryCode"))
       .endCustomerPostalCode(jsonPath.getString("endCustomer.postalCode"))
       .build();
+  }
+
+  private List<LineItemDTO> getFlexLineItems(Boolean isMultiLineItem, LinkedHashMap<String, String> data) {
+    List<LineItemDTO> lineItems = new ArrayList<>();
+    OfferDTO offer = OfferDTO.builder()
+        .term(OfferDTO.getTermCodeMap().get(data.get(BICECEConstants.TERM)))
+        .accessModel(new OfferItemDTO("F", "Flex"))
+        .servicePlanId(new OfferItemDTO("STND", "Standard"))
+        .intendedUsage(new OfferItemDTO("COM", "Commercial"))
+        .connectivity(new OfferItemDTO("C100", "Online"))
+        .build();
+
+    LineItemDTO lineItem = LineItemDTO.builder()
+        .offeringId(data.get(BICECEConstants.OFFERING_ID))
+        .action("New")
+        .quantity(Integer.valueOf(data.get(BICECEConstants.FLEX_TOKENS)))
+        .offer(offer)
+        .build();
+    lineItems.add(lineItem);
+
+    if (isMultiLineItem) {
+      if (System.getProperty("quantity2") != null) {
+        data.put(BICECEConstants.FLEX_TOKENS, System.getProperty("quantity2"));
+      } else {
+        data.put(BICECEConstants.FLEX_TOKENS, "4000");
+      }
+
+      LineItemDTO lineItemTwo = LineItemDTO.builder()
+          .offeringId(data.get(BICECEConstants.OFFERING_ID))
+          .action("New")
+          .quantity(Integer.valueOf(data.get(BICECEConstants.FLEX_TOKENS)))
+          .offer(offer)
+          .build();
+      lineItems.add(lineItemTwo);
+    }
+
+    return lineItems;
   }
 }

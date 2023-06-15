@@ -182,7 +182,6 @@ public class BICECEConstants extends BICConstants {
   public static final String OFFERING_ID = "offeringId";
   public static final String FLEX_TOKENS = "tokens";
   public static final String TERM = "term";
-  public static final String TERM_CODE = "termCode";
   public static final String ACCESS_MODEL = "accessModel";
   public static final String PO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
   public static final String SUB_DATE_FORMAT = "MM/dd/yyyy HH:mm:ss z";
@@ -226,6 +225,7 @@ public class BICECEConstants extends BICConstants {
   public static final String SUBMIT_PAYMENT_BUTTON = "submitPaymentButton";
   public static final String LOC_TEST_NAME = "LOC_ORDER";
   public static final String QUOTE_TEST_NAME = "QUOTE";
+  public static final String QUOTE_SUS_PRODUCT = "QUOTE_SUS_PRODUCT";
   public static final String PROJECT78_PUSH_FLAG = "pushToDataStore";
   public static final String PROJECT78_PULL_FLAG = "pullFromDataStore";
   public static final String IS_MULTILINE = "isMultiLineItem";
