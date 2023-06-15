@@ -1128,7 +1128,7 @@ public class PortalTestBase {
       portalPage.clickUsingLowLevelActions("portalChangePaymentBtn");
       portalPage.waitForPageToLoad();
 
-      Util.sleep(10000);
+      Util.sleep(15000);
 
       if (System.getProperty("store").equals("STORE-JP")) {
         Util.waitforPresenceOfElement(portalPage.getFirstFieldLocator(
@@ -2032,6 +2032,10 @@ public class PortalTestBase {
     }
 
     Util.sleep(5000);
+    if (portalPage.checkIfElementExistsInPage("paymentDetailsCompleted", 20)) {
+      portalPage.clickUsingLowLevelActions("editPaymentMethod");
+      portalPage.waitForPageToLoad();
+    }
     bicTestBase.enterPayInvoiceBillingDetails(data, bicTestBase.getBillingAddress(data),
         data.get(BICECEConstants.PAYMENT_TYPE));
 

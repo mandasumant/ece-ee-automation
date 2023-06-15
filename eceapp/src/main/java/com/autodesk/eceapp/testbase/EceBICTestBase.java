@@ -511,14 +511,31 @@ public class EceBICTestBase {
       String lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
           .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
 
-      bicPage.waitForFieldPresent(BICECEConstants.FIRSTNAME, 2000);
-      clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
-      driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
+      if (bicPage.checkFieldExistence(firstNameXpath)) {
+        bicPage.waitForFieldPresent(BICECEConstants.FIRSTNAME, 2000);
+        clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
+        driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
 
-      Util.sleep(1000);
-      clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
-      driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
-      status = populateBillingDetails(address, paymentType);
+        Util.sleep(1000);
+        clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
+        driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
+        status = populateBillingDetails(address, paymentType);
+      }
+
+      String radioButtonFirstNameXpath = bicPage.getFirstFieldLocator("radioButtonFirstName");
+      String radioButtonLastNameXpath = bicPage.getFirstFieldLocator("radioButtonLastName");
+
+      if (bicPage.checkFieldExistence(radioButtonFirstNameXpath)) {
+        clearTextInputValue(driver.findElement(By.xpath(radioButtonFirstNameXpath)));
+        driver.findElement(By.xpath(radioButtonFirstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
+
+        Util.sleep(1000);
+
+        clearTextInputValue(driver.findElement(By.xpath(radioButtonLastNameXpath)));
+        driver.findElement(By.xpath(radioButtonLastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
+        status = enterCustomerDetails(address);
+
+      }
 
       try {
         driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
@@ -895,35 +912,33 @@ public class EceBICTestBase {
 
   @Step("Populate Sepa payment details")
   public void populateSepaPaymentDetails(HashMap<String, String> data, String[] paymentCardDetails)
-      throws MetadataException {
-    try {
-      bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
-      Util.printInfo("Clicking on Sepa tab.");
-      JavascriptExecutor js = (JavascriptExecutor) driver;
-      String sepaTab = bicPage.getFirstFieldLocator("sepaPaymentTab");
-      js.executeScript("arguments[0].click();", driver.findElement(By.xpath(sepaTab)));
+          throws MetadataException {
+    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
+    Util.printInfo("Clicking on Sepa tab.");
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    String sepaTab = bicPage.getFirstFieldLocator("sepaPaymentTab");
+    js.executeScript("arguments[0].click();", driver.findElement(By.xpath(sepaTab)));
 
+    if (bicPage.isFieldVisible("addNewAccount")) {
+      bicPage.clickUsingLowLevelActions("addNewAccount");
+    }
+
+    try {
       Util.printInfo("Waiting for Sepa header.");
       bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
+              bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
+
+      Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
+      bicPage.clickUsingLowLevelActions("sepaIbanNumber");
+      bicPage.populateField("sepaIbanNumber", paymentCardDetails[0]);
+
+      Util.printInfo("Entering SEPA profile name : " + paymentCardDetails[0]);
+      bicPage.populateField("sepaProfileName", paymentCardDetails[1]);
     } catch (MetadataException e) {
       e.printStackTrace();
-      AssertUtils.fail("Unable to SEPA Payment Tab");
+      AssertUtils.fail("Unable to enter SEPA payment information to make payment");
     }
 
-    if (!bicPage.isFieldVisible("invoicePaymentEdit")) {
-      try {
-        Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
-        bicPage.clickUsingLowLevelActions("sepaIbanNumber");
-        bicPage.populateField("sepaIbanNumber", paymentCardDetails[0]);
-
-        Util.printInfo("Entering SEPA profile name : " + paymentCardDetails[0]);
-        bicPage.populateField("sepaProfileName", paymentCardDetails[1]);
-      } catch (MetadataException e) {
-        e.printStackTrace();
-        AssertUtils.fail("Unable to enter SEPA payment information to make payment");
-      }
-    }
     Util.sleep(20000);
     if (bicPage.checkIfElementExistsInPage("mandateAgreementCheckbox", 20)) {
       clickMandateAgreementCheckbox();
@@ -947,7 +962,7 @@ public class EceBICTestBase {
         AssertUtils.fail("Unable to click on Giropay payment method");
       }
 
-      if (bicPage.checkIfElementExistsInPage("giropayRadioButtonFirstName", 10) || bicPage.checkIfElementExistsInPage(
+      if (bicPage.checkIfElementExistsInPage("radioButtonFirstName", 10) || bicPage.checkIfElementExistsInPage(
               "giropayPaymentTabFirstName", 10)) {
         populateBillingAddress(address, data);
         Util.sleep(20000);
@@ -2075,8 +2090,9 @@ public class EceBICTestBase {
     Util.printInfo("Submit payment button enabled");
   }
 
-  public void enterCustomerDetails(Map<String, String> address)
+  public boolean enterCustomerDetails(Map<String, String> address)
       throws MetadataException {
+    boolean status =false;
 
     if (bicPage.checkIfElementExistsInPage("companyNameField", 15)) {
       bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
@@ -2120,6 +2136,11 @@ public class EceBICTestBase {
 
     populateTaxIdForFlex();
 
+    if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 20)) {
+      bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+      waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
+
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
@@ -2149,6 +2170,7 @@ public class EceBICTestBase {
     } else {
       AssertUtils.fail("Customer details section is still open. Could not save the address.");
     }
+    return status;
   }
 
   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
