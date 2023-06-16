@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class LineItemDTO {
   private String offeringId;
-  private String action = "New";
+  private String action;
   private Integer quantity;
   private String startDate;
   private OfferDTO offer;

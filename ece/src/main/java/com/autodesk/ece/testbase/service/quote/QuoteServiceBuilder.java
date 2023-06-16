@@ -7,19 +7,14 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class QuoteServiceBuilder {
-  public static QuoteService build(final String pwsClientId, final String pwsClientSecret, final String pwsHostname) {
-// This code will be uncommented when R2.1.2 is ready with V2
-//    if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_INT)) {
-//      if ("en_AU".equals(System.getProperty(BICECEConstants.LOCALE)) || "en_NZ".equalsIgnoreCase(System.getProperty(BICECEConstants.LOCALE))) {
-//        return new PWSV2Service(pwsClientId, pwsClientSecret, pwsHostname);
-//      }
-//    }
-//
-//    if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG)) {
-//      return new PWSV1Service(pwsClientId, pwsClientSecret, pwsHostname);
-//    }
-//
-//    throw new RuntimeException("Environment evaluation is incorrect");
+  public static QuoteService build(
+      final String pwsClientId, final String pwsClientSecret,
+      final String pwsClientId_v2, final String pwsClientSecret_v2, final String pwsHostname) {
+    if (BICECEConstants.ENV_INT.equalsIgnoreCase(System.getProperty(BICECEConstants.ENVIRONMENT))) {
+      if ("en_AU".equalsIgnoreCase(System.getProperty(BICECEConstants.LOCALE))) {
+        return new PWSV2Service(pwsClientId_v2, pwsClientSecret_v2, pwsHostname);
+      }
+    }
 
     return new PWSV1Service(pwsClientId, pwsClientSecret, pwsHostname);
   }

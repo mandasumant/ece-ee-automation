@@ -128,8 +128,11 @@ public class BICQuoteOrder extends ECETestBase {
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
     PASSWORD = ProtectedConfigFile.decrypt(testDataForEachMethod.get(BICECEConstants.PASSWORD));
-    pwsTestBase = new PWSTestBase(testDataForEachMethod.get("pwsClientId"),
+    pwsTestBase = new PWSTestBase(
+        testDataForEachMethod.get("pwsClientId"),
         ProtectedConfigFile.decrypt(testDataForEachMethod.get("pwsClientSecret")),
+        testDataForEachMethod.get("pwsClientId_v2"),
+        ProtectedConfigFile.decrypt(testDataForEachMethod.get("pwsClientSecret_v2")),
         testDataForEachMethod.get("pwsHostname"));
 
     Names names = EceBICTestBase.generateFirstAndLastNames();
