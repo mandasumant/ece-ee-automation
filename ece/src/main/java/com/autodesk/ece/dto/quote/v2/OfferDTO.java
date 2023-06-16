@@ -74,7 +74,7 @@ public class OfferDTO {
     }
 
     public OfferDTOBuilder servicePlanId(String servicePlanId) {
-      this.servicePlanId = servicePlans.get(servicePlanId);
+      this.servicePlanId = servicePlans.get(servicePlanId.toLowerCase());
       return this;
     }
 
