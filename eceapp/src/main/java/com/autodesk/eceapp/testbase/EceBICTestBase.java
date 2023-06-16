@@ -506,35 +506,29 @@ public class EceBICTestBase {
         data.put(BICECEConstants.LASTNAME, "DECLINED");
       }
 
-      String firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-          .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
-      String lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
-          .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
+      if (bicPage.checkIfElementExistsInPage("radioButtonFirstName", 10)) {
+        String radioButtonFirstNameXpath = bicPage.getFirstFieldLocator("radioButtonFirstName");
+        String radioButtonLastNameXpath = bicPage.getFirstFieldLocator("radioButtonLastName");
 
-      if (bicPage.checkFieldExistence(firstNameXpath)) {
+        clearTextInputValue(driver.findElement(By.xpath(radioButtonFirstNameXpath)));
+        driver.findElement(By.xpath(radioButtonFirstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
+        Util.sleep(1000);
+        clearTextInputValue(driver.findElement(By.xpath(radioButtonLastNameXpath)));
+        driver.findElement(By.xpath(radioButtonLastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
+        status = enterCustomerDetails(address);
+      } else {
+        String firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
+                .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
+        String lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
+                .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
+
         bicPage.waitForFieldPresent(BICECEConstants.FIRSTNAME, 2000);
         clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
         driver.findElement(By.xpath(firstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
-
         Util.sleep(1000);
         clearTextInputValue(driver.findElement(By.xpath(lastNameXpath)));
         driver.findElement(By.xpath(lastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
         status = populateBillingDetails(address, paymentType);
-      }
-
-      String radioButtonFirstNameXpath = bicPage.getFirstFieldLocator("radioButtonFirstName");
-      String radioButtonLastNameXpath = bicPage.getFirstFieldLocator("radioButtonLastName");
-
-      if (bicPage.checkFieldExistence(radioButtonFirstNameXpath)) {
-        clearTextInputValue(driver.findElement(By.xpath(radioButtonFirstNameXpath)));
-        driver.findElement(By.xpath(radioButtonFirstNameXpath)).sendKeys(data.get(BICECEConstants.FIRSTNAME));
-
-        Util.sleep(1000);
-
-        clearTextInputValue(driver.findElement(By.xpath(radioButtonLastNameXpath)));
-        driver.findElement(By.xpath(radioButtonLastNameXpath)).sendKeys(data.get(BICECEConstants.LASTNAME));
-        status = enterCustomerDetails(address);
-
       }
 
       try {
@@ -588,25 +582,26 @@ public class EceBICTestBase {
 
       WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
       WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
+      if (continueButton.isDisplayed()) {
+        int attempts = 0;
+        while (attempts < 5) {
+          try {
+            continueButton.click();
+            waitForLoadingSpinnerToComplete("loadingSpinner");
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+            wait.until(ExpectedConditions.invisibilityOf(continueButton));
 
-      int attempts = 0;
-      while (attempts < 5) {
-        try {
-          continueButton.click();
-          waitForLoadingSpinnerToComplete("loadingSpinner");
-          WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-          wait.until(ExpectedConditions.invisibilityOf(continueButton));
-
-          Util.printInfo("Save button no longer present");
-          break;
-        } catch (TimeoutException e) {
-          e.printStackTrace();
-          Util.printInfo("Save button still present, retrying");
-          attempts++;
-          if (attempts == 5) {
-            AssertUtils.fail("Failed to click on Save button on billing details page...");
+            Util.printInfo("Save button no longer present");
+            break;
+          } catch (TimeoutException e) {
+            e.printStackTrace();
+            Util.printInfo("Save button still present, retrying");
+            attempts++;
+            if (attempts == 5) {
+              AssertUtils.fail("Failed to click on Save button on billing details page...");
+            }
+            Util.sleep(2000);
           }
-          Util.sleep(2000);
         }
       }
     } else if (bicPage.waitForFieldPresent("creditCardRadioButton", 5000)) {
@@ -1705,6 +1700,12 @@ public class EceBICTestBase {
       bicPage.clickUsingLowLevelActions("cartContinueButton");
     }
 
+    if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
+      bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
+      Util.sleep(5000);
+      bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+    }
+
     while (!isOrderCaptured) {
 
       if (attempt > 10) {
@@ -2035,6 +2036,15 @@ public class EceBICTestBase {
     selectPaymentProfile(data, paymentCardDetails, address);
     dismissChatPopup();
 
+    if ((data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
+            .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE))
+            && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
+      boolean status = populateBillingAddress(address, data);
+      if (status) {
+        data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+      }
+    }
+
     if (paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
       return;
     }
@@ -2048,7 +2058,7 @@ public class EceBICTestBase {
       try {
         if (bicPage.checkIfElementExistsInPage("savePaymentProfile", 20)) {
           bicPage.clickUsingLowLevelActions("savePaymentProfile");
-        } else {
+        } else if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 20)) {
           bicPage.clickUsingLowLevelActions("reviewLOCOrder");
         }
       } catch (MetadataException e) {
@@ -2141,6 +2151,11 @@ public class EceBICTestBase {
       waitForLoadingSpinnerToComplete("loadingSpinner");
     }
 
+    if (bicPage.checkIfElementExistsInPage("paymentContinueButton", 15)) {
+      bicPage.clickUsingLowLevelActions("paymentContinueButton");
+      waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
+
     if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
       Util.printInfo("Clicking on Continue in Customer Details section.");
       bicPage.clickUsingLowLevelActions("customerDetailsContinue");
@@ -2165,7 +2180,7 @@ public class EceBICTestBase {
     Util.sleep(5000);
 
     boolean isCustomerDetailsComplete = bicPage.checkIfElementExistsInPage("customerDetailsComplete", 20);
-    if (isCustomerDetailsComplete) {
+    if (isCustomerDetailsComplete || bicPage.checkIfElementExistsInPage("paymentDetailsCompleted", 20)) {
       Util.printInfo("Customer details address saved successfully!");
     } else {
       AssertUtils.fail("Customer details section is still open. Could not save the address.");
