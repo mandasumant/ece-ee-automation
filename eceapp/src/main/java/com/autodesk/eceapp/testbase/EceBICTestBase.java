@@ -2036,13 +2036,13 @@ public class EceBICTestBase {
     selectPaymentProfile(data, paymentCardDetails, address);
     dismissChatPopup();
 
-    if ((data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
-            .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE))
-            && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
-      boolean status = populateBillingAddress(address, data);
-      if (status) {
-        data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
-      }
+    // Enter billing details
+    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
+            .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+      debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
+      populateBillingAddress(address, data);
+      data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+      debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
 
     if (paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
@@ -2071,12 +2071,6 @@ public class EceBICTestBase {
         data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser") && !paymentMethod.equalsIgnoreCase(
         BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
-    } else if ((data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
-        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE))
-        && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
-      debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
-      populateBillingAddress(address, data);
-      debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
     }
   }
 
