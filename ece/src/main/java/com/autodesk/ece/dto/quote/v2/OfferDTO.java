@@ -2,11 +2,9 @@ package com.autodesk.ece.dto.quote.v2;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class OfferDTO {
   private OfferItemDTO term;
   private OfferItemDTO accessModel;
@@ -33,22 +31,60 @@ public class OfferDTO {
       "premium_no_support", new OfferItemDTO("PREMNS", "Premium No Support")
   );
 
-  public static OfferItemDTO getTerm(final String term) {
-    return terms.get(term.toLowerCase());
+  public OfferDTO(OfferItemDTO term, OfferItemDTO accessModel, OfferItemDTO connectivity, OfferItemDTO servicePlanId, OfferItemDTO intendedUsage) {
+    this.term = term;
+    this.accessModel = accessModel;
+    this.connectivity = connectivity;
+    this.servicePlanId = servicePlanId;
+    this.intendedUsage = intendedUsage;
   }
-  public static OfferItemDTO getIntendedUsage(final String usage) {
-    return intendedUsages.get(usage.toLowerCase());
+
+  public static OfferDTOBuilder builder() {
+    return new OfferDTOBuilder();
   }
-  public static OfferItemDTO getServicePlanId(final String plan) {
-    return servicePlans.get(plan.toLowerCase());
-  }
-  public static OfferItemDTO getOnlineConnectivity() {
-    return new OfferItemDTO("C100", "Online");
-  }
-  public static OfferItemDTO getSingleUserAccessModel() {
-    return new OfferItemDTO("SU", "Single User");
-  }
-  public static OfferItemDTO getFlexAccessModel() {
-    return new OfferItemDTO("F", "Flex");
+
+  public static class OfferDTOBuilder {
+    private OfferItemDTO term;
+    private OfferItemDTO accessModel;
+    private OfferItemDTO connectivity;
+    private OfferItemDTO servicePlanId;
+    private OfferItemDTO intendedUsage;
+
+    public OfferDTOBuilder() {
+    }
+
+    public OfferDTOBuilder term(String term) {
+      this.term = terms.get(term.toLowerCase());
+      return this;
+    }
+
+    public OfferDTOBuilder flexAccessModel() {
+      this.accessModel = new OfferItemDTO("F", "Flex");
+      return this;
+    }
+
+    public OfferDTOBuilder singleUserAccessModel() {
+      this.accessModel = new OfferItemDTO("SU", "Single User");
+      return this;
+    }
+
+    public OfferDTOBuilder connectivity() {
+      this.connectivity = new OfferItemDTO("C100", "Online");
+      return this;
+    }
+
+    public OfferDTOBuilder servicePlanId(String servicePlanId) {
+      this.servicePlanId = servicePlans.get(servicePlanId);
+      return this;
+    }
+
+    public OfferDTOBuilder intendedUsage(String intendedUsage) {
+      this.intendedUsage = intendedUsages.get(intendedUsage.toLowerCase());
+      return this;
+    }
+
+    public OfferDTO build() {
+      return new OfferDTO(this.term, this.accessModel, this.connectivity, this.servicePlanId, this.intendedUsage);
+    }
   }
 }

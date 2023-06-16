@@ -31,11 +31,11 @@ public class PwsQuoteDataBuilder {
     List<LineItemDTO> lineItems = new ArrayList<>();
     quoteListMap.forEach(quoteMap -> {
       OfferDTO offer = OfferDTO.builder()
-          .term(OfferDTO.getTerm(quoteMap.get("term")))
-          .intendedUsage(OfferDTO.getIntendedUsage(quoteMap.get("usage")))
-          .servicePlanId(OfferDTO.getServicePlanId(quoteMap.get("plan")))
-          .connectivity(OfferDTO.getOnlineConnectivity())
-          .accessModel(OfferDTO.getSingleUserAccessModel())
+          .term(quoteMap.get("term"))
+          .intendedUsage(quoteMap.get("usage"))
+          .servicePlanId(quoteMap.get("plan"))
+          .connectivity()
+          .singleUserAccessModel()
           .build();
       LineItemDTO lineItem = LineItemDTO.builder()
           .offeringId(quoteMap.get("offering_id"))
@@ -55,11 +55,11 @@ public class PwsQuoteDataBuilder {
   private List<LineItemDTO> getFlexLineItems(Boolean isMultiLineItem, LinkedHashMap<String, String> data) {
     List<LineItemDTO> lineItems = new ArrayList<>();
     OfferDTO offer = OfferDTO.builder()
-        .term(OfferDTO.getTerm(data.get(BICECEConstants.TERM)))
-        .accessModel(OfferDTO.getFlexAccessModel())
-        .servicePlanId(OfferDTO.getServicePlanId("standard"))
-        .intendedUsage(OfferDTO.getIntendedUsage("commercial"))
-        .connectivity(OfferDTO.getOnlineConnectivity())
+        .term(data.get(BICECEConstants.TERM))
+        .flexAccessModel()
+        .servicePlanId("standard")
+        .intendedUsage("commercial")
+        .connectivity()
         .build();
 
     LineItemDTO lineItem = LineItemDTO.builder()
