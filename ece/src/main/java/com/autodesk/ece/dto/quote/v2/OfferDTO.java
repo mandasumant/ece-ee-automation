@@ -33,15 +33,22 @@ public class OfferDTO {
       "premium_no_support", new OfferItemDTO("PREMNS", "Premium No Support")
   );
 
-  public static Map<String, OfferItemDTO> getTermsMap() {
-    return terms;
+  public static OfferItemDTO getTerm(final String term) {
+    return terms.get(term.toLowerCase());
   }
-
-  public static Map<String, OfferItemDTO> getUsagesMap() {
-    return intendedUsages;
+  public static OfferItemDTO getIntendedUsage(final String usage) {
+    return intendedUsages.get(usage.toLowerCase());
   }
-
-  public static Map<String, OfferItemDTO> getServicePlanMaps() {
-    return servicePlans;
+  public static OfferItemDTO getServicePlanId(final String plan) {
+    return servicePlans.get(plan.toLowerCase());
+  }
+  public static OfferItemDTO getOnlineConnectivity() {
+    return new OfferItemDTO("C100", "Online");
+  }
+  public static OfferItemDTO getSingleUserAccessModel() {
+    return new OfferItemDTO("SU", "Single User");
+  }
+  public static OfferItemDTO getFlexAccessModel() {
+    return new OfferItemDTO("F", "Flex");
   }
 }

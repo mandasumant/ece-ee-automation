@@ -2,7 +2,6 @@ package com.autodesk.ece.testbase.service.quote;
 
 import com.autodesk.ece.dto.quote.v2.LineItemDTO;
 import com.autodesk.ece.dto.quote.v2.OfferDTO;
-import com.autodesk.ece.dto.quote.v2.OfferItemDTO;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.utilities.StringUtil;
 import java.util.ArrayList;
@@ -32,11 +31,11 @@ public class PwsQuoteDataBuilder {
     List<LineItemDTO> lineItems = new ArrayList<>();
     quoteListMap.forEach(quoteMap -> {
       OfferDTO offer = OfferDTO.builder()
-          .term(OfferDTO.getTermsMap().get(quoteMap.get("term")))
-          .intendedUsage(OfferDTO.getUsagesMap().get(quoteMap.get("usage")))
-          .servicePlanId(OfferDTO.getServicePlanMaps().get(quoteMap.get("plan")))
-          .connectivity(new OfferItemDTO("C100", "Online"))
-          .accessModel(new OfferItemDTO("SU", "Single User"))
+          .term(OfferDTO.getTerm(quoteMap.get("term")))
+          .intendedUsage(OfferDTO.getIntendedUsage(quoteMap.get("usage")))
+          .servicePlanId(OfferDTO.getServicePlanId(quoteMap.get("plan")))
+          .connectivity(OfferDTO.getOnlineConnectivity())
+          .accessModel(OfferDTO.getSingleUserAccessModel())
           .build();
       LineItemDTO lineItem = LineItemDTO.builder()
           .offeringId(quoteMap.get("offering_id"))
@@ -56,11 +55,11 @@ public class PwsQuoteDataBuilder {
   private List<LineItemDTO> getFlexLineItems(Boolean isMultiLineItem, LinkedHashMap<String, String> data) {
     List<LineItemDTO> lineItems = new ArrayList<>();
     OfferDTO offer = OfferDTO.builder()
-        .term(OfferDTO.getTermsMap().get(data.get(BICECEConstants.TERM)))
-        .accessModel(new OfferItemDTO("F", "Flex"))
-        .servicePlanId(new OfferItemDTO("STND", "Standard"))
-        .intendedUsage(new OfferItemDTO("COM", "Commercial"))
-        .connectivity(new OfferItemDTO("C100", "Online"))
+        .term(OfferDTO.getTerm(data.get(BICECEConstants.TERM)))
+        .accessModel(OfferDTO.getFlexAccessModel())
+        .servicePlanId(OfferDTO.getServicePlanId("standard"))
+        .intendedUsage(OfferDTO.getIntendedUsage("commercial"))
+        .connectivity(OfferDTO.getOnlineConnectivity())
         .build();
 
     LineItemDTO lineItem = LineItemDTO.builder()
