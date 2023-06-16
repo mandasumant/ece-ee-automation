@@ -9,8 +9,14 @@ import java.util.LinkedHashMap;
 public class PWSTestBase {
   private final QuoteService quoteService;
 
-  public PWSTestBase(final String pwsClientId, final String pwsClientSecret, final String pwsHostname) {
-    this.quoteService = QuoteServiceBuilder.build(pwsClientId, pwsClientSecret, pwsHostname);
+  public PWSTestBase(
+      final String pwsClientId,
+      final String pwsClientSecret,
+      final String pwsClientId_v2,
+      final String pwsClientSecret_v2,
+      final String pwsHostname) {
+    this.quoteService = QuoteServiceBuilder.build(
+        pwsClientId, pwsClientSecret, pwsClientId_v2, pwsClientSecret_v2, pwsHostname);
   }
 
   public static String getQuoteStartDateAsString() {

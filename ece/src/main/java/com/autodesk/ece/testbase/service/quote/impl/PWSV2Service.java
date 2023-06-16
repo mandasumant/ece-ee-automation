@@ -5,14 +5,13 @@ import com.autodesk.ece.dto.quote.AgentAccountDTO;
 import com.autodesk.ece.dto.quote.AgentContactDTO;
 import com.autodesk.ece.dto.quote.EndCustomerDTO;
 import com.autodesk.ece.dto.quote.FinalizeQuoteDTO;
-import com.autodesk.ece.dto.quote.v2.OfferDTO;
 import com.autodesk.ece.dto.PWSAccessInfo;
 import com.autodesk.ece.dto.quote.PurchaserDTO;
 import com.autodesk.ece.dto.QuoteDetails;
 import com.autodesk.ece.dto.quote.v2.LineItemDTO;
-import com.autodesk.ece.dto.quote.v2.OfferItemDTO;
 import com.autodesk.ece.dto.quote.v2.PrimaryAdminDTO;
 import com.autodesk.ece.dto.quote.v2.QuoteDTO;
+import com.autodesk.ece.testbase.service.quote.PwsQuoteDataBuilder;
 import com.autodesk.ece.testbase.service.quote.QuoteService;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.utilities.Address;
@@ -26,7 +25,6 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBodyExtractionOptions;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -60,9 +58,7 @@ public class PWSV2Service implements QuoteService {
     PrimaryAdminDTO primaryAdmin = new PrimaryAdminDTO(agentContactEmail);
     AgentAccountDTO agentAccount = new AgentAccountDTO(csn);
 
-    List<LineItemDTO> lineItems = data.get(BICECEConstants.QUOTE_SUS_PRODUCT) != null
-        ? PwsQuoteDataBuilder.getLineItems(data.get(BICECEConstants.QUOTE_SUS_PRODUCT), data.get(BICECEConstants.TERM))
-        : getFlexLineItems(isMultiLineItem, data);
+    List<LineItemDTO> lineItems = PwsQuoteDataBuilder.getLineItems(data, isMultiLineItem);
 
     EndCustomerDTO endCustomer = null;
     if (System.getProperty("existingCSN") != null) {
@@ -117,7 +113,6 @@ public class PWSV2Service implements QuoteService {
     Util.printInfo("Create Quote Payload: " + payloadBody);
     Util.printInfo("Headers: " + pwsRequestHeaders);
 
-    // This has version 2
     Response response = given()
         .headers(pwsRequestHeaders)
         .body(payloadBody)
@@ -162,7 +157,9 @@ public class PWSV2Service implements QuoteService {
   }
 
   protected String getCreateQuoteUrl(final String hostname) {
-    return MessageFormat.format("https://{0}/v2/quotes", hostname);
+    final String createQuoteURL = MessageFormat.format("https://{0}/v2/quotes", hostname);
+    Util.printInfo("Create Quote URL: " + createQuoteURL);
+    return createQuoteURL;
   }
 
   @Step("Finalize Quote" + GlobalConstants.TAG_TESTINGHUB)
@@ -182,10 +179,13 @@ public class PWSV2Service implements QuoteService {
 
     Util.sleep(60000);
 
+    final String finalizeQuoteURL = MessageFormat.format("https://{0}/v1/quotes/finalize", hostname);
+    Util.printInfo("Finalize Quote URL: " + finalizeQuoteURL);
+
     Response response = given()
         .body(finalizeBody)
         .headers(pwsRequestHeaders)
-        .put(MessageFormat.format("https://{0}/v1/quotes/finalize", hostname))
+        .put(finalizeQuoteURL)
         .then().extract().response();
 
     Util.printInfo("The finalize response headers: " + response.getHeaders());
@@ -243,9 +243,12 @@ public class PWSV2Service implements QuoteService {
   }
 
   private Response getQuoteStatus(Map<String, String> headers, String transactionId) {
+    final String getQuoteStatusUrl = MessageFormat.format("https://{0}/v1/quotes/status?transactionId={1}", hostname, transactionId);
+    Util.printInfo("Get Quote Status URL: " + getQuoteStatusUrl);
+
     return given()
         .headers(headers)
-        .get(MessageFormat.format("https://{0}/v1/quotes/status?transactionId={1}", hostname, transactionId))
+        .get(getQuoteStatusUrl)
         .then().extract().response();
   }
   @Step("Get Quote" + GlobalConstants.TAG_TESTINGHUB)
@@ -272,7 +275,6 @@ public class PWSV2Service implements QuoteService {
       put("timezone_city", System.getProperty("timezone"));
     }};
 
-    // This has version 2
     return given()
         .headers(newHeaders)
         .get(getQuoteDetailsUrl(hostname, quoteNo))
@@ -280,7 +282,10 @@ public class PWSV2Service implements QuoteService {
   }
 
   protected String getQuoteDetailsUrl(final String hostname, final String quoteNo) {
-    return MessageFormat.format("https://{0}/v2/quotes?filter[quoteNumber]={1}", hostname, quoteNo);
+    final String getQuoteDetailsURL = MessageFormat.format("https://{0}/v2/quotes?filter[quoteNumber]={1}", hostname, quoteNo);
+    Util.printInfo("Get Quote Details URL: " + getQuoteDetailsURL);
+
+    return getQuoteDetailsURL;
   }
 
   private QuoteDetails createObjectFromJsonPath(final JsonPath jsonPath) {
@@ -294,42 +299,5 @@ public class PWSV2Service implements QuoteService {
       .endCustomerCountryCode(jsonPath.getString("endCustomer.countryCode"))
       .endCustomerPostalCode(jsonPath.getString("endCustomer.postalCode"))
       .build();
-  }
-
-  private List<LineItemDTO> getFlexLineItems(Boolean isMultiLineItem, LinkedHashMap<String, String> data) {
-    List<LineItemDTO> lineItems = new ArrayList<>();
-    OfferDTO offer = OfferDTO.builder()
-        .term(OfferDTO.getTermCodeMap().get(data.get(BICECEConstants.TERM)))
-        .accessModel(new OfferItemDTO("F", "Flex"))
-        .servicePlanId(new OfferItemDTO("STND", "Standard"))
-        .intendedUsage(new OfferItemDTO("COM", "Commercial"))
-        .connectivity(new OfferItemDTO("C100", "Online"))
-        .build();
-
-    LineItemDTO lineItem = LineItemDTO.builder()
-        .offeringId(data.get(BICECEConstants.OFFERING_ID))
-        .action("New")
-        .quantity(Integer.valueOf(data.get(BICECEConstants.FLEX_TOKENS)))
-        .offer(offer)
-        .build();
-    lineItems.add(lineItem);
-
-    if (isMultiLineItem) {
-      if (System.getProperty("quantity2") != null) {
-        data.put(BICECEConstants.FLEX_TOKENS, System.getProperty("quantity2"));
-      } else {
-        data.put(BICECEConstants.FLEX_TOKENS, "4000");
-      }
-
-      LineItemDTO lineItemTwo = LineItemDTO.builder()
-          .offeringId(data.get(BICECEConstants.OFFERING_ID))
-          .action("New")
-          .quantity(Integer.valueOf(data.get(BICECEConstants.FLEX_TOKENS)))
-          .offer(offer)
-          .build();
-      lineItems.add(lineItemTwo);
-    }
-
-    return lineItems;
   }
 }

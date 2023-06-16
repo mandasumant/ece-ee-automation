@@ -225,7 +225,7 @@ public class BICECEConstants extends BICConstants {
   public static final String SUBMIT_PAYMENT_BUTTON = "submitPaymentButton";
   public static final String LOC_TEST_NAME = "LOC_ORDER";
   public static final String QUOTE_TEST_NAME = "QUOTE";
-  public static final String QUOTE_SUS_PRODUCT = "QUOTE_SUS_PRODUCT";
+  public static final String QUOTE_LINE_ITEMS = "quoteLineItems";
   public static final String PROJECT78_PUSH_FLAG = "pushToDataStore";
   public static final String PROJECT78_PULL_FLAG = "pullFromDataStore";
   public static final String IS_MULTILINE = "isMultiLineItem";

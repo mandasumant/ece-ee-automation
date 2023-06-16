@@ -77,6 +77,8 @@ default:
 
   pwsClientId: "sR8Ye2YBRq5QAnUIiOxKWw0J3a92tDVJ"
   pwsClientSecret: "+iFsysMrCCnJ84IqILULBg==:XEzSSr6nNaqPuBwIxnd/xIQP1LQVOgUETN/CGCZRohk="
+  pwsClientId_v2: "IuQtpU6mP8AkA1jM1eMUKpHeUimRrgEF"
+  pwsClientSecret_v2: "qV3JAx23eTm6Rw/L7iFQ6Q==:erm21aDDudVT3Lbr2iu2cosqq6lvL884VbM8m9/oKwI="
   pwsHostname: "enterprise-api-int.autodesk.com"
   quoteAgentCsnAccount: "5109330358"
   agentContactEmail: "partneruser_da_int_5109330358@letscheck.email"

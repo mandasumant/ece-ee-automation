@@ -11,6 +11,7 @@ import com.autodesk.ece.dto.quote.v1.QuoteDTO;
 import com.autodesk.ece.testbase.service.quote.QuoteService;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.utilities.Address;
+import com.autodesk.testinghub.core.utils.Util;
 import com.google.gson.Gson;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -33,7 +34,9 @@ public class PWSV1Service extends PWSV2Service implements QuoteService {
 
   @Override
   protected String getCreateQuoteUrl(final String hostname) {
-    return MessageFormat.format("https://{0}/v1/quotes", hostname);
+    final String createQuoteURL = MessageFormat.format("https://{0}/v1/quotes", hostname);
+    Util.printInfo("Create Quote URL: " + createQuoteURL);
+    return createQuoteURL;
   }
 
   @Override
@@ -43,7 +46,9 @@ public class PWSV1Service extends PWSV2Service implements QuoteService {
 
   @Override
   protected String getQuoteDetailsUrl(final String hostname, final String quoteNo) {
-    return MessageFormat.format("https://{0}/v1/quotes?quoteNumber={1}", hostname, quoteNo);
+    final String getQuoteDetailsURL = MessageFormat.format("https://{0}/v1/quotes?quoteNumber={1}", hostname, quoteNo);
+    Util.printInfo("Get Quote Details URL: " + getQuoteDetailsURL);
+    return getQuoteDetailsURL;
   }
 
   @Override
