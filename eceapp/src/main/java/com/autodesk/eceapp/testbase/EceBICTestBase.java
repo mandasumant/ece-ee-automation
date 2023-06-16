@@ -2654,7 +2654,7 @@ public class EceBICTestBase {
     Util.printInfo("Successfully logged in");
   }
 
-  private String[] getCardPaymentDetails(String paymentMethod) {
+  public String[] getCardPaymentDetails(String paymentMethod) {
     debugPageUrl(BICECEConstants.ENTER_PAYMENT_DETAILS);
     return getPaymentDetails(paymentMethod.toUpperCase()).split("@");
   }
