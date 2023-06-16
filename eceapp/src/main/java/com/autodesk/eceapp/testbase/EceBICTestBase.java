@@ -2450,10 +2450,12 @@ public class EceBICTestBase {
       bicPage.waitForPageToLoad();
       validateNetworkLogsOnEachPage(URL);
     } catch (Exception e) {
+      e.printStackTrace();
       try {
         retryLoadingURL(URL);
         bicPage.waitForPageToLoad();
       } catch (Exception e1) {
+        e1.printStackTrace();
         AssertUtils.fail("Failed to load and get url :: " + URL);
       }
     }
