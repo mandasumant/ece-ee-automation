@@ -1,6 +1,7 @@
 package com.autodesk.ece.testbase;
 
 import com.autodesk.eceapp.testbase.EceBICTestBase;
+import com.autodesk.eceapp.testbase.EcePortalTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
@@ -27,7 +28,7 @@ public class ECETestBase {
   protected static EseSAPTestBase saptb = null;
   protected EseSFDCTestBase sfdctb = null;
   protected EseSOAPTestBase soaptb = null;
-  protected PortalTestBase portaltb = null;
+  protected EcePortalTestBase portaltb = null;
   protected DynamoDBValidation dynamotb = null;
   protected ApigeeTestBase resttb = null;
   protected PelicanTestBase pelicantb = null;
@@ -47,7 +48,7 @@ public class ECETestBase {
     dbValtb = new DBValidations();
     sfdctb = new EseSFDCTestBase(webdriver);
     soaptb = new EseSOAPTestBase();
-    portaltb = new PortalTestBase(testbase);
+    portaltb = new EcePortalTestBase(testbase);
     resttb = new ApigeeTestBase();
     dynamotb = new DynamoDBValidation();
     pelicantb = new PelicanTestBase();
@@ -72,8 +73,8 @@ public class ECETestBase {
     return testbase.getdriver();
   }
 
-  public PortalTestBase getPortalTestBase() {
-    return new PortalTestBase(testbase);
+  public EcePortalTestBase getPortalTestBase() {
+    return new EcePortalTestBase(testbase);
   }
 
   public EceBICTestBase getBicTestBase() {

@@ -1,10 +1,8 @@
-package com.autodesk.ece.testbase;
+package com.autodesk.eceapp.testbase;
 
 import static java.util.Objects.isNull;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
-import com.autodesk.eceapp.testbase.EceBICTestBase;
-import com.autodesk.eceapp.testbase.EceZipPayTestBase;
 import com.autodesk.eceapp.utilities.NumberUtil;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
@@ -48,7 +46,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
-public class PortalTestBase {
+public class EcePortalTestBase {
 
   private final Page_ portalPage;
   private final String accountsPortalOrdersInvoicesUrl;
@@ -64,7 +62,7 @@ public class PortalTestBase {
   private final EceBICTestBase bicTestBase;
   public WebDriver driver = null;
 
-  public PortalTestBase(GlobalTestBase testbase) {
+  public EcePortalTestBase(GlobalTestBase testbase) {
     driver = testbase.getdriver();
     portalPage = testbase.createPageForApp("PAGE_PORTAL", EceAppConstants.APP_NAME);
     bicTestBase = new EceBICTestBase(driver, testbase);
