@@ -231,6 +231,11 @@ validateBicQuoteOrder:
   accessModel: "Flex"
   productType: "flex"
 
+validateQuoteOrder:
+  term: "Annual"
+  accessModel: "S"
+  productType: "flex"
+
 validateQuoteRefundOrder:
   term: "Annual"
   accessModel: "Flex"

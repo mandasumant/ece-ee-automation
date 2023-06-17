@@ -2,6 +2,9 @@ package com.autodesk.eceapp.testbase;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
+import com.autodesk.eceapp.dto.PayerDetails;
+import com.autodesk.eceapp.dto.ProductDetails;
+import com.autodesk.eceapp.dto.PurchaserDetails;
 import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.eceapp.utilities.AnalyticsNetworkLogs;
 import com.autodesk.eceapp.utilities.NumberUtil;
@@ -14,6 +17,7 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.JsonParser;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.ScreenCapture;
+import com.autodesk.testinghub.core.utils.SoftAssertUtil;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.testbase.EseSAPTestBase;
@@ -26,6 +30,7 @@ import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -126,6 +131,115 @@ public class EceBICTestBase {
     strDate = sourceName + stk + timeStamp + "@" + emailDomain;
 
     return strDate.toLowerCase();
+  }
+
+  public static void assertProductInList(String productName, int quantity) {
+    // Assuming productDetailsList is a list of ProductDetails objects
+    List<ProductDetails> productDetailsList = generateProductList();
+
+    // Loop through the productDetailsList and check if the productName and quantity matches any of the products
+    for (ProductDetails productDetails : productDetailsList) {
+      if (productName.equals(productDetails.getProductName()) && quantity == productDetails.getQuantity()) {
+        System.out.println(
+            "Product name: " + productName + " is present in the list with its quantity " + quantity + ".");
+        return;
+      }
+    }
+
+    // If the product name and quantity are not found in the list, fail the assertion
+    Assert.fail("Product name: " + productName + " and quantity " + quantity + " are not present in the list.");
+  }
+
+  @Step("Generate Payer Details " + GlobalConstants.TAG_TESTINGHUB)
+  public static PayerDetails generatePayerDetails() {
+
+    PayerDetails payer = new PayerDetails(
+        "5501652284",
+        "testinghub-storeaus-02@letscheck.pw",
+        "259-262 Colchester Road",
+        "AutodeskAU@259-262 Colchester Road@Kilsyth South@3137@397202088@Australia@VIC",
+        "Kilsyth South",
+        "VIC",
+        "3137",
+        "AU",
+        "PlatformAutoEnAu",
+        "existing",
+        "1234567890",
+        true);
+
+    return payer;
+  }
+
+  public static List<ProductDetails> generateProductList() {
+    List<ProductDetails> productList = new ArrayList<>();
+
+    // Create and add the first product to the list
+    ProductDetails product1 = new ProductDetails("Flex", "Monthly", 5000);
+
+    // Consume the data and print out product details for each product in the list
+    for (ProductDetails product : productList) {
+      printProductDetails(product);
+    }
+
+    return productList;
+  }
+
+  public static List<ProductDetails> generateProductList2() {
+    List<ProductDetails> productList = new ArrayList<>();
+
+    // Create and add the first product to the list - Q-214964
+    ProductDetails product1 = new ProductDetails("3ds Max", "Monthly", 2);
+    productList.add(product1);
+
+    // Create and add the second product to the list
+    ProductDetails product2 = new ProductDetails("Fusion 360 CLOUD", "Annual", 10);
+    productList.add(product2);
+
+    // Create and add the third product to the list
+    ProductDetails product3 = new ProductDetails("Flex", "Annual", 1000);
+    productList.add(product3);
+
+    // Consume the data and print out product details for each product in the list
+    for (ProductDetails product : productList) {
+      printProductDetails(product);
+    }
+
+    return productList;
+  }
+
+  public static List<ProductDetails> generateProductList3() {
+    List<ProductDetails> productList = new ArrayList<>();
+
+    ProductDetails product1 = new ProductDetails("3ds Max", "Monthly", 1);
+    productList.add(product1);
+
+    // Consume the data and print out product details for each product in the list
+    for (ProductDetails product : productList) {
+      printProductDetails(product);
+    }
+
+    return productList;
+  }
+
+  @Step("Generate Purchaser Details " + GlobalConstants.TAG_TESTINGHUB)
+  public static PurchaserDetails generatePurchaserDetails() {
+    PurchaserDetails purchaser = new PurchaserDetails(
+        "testinghub-storeaus-02@letscheck.pw",
+        "PlatformAutoEnAu",
+        "FntestEnAu",
+        "LntestEnAu",
+        "English",
+        "397202088");
+
+    return purchaser;
+  }
+
+  public static void printProductDetails(ProductDetails productDetails) {
+    String productName = productDetails.getProductName();
+    int quantity = productDetails.getQuantity();
+
+    Util.printInfo("DTO Product Name: " + productName);
+    Util.printInfo("DTO Quantity: " + quantity);
   }
 
   @Step("get billing address")
@@ -518,9 +632,9 @@ public class EceBICTestBase {
         status = enterCustomerDetails(address);
       } else {
         String firstNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.FIRST_NAME)
-                .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
+            .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
         String lastNameXpath = bicPage.getFirstFieldLocator(BICECEConstants.LAST_NAME)
-                .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
+            .replace(BICECEConstants.PAYMENT_PROFILE, paymentProfile);
 
         bicPage.waitForFieldPresent(BICECEConstants.FIRSTNAME, 2000);
         clearTextInputValue(driver.findElement(By.xpath(firstNameXpath)));
@@ -626,6 +740,23 @@ public class EceBICTestBase {
       }
     } catch (Exception e) {
       Util.printTestFailedMessage("populateTaxIdForFlex");
+      AssertUtils.fail("Unable to Populate Tax Id ");
+    }
+  }
+
+  private void populateTaxIdForQuote() {
+    String taxId = System.getProperty(BICECEConstants.TAX_ID);
+
+    try {
+      if (taxId != null && !taxId.isEmpty()) {
+        if (bicPage.checkIfElementExistsInPage("taxIdForQuote", 5)) {
+          Util.printInfo("Populating tax id: " + taxId);
+          bicPage.populateField("taxIdForQuote", taxId);
+          waitForLoadingSpinnerToComplete("loadingSpinner");
+        }
+      }
+    } catch (Exception e) {
+      Util.printTestFailedMessage("populateTaxIdForQuote");
       AssertUtils.fail("Unable to Populate Tax Id ");
     }
   }
@@ -907,7 +1038,7 @@ public class EceBICTestBase {
 
   @Step("Populate Sepa payment details")
   public void populateSepaPaymentDetails(HashMap<String, String> data, String[] paymentCardDetails)
-          throws MetadataException {
+      throws MetadataException {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
     Util.printInfo("Clicking on Sepa tab.");
     JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -921,7 +1052,7 @@ public class EceBICTestBase {
     try {
       Util.printInfo("Waiting for Sepa header.");
       bicPage.waitForElementVisible(
-              bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
+          bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
 
       Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
       bicPage.clickUsingLowLevelActions("sepaIbanNumber");
@@ -958,7 +1089,7 @@ public class EceBICTestBase {
       }
 
       if (bicPage.checkIfElementExistsInPage("radioButtonFirstName", 10) || bicPage.checkIfElementExistsInPage(
-              "giropayPaymentTabFirstName", 10)) {
+          "giropayPaymentTabFirstName", 10)) {
         populateBillingAddress(address, data);
         Util.sleep(20000);
       } else if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 20)) {
@@ -1684,7 +1815,6 @@ public class EceBICTestBase {
         + currency;
   }
 
-
   @Step("Placing the Flex Order" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> placeFlexOrder(LinkedHashMap<String, String> data) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
@@ -1751,6 +1881,85 @@ public class EceBICTestBase {
           Util.printInfo("Placing Flex Order Attempt: " + attempt + " - Successful !");
         } else {
           Util.printInfo("Placing Flex Order Attempt: " + attempt + " - Failed !");
+          Util.sleep(60000);
+          driver.navigate().refresh();
+        }
+      } else {
+        if (Strings.isNotNullAndNotEmpty(data.get("isReturningUser"))) {
+          if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 10)) {
+            bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+            bicPage.waitForElementToDisappear("reviewLOCOrder", 15);
+          }
+          bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+          bicPage.waitForElementToDisappear(BICECEConstants.SUBMIT_ORDER_BUTTON, 15);
+        }
+        financingTestBase.setTestData(data);
+        financingTestBase.completeFinancingApplication(data);
+        break;
+      }
+    }
+
+    results.put(BICConstants.emailid, data.get(BICConstants.emailid));
+    results.put(BICConstants.orderNumber, orderNumber);
+
+    return results;
+  }
+
+  @Step("Placing the Flex Order" + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    String orderNumber = null;
+    Map<String, String> address = getBillingAddress(data);
+
+    int attempt = 0;
+    Boolean isOrderCaptured = false;
+    Util.printInfo("Checking for Continue button");
+
+    if (bicPage.checkIfElementExistsInPage("cartContinueButton", 10)) {
+      Util.printInfo("Clicking on Continue button");
+      bicPage.clickUsingLowLevelActions("cartContinueButton");
+    }
+
+    while (!isOrderCaptured) {
+
+      if (attempt > 10) {
+        Assert.fail("Retries exhausted \"Submit Order\" failed to place the Order.");
+      } else {
+        Util.printInfo("Placing Quote Order Attempt: " + attempt++);
+      }
+
+      if (Strings.isNotNullAndNotEmpty(data.get("isNonQuoteOrder"))) {
+        enterCustomerDetails(address);
+        data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+      } else {
+        populateTaxIdForQuote();
+      }
+
+      if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+        bicPage.clickUsingLowLevelActions("customerDetailsContinue");
+        bicPage.waitForElementToDisappear("customerDetailsContinue", 5);
+      }
+
+      String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
+
+      if (data.get("userType").equals("new")) {
+        enterBillingDetails(data, address, paymentMethod);
+      } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
+        paymentMethod = "LOC";
+        enterBillingDetails(data, address, paymentMethod);
+      }
+
+      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
+        if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
+          submitOrder(data, false);
+        }
+        orderNumber = getOrderNumber(data);
+        if (null != orderNumber) {
+          isOrderCaptured = true;
+          printConsole(orderNumber, data, address);
+          Util.printInfo("Placing Quote Order Attempt: " + attempt + " - Successful !");
+        } else {
+          Util.printInfo("Placing Quote Order Attempt: " + attempt + " - Failed !");
           Util.sleep(60000);
           driver.navigate().refresh();
         }
@@ -2038,7 +2247,7 @@ public class EceBICTestBase {
 
     // Enter billing details
     if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
-            .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
       data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
@@ -2066,7 +2275,7 @@ public class EceBICTestBase {
       }
     } else if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
-    } else if (data.get("isNonQuoteFlexOrder") != null &&
+    } else if (data.get("isNonQuoteOrder") != null &&
         data.get(BICECEConstants.BILLING_DETAILS_ADDED).equalsIgnoreCase(BICECEConstants.TRUE) &&
         data.get(BICECEConstants.USER_TYPE).equalsIgnoreCase("newUser") && !paymentMethod.equalsIgnoreCase(
         BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
@@ -2096,7 +2305,7 @@ public class EceBICTestBase {
 
   public boolean enterCustomerDetails(Map<String, String> address)
       throws MetadataException {
-    boolean status =false;
+    boolean status = false;
 
     if (bicPage.checkIfElementExistsInPage("companyNameField", 15)) {
       bicPage.populateField("companyNameField", address.get(BICECEConstants.ORGANIZATION_NAME));
@@ -2135,7 +2344,11 @@ public class EceBICTestBase {
     Util.sleep(2000);
 
     if (bicPage.checkIfElementExistsInPage("phoneNumberField", 10)) {
-      bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
+      String phoneNumber = driver.findElement(
+          By.xpath(bicPage.getFirstFieldLocator("phoneNumberField"))).getText();
+      if (phoneNumber == "") {
+        bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
+      }
     }
 
     populateTaxIdForFlex();
@@ -3196,6 +3409,143 @@ public class EceBICTestBase {
     AssertUtils.assertTrue(!miniCartDrawer.isDisplayed(), "Mini Cart is displayed");
 
     AssertUtils.assertEquals(currentURL, driver.getCurrentUrl());
+
+  }
+
+  @Step("Create Quote 2 Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createQuote2Order(LinkedHashMap<String, String> data)
+      throws MetadataException {
+    HashMap<String, String> results;
+
+    PurchaserDetails purchaserDetails = generatePurchaserDetails();
+    PayerDetails payerDetails = generatePayerDetails();
+
+    data.put(BICECEConstants.PAYMENT, data.get("paymentType"));
+    data.put("taxOptionEnabled", "Y");
+    data.put(BICECEConstants.FIRSTNAME, purchaserDetails.getFirstName());
+    data.put(BICECEConstants.LASTNAME, purchaserDetails.getFirstName());
+    data.put(BICECEConstants.ORGANIZATION_NAME, purchaserDetails.getName());
+
+    data.put(BICECEConstants.ADDRESS, payerDetails.getCompleteAddress());
+    // Note: company name String getRandomCompanyName()
+
+    PurchaserDetails purchaserDetailsObject = generatePurchaserDetails();
+
+    data.put(BICECEConstants.emailid, purchaserDetailsObject.getEmail());
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+
+    data.put("quote2OrderCartURL", getQuote2OrderCartURL(data));
+    navigateToQuoteCheckout(data);
+
+    if (bicPage.checkIfElementExistsInPage("createNewUserGUAC", 10)) {
+      loginToOxygen(data.get(BICECEConstants.emailid), password);
+    }
+
+    // Assert quote header text
+    String productListHeader = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("productListHeader"))).getText();
+    AssertUtils.assertEquals(productListHeader, "#" + data.get(BICECEConstants.QUOTE_ID));
+
+    assertProductDetails();
+
+    assertPurchaserDetails();
+
+    assertCustomerDetailsAddress();
+
+    ScreenCapture.getInstance().captureFullScreenshot();
+    Util.printInfo("Taking screenshot");
+
+    results = placeQuoteOrder(data);
+
+    ScreenCapture.getInstance().captureFullScreenshot();
+    Util.printInfo("Taking screenshot");
+
+    Util.sleep(5000);
+
+    return results;
+  }
+
+  public void assertCustomerDetailsAddress() {
+
+    PayerDetails payerDetails = generatePayerDetails();
+
+    // Find the end customer address elements value from customer details section
+    String companyName = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("customerDetailsCompany"))).getText();
+
+    String address = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("customerDetailsAddressLine"))).getText();
+
+    String cityStateZip = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("customerDetailsCityStateZip"))).getText();
+
+    String PayerCityStateZip =
+        payerDetails.getCity() + " " + payerDetails.getStateProvinceCode() + " " + payerDetails.getPostalCode();
+
+    SoftAssertUtil.assertEquals(companyName, payerDetails.getCompanyName());
+
+    SoftAssertUtil.assertEquals(address, payerDetails.getAddress());
+
+    SoftAssertUtil.assertEquals(cityStateZip, PayerCityStateZip);
+
+  }
+
+  public void assertPurchaserDetails() {
+
+    PurchaserDetails purchaserDetails = generatePurchaserDetails();
+
+    // Find the customer contact elements value from customer details section
+    String contactName = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("customerDetailsName"))).getText();
+
+    String contactEmail = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("customerDetailsEmail"))).getText();
+
+    String contactPhone = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("customerDetailsPhone"))).getText();
+
+    String purchaserCompleteName = purchaserDetails.getFirstName() + " " + purchaserDetails.getLastName();
+
+    SoftAssertUtil.assertEquals(contactName, purchaserCompleteName);
+
+    SoftAssertUtil.assertEquals(contactEmail, purchaserDetails.getEmail());
+
+    SoftAssertUtil.assertEquals(contactPhone, purchaserDetails.getPhone());
+
+  }
+
+  public void assertProductDetails() {
+    waitForLoadingSpinnerToComplete("loadingSpinner");
+
+    // Find the main container element containing the product details
+    WebElement accordionCart = driver.findElement(By.cssSelector("[data-testid=\"odm-accordion-cart\"]"));
+
+    // Find all product line items within the accordion cart
+    for (WebElement productLineItem : accordionCart.findElements(
+        By.xpath("//*[contains(@data-testid, \"product-line-item-\")]"))) {
+
+      // Find the element containing the product name within each line item
+      WebElement productNameElement = productLineItem.findElement(
+          By.cssSelector(".checkout--product-bar--info-column--name-sub-column--name"));
+
+      // Find the element containing the product quantity within each line item
+      WebElement productQuantityElement = productLineItem.findElement(
+          By.cssSelector("[data-testid=\"quantity-field\"]"));
+
+      // Get the actual product name text
+      String actualProductName = productNameElement.getText();
+      Util.printInfo("Cart Product Name: " + actualProductName);
+
+      // Get the actual product quantity text
+      String actualProductQuantity = productQuantityElement.getText();
+
+      // Get the actual quantity string and convert to int
+      int actualQuantity = Integer.parseInt(actualProductQuantity);
+      Util.printInfo("Cart Quantity: " + actualQuantity);
+
+      assertProductInList(actualProductName, actualQuantity);
+
+    }
 
   }
 
