@@ -10,7 +10,6 @@ import lombok.Builder;
 public @Builder
 class QuoteDTO {
   private String currency;
-  private PrimaryAdminDTO primaryAdmin;
   private AgentAccountDTO agentAccount;
   private AgentContactDTO agentContact;
   private EndCustomerDTO endCustomer;

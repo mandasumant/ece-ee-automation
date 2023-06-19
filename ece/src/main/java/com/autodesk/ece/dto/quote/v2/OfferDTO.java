@@ -64,7 +64,7 @@ public class OfferDTO {
     }
 
     public OfferDTOBuilder singleUserAccessModel() {
-      this.accessModel = new OfferItemDTO("SU", "Single User");
+      this.accessModel = new OfferItemDTO("S", "Single User");
       return this;
     }
 

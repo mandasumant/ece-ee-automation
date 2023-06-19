@@ -9,7 +9,6 @@ import com.autodesk.ece.dto.PWSAccessInfo;
 import com.autodesk.ece.dto.quote.PurchaserDTO;
 import com.autodesk.ece.dto.QuoteDetails;
 import com.autodesk.ece.dto.quote.v2.LineItemDTO;
-import com.autodesk.ece.dto.quote.v2.PrimaryAdminDTO;
 import com.autodesk.ece.dto.quote.v2.QuoteDTO;
 import com.autodesk.ece.testbase.service.quote.PwsQuoteDataBuilder;
 import com.autodesk.ece.testbase.service.quote.QuoteService;
@@ -55,7 +54,6 @@ public class PWSV2Service implements QuoteService {
     }
 
     AgentContactDTO agentContact = new AgentContactDTO(agentContactEmail);
-    PrimaryAdminDTO primaryAdmin = new PrimaryAdminDTO(agentContactEmail);
     AgentAccountDTO agentAccount = new AgentAccountDTO(csn);
 
     List<LineItemDTO> lineItems = PwsQuoteDataBuilder.getLineItems(data, isMultiLineItem);
@@ -70,7 +68,6 @@ public class PWSV2Service implements QuoteService {
     }
 
     QuoteDTO quote = QuoteDTO.builder()
-        .primaryAdmin(primaryAdmin)
         .lineItems(lineItems)
         .purchaser(purchaser)
         .endCustomer(endCustomer)
