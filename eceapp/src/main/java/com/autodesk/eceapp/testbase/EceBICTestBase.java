@@ -112,8 +112,12 @@ public class EceBICTestBase {
   }
 
   public static String generateUniqueEmailID(String emailDomain) {
-    String storeKey = System.getProperty("store").replace("-", "");
+    String storeKey = System.getProperty("store");
     String emailType = System.getProperty("emailType");
+
+    if (storeKey == null) {
+      storeKey = "";
+    }
 
     String sourceName = "thub";
     if (emailType != null && !emailType.isEmpty()) {
