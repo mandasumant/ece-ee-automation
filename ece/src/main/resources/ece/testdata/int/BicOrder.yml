@@ -235,8 +235,28 @@ validateBicQuoteOrder:
 
 validateQuoteOrder:
   term: "Annual"
-  accessModel: "S"
+  accessModel: "SU"
   productType: "flex"
+
+validateQuoteOrderFlex:
+  term: "Annual"
+  accessModel: "Flex"
+  productType: "flex"
+
+validateQuoteOrderMonthly:
+  term: "Monthly"
+  accessModel: "SU"
+  productType: "3ds max"
+
+validateQuoteOrderAnnual:
+  term: "Annual"
+  accessModel: "SU"
+  productType: "3ds max"
+
+validateQuoteOrderMYAB:
+  term: "3 Year"
+  accessModel: "SU"
+  productType: "3ds max"
 
 validateQuoteRefundOrder:
   term: "Annual"

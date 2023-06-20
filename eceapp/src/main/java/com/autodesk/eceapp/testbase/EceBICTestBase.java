@@ -1,5 +1,6 @@
 package com.autodesk.eceapp.testbase;
 
+import static com.autodesk.eceapp.constants.BICECEConstants.PASSWORD;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.dto.PayerDetails;
@@ -137,85 +138,64 @@ public class EceBICTestBase {
     return strDate.toLowerCase();
   }
 
-  public static void assertProductInList(String productName, int quantity) {
-    // Assuming productDetailsList is a list of ProductDetails objects
-    List<ProductDetails> productDetailsList = generateProductList();
+  public static void assertProductInList(List<ProductDetails> productDetailsList, String productName, String term,
+      int quantity) {
 
     // Loop through the productDetailsList and check if the productName and quantity matches any of the products
     for (ProductDetails productDetails : productDetailsList) {
-      if (productName.equals(productDetails.getProductName()) && quantity == productDetails.getQuantity()) {
-        System.out.println(
-            "Product name: " + productName + " is present in the list with its quantity " + quantity + ".");
+      if (productName.equals(productDetails.getProductName()) && term.equals(productDetails.getTerm())
+          && quantity == productDetails.getQuantity()) {
+        Util.printInfo(
+            "Product name: [" + productName + "] is present in the list with the term [" + term + "] and quantity ["
+                + quantity + "].");
         return;
       }
     }
 
     // If the product name and quantity are not found in the list, fail the assertion
-    Assert.fail("Product name: " + productName + " and quantity " + quantity + " are not present in the list.");
+    Assert.fail(
+        "Product name: [" + productName + "] is not present in the list with the term [" + term + "] and quantity ["
+            + quantity + "].");
   }
 
   @Step("Generate Payer Details " + GlobalConstants.TAG_TESTINGHUB)
   public static PayerDetails generatePayerDetails() {
 
     PayerDetails payer = new PayerDetails(
-        "5501652284",
-        "testinghub-storeaus-02@letscheck.pw",
-        "259-262 Colchester Road",
+        "5501665675",
+        "biz-thubstoreausdbiiwxecvkym@letscheck.pw",
+        "259-261 Colchester Road",
         "AutodeskAU@259-262 Colchester Road@Kilsyth South@3137@397202088@Australia@VIC",
         "Kilsyth South",
         "VIC",
         "3137",
         "AU",
-        "PlatformAutoEnAu",
-        "existing",
+        "XIZTLFFN",
+        "new",
         "1234567890",
         true);
 
     return payer;
   }
 
+  @Step("Generate Products Details " + GlobalConstants.TAG_TESTINGHUB)
   public static List<ProductDetails> generateProductList() {
     List<ProductDetails> productList = new ArrayList<>();
 
     // Create and add the first product to the list
-    ProductDetails product1 = new ProductDetails("Flex", "Monthly", 5000);
-
-    // Consume the data and print out product details for each product in the list
-    for (ProductDetails product : productList) {
-      printProductDetails(product);
-    }
-
-    return productList;
-  }
-
-  public static List<ProductDetails> generateProductList2() {
-    List<ProductDetails> productList = new ArrayList<>();
-
-    // Create and add the first product to the list - Q-214964
-    ProductDetails product1 = new ProductDetails("3ds Max", "Monthly", 2);
+    ProductDetails product1 = new ProductDetails("3ds Max", "1 year", 1);
     productList.add(product1);
 
-    // Create and add the second product to the list
-    ProductDetails product2 = new ProductDetails("Fusion 360 CLOUD", "Annual", 10);
-    productList.add(product2);
+//    ProductDetails product1 = new ProductDetails("3ds Max", "1 month", 3);
+//    productList.add(product1);
 
-    // Create and add the third product to the list
-    ProductDetails product3 = new ProductDetails("Flex", "Annual", 1000);
-    productList.add(product3);
-
-    // Consume the data and print out product details for each product in the list
-    for (ProductDetails product : productList) {
-      printProductDetails(product);
-    }
-
-    return productList;
-  }
-
-  public static List<ProductDetails> generateProductList3() {
-    List<ProductDetails> productList = new ArrayList<>();
-
-    ProductDetails product1 = new ProductDetails("3ds Max", "Monthly", 1);
-    productList.add(product1);
+//    // Create and add the second product to the list
+//    ProductDetails product2 = new ProductDetails("Fusion 360 CLOUD", "Annual", 10);
+//    productList.add(product2);
+//
+//    // Create and add the third product to the list
+//    ProductDetails product3 = new ProductDetails("Flex", "Annual", 1000);
+//    productList.add(product3);
 
     // Consume the data and print out product details for each product in the list
     for (ProductDetails product : productList) {
@@ -228,22 +208,24 @@ public class EceBICTestBase {
   @Step("Generate Purchaser Details " + GlobalConstants.TAG_TESTINGHUB)
   public static PurchaserDetails generatePurchaserDetails() {
     PurchaserDetails purchaser = new PurchaserDetails(
-        "testinghub-storeaus-02@letscheck.pw",
-        "PlatformAutoEnAu",
-        "FntestEnAu",
-        "LntestEnAu",
-        "English",
-        "397202088");
+        "biz-thubstoreausdbiiwxecvkym@letscheck.pw",
+        "XIZTLFFN",
+        "FNwClkOT",
+        "LNwClkOT",
+        "en",
+        "+4128008009");
 
     return purchaser;
   }
 
   public static void printProductDetails(ProductDetails productDetails) {
     String productName = productDetails.getProductName();
+    String productTerm = productDetails.getTerm();
     int quantity = productDetails.getQuantity();
 
-    Util.printInfo("DTO Product Name: " + productName);
-    Util.printInfo("DTO Quantity: " + quantity);
+    Util.printInfo("Product Name: " + productName);
+    Util.printInfo("Term: " + productTerm);
+    Util.printInfo("Quantity: " + quantity);
   }
 
   @Step("get billing address")
@@ -449,7 +431,7 @@ public class EceBICTestBase {
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 30000);
     bicPage.click(BICECEConstants.LOGIN_PASSWORD);
     bicPage.populateField(BICECEConstants.LOGIN_PASSWORD,
-        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)));
+        ProtectedConfigFile.decrypt(data.get(PASSWORD)));
 
     bicPage.waitForField(BICECEConstants.LOGIN_BUTTON, true, 30000);
     bicPage.clickToSubmit(BICECEConstants.LOGIN_BUTTON, 10000);
@@ -1796,7 +1778,7 @@ public class EceBICTestBase {
     String quantity = "";
     String userType = data.get(BICECEConstants.USER_TYPE);
     String region = data.get(BICECEConstants.REGION);
-    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+    String password = ProtectedConfigFile.decrypt(data.get(PASSWORD));
     String promoCode1 = data.get(BICECEConstants.PROMO_CODE);
 
     String emailID = generateUniqueEmailID();
@@ -1943,12 +1925,6 @@ public class EceBICTestBase {
 
     int attempt = 0;
     Boolean isOrderCaptured = false;
-    Util.printInfo("Checking for Continue button");
-
-    if (bicPage.checkIfElementExistsInPage("cartContinueButton", 10)) {
-      Util.printInfo("Clicking on Continue button");
-      bicPage.clickUsingLowLevelActions("cartContinueButton");
-    }
 
     while (!isOrderCaptured) {
 
@@ -1958,54 +1934,35 @@ public class EceBICTestBase {
         Util.printInfo("Placing Quote Order Attempt: " + attempt++);
       }
 
-      if (Strings.isNotNullAndNotEmpty(data.get("isNonQuoteOrder"))) {
-        enterCustomerDetails(address);
-        data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
-      } else {
-        populateTaxIdForQuote();
-      }
+      populateTaxIdForQuote();
 
       if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 10)) {
+        Util.printInfo("Clicking on Continue button from customer details section");
         bicPage.clickUsingLowLevelActions("customerDetailsContinue");
-        bicPage.waitForElementToDisappear("customerDetailsContinue", 5);
       }
 
       String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
-      if (data.get("userType").equals("new")) {
-        enterBillingDetails(data, address, paymentMethod);
+      if (data.get("userType").equals("newUser")) {
+        enterBillingDetailsForQuote(data, address, paymentMethod);
       } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
         paymentMethod = "LOC";
-        enterBillingDetails(data, address, paymentMethod);
+        enterBillingDetailsForQuote(data, address, paymentMethod);
       }
 
-      if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-        if (!paymentMethod.equals(BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
-          submitOrder(data, false);
-        }
-        orderNumber = getOrderNumber(data);
-        if (null != orderNumber) {
-          isOrderCaptured = true;
-          printConsole(orderNumber, data, address);
-          Util.printInfo("Placing Quote Order Attempt: " + attempt + " - Successful !");
-        } else {
-          Util.printInfo("Placing Quote Order Attempt: " + attempt + " - Failed !");
-          Util.sleep(60000);
-          driver.navigate().refresh();
-        }
+      submitOrder(data, false);
+
+      orderNumber = getOrderNumber(data);
+      if (null != orderNumber) {
+        isOrderCaptured = true;
+        printConsole(orderNumber, data, address);
+        Util.printInfo("Placing Quote Order Attempt: " + attempt + " - Successful !");
       } else {
-        if (Strings.isNotNullAndNotEmpty(data.get("isReturningUser"))) {
-          if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 10)) {
-            bicPage.clickUsingLowLevelActions("reviewLOCOrder");
-            bicPage.waitForElementToDisappear("reviewLOCOrder", 15);
-          }
-          bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
-          bicPage.waitForElementToDisappear(BICECEConstants.SUBMIT_ORDER_BUTTON, 15);
-        }
-        financingTestBase.setTestData(data);
-        financingTestBase.completeFinancingApplication(data);
-        break;
+        Util.printInfo("Placing Quote Order Attempt: " + attempt + " - Failed !");
+        Util.sleep(60000);
+        driver.navigate().refresh();
       }
+
     }
 
     results.put(BICConstants.emailid, data.get(BICConstants.emailid));
@@ -2116,7 +2073,7 @@ public class EceBICTestBase {
     String emailID = generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
     createBICAccount(names, data.get(BICECEConstants.emailid),
-        ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD)), false);
+        ProtectedConfigFile.decrypt(data.get(PASSWORD)), false);
     data.putAll(names.getMap());
     String oxygenId = driver.manage().getCookieNamed("identity-sso").getValue();
     data.put(BICConstants.oxid, oxygenId);
@@ -2324,6 +2281,41 @@ public class EceBICTestBase {
         BICECEConstants.PAYMENT_TYPE_GIROPAY)) {
       clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
     }
+  }
+
+  public void enterBillingDetailsForQuote(LinkedHashMap<String, String> data,
+      Map<String, String> address, String paymentMethod) throws MetadataException {
+    String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
+    dismissChatPopup();
+    if (bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
+      bicPage.clickUsingLowLevelActions("paymentEditBtn");
+      bicPage.clickUsingLowLevelActions("editPaymentDetails");
+      waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
+    selectPaymentProfile(data, paymentCardDetails, address);
+    dismissChatPopup();
+
+    // Enter billing details
+    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+      debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
+      populateBillingAddress(address, data);
+      data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
+      debugPageUrl(BICECEConstants.AFTER_ENTERING_BILLING_DETAILS);
+    }
+
+    try {
+      if (bicPage.checkIfElementExistsInPage("savePaymentProfile", 20)) {
+        bicPage.clickUsingLowLevelActions("savePaymentProfile");
+      } else if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 20)) {
+        bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+      } else if (null != data.get(BICECEConstants.QUOTE_ID) && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
+        clickOnContinueBtn(System.getProperty(BICECEConstants.PAYMENT));
+      }
+    } catch (MetadataException e) {
+      throw new RuntimeException(e);
+    }
+
   }
 
   public void enterPayInvoiceBillingDetails(LinkedHashMap<String, String> data,
@@ -2754,7 +2746,7 @@ public class EceBICTestBase {
   @Step("Guac: Test Trial Download  " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> testCjtTrialDownloadUI(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<String, String>();
-    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+    String password = ProtectedConfigFile.decrypt(data.get(PASSWORD));
 
     try {
       String constructDotComURL = data.get("guacDotComBaseURL") + ".com/products/autocad/trial-intake";
@@ -3384,7 +3376,7 @@ public class EceBICTestBase {
     HashMap<String, String> results = new HashMap<>();
     Map<String, String> address = null;
     String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
-    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+    String password = ProtectedConfigFile.decrypt(data.get(PASSWORD));
     String emailID = generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
     data.put(BICECEConstants.MINI_CART_MULTI_PRODUCT, "true");
@@ -3456,26 +3448,29 @@ public class EceBICTestBase {
   }
 
   @Step("Create Quote 2 Order " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> createQuote2Order(LinkedHashMap<String, String> data)
+  public HashMap<String, String> createQuote2Order(LinkedHashMap<String, String> data,
+      List<ProductDetails> productDetailsList, PurchaserDetails purchaserDetails, PayerDetails payerDetails)
       throws MetadataException {
     HashMap<String, String> results;
 
-    PurchaserDetails purchaserDetails = generatePurchaserDetails();
-    PayerDetails payerDetails = generatePayerDetails();
+    //Required: quote_id needs to be available from data
+    //data.put(BICECEConstants.QUOTE_ID, "Q-236962");
+    if (Strings.isNotNullAndNotEmpty(data.get("quote_id"))) {
+      data.put(BICECEConstants.QUOTE_ID, data.get("quote_id"));
+    } else {
+      AssertUtils.fail("Quote id is missing");
+    }
 
     data.put(BICECEConstants.PAYMENT, data.get("paymentType"));
-    data.put("taxOptionEnabled", "Y");
     data.put(BICECEConstants.FIRSTNAME, purchaserDetails.getFirstName());
     data.put(BICECEConstants.LASTNAME, purchaserDetails.getFirstName());
-    data.put(BICECEConstants.ORGANIZATION_NAME, purchaserDetails.getName());
-
+    data.put(BICECEConstants.ORGANIZATION_NAME, purchaserDetails.getCompanyName());
     data.put(BICECEConstants.ADDRESS, payerDetails.getCompleteAddress());
-    // Note: company name String getRandomCompanyName()
 
     PurchaserDetails purchaserDetailsObject = generatePurchaserDetails();
 
     data.put(BICECEConstants.emailid, purchaserDetailsObject.getEmail());
-    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+    String password = ProtectedConfigFile.decrypt(data.get(PASSWORD));
 
     data.put("quote2OrderCartURL", getQuote2OrderCartURL(data));
     navigateToQuoteCheckout(data);
@@ -3484,16 +3479,18 @@ public class EceBICTestBase {
       loginToOxygen(data.get(BICECEConstants.emailid), password);
     }
 
+    waitForLoadingSpinnerToComplete("loadingSpinner");
+
     // Assert quote header text
     String productListHeader = driver.findElement(
         By.xpath(bicPage.getFirstFieldLocator("productListHeader"))).getText();
     AssertUtils.assertEquals(productListHeader, "#" + data.get(BICECEConstants.QUOTE_ID));
 
-    assertProductDetails();
+    assertProductDetails(productDetailsList);
 
-    assertPurchaserDetails();
+    assertPurchaserDetails(purchaserDetails);
 
-    assertCustomerDetailsAddress();
+    assertPayerDetails(payerDetails);
 
     ScreenCapture.getInstance().captureFullScreenshot();
     Util.printInfo("Taking screenshot");
@@ -3508,11 +3505,32 @@ public class EceBICTestBase {
     return results;
   }
 
-  public void assertCustomerDetailsAddress() {
+  @Step("Create Quote Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createQuoteOrder(LinkedHashMap<String, String> data)
+      throws MetadataException {
+    HashMap<String, String> results;
 
-    PayerDetails payerDetails = generatePayerDetails();
+    // Assert quote header text
+    String productListHeader = driver.findElement(
+        By.xpath(bicPage.getFirstFieldLocator("productListHeader"))).getText();
+    AssertUtils.assertEquals(productListHeader, "#" + data.get(BICECEConstants.QUOTE_ID));
 
-    // Find the end customer address elements value from customer details section
+    ScreenCapture.getInstance().captureFullScreenshot();
+    Util.printInfo("Taking screenshot");
+
+    results = placeQuoteOrder(data);
+
+    ScreenCapture.getInstance().captureFullScreenshot();
+    Util.printInfo("Taking screenshot");
+
+    Util.sleep(5000);
+
+    return results;
+  }
+
+  public void assertPayerDetails(PayerDetails payerDetails) {
+
+    // Find the payer elements value from customer details section
     String companyName = driver.findElement(
         By.xpath(bicPage.getFirstFieldLocator("customerDetailsCompany"))).getText();
 
@@ -3533,32 +3551,29 @@ public class EceBICTestBase {
 
   }
 
-  public void assertPurchaserDetails() {
+  public void assertPurchaserDetails(PurchaserDetails purchaserDetails) {
 
-    PurchaserDetails purchaserDetails = generatePurchaserDetails();
-
-    // Find the customer contact elements value from customer details section
-    String contactName = driver.findElement(
+    // Find the customer elements value from customer details section
+    String actualPurchaserName = driver.findElement(
         By.xpath(bicPage.getFirstFieldLocator("customerDetailsName"))).getText();
 
-    String contactEmail = driver.findElement(
+    String actualPurchaserEmail = driver.findElement(
         By.xpath(bicPage.getFirstFieldLocator("customerDetailsEmail"))).getText();
 
-    String contactPhone = driver.findElement(
+    String actualPurchaserPhone = driver.findElement(
         By.xpath(bicPage.getFirstFieldLocator("customerDetailsPhone"))).getText();
 
     String purchaserCompleteName = purchaserDetails.getFirstName() + " " + purchaserDetails.getLastName();
 
-    SoftAssertUtil.assertEquals(contactName, purchaserCompleteName);
+    SoftAssertUtil.assertEquals(actualPurchaserName, purchaserCompleteName);
 
-    SoftAssertUtil.assertEquals(contactEmail, purchaserDetails.getEmail());
+    SoftAssertUtil.assertEquals(actualPurchaserEmail, purchaserDetails.getEmail());
 
-    SoftAssertUtil.assertEquals(contactPhone, purchaserDetails.getPhone());
+    SoftAssertUtil.assertEquals(actualPurchaserPhone, purchaserDetails.getPhone());
 
   }
 
-  public void assertProductDetails() {
-    waitForLoadingSpinnerToComplete("loadingSpinner");
+  public void assertProductDetails(List<ProductDetails> productDetailsList) {
 
     // Find the main container element containing the product details
     WebElement accordionCart = driver.findElement(By.cssSelector("[data-testid=\"odm-accordion-cart\"]"));
@@ -3571,6 +3586,10 @@ public class EceBICTestBase {
       WebElement productNameElement = productLineItem.findElement(
           By.cssSelector(".checkout--product-bar--info-column--name-sub-column--name"));
 
+      // Find the element containing the product term within each line item
+      WebElement productTermElement = productLineItem.findElement(
+          By.cssSelector("[data-testid=\"read-only-term\"]>p"));
+
       // Find the element containing the product quantity within each line item
       WebElement productQuantityElement = productLineItem.findElement(
           By.cssSelector("[data-testid=\"quantity-field\"]"));
@@ -3579,6 +3598,10 @@ public class EceBICTestBase {
       String actualProductName = productNameElement.getText();
       Util.printInfo("Cart Product Name: " + actualProductName);
 
+      // Get the actual product term text
+      String actualTerm = productTermElement.getText();
+      Util.printInfo("Cart Term: " + actualTerm);
+
       // Get the actual product quantity text
       String actualProductQuantity = productQuantityElement.getText();
 
@@ -3586,10 +3609,26 @@ public class EceBICTestBase {
       int actualQuantity = Integer.parseInt(actualProductQuantity);
       Util.printInfo("Cart Quantity: " + actualQuantity);
 
-      assertProductInList(actualProductName, actualQuantity);
+      assertProductInList(productDetailsList, actualProductName, actualTerm, actualQuantity);
 
     }
 
+  }
+
+  public HashMap<String, String> createPayerAccount(LinkedHashMap<String, String> data) throws MetadataException {
+    HashMap<String, String> results = new HashMap<>();
+    String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
+
+    Names payerNames = EceBICTestBase.generateFirstAndLastNames();
+    String payerEmail = EceBICTestBase.generateUniqueEmailID();
+    Util.printInfo("Payer email: " + payerEmail);
+    goToDotcomSignin(data);
+    createBICAccount(payerNames, payerEmail, password, true);
+    getUrl(data.get("oxygenLogOut"));
+    data.put(BICECEConstants.PAYER_EMAIL, payerEmail);
+    results.put(BICECEConstants.PAYER_EMAIL, payerEmail);
+
+    return results;
   }
 
   public static class Names {

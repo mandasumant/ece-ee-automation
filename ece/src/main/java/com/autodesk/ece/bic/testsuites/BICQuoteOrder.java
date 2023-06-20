@@ -167,9 +167,12 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     // Load test data for wire transfer
-    if (BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equals(System.getProperty(BICECEConstants.PAYMENT)) || BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equals(System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE))) {
-      Util.printInfo(" Loading Bank Information for Payment Type: " + BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD + " From YAML File " );
-      LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get("BankInformationByLocale");
+    if (BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equals(System.getProperty(BICECEConstants.PAYMENT))
+        || BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD.equals(System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE))) {
+      Util.printInfo(" Loading Bank Information for Payment Type: " + BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD
+          + " From YAML File ");
+      LinkedHashMap<String, Map<String, Map<String, String>>> bankInformationMap = (LinkedHashMap<String, Map<String, Map<String, String>>>) bankInformationByLocaleYaml.get(
+          "BankInformationByLocale");
       testDataForEachMethod.putAll(bankInformationMap.get("customer").get(locale));
     }
   }
@@ -204,12 +207,12 @@ public class BICQuoteOrder extends ECETestBase {
     Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
     Util.sleep(600000);
 
-    HashMap<String, String> justQuoteDeails = new HashMap<String, String>();
+    HashMap<String, String> justQuoteDetails = new HashMap<String, String>();
     testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
     testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
     getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-    justQuoteDeails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
-    justQuoteDeails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
+    justQuoteDetails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
+    justQuoteDetails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
 
     if (shouldPushToDataStore) {
       try {
@@ -242,8 +245,8 @@ public class BICQuoteOrder extends ECETestBase {
       }
     }
 
-    updateTestingHub(justQuoteDeails);
-    Util.printInfo("Final List " + justQuoteDeails);
+    updateTestingHub(justQuoteDetails);
+    Util.printInfo("Final List " + justQuoteDetails);
   }
 
   @Test(groups = {"bic-quoteorder"}, description = "Validation of Create BIC Quote Order")
@@ -256,7 +259,7 @@ public class BICQuoteOrder extends ECETestBase {
         !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) ? Boolean.valueOf(
             System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) : false;
 
-    if (shouldPullFromDataStore &&  loadQuoteDataFromP78()) {
+    if (shouldPullFromDataStore && loadQuoteDataFromP78()) {
       if (Strings.isNotNullAndNotEmpty(testDataForEachMethod.get(BICECEConstants.ADDRESS))) {
         address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
       } else if (Strings.isNotNullAndNotEmpty(System.getProperty(BICECEConstants.ADDRESS))) {
@@ -429,7 +432,8 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
-      String paymentType = System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE) != null ? System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE)
+      String paymentType = System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE) != null ? System.getProperty(
+          BICECEConstants.NEW_PAYMENT_TYPE)
           : System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER")
               ? BICECEConstants.VISA
               : BICECEConstants.CREDITCARD;
@@ -454,7 +458,8 @@ public class BICQuoteOrder extends ECETestBase {
             false, testDataForEachMethod.get(BICECEConstants.LOCALE));
         isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
 
-        if ((testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD))) {
+        if ((testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE)
+            .equalsIgnoreCase(BICECEConstants.WIRE_TRANSFER_PAYMENT_METHOD))) {
           return;
         }
 
@@ -1595,7 +1600,7 @@ public class BICQuoteOrder extends ECETestBase {
       return false;
     }
     return true;
-   }
+  }
 
 
   private String submitECMSTaxExemption(HashMap<String, String> testResults, Address address) throws IOException {

@@ -6,16 +6,16 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class PurchaserDetails {
 
   private String email;
-  private String name;
+  private String companyName;
   private String firstName;
   private String lastName;
   private String preferredLanguage;
   private String phone;
 
-  public PurchaserDetails(String email, String name, String firstName, String lastName, String preferredLanguage,
+  public PurchaserDetails(String email, String companyName, String firstName, String lastName, String preferredLanguage,
       String phone) {
     this.email = email;
-    this.name = name;
+    this.companyName = companyName;
     this.firstName = firstName;
     this.lastName = lastName;
     this.preferredLanguage = preferredLanguage;
@@ -26,8 +26,8 @@ public class PurchaserDetails {
     return email;
   }
 
-  public String getName() {
-    return name;
+  public String getCompanyName() {
+    return companyName;
   }
 
   public String getFirstName() {
@@ -58,14 +58,14 @@ public class PurchaserDetails {
 
     PurchaserDetails that = (PurchaserDetails) o;
 
-    return new EqualsBuilder().append(email, that.email).append(name, that.name)
+    return new EqualsBuilder().append(email, that.email).append(companyName, that.companyName)
         .append(firstName, that.firstName).append(lastName, that.lastName)
         .append(preferredLanguage, that.preferredLanguage).append(phone, that.phone).isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(email).append(name).append(firstName).append(lastName)
+    return new HashCodeBuilder(17, 37).append(email).append(companyName).append(firstName).append(lastName)
         .append(preferredLanguage).append(phone).toHashCode();
   }
 }
