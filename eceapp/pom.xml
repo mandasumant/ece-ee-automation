@@ -40,6 +40,18 @@
             <url>https://splunk.jfrog.io/splunk/ext-releases-local</url>
         </repository>
     </repositories>
+     <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>ArtifactorySantaClara-releases</name>
+            <url>https://art-bobcat.autodesk.com:443/artifactory/team-eis-qa-maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>ArtifactorySantaClara-snapshots</name>
+            <url>https://art-bobcat.autodesk.com:443/artifactory/team-eis-qa-maven</url>
+        </snapshotRepository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>com.autodesk.testinghub</groupId>
@@ -53,5 +65,27 @@
         </dependency>
 
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
