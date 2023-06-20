@@ -698,6 +698,7 @@ public class EceBICTestBase {
 
       Util.printInfo("Clicking on Save button from tab: " + tabKey);
 
+      Util.sleep(10000);
       WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
       WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
       if (continueButton.isDisplayed()) {
@@ -1042,36 +1043,41 @@ public class EceBICTestBase {
 
   @Step("Populate Sepa payment details")
   public void populateSepaPaymentDetails(HashMap<String, String> data, String[] paymentCardDetails)
-      throws MetadataException {
+          throws MetadataException {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
-    Util.printInfo("Clicking on Sepa tab.");
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    String sepaTab = bicPage.getFirstFieldLocator("sepaPaymentTab");
-    js.executeScript("arguments[0].click();", driver.findElement(By.xpath(sepaTab)));
-
-    if (bicPage.isFieldVisible("addNewAccount")) {
-      bicPage.clickUsingLowLevelActions("addNewAccount");
-    }
 
     try {
+      Util.printInfo("Clicking on Sepa tab.");
+      if (bicPage.checkIfElementExistsInPage("sepaPaymentTab", 10)) {
+        Util.printInfo("SEPA payment method tab is visible");
+        bicPage.clickUsingLowLevelActions("sepaPaymentTab");
+      } else if (bicPage.checkIfElementExistsInPage("sepaPaymentRadioButton", 10)) {
+        Util.printInfo("SEPA payment method radio button is visible");
+        bicPage.clickUsingLowLevelActions("sepaPaymentRadioButton");
+      }
+
+      if (bicPage.isFieldVisible("addNewAccount")) {
+        bicPage.clickUsingLowLevelActions("addNewAccount");
+      }
+
       Util.printInfo("Waiting for Sepa header.");
-      bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("sepaHeader").get(0), 10);
+      if (bicPage.checkIfElementExistsInPage("sepaHeaderTab", 10) || bicPage.checkIfElementExistsInPage("sepaHeaderRadioButton", 10)) {
+        Util.printInfo("SEPA Header is Visible. So, Entering SEPA Payment Details");
+        Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
+        bicPage.clickUsingLowLevelActions("sepaIbanNumber");
+        bicPage.populateField("sepaIbanNumber", paymentCardDetails[0]);
 
-      Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
-      bicPage.clickUsingLowLevelActions("sepaIbanNumber");
-      bicPage.populateField("sepaIbanNumber", paymentCardDetails[0]);
+        Util.printInfo("Entering SEPA profile name : " + paymentCardDetails[0]);
+        bicPage.populateField("sepaProfileName", paymentCardDetails[1]);
+      }
 
-      Util.printInfo("Entering SEPA profile name : " + paymentCardDetails[0]);
-      bicPage.populateField("sepaProfileName", paymentCardDetails[1]);
+      Util.sleep(20000);
+      if (bicPage.checkIfElementExistsInPage("mandateAgreementCheckbox", 20)) {
+        clickMandateAgreementCheckbox();
+      }
     } catch (MetadataException e) {
       e.printStackTrace();
       AssertUtils.fail("Unable to enter SEPA payment information to make payment");
-    }
-
-    Util.sleep(20000);
-    if (bicPage.checkIfElementExistsInPage("mandateAgreementCheckbox", 20)) {
-      clickMandateAgreementCheckbox();
     }
   }
 
@@ -2250,8 +2256,8 @@ public class EceBICTestBase {
     dismissChatPopup();
 
     // Enter billing details
-    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) != null && !data
-        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE)) {
+    if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE) && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
       data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
@@ -2350,7 +2356,7 @@ public class EceBICTestBase {
     if (bicPage.checkIfElementExistsInPage("phoneNumberField", 10)) {
       String phoneNumber = driver.findElement(
           By.xpath(bicPage.getFirstFieldLocator("phoneNumberField"))).getText();
-      if (phoneNumber == "") {
+      if (phoneNumber.equals("")) {
         bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
       }
     }
