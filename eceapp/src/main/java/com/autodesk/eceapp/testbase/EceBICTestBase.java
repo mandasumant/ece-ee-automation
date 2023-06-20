@@ -479,7 +479,7 @@ public class EceBICTestBase {
   }
 
   @Step("Selecting Monthly Subscription")
-  public void selectMonthlySubscription(WebDriver driver) {
+  public void selectMonthlySubscription() {
     JavascriptExecutor executor = (JavascriptExecutor) driver;
     WebElement element = driver
         .findElement(By.xpath("//term-element[contains(@automationid, \"buy-component-term-billing-plan-1-month\")]"));
@@ -488,10 +488,19 @@ public class EceBICTestBase {
   }
 
   @Step("Selecting Yearly Subscription")
-  public void selectYearlySubscription(WebDriver driver) {
+  public void selectYearlySubscription() {
     JavascriptExecutor executor = (JavascriptExecutor) driver;
     WebElement element = driver
         .findElement(By.xpath("//term-element[contains(@automationid, \"buy-component-term-billing-plan-1-year\")]"));
+    executor.executeScript("arguments[0].click();", element);
+    Util.sleep(2000);
+  }
+
+  @Step("Selecting 3 Year Subscription")
+  public void selectThreeYearSubscription() {
+    JavascriptExecutor executor = (JavascriptExecutor) driver;
+    WebElement element = driver
+        .findElement(By.xpath("//term-element[contains(@automationid, \"buy-component-term-billing-plan-3-year\")]"));
     executor.executeScript("arguments[0].click();", element);
     Util.sleep(2000);
   }
@@ -1704,7 +1713,7 @@ public class EceBICTestBase {
     if (System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_STG) ||
         System.getProperty(BICECEConstants.ENVIRONMENT).equalsIgnoreCase(BICECEConstants.ENV_INT)) {
       navigateToDotComPage(data);
-
+      String dotComPrice = "";
       // Selecting monthly for Non-Flex
       if (productType.equals("flex")) {
         bicPage.waitForFieldPresent("flexTab", 5000);
@@ -1726,10 +1735,21 @@ public class EceBICTestBase {
         }
       } else {
         if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_TYPE_FINANCING)) {
-          selectYearlySubscription(driver);
+          selectYearlySubscription();
         } else {
-          selectMonthlySubscription(driver);
+          String term = System.getProperty("term");
+          if (BICECEConstants.ONE_YEAR.equals(term)) {
+            selectYearlySubscription();
+          } else if (BICECEConstants.THREE_YEAR.equals(term)) {
+            selectThreeYearSubscription();
+          } else {
+            selectMonthlySubscription();
+          }
         }
+        String dotcomFinalPrice = driver.findElement(
+            By.xpath(bicPage.getFirstFieldLocator("dotcomFinalPrice"))).getText();
+        Util.printInfo("THE DOTCOM FINAL PRICE " + dotcomFinalPrice);
+        data.put("dotComPrice", dotcomFinalPrice);
         constructGuacURL = subscribeAndAddToCart(data);
         priceId = StringUtils.substringBetween(constructGuacURL, "priceIds=", "&");
       }
@@ -2189,6 +2209,19 @@ public class EceBICTestBase {
 
     if (!(isLoggedIn)) {
       signInIframe(data);
+    }
+
+    String dotComPrice = data.get("dotComPrice").replaceAll("[^0-9]", "") + "00";
+
+    if (bicPage.checkIfElementExistsInPage("promocodeAfterDiscountPrice", 10)) {
+      String priceAfterDiscount = bicPage.getValueFromGUI("promocodeAfterDiscountPrice").trim()
+          .replaceAll("[^0-9]", "");
+      AssertUtils.assertEquals("Price in the Cart and Checkout are not matching", dotComPrice, priceAfterDiscount);
+    } else if (bicPage.checkIfElementExistsInPage("promoCodeBeforeDiscountPrice", 10)) {
+      String priceBeforeDiscount = bicPage.getValueFromGUI("promoCodeBeforeDiscountPrice").trim()
+          .replaceAll("[^0-9]", "");
+      AssertUtils.assertEquals("Price in the Cart and Checkout are matching", dotComPrice, priceBeforeDiscount
+      );
     }
 
     if ((!data.get("productType").equals("flex")) && data.containsKey(BICECEConstants.QUANTITY)) {
@@ -3393,7 +3426,7 @@ public class EceBICTestBase {
 
     navigateToDotComPage(data);
 
-    selectMonthlySubscription(driver);
+    selectMonthlySubscription();
 
     bicPage.clickToSubmit("guacAddToCart", 3000);
 

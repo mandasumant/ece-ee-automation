@@ -43,7 +43,7 @@ public class EceDotcomTestBase extends EceBICTestBase {
   }
 
   public void selectMonthlySubscription() {
-    selectMonthlySubscription(driver);
+    selectMonthlySubscription();
   }
 
 

@@ -262,4 +262,10 @@ public class BICECEConstants extends BICConstants {
   public static final String MAX_3DS = "3ds Max";
   public static final String AUTO_CAD = "AutoCAD";
   public static final String MINI_CART_VALIDATE_PRICE = "minicartValidatePrice";
+
+  public static final String ONE_MONTH = "1-MONTH";
+  public static final String ONE_YEAR = "1-YEAR";
+  public static final String THREE_YEAR = "3-YEAR";
+
+
 }
