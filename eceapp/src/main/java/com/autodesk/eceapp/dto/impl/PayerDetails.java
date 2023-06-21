@@ -1,10 +1,10 @@
-package com.autodesk.eceapp.dto;
+package com.autodesk.eceapp.dto.impl;
 
+import com.autodesk.eceapp.dto.IPayerDetails;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class PayerDetails {
-
+public class PayerDetails implements IPayerDetails {
   private String payerCsn;
   private String email;
   private String address;

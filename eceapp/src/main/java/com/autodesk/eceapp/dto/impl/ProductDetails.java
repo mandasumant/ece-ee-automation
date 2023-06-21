@@ -1,10 +1,10 @@
-package com.autodesk.eceapp.dto;
+package com.autodesk.eceapp.dto.impl;
 
+import com.autodesk.eceapp.dto.IProductDetails;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class ProductDetails {
-
+public class ProductDetails implements IProductDetails {
   private String productName;
   private String term;
   private int quantity;

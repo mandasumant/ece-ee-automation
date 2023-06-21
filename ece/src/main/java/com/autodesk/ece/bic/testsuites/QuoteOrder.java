@@ -1,14 +1,16 @@
 package com.autodesk.ece.bic.testsuites;
 
+import static com.autodesk.eceapp.testbase.EceBICTestBase.generateInvoiceDetails;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePayerDetails;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generateProductList;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePurchaserDetails;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.dto.PayerDetails;
-import com.autodesk.eceapp.dto.ProductDetails;
-import com.autodesk.eceapp.dto.PurchaserDetails;
+import com.autodesk.eceapp.dto.IInvoiceDetails;
+import com.autodesk.eceapp.dto.IPayerDetails;
+import com.autodesk.eceapp.dto.IProductDetails;
+import com.autodesk.eceapp.dto.IPurchaserDetails;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.eceapp.utilities.Address;
@@ -150,15 +152,16 @@ public class QuoteOrder extends ECETestBase {
 
   @Test(groups = {"quote-order"}, description = "Validation of Create BIC Quote Order")
   public void validateQuoteOrder() throws Exception {
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     HashMap<String, String> results;
 
-    List<ProductDetails> productDetailsList = generateProductList();
-    PurchaserDetails purchaserDetails = generatePurchaserDetails();
-    PayerDetails payerDetails = generatePayerDetails();
+    List<IProductDetails> productDetailsList = generateProductList();
+    IPurchaserDetails purchaserDetails = generatePurchaserDetails();
+    IPayerDetails payerDetails = generatePayerDetails();
+    IInvoiceDetails InvoiceDetails = generateInvoiceDetails();
 
     results = getBicTestBase().createQuote2Order(testDataForEachMethod, productDetailsList, purchaserDetails,
-        payerDetails);
+        payerDetails, InvoiceDetails);
 
     results.putAll(testDataForEachMethod);
 

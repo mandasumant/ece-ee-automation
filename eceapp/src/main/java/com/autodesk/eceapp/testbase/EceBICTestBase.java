@@ -3,9 +3,13 @@ package com.autodesk.eceapp.testbase;
 import static com.autodesk.eceapp.constants.BICECEConstants.PASSWORD;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
-import com.autodesk.eceapp.dto.PayerDetails;
-import com.autodesk.eceapp.dto.ProductDetails;
-import com.autodesk.eceapp.dto.PurchaserDetails;
+import com.autodesk.eceapp.dto.IInvoiceDetails;
+import com.autodesk.eceapp.dto.IPayerDetails;
+import com.autodesk.eceapp.dto.IProductDetails;
+import com.autodesk.eceapp.dto.IPurchaserDetails;
+import com.autodesk.eceapp.dto.impl.InvoiceDetails;
+import com.autodesk.eceapp.dto.impl.PayerDetails;
+import com.autodesk.eceapp.dto.impl.PurchaserDetails;
 import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.eceapp.utilities.AnalyticsNetworkLogs;
 import com.autodesk.eceapp.utilities.NumberUtil;
@@ -138,11 +142,11 @@ public class EceBICTestBase {
     return strDate.toLowerCase();
   }
 
-  public static void assertProductInList(List<ProductDetails> productDetailsList, String productName, String term,
+  public static void assertProductInList(List<IProductDetails> productDetailsList, String productName, String term,
       int quantity) {
 
     // Loop through the productDetailsList and check if the productName and quantity matches any of the products
-    for (ProductDetails productDetails : productDetailsList) {
+    for (IProductDetails productDetails : productDetailsList) {
       if (productName.equals(productDetails.getProductName()) && term.equals(productDetails.getTerm())
           && quantity == productDetails.getQuantity()) {
         Util.printInfo(
@@ -171,7 +175,7 @@ public class EceBICTestBase {
         "3137",
         "AU",
         "XIZTLFFN",
-        "new",
+        "existing",
         "1234567890",
         true);
 
@@ -179,26 +183,19 @@ public class EceBICTestBase {
   }
 
   @Step("Generate Products Details " + GlobalConstants.TAG_TESTINGHUB)
-  public static List<ProductDetails> generateProductList() {
-    List<ProductDetails> productList = new ArrayList<>();
+  public static List<IProductDetails> generateProductList() {
+    List<IProductDetails> productList = new ArrayList<>();
 
     // Create and add the first product to the list
-    ProductDetails product1 = new ProductDetails("3ds Max", "1 year", 1);
+    com.autodesk.eceapp.dto.impl.ProductDetails product1 = new com.autodesk.eceapp.dto.impl.ProductDetails("3ds Max",
+        "1 year", 1);
     productList.add(product1);
 
 //    ProductDetails product1 = new ProductDetails("3ds Max", "1 month", 3);
 //    productList.add(product1);
 
-//    // Create and add the second product to the list
-//    ProductDetails product2 = new ProductDetails("Fusion 360 CLOUD", "Annual", 10);
-//    productList.add(product2);
-//
-//    // Create and add the third product to the list
-//    ProductDetails product3 = new ProductDetails("Flex", "Annual", 1000);
-//    productList.add(product3);
-
     // Consume the data and print out product details for each product in the list
-    for (ProductDetails product : productList) {
+    for (IProductDetails product : productList) {
       printProductDetails(product);
     }
 
@@ -218,7 +215,16 @@ public class EceBICTestBase {
     return purchaser;
   }
 
-  public static void printProductDetails(ProductDetails productDetails) {
+  @Step("Generate Invoice Details " + GlobalConstants.TAG_TESTINGHUB)
+  public static InvoiceDetails generateInvoiceDetails() {
+    InvoiceDetails invoiceNote = new InvoiceDetails(
+        "Some invoice note",
+        "123456");
+
+    return invoiceNote;
+  }
+
+  public static void printProductDetails(IProductDetails productDetails) {
     String productName = productDetails.getProductName();
     String productTerm = productDetails.getTerm();
     int quantity = productDetails.getQuantity();
@@ -1034,7 +1040,7 @@ public class EceBICTestBase {
 
   @Step("Populate Sepa payment details")
   public void populateSepaPaymentDetails(HashMap<String, String> data, String[] paymentCardDetails)
-          throws MetadataException {
+      throws MetadataException {
     bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 60000);
 
     try {
@@ -1052,7 +1058,8 @@ public class EceBICTestBase {
       }
 
       Util.printInfo("Waiting for Sepa header.");
-      if (bicPage.checkIfElementExistsInPage("sepaHeaderTab", 10) || bicPage.checkIfElementExistsInPage("sepaHeaderRadioButton", 10)) {
+      if (bicPage.checkIfElementExistsInPage("sepaHeaderTab", 10) || bicPage.checkIfElementExistsInPage(
+          "sepaHeaderRadioButton", 10)) {
         Util.printInfo("SEPA Header is Visible. So, Entering SEPA Payment Details");
         Util.printInfo("Entering IBAN number : " + paymentCardDetails[0]);
         bicPage.clickUsingLowLevelActions("sepaIbanNumber");
@@ -1349,7 +1356,7 @@ public class EceBICTestBase {
         }
 
         try {
-          if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null && payByInvoiceDetails.get(
+          if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null || false && payByInvoiceDetails.get(
               BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
             if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
               Util.printInfo("Entering Payer email and CSN.");
@@ -1383,7 +1390,11 @@ public class EceBICTestBase {
             bicPage.clickUsingLowLevelActions(pbiLink);
             AssertUtils.assertEquals(bicPage.checkIfElementExistsInPage("purchaseOrderNumber", 10), true,
                 "PO Number text box not Visible");
-            bicPage.populateField("purchaseOrderNumber", RandomStringUtils.randomAlphabetic(6).toUpperCase());
+            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_ID).equals("")) {
+              bicPage.populateField("purchaseOrderNumber", payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
+            } else {
+              bicPage.populateField("purchaseOrderNumber", RandomStringUtils.randomAlphabetic(6).toUpperCase());
+            }
             bicPage.clickUsingLowLevelActions("attachPurchaseOrderNumberCarrot");
             AssertUtils.assertEquals(bicPage.checkIfElementExistsInPage("attachPODocumentAgreeCheckBox", 10), true,
                 "PO Agreement checkbox not Visible");
@@ -1408,10 +1419,10 @@ public class EceBICTestBase {
 
       if (payByInvoiceDetails.containsKey(BICECEConstants.INVOICE_NOTES)) {
         if (!payByInvoiceDetails.get(BICECEConstants.INVOICE_NOTES).equals("")) {
-          bicPage.clickUsingLowLevelActions("portalAddinvoiceLink");
+          bicPage.clickUsingLowLevelActions("addInvoiceNotesLink");
           bicPage.waitForElementVisible(
-              bicPage.getMultipleWebElementsfromField("portalAddInvoiceNotesTextArea").get(0), 10);
-          bicPage.populateField("portalAddInvoiceNotesTextArea", payByInvoiceDetails.get("invoiceNotes"));
+              bicPage.getMultipleWebElementsfromField("invoiceNotesInput").get(0), 10);
+          bicPage.populateField("invoiceNotesInput", payByInvoiceDetails.get("invoiceNotes"));
         }
       }
 
@@ -1433,9 +1444,11 @@ public class EceBICTestBase {
       AssertUtils.fail("Unable to enter Pay By invoice payment details");
     }
 
-    bicPage.click("reviewLOCOrder");
-
     try {
+      if (bicPage.checkIfElementExistsInPage("reviewLOCOrder", 5)) {
+        bicPage.click("reviewLOCOrder");
+      }
+
       if (bicPage.checkIfElementExistsInPage("paymentContinueButton", 15)) {
         bicPage.clickUsingLowLevelActions("paymentContinueButton");
       }
@@ -1943,7 +1956,7 @@ public class EceBICTestBase {
 
       String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
-      if (data.get("userType").equals("newUser")) {
+      if (data.get("userType").equals("new") || data.get("userType").equals("newUser")) {
         enterBillingDetailsForQuote(data, address, paymentMethod);
       } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
         paymentMethod = "LOC";
@@ -2247,7 +2260,8 @@ public class EceBICTestBase {
 
     // Enter billing details
     if (data.get(BICECEConstants.BILLING_DETAILS_ADDED) == null || !data
-        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE) && !paymentMethod.equalsIgnoreCase(BICECEConstants.LOC)) {
+        .get(BICECEConstants.BILLING_DETAILS_ADDED).equals(BICECEConstants.TRUE) && !paymentMethod.equalsIgnoreCase(
+        BICECEConstants.LOC)) {
       debugPageUrl(BICECEConstants.ENTER_BILLING_DETAILS);
       populateBillingAddress(address, data);
       data.put(BICECEConstants.BILLING_DETAILS_ADDED, BICECEConstants.TRUE);
@@ -2292,6 +2306,7 @@ public class EceBICTestBase {
       bicPage.clickUsingLowLevelActions("editPaymentDetails");
       waitForLoadingSpinnerToComplete("loadingSpinner");
     }
+
     selectPaymentProfile(data, paymentCardDetails, address);
     dismissChatPopup();
 
@@ -2379,9 +2394,9 @@ public class EceBICTestBase {
     Util.sleep(2000);
 
     if (bicPage.checkIfElementExistsInPage("phoneNumberField", 10)) {
-      String phoneNumber = driver.findElement(
-          By.xpath(bicPage.getFirstFieldLocator("phoneNumberField"))).getText();
-      if (phoneNumber.equals("")) {
+      WebElement phoneNumberInput = driver.findElement(By.xpath(bicPage.getFirstFieldLocator("phoneNumberField")));
+      String inputValue = phoneNumberInput.getAttribute("value");
+      if (Strings.isNullOrEmpty(inputValue)) {
         bicPage.populateField("phoneNumberField", address.get(BICECEConstants.PHONE_NUMBER));
       }
     }
@@ -3449,12 +3464,12 @@ public class EceBICTestBase {
 
   @Step("Create Quote 2 Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createQuote2Order(LinkedHashMap<String, String> data,
-      List<ProductDetails> productDetailsList, PurchaserDetails purchaserDetails, PayerDetails payerDetails)
+      List<IProductDetails> productDetailsList, IPurchaserDetails purchaserDetails, IPayerDetails payerDetails,
+      IInvoiceDetails invoiceDetails)
       throws MetadataException {
     HashMap<String, String> results;
 
     //Required: quote_id needs to be available from data
-    //data.put(BICECEConstants.QUOTE_ID, "Q-236962");
     if (Strings.isNotNullAndNotEmpty(data.get("quote_id"))) {
       data.put(BICECEConstants.QUOTE_ID, data.get("quote_id"));
     } else {
@@ -3465,7 +3480,15 @@ public class EceBICTestBase {
     data.put(BICECEConstants.FIRSTNAME, purchaserDetails.getFirstName());
     data.put(BICECEConstants.LASTNAME, purchaserDetails.getFirstName());
     data.put(BICECEConstants.ORGANIZATION_NAME, purchaserDetails.getCompanyName());
+    String isSamePayer = String.valueOf(payerDetails.isPayerSameAsPurchaser());
+    data.put(BICECEConstants.IS_SAME_PAYER, isSamePayer);
+    data.put(BICECEConstants.PAYER_EMAIL, payerDetails.getEmail());
+    data.put(BICECEConstants.PAYER_CSN, payerDetails.getPayerCsn());
     data.put(BICECEConstants.ADDRESS, payerDetails.getCompleteAddress());
+    data.put(BICECEConstants.ORDER_ID, invoiceDetails.getInvoicePoNumber());
+    data.put(BICECEConstants.INVOICE_NOTES, invoiceDetails.getInvoiceNotes());
+
+    data.put("userType", payerDetails.getExistingPayer());
 
     PurchaserDetails purchaserDetailsObject = generatePurchaserDetails();
 
@@ -3505,6 +3528,15 @@ public class EceBICTestBase {
     return results;
   }
 
+  @Step("Create Direct Order " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> createDirectOrder(LinkedHashMap<String, String> data,
+      List<IProductDetails> productDetailsList, IPurchaserDetails purchaserDetails)
+      throws MetadataException {
+    HashMap<String, String> results = null;
+
+    return results;
+  }
+
   @Step("Create Quote Order " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> createQuoteOrder(LinkedHashMap<String, String> data)
       throws MetadataException {
@@ -3528,7 +3560,8 @@ public class EceBICTestBase {
     return results;
   }
 
-  public void assertPayerDetails(PayerDetails payerDetails) {
+  @Step("Assert Payer Details " + GlobalConstants.TAG_TESTINGHUB)
+  public void assertPayerDetails(IPayerDetails payerDetails) {
 
     // Find the payer elements value from customer details section
     String companyName = driver.findElement(
@@ -3551,7 +3584,8 @@ public class EceBICTestBase {
 
   }
 
-  public void assertPurchaserDetails(PurchaserDetails purchaserDetails) {
+  @Step("Assert Purchaser Details " + GlobalConstants.TAG_TESTINGHUB)
+  public void assertPurchaserDetails(IPurchaserDetails purchaserDetails) {
 
     // Find the customer elements value from customer details section
     String actualPurchaserName = driver.findElement(
@@ -3573,7 +3607,8 @@ public class EceBICTestBase {
 
   }
 
-  public void assertProductDetails(List<ProductDetails> productDetailsList) {
+  @Step("Assert Products Details " + GlobalConstants.TAG_TESTINGHUB)
+  public void assertProductDetails(List<IProductDetails> productDetailsList) {
 
     // Find the main container element containing the product details
     WebElement accordionCart = driver.findElement(By.cssSelector("[data-testid=\"odm-accordion-cart\"]"));

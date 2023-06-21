@@ -1,9 +1,10 @@
-package com.autodesk.eceapp.dto;
+package com.autodesk.eceapp.dto.impl;
 
+import com.autodesk.eceapp.dto.IPurchaserDetails;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class PurchaserDetails {
+public class PurchaserDetails implements IPurchaserDetails {
 
   private String email;
   private String companyName;
