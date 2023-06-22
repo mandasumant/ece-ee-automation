@@ -1,19 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+    <artifactId>eceapp</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <artifactId>core</artifactId>
+            <groupId>com.autodesk.testinghub</groupId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <artifactId>eseapp</artifactId>
+            <groupId>com.autodesk.testinghub</groupId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>bms-e2-pelican-subscription-v4-java-client</artifactId>
+            <groupId>com.autodesk.platformautomation</groupId>
+            <scope>compile</scope>
+            <version>4.0</version>
+        </dependency>
+
+    </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>ArtifactorySantaClara-releases</name>
+            <url>https://art-bobcat.autodesk.com:443/artifactory/team-eis-qa-maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>ArtifactorySantaClara-snapshots</name>
+            <url>https://art-bobcat.autodesk.com:443/artifactory/team-eis-qa-maven</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <groupId>com.autodesk.ece</groupId>
-    <artifactId>eceapp</artifactId>
-    <version>1.0</version>
 
-    <properties>
+    <modelVersion>4.0.0</modelVersion>
+     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <repositories>
         <repository>
             <id>central-mvn</id>
@@ -40,52 +92,6 @@
             <url>https://splunk.jfrog.io/splunk/ext-releases-local</url>
         </repository>
     </repositories>
-     <distributionManagement>
-        <repository>
-            <id>central</id>
-            <name>ArtifactorySantaClara-releases</name>
-            <url>https://art-bobcat.autodesk.com:443/artifactory/team-eis-qa-maven</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>ArtifactorySantaClara-snapshots</name>
-            <url>https://art-bobcat.autodesk.com:443/artifactory/team-eis-qa-maven</url>
-        </snapshotRepository>
-    </distributionManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.autodesk.testinghub</groupId>
-            <artifactId>core</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.autodesk.testinghub</groupId>
-            <artifactId>eseapp</artifactId>
-            <version>1.1</version>
-        </dependency>
-
-    </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptors>
-                        <descriptor>assembly.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <version>1.0</version>
 
 </project>

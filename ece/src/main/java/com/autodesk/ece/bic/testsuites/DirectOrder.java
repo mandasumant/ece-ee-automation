@@ -2,8 +2,12 @@ package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.dto.IProductDetails;
+import com.autodesk.eceapp.dto.impl.ProductDetails;
+import com.autodesk.eceapp.dto.impl.PurchaserDetails;
 import com.autodesk.eceapp.fixtures.CustomerBillingDetails;
 import com.autodesk.eceapp.fixtures.OxygenUser;
+import com.autodesk.eceapp.testbase.EceCheckoutTestBase;
 import com.autodesk.eceapp.testbase.EceDotcomTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -14,6 +18,8 @@ import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -23,6 +29,7 @@ import org.testng.annotations.Test;
  * A testsuite to hold tests related to validation of scenarios with direct order purchases
  */
 public class DirectOrder extends ECETestBase {
+
 
   private static final String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
@@ -36,6 +43,7 @@ public class DirectOrder extends ECETestBase {
   CustomerBillingDetails billingDetails;
 
   EceDotcomTestBase dotcomTestBase = new EceDotcomTestBase(getDriver(), getTestBase(), locale);
+  EceCheckoutTestBase checkoutTestBase = new EceCheckoutTestBase(getDriver(), getTestBase(), locale);
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -64,30 +72,62 @@ public class DirectOrder extends ECETestBase {
     String paymentType = System.getProperty("payment");
     testDataForEachMethod.put("paymentType", paymentType);
 
-    productName = testDataForEachMethod.get(BICECEConstants.PRODUCT_NAME);
+    testDataForEachMethod.put("taxOptionEnabled", "undefined");
+    testDataForEachMethod.put("productType", "flex");
+
+    productName = "3ds-max";
 
     billingDetails = new CustomerBillingDetails(testDataForEachMethod, getBicTestBase());
   }
 
+  @Test(groups = {"create-direct-order-test"}, description = "Validation of Create Direct O2P Order")
+  public void createDirectOrderTest() throws MetadataException {
+    com.autodesk.eceapp.testsuites.DirectOrder directOrderTestbase = new com.autodesk.eceapp.testsuites.DirectOrder(
+        getDriver(),
+        getTestBase());
+    IProductDetails productDetails = new ProductDetails("3ds-max", "monthly", 4);
+    IProductDetails productDetails2 = new ProductDetails("flex", "monthly", 296);
+    IProductDetails productDetails3 = new ProductDetails("3ds-max", "yearly", 17);
+    List<IProductDetails> productList = new LinkedList<>();
+    productList.add(productDetails);
+    productList.add(productDetails2);
+    productList.add(productDetails3);
+    PurchaserDetails purchaserDetails = new PurchaserDetails("thubstoreausxfluaysijltc@letscheck.pw", "Autodesk", "Foo",
+        "Bar",
+        "AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT", "EN", "5555555555");
+    directOrderTestbase.createDirectOrder(productList, purchaserDetails, "en_AU", null);
+  }
+
   @Test(groups = {"create-direct-order"}, description = "Validation of Create Direct O2P Order")
   public void createDirectOrder() throws MetadataException {
+
+//    HashMap<String, String> foo = new HashMap<>(testDataForEachMethod);
+//    foo.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID, "68736437139881");
+//    subscriptionServiceV4Testbase.getSubscriptionById(foo);
+
     dotcomTestBase.navigateToDotComPage(productName);
     dotcomTestBase.selectMonthlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+
+    //getDriver().navigate()
+    //    .to("https://checkout-apollo.autodesk.com/en-AU/cart?offers=%5Bcountry:AU;currency:AUD;priceRegionCode:AH;offeringCode:3DSMAX;offeringName:3DSMax;offeringId:OD-000021;quantity:2;intendedUsageCode:COM;accessModelCode:S;termCode:A01;connectivityCode:C100;connectivityIntervalCode:C03;servicePlanIdCode:STND;billingBehaviorCode:A200;billingTypeCode:B100;billingFrequencyCode:B05%5D");
     getBicTestBase().setStorageData();
+    checkoutTestBase.clickOnContinueButton();
     getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
-    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
-        billingDetails.address);
-    getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
-    getBicTestBase().submitOrder(testDataForEachMethod);
-    String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
-
+//    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
+//        billingDetails.address);
+//    getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
+//    getBicTestBase().submitOrder(testDataForEachMethod);
     HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
-    results.put(BICECEConstants.orderNumber, orderNumber);
-    results = pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(testDataForEachMethod));
+    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
+    // Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         user.emailID,

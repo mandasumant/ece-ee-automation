@@ -5,6 +5,9 @@ public interface IPurchaserDetails {
   String getCompanyName();
   String getFirstName();
   String getLastName();
+
+  String getAddress();
+
   String getPreferredLanguage();
   String getPhone();
 }

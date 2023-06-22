@@ -209,6 +209,7 @@ public class EceBICTestBase {
         "XIZTLFFN",
         "FNwClkOT",
         "LNwClkOT",
+        "",
         "en",
         "+4128008009");
 
@@ -347,7 +348,7 @@ public class EceBICTestBase {
     }
   }
 
-  private void switchToBICCartLoginPage() {
+  void switchToBICCartLoginPage() {
     String elementXpath = bicPage.getFirstFieldLocator("createNewUseriFrame");
     Util.waitForElement(elementXpath, "Create New User iFrame");
     WebElement element = driver.findElement(By.xpath(elementXpath));
