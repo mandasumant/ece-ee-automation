@@ -31,6 +31,11 @@ public class OfferDTO {
       "premium_no_support", new OfferItemDTO("PREMNS", "Premium No Support")
   );
 
+  private static Map<String, OfferItemDTO> accessModels = ImmutableMap.of(
+      "sus", new OfferItemDTO("S", "Single User"),
+      "flex", new OfferItemDTO("F", "Flex")
+  );
+
   public OfferDTO(OfferItemDTO term, OfferItemDTO accessModel, OfferItemDTO connectivity, OfferItemDTO servicePlanId, OfferItemDTO intendedUsage) {
     this.term = term;
     this.accessModel = accessModel;
@@ -58,13 +63,8 @@ public class OfferDTO {
       return this;
     }
 
-    public OfferDTOBuilder flexAccessModel() {
-      this.accessModel = new OfferItemDTO("F", "Flex");
-      return this;
-    }
-
-    public OfferDTOBuilder singleUserAccessModel() {
-      this.accessModel = new OfferItemDTO("S", "Single User");
+    public OfferDTOBuilder accessModel(String accessModel) {
+      this.accessModel = accessModels.get(accessModel);
       return this;
     }
 

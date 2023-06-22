@@ -35,12 +35,12 @@ public class PwsQuoteDataBuilder {
           .intendedUsage(quoteMap.get("usage"))
           .servicePlanId(quoteMap.get("plan"))
           .connectivity()
-          .singleUserAccessModel()
+          .accessModel(Optional.ofNullable(quoteMap.get("access_model")).map(String::toLowerCase).orElse("sus"))
           .build();
       LineItemDTO lineItem = LineItemDTO.builder()
           .offeringId(quoteMap.get("offering_id"))
           .action("New")
-          .quantity(getRandomInt(1,5))
+          .quantity(Optional.ofNullable(quoteMap.get("quantity")).map(Integer::valueOf).orElse(getRandomInt(1,10)))
           .offer(offer)
           .build();
       lineItems.add(lineItem);
@@ -56,7 +56,7 @@ public class PwsQuoteDataBuilder {
     List<LineItemDTO> lineItems = new ArrayList<>();
     OfferDTO offer = OfferDTO.builder()
         .term(data.get(BICECEConstants.TERM))
-        .flexAccessModel()
+        .accessModel("flex")
         .servicePlanId("standard")
         .intendedUsage("commercial")
         .connectivity()
