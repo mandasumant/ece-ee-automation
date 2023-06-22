@@ -1391,7 +1391,7 @@ public class EceBICTestBase {
             bicPage.clickUsingLowLevelActions(pbiLink);
             AssertUtils.assertEquals(bicPage.checkIfElementExistsInPage("purchaseOrderNumber", 10), true,
                 "PO Number text box not Visible");
-            if (!payByInvoiceDetails.get(BICECEConstants.ORDER_ID).equals("")) {
+            if (Strings.isNotNullAndNotEmpty(payByInvoiceDetails.get(BICECEConstants.ORDER_ID))) {
               bicPage.populateField("purchaseOrderNumber", payByInvoiceDetails.get(BICECEConstants.ORDER_ID));
             } else {
               bicPage.populateField("purchaseOrderNumber", RandomStringUtils.randomAlphabetic(6).toUpperCase());
