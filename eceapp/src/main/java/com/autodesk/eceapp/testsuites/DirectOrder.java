@@ -1,6 +1,7 @@
 package com.autodesk.eceapp.testsuites;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.dto.IProductDetails;
 import com.autodesk.eceapp.dto.IPurchaserDetails;
 import com.autodesk.eceapp.fixtures.CustomerBillingDetails;
@@ -37,10 +38,9 @@ public class DirectOrder {
   public DirectOrder(WebDriver driver, GlobalTestBase testbase) {
     this.driver = driver;
     this.testbase = testbase;
-    String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
-    loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-    String localeConfigFile = "LOCALE_CONFIG";
-    localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
+    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
+    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
+    
   }
 
   public HashMap<String, String> createDirectOrder(List<IProductDetails> productDetailsList,
