@@ -1744,7 +1744,6 @@ public class EceBICTestBase {
         }
         String dotcomFinalPrice = driver.findElement(
             By.xpath(bicPage.getFirstFieldLocator("dotcomFinalPrice"))).getText();
-        Util.printInfo("THE DOTCOM FINAL PRICE " + dotcomFinalPrice);
         data.put("dotComPrice", dotcomFinalPrice);
         constructGuacURL = subscribeAndAddToCart(data);
         priceId = StringUtils.substringBetween(constructGuacURL, "priceIds=", "&");
@@ -2060,6 +2059,7 @@ public class EceBICTestBase {
         (int) totalCostOrderSummaryDouble,
         (int) estimatedPriceDouble);
   }
+
 
   @SuppressWarnings({"static-access", "unused"})
   @Step("Dot Com: Navigate to Flex Cart from DotCom " + GlobalConstants.TAG_TESTINGHUB)
@@ -2446,7 +2446,26 @@ public class EceBICTestBase {
     return status;
   }
 
-  private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
+  private void valdiateMYABBillingPlans() throws MetadataException{
+    boolean elementPresent =  false;
+    elementPresent = bicPage.checkIfElementExistsInPage("myabFirstYearPaymentLabel",10);
+    AssertUtils.assertTrue(elementPresent,"MYAB 1 Year billing label is missing");
+
+    elementPresent = bicPage.checkIfElementExistsInPage("myabSecondYearPaymentAmount",10);
+    AssertUtils.assertTrue(elementPresent,"MYAB 2nd Year billing  is missing");
+
+    elementPresent = bicPage.checkIfElementExistsInPage("myabThirdYearPaymentAmount",10);
+    AssertUtils.assertTrue(elementPresent,"MYAB  3rd Year billing text is missing");
+
+    elementPresent = bicPage.checkIfElementExistsInPage("myabSubscriptionAmountLabel",10);
+    AssertUtils.assertTrue(elementPresent,"MYAB subsctiption amount label is missing");
+
+    elementPresent = bicPage.checkIfElementExistsInPage("myabAnnualPaymentsLabel",10);
+    AssertUtils.assertTrue(elementPresent,"MYAB Annual Payment label is missing");
+
+  }
+
+   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
     String priceBeforePromo = null;
     String priceAfterPromo = null;
 
