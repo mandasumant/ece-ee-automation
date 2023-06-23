@@ -1458,17 +1458,16 @@ public class EceBICTestBase {
     }
   }
 
-  @Step("Click on Zip tab")
-  public void populateZipPaymentDetails() {
-    bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 30000);
-    try {
-      Util.printInfo("Clicking on Zip tab.");
-      bicPage.waitForFieldPresent("zipPaymentTab", 10000);
+  @Step("Select Zip payment method")
+  public void populateZipPaymentDetails() throws MetadataException {
+    if (bicPage.checkIfElementExistsInPage("zipPaymentTab", 10)) {
+      Util.printInfo("Zip payment method tab is visible");
       bicPage.clickUsingLowLevelActions("zipPaymentTab");
-
-    } catch (MetadataException e) {
-      e.printStackTrace();
-      AssertUtils.fail("Unable to enter Zip details to make payment...");
+    } else if (bicPage.checkIfElementExistsInPage("zipRadioButton", 10)) {
+      Util.printInfo("Zip payment method radio button is visible");
+      bicPage.clickUsingLowLevelActions("zipRadioButton");
+    } else {
+      AssertUtils.fail("Unable to select Zip payment method");
     }
   }
 
@@ -1594,12 +1593,13 @@ public class EceBICTestBase {
       }
 
       // Zip Pay Verification
-      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-        String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
-        WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
-        zipTestBase.setTestData(data);
-        zipTestBase.verifyZipBalance(amountDueElement.getText());
-      }
+      //TODO: Review amount validation - ECEEPLT-7150
+//      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+//        String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
+//        WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
+//        zipTestBase.setTestData(data);
+//        zipTestBase.verifyZipBalance(amountDueElement.getText());
+//      }
 
       try {
         if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)) {

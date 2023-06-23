@@ -12,9 +12,9 @@ def serviceBuildHelper = new ServicesBuildHelper(this, 'svc_d_artifactory', buil
 
 def generateTest(name, testcase, address, options = []) {
     def testData = [
-            usertype     : "new",
-            password     : "",
-            emailType    : "biz"
+            usertype : "new",
+            password : "",
+            emailType: "biz"
     ]
     testData.putAll(address)
     testData.putAll(options)
@@ -65,10 +65,10 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.APOLLO_R2_1_1 == true ||
-                            params.APOLLO_R2_1_2 == true ||
-                            params.EDU == true ||
-                            params.ANALYTICS == true
+                                    params.APOLLO_R2_1_1 == true ||
+                                    params.APOLLO_R2_1_2 == true ||
+                                    params.EDU == true ||
+                                    params.ANALYTICS == true
                         }
                     }
                 }
@@ -89,10 +89,10 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.APOLLO_R2_1_1 == true ||
-                            params.APOLLO_R2_1_2 == true ||
-                            params.EDU == true ||
-                            params.ANALYTICS == true
+                                    params.APOLLO_R2_1_1 == true ||
+                                    params.APOLLO_R2_1_2 == true ||
+                                    params.EDU == true ||
+                                    params.ANALYTICS == true
                         }
                     }
                 }
@@ -117,10 +117,10 @@ pipeline {
                         triggeredBy 'TimerTrigger'
                         expression {
                             params.CJT == true ||
-                            params.APOLLO_R2_1_1 == true ||
-                            params.APOLLO_R2_1_2 == true ||
-                            params.EDU == true ||
-                            params.ANALYTICS == true
+                                    params.APOLLO_R2_1_1 == true ||
+                                    params.APOLLO_R2_1_2 == true ||
+                                    params.EDU == true ||
+                                    params.ANALYTICS == true
                         }
                     }
                 }
@@ -191,7 +191,10 @@ pipeline {
         stage('Apollo R2.1.2') {
             when {
                 branch 'master'
-                triggeredBy 'TimerTrigger'
+                anyOf {
+                    expression { triggeredBy 'TimerTrigger' }
+                    expression { params.APOLLO_R2_1_2 == true }
+                }
             }
             steps {
                 triggerApolloR2_1_2(serviceBuildHelper, 'INT')
@@ -329,6 +332,7 @@ def triggerApolloR2_1_2(def serviceBuildHelper, String env) {
                 '{"displayname":"Q2O SUS - Single Line Item - Annual Offer AU - CC","testcasename":"10bb01af","description":"Q2O SUS - Single Line Item - Annual Offer AU - CC","testClass":"com.autodesk.ece.bic.testsuites.QuoteOrder","testGroup":"quote-order-annual","testMethod":"validateQuoteOrderAnnual","parameters":{"application":"ece"},"testdata":{"usertype":"new","email":"","password":"","sku":"default:1","payment":"CREDITCARD","store":"STORE-AUS","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Australia/Sydney"}},' +
                 '{"displayname":"Q2O SUS - Single Line Item - Annual Offer AU - PAYPAL","testcasename":"10bb01af","description":"Q2O SUS - Single Line Item - Annual Offer AU - PAYPAL","testClass":"com.autodesk.ece.bic.testsuites.QuoteOrder","testGroup":"quote-order-annual","testMethod":"validateQuoteOrderAnnual","parameters":{"application":"ece"},"testdata":{"usertype":"new","email":"","password":"","sku":"default:1","payment":"PAYPAL","store":"STORE-AUS","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Australia/Sydney"}},' +
                 '{"displayname":"Q2O SUS - Single Line Item - Annual Offer AU - LOC","testcasename":"10bb01af","description":"Q2O SUS - Single Line Item - Annual Offer AU - LOC","testClass":"com.autodesk.ece.bic.testsuites.QuoteOrder","testGroup":"quote-order-annual","testMethod":"validateQuoteOrderAnnual","parameters":{"application":"ece"},"testdata":{"usertype":"new","email":"","password":"","sku":"default:1","payment":"LOC","store":"STORE-AUS","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Australia/Sydney"}},' +
+                //'{"displayname":"Q2O SUS - Single Line Item - Annual Offer AU - ZIP","testcasename":"10bb01af","description":"Q2O SUS - Single Line Item - Annual Offer AU - ZIP","testClass":"com.autodesk.ece.bic.testsuites.QuoteOrder","testGroup":"quote-order-annual","testMethod":"validateQuoteOrderAnnual","parameters":{"application":"ece"},"testdata":{"usertype":"new","email":"","password":"","sku":"default:1","payment":"ZIP","store":"STORE-AUS","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","timezone":"Australia/Sydney"}},' +
                 '{"displayname":"Q2O SUS - Single Line Item - MYAB Offer AU - CC","testcasename":"6308c0bb","description":"Q2O SUS - Single Line Item - MYAB Offer AU - CC","testClass":"com.autodesk.ece.bic.testsuites.QuoteOrder","testGroup":"quote-order-myab","testMethod":"validateQuoteOrderMYAB","parameters":{"application":"ece"},"testdata":{"usertype":"new","email":"","password":"","sku":"default:1","payment":"CREDITCARD","store":"STORE-AUS","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Australia/Sydney"}},' +
                 '{"displayname":"Q2O SUS - Single Line Item - MYAB Offer AU - PAYPAL","testcasename":"6308c0bb","description":"Q2O SUS - Single Line Item - MYAB Offer AU - PAYPAL","testClass":"com.autodesk.ece.bic.testsuites.QuoteOrder","testGroup":"quote-order-myab","testMethod":"validateQuoteOrderMYAB","parameters":{"application":"ece"},"testdata":{"usertype":"new","email":"","password":"","sku":"default:1","payment":"PAYPAL","store":"STORE-AUS","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Australia/Sydney"}},' +
                 //'{"displayname":"Q2O SUS - Single Line Item - Premium Product Offer AU - CC","testcasename":"e3ecfeb4","description":"Q2O SUS - Single Line Item - Premium Product Offer AU - CC","testClass":"com.autodesk.ece.bic.testsuites.QuoteOrder","testGroup":"quote-order-premium","testMethod":"validateQuoteOrderPremium","parameters":{"application":"ece"},"testdata":{"usertype":"new","email":"","password":"","sku":"default:1","payment":"CREDITCARD","store":"STORE-AUS","locale":"en_AU","address":"AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT","sapValidation":"' + params.INVOICE_VALIDATION + '","timezone":"Australia/Sydney"}},' +

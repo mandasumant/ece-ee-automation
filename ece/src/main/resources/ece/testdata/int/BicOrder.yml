@@ -243,11 +243,6 @@ validateQuoteOrderFlex:
   accessModel: "Flex"
   productType: "flex"
 
-validateQuoteOrderMonthly:
-  term: "Monthly"
-  accessModel: "SU"
-  productType: "3ds max"
-
 validateQuoteOrderAnnual:
   term: "Annual"
   accessModel: "SU"
