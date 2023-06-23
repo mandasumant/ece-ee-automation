@@ -167,7 +167,7 @@ public class QuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-  @Test(groups = {"quote-order-flex"}, description = "Validation of Create Quote Order with Monthly SUS")
+  @Test(groups = {"quote-order-flex"}, description = "Validation of Create Quote Order with Annual Flex")
   public void validateQuoteOrderFlex() throws Exception {
     HashMap<String, String> testResults;
 
@@ -180,7 +180,7 @@ public class QuoteOrder extends ECETestBase {
 
   }
 
-  @Test(groups = {"quote-order-annual"}, description = "Validation of Create Quote Order with Monthly SUS")
+  @Test(groups = {"quote-order-annual"}, description = "Validation of Create Quote Order with Annual SUS")
   public void validateQuoteOrderAnnual() throws Exception {
     HashMap<String, String> testResults;
 
@@ -193,7 +193,7 @@ public class QuoteOrder extends ECETestBase {
 
   }
 
-  @Test(groups = {"quote-order-myab"}, description = "Validation of Create Quote Order with Monthly SUS")
+  @Test(groups = {"quote-order-myab"}, description = "Validation of Create Quote Order with MYAB SUS")
   public void validateQuoteOrderMYAB() throws Exception {
     HashMap<String, String> testResults;
 
@@ -215,6 +215,19 @@ public class QuoteOrder extends ECETestBase {
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
             "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:3000");
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    testResults = createQuoteOrder(testDataForEachMethod);
+    updateTestingHub(testResults);
+
+  }
+
+  @Test(groups = {"quote-order-annual-myab"}, description = "Validation of Create Quote Order with Annual and MYAB SUS")
+  public void validateQuoteOrderAnnualMYAB() throws Exception {
+    HashMap<String, String> testResults;
+
+    String quoteLineItems = System.setProperty("quoteLineItems",
+            "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|access_model:sus,offering_id:OD-000021,term:3_year,usage:commercial,plan:standard");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = createQuoteOrder(testDataForEachMethod);
