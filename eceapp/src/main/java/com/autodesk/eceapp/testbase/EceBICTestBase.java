@@ -3479,7 +3479,7 @@ public class EceBICTestBase {
 
     data.put(BICECEConstants.PAYMENT, data.get("paymentType"));
     data.put(BICECEConstants.FIRSTNAME, purchaserDetails.getFirstName());
-    data.put(BICECEConstants.LASTNAME, purchaserDetails.getFirstName());
+    data.put(BICECEConstants.LASTNAME, purchaserDetails.getLastName());
     data.put(BICECEConstants.ORGANIZATION_NAME, purchaserDetails.getCompanyName());
     String isSamePayer = String.valueOf(payerDetails.isPayerSameAsPurchaser());
     data.put(BICECEConstants.IS_SAME_PAYER, isSamePayer);

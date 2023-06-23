@@ -175,6 +175,10 @@ public class QuoteOrder extends ECETestBase {
     HashMap<String, String> results = new HashMap<String, String>();
     Address address = getBillingAddress();
 
+    String quoteLineItems = System.setProperty("quoteLineItems",
+        "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:3000");
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
     if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
       testResults = getBicTestBase().createPayerAccount(testDataForEachMethod);
     }
@@ -230,7 +234,7 @@ public class QuoteOrder extends ECETestBase {
     Address address = getBillingAddress();
 
     String quoteLineItems = System.setProperty("quoteLineItems",
-        "offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
+        "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
@@ -321,7 +325,7 @@ public class QuoteOrder extends ECETestBase {
     Address address = getBillingAddress();
 
     String quoteLineItems = System.setProperty("quoteLineItems",
-        "offering_id:OD-000021,term:3_year,usage:commercial,plan:standard");
+        "access_model:sus,offering_id:OD-000021,term:3_year,usage:commercial,plan:standard");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
