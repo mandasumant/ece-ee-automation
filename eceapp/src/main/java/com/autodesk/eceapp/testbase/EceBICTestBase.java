@@ -2446,26 +2446,26 @@ public class EceBICTestBase {
     return status;
   }
 
-  private void valdiateMYABBillingPlans() throws MetadataException{
-    boolean elementPresent =  false;
-    elementPresent = bicPage.checkIfElementExistsInPage("myabFirstYearPaymentLabel",10);
-    AssertUtils.assertTrue(elementPresent,"MYAB 1 Year billing label is missing");
+  private void valdiateMYABBillingPlans() throws MetadataException {
+    boolean elementPresent = false;
+    elementPresent = bicPage.checkIfElementExistsInPage("myabFirstYearPaymentLabel", 10);
+    AssertUtils.assertTrue(elementPresent, "MYAB 1 Year billing label is missing");
 
-    elementPresent = bicPage.checkIfElementExistsInPage("myabSecondYearPaymentAmount",10);
-    AssertUtils.assertTrue(elementPresent,"MYAB 2nd Year billing  is missing");
+    elementPresent = bicPage.checkIfElementExistsInPage("myabSecondYearPaymentAmount", 10);
+    AssertUtils.assertTrue(elementPresent, "MYAB 2nd Year billing  is missing");
 
-    elementPresent = bicPage.checkIfElementExistsInPage("myabThirdYearPaymentAmount",10);
-    AssertUtils.assertTrue(elementPresent,"MYAB  3rd Year billing text is missing");
+    elementPresent = bicPage.checkIfElementExistsInPage("myabThirdYearPaymentAmount", 10);
+    AssertUtils.assertTrue(elementPresent, "MYAB  3rd Year billing text is missing");
 
-    elementPresent = bicPage.checkIfElementExistsInPage("myabSubscriptionAmountLabel",10);
-    AssertUtils.assertTrue(elementPresent,"MYAB subsctiption amount label is missing");
+    elementPresent = bicPage.checkIfElementExistsInPage("myabSubscriptionAmountLabel", 10);
+    AssertUtils.assertTrue(elementPresent, "MYAB subsctiption amount label is missing");
 
-    elementPresent = bicPage.checkIfElementExistsInPage("myabAnnualPaymentsLabel",10);
-    AssertUtils.assertTrue(elementPresent,"MYAB Annual Payment label is missing");
+    elementPresent = bicPage.checkIfElementExistsInPage("myabAnnualPaymentsLabel", 10);
+    AssertUtils.assertTrue(elementPresent, "MYAB Annual Payment label is missing");
 
   }
 
-   private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
+  private void populatePromoCode(String promoCode, LinkedHashMap<String, String> data) {
     String priceBeforePromo = null;
     String priceAfterPromo = null;
 
@@ -3510,9 +3510,7 @@ public class EceBICTestBase {
 
     data.put("userType", payerDetails.getExistingPayer());
 
-    PurchaserDetails purchaserDetailsObject = generatePurchaserDetails();
-
-    data.put(BICECEConstants.emailid, purchaserDetailsObject.getEmail());
+    data.put(BICECEConstants.emailid, purchaserDetails.getEmail());
     String password = ProtectedConfigFile.decrypt(data.get(PASSWORD));
 
     data.put("quote2OrderCartURL", getQuote2OrderCartURL(data));
