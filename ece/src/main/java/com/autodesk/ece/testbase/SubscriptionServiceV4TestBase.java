@@ -3,11 +3,11 @@ package com.autodesk.ece.testbase;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.utilities.PelicanRequestSigner;
 import com.autodesk.eceapp.utilities.PelicanRequestSigner.PelicanSignature;
-import com.autodesk.platformautomation.ApiClient;
-import com.autodesk.platformautomation.ApiException;
-import com.autodesk.platformautomation.Configuration;
-import com.autodesk.platformautomation.bmse2pelicansubscriptionv4.SubscriptionControllerApi;
-import com.autodesk.platformautomation.bmse2pelicansubscriptionv4.models.SubscriptionSuccessV4;
+import com.autodesk.platformautomation.bilinsmpelicansubscriptionv4.ApiClient;
+import com.autodesk.platformautomation.bilinsmpelicansubscriptionv4.ApiException;
+import com.autodesk.platformautomation.bilinsmpelicansubscriptionv4.Configuration;
+import com.autodesk.platformautomation.bilinsmpelicansubscriptionv4.client.SubscriptionControllerApi;
+import com.autodesk.platformautomation.bilinsmpelicansubscriptionv4.client.models.SubscriptionSuccessV4;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.Util;
@@ -42,8 +42,8 @@ public class SubscriptionServiceV4TestBase {
       }
       try {
         SubscriptionSuccessV4 result = apiInstance.findSubscriptionById(signature.xE2PartnerId,
-            signature.xE2AppFamilyId, signature.xE2HMACTimestamp, signature.xE2HMACSignature, id,
-            signature.xRequestRef);
+            signature.xE2AppFamilyId, signature.xE2HMACTimestamp, signature.xE2HMACSignature, Long.parseLong(id),
+            null, null, null);
         Util.PrintInfo(BICECEConstants.RESULT + result);
         results.put("response_nextBillingDate", result.getNextBillingDate());
         results.put("response_subscriptionQuantity",
