@@ -1,6 +1,7 @@
 package com.autodesk.eceapp.utilities;
 
 
+import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.testinghub.core.utils.Util;
 import io.restassured.path.json.JsonPath;
 import java.io.FileInputStream;
@@ -45,8 +46,9 @@ public class Address {
 
     ClassLoader classLoader = this.getClass().getClassLoader();
 
-    String countryCodeJsonFilePath = Objects.requireNonNull(
-        classLoader.getResource("ece/payload/countryCodes.json")).getPath();
+//    String countryCodeJsonFilePath = Objects.requireNonNull(
+//        classLoader.getResource("ece/payload/countryCodes.json")).getPath();
+    String countryCodeJsonFilePath = EceAppConstants.APP_MISC_RESOURCE_PATH + "countryCodes.json";
 
     try {
       FileInputStream fileStream = new FileInputStream(countryCodeJsonFilePath);
@@ -57,8 +59,9 @@ public class Address {
       Util.printError("Failed to load country codes file: " + e.getMessage());
     }
 
-    String provinceNameJsonFilePath = Objects.requireNonNull(
-        classLoader.getResource("ece/testdata/misc/provinces.json")).getPath();
+//    String provinceNameJsonFilePath = Objects.requireNonNull(
+//        classLoader.getResource("ece/testdata/misc/provinces.json")).getPath();
+    String provinceNameJsonFilePath = EceAppConstants.APP_MISC_RESOURCE_PATH + "provinces.json";
 
     if (!this.province.equals("")) {
       try {

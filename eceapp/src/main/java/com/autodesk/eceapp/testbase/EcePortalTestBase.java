@@ -68,8 +68,7 @@ public class EcePortalTestBase {
     bicTestBase = new EceBICTestBase(driver, testbase);
     zipTestBase = new EceZipPayTestBase(testbase);
 
-    String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
-    Map<?, ?> loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
+    Map<?, ?> loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
     LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml
         .get("default");
     accountsPortalOrdersInvoicesUrl = defaultvalues.get("accountsPortalOrdersInvoicesUrl");

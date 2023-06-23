@@ -6,6 +6,7 @@ import com.autodesk.ece.testbase.DatastoreClient.OrderData;
 import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
 import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -53,10 +54,8 @@ public class MOABOrder extends ECETestBase {
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
-    String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
-    loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-    String localeConfigFile = "LOCALE_CONFIG";
-    localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
+    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
+    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
     bankInformationByLocaleYaml = YamlUtil.loadYmlUsingTestManifest("BANK_INFORMATION_BY_LOCALE");
   }
 

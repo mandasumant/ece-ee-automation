@@ -9,6 +9,7 @@ import com.autodesk.ece.testbase.ECETestBase;
 import com.autodesk.ece.testbase.PWSTestBase;
 import com.autodesk.ece.testbase.PelicanTestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.eceapp.utilities.Address;
@@ -64,10 +65,8 @@ public class BICQuoteOrder extends ECETestBase {
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
-    String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
-    loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-    String localeConfigFile = "LOCALE_CONFIG";
-    localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
+    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
+    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
     bankInformationByLocaleYaml = YamlUtil.loadYmlUsingTestManifest("BANK_INFORMATION_BY_LOCALE");
   }
 

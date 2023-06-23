@@ -2,6 +2,7 @@ package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.ece.testbase.ECETestBase;
+import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
@@ -42,10 +43,8 @@ public class BICFinancingOrder extends ECETestBase {
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
-    String testFileKey = "BIC_ORDER_" + GlobalConstants.ENV.toUpperCase();
-    loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
-    String localeConfigFile = "LOCALE_CONFIG";
-    localeConfigYaml = YamlUtil.loadYmlUsingTestManifest(localeConfigFile);
+    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
+    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
   }
 
   @BeforeMethod(alwaysRun = true)
