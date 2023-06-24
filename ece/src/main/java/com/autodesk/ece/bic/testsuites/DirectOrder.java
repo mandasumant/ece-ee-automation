@@ -166,7 +166,9 @@ public class DirectOrder extends ECETestBase {
     dotcomTestBase.selectMonthlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
+    checkoutTestBase.clickOnContinueButton();
     getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+    getBicTestBase().enterCustomerDetails(billingDetails.address);
     getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
         billingDetails.address);
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
@@ -213,7 +215,9 @@ public class DirectOrder extends ECETestBase {
     dotcomTestBase.selectMonthlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
+    checkoutTestBase.clickOnContinueButton();
     getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+    getBicTestBase().enterCustomerDetails(billingDetails.address);
     getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
         billingDetails.address);
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
