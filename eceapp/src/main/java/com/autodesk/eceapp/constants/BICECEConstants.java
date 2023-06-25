@@ -267,5 +267,5 @@ public class BICECEConstants extends BICConstants {
   public static final String ONE_YEAR = "1-YEAR";
   public static final String THREE_YEAR = "3-YEAR";
 
-
+  public static final String TERMINATED = "TERMINATED";
 }

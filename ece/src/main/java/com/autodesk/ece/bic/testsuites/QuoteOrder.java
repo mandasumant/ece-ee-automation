@@ -22,6 +22,8 @@ import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
+import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -239,6 +241,97 @@ public class QuoteOrder extends ECETestBase {
     testResults = createQuoteOrder(testDataForEachMethod);
     updateTestingHub(testResults);
 
+  }
+
+  @Test(groups = {"quote-refund-annual"}, description = "Validation of Refund of Quote Order with Annual SUS")
+  public void validateQuoteRefundOrderAnnual() throws Exception {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> results = new HashMap<String, String>();
+    Address address = getBillingAddress();
+
+    String quoteLineItems = System.setProperty("quoteLineItems",
+        "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+      testResults = getBicTestBase().createPayerAccount(testDataForEachMethod);
+    }
+
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(
+        new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)),
+        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, false);
+
+    // Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 5min for Quote to sync to S4");
+    Util.sleep(300000);
+
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+
+    // Signing out after quote creation
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    testResults.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
+    testResults.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
+
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
+    String oxygenId = getBicTestBase().driver.manage().getCookieNamed("identity-sso").getValue();
+    testDataForEachMethod.put(BICConstants.oxid, oxygenId);
+
+    testResults.putAll(results);
+    updateTestingHub(testResults);
+
+    results = getBicTestBase().createQuoteOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.putAll(testDataForEachMethod);
+    updateTestingHub(testResults);
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
+    // Refund PurchaseOrder details from pelican
+    pelicantb.createRefundOrderV4(results);
+
+    // Adyen delays in IPN response is causing test failures. Until the issue is
+    // resolved lets
+    // add additional 6min sleep for the IPN message to come back.
+    Util.sleep(360000);
+
+    // Getting a PurchaseOrder details from pelican
+    JsonPath jp = pelicantb.getRefundedPurchaseOrderV4WithPolling(results);
+    results.put("refund_orderState", jp.get("orderState").toString());
+    results.put("refund_fulfillmentStatus", jp.get("fulfillmentStatus"));
+
+    // Verify that Order status is Refunded
+    AssertUtils.assertEquals("Order status is NOT REFUNDED", results.get("refund_orderState"), "REFUNDED");
+
+    try {
+      testResults.put(TestingHubConstants.emailid, results.get(TestingHubConstants.emailid));
+      testResults.put(TestingHubConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put("subscriptionId", results.get("getPOReponse_subscriptionId"));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+
+    //Get Subscription to check if Subscription is in Terminated status
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    AssertUtils.assertEquals("Subscription is NOT TERMINATED", results.get("response_status"),
+        BICECEConstants.TERMINATED);
+
+    updateTestingHub(testResults);
   }
 
   private String getSerializedBillingAddress() {
