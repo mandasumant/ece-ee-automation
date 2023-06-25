@@ -1,20 +1,18 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.ece.testbase.DatastoreClient;
-import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
-import com.autodesk.ece.testbase.DatastoreClient.OrderData;
-import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
-import com.autodesk.ece.testbase.ECETestBase;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.NewQuoteOrder;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderData;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderFilters;
+import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
-import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.constants.EseCommonConstants;
 import com.autodesk.testinghub.eseapp.constants.PWSConstants;
@@ -54,9 +52,9 @@ public class MOABOrder extends ECETestBase {
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
-    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
-    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
-    bankInformationByLocaleYaml = YamlUtil.loadYmlUsingTestManifest("BANK_INFORMATION_BY_LOCALE");
+    loadYaml = ResourceFileLoader.getBicOrderYaml();
+    localeConfigYaml = ResourceFileLoader.getLocaleConfigYaml();
+    bankInformationByLocaleYaml = ResourceFileLoader.getBankInformationByLocaleYaml();
   }
 
   @BeforeMethod(alwaysRun = true)

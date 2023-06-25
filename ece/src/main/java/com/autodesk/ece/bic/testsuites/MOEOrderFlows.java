@@ -1,16 +1,14 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.testbase.MOETestBase;
+import com.autodesk.eceapp.testbase.ece.ECETestBase;
+import com.autodesk.eceapp.testbase.ece.MOETestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.constants.EceAppConstants;
-import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import io.restassured.path.json.JsonPath;
@@ -45,8 +43,8 @@ public class MOEOrderFlows extends ECETestBase {
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
-    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
-    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
+    loadYaml = ResourceFileLoader.getBicOrderYaml();
+    localeConfigYaml = ResourceFileLoader.getLocaleConfigYaml();
   }
 
   @BeforeMethod(alwaysRun = true)

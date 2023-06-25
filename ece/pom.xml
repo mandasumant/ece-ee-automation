@@ -56,36 +56,17 @@
 
     <dependencies>
         <dependency>
-            <artifactId>bms-e2-pelican-subscription-v3-java-client</artifactId>
-            <groupId>com.autodesk.platformautomation</groupId>
-            <scope>compile</scope>
-            <version>3.0</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>bms-e2-pelican-subscription-v4-java-client</artifactId>
-            <groupId>com.autodesk.platformautomation</groupId>
-            <scope>compile</scope>
-            <version>4.0</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>bilinsm-Access-NEWT-java-client</artifactId>
-            <groupId>com.autodesk.platformautomation.bilinsmAccessNEWT</groupId>
-            <scope>compile</scope>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.autodesk.testinghub</groupId>
             <artifactId>core</artifactId>
             <version>${core.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.autodesk.testinghub</groupId>
             <artifactId>eseapp</artifactId>
             <version>${eseapp.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.autodesk.ece</groupId>
             <artifactId>eceapp</artifactId>
@@ -98,59 +79,6 @@
             <version>${testng.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-testng</artifactId>
-            <version>${allure.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>jackson-core</artifactId>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <version>2.14.2</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>jackson-databind</artifactId>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <version>2.14.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.14.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.10.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.mailosaur</groupId>
-            <artifactId>mailosaur-java</artifactId>
-            <version>7.12.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.15.4</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -200,6 +128,7 @@
                                     <outputDirectory>${project.build.directory}/</outputDirectory>
                                     <excludes>**/*test.class,**/*.class,</excludes>
                                 </artifactItem>
+
                                 <artifactItem>
                                     <groupId>com.autodesk.ece</groupId>
                                     <artifactId>eceapp</artifactId>

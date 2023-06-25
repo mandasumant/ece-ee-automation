@@ -1,12 +1,10 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.eceapp.constants.EceAppConstants;
+import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.utilities.AnalyticsNetworkLogs;
-import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,8 +28,8 @@ public class TealiumNetworkLogs extends ECETestBase {
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
-        loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
-        localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
+        loadYaml = ResourceFileLoader.getBicOrderYaml();
+        localeConfigYaml = ResourceFileLoader.getLocaleConfigYaml();
     }
 
     @BeforeMethod(alwaysRun = true)

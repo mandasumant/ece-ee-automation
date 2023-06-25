@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.utilities.NumberUtil;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
@@ -15,7 +16,6 @@ import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.SoftAssertUtil;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import io.qameta.allure.Step;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,7 +68,7 @@ public class EcePortalTestBase {
     bicTestBase = new EceBICTestBase(driver, testbase);
     zipTestBase = new EceZipPayTestBase(testbase);
 
-    Map<?, ?> loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
+    Map<?, ?> loadYaml = ResourceFileLoader.getBicOrderYaml();
     LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml
         .get("default");
     accountsPortalOrdersInvoicesUrl = defaultvalues.get("accountsPortalOrdersInvoicesUrl");

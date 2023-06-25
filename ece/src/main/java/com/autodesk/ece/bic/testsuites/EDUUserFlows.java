@@ -1,17 +1,17 @@
 package com.autodesk.ece.bic.testsuites;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.testbase.EDUTestBase;
-import com.autodesk.ece.testbase.EDUTestBase.EDUUserType;
-import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.eceapp.testbase.ece.ECETestBase;
+import com.autodesk.eceapp.testbase.ece.EDUTestBase;
+import com.autodesk.eceapp.testbase.ece.EDUTestBase.EDUUserType;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,8 +32,7 @@ public class EDUUserFlows extends ECETestBase {
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
-    String testFileKey = "EDU_" + GlobalConstants.ENV.toUpperCase();
-    loadYaml = YamlUtil.loadYmlUsingTestManifest(testFileKey);
+    loadYaml = ResourceFileLoader.getEDUyamlInSTG();
   }
 
   @BeforeMethod(alwaysRun = true)

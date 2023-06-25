@@ -1,11 +1,9 @@
 package com.autodesk.eceapp.testbase;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.constants.EceAppConstants;
-import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +21,11 @@ public class EceCheckoutTestBase extends EceBICTestBase {
   public EceCheckoutTestBase(WebDriver driver, GlobalTestBase testbase, String locale) {
     super(driver, testbase);
 
-    Map<?, ?> loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
+    Map<?, ?> loadYaml = ResourceFileLoader.getBicOrderYaml();
     envDataConstants = (LinkedHashMap<String, String>) loadYaml
         .get("default");
 
-    Map<?, ?> localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
+    Map<?, ?> localeConfigYaml = ResourceFileLoader.getLocaleConfigYaml();
     LinkedHashMap<String, Map<String, String>> localeDataMap = (LinkedHashMap<String, Map<String, String>>) localeConfigYaml
         .get(BICECEConstants.LOCALE_CONFIG);
     localeDataConstants = localeDataMap.get(locale);

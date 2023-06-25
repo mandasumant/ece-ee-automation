@@ -1,10 +1,7 @@
 package com.autodesk.eceapp.utilities;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.constants.EceAppConstants;
-import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
@@ -21,7 +18,7 @@ public class PelicanRequestSigner {
   private final String xE2AppFamilyId;
 
   public PelicanRequestSigner() {
-    Map<?, ?> loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
+    Map<?, ?> loadYaml = ResourceFileLoader.getBicOrderYaml();
     LinkedHashMap<String, String> defaultValues = (LinkedHashMap<String, String>) loadYaml
         .get("default");
     xE2PartnerId = defaultValues.get(BICECEConstants.GETPRICEDETAILS_X_E2_PARTNER_ID);

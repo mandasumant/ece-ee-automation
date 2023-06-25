@@ -1,36 +1,31 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.ece.dto.QuoteDetails;
-import com.autodesk.ece.testbase.DatastoreClient;
-import com.autodesk.ece.testbase.DatastoreClient.NewQuoteOrder;
-import com.autodesk.ece.testbase.DatastoreClient.OrderData;
-import com.autodesk.ece.testbase.DatastoreClient.OrderFilters;
-import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.testbase.PWSTestBase;
-import com.autodesk.ece.testbase.PelicanTestBase;
+import com.autodesk.eceapp.dto.QuoteDetails;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.NewQuoteOrder;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderData;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderFilters;
+import com.autodesk.eceapp.testbase.ece.ECETestBase;
+import com.autodesk.eceapp.testbase.ece.PWSTestBase;
+import com.autodesk.eceapp.testbase.ece.PelicanTestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.eceapp.utilities.Address;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.eceapp.utilities.TaxExemptionMappings;
 import com.autodesk.eceapp.utilities.TaxExemptionMappings.TaxOptions;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.restassured.path.json.JsonPath;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -65,9 +60,9 @@ public class BICQuoteOrder extends ECETestBase {
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
-    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
-    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
-    bankInformationByLocaleYaml = YamlUtil.loadYmlUsingTestManifest("BANK_INFORMATION_BY_LOCALE");
+    loadYaml = ResourceFileLoader.getBicOrderYaml();
+    localeConfigYaml = ResourceFileLoader.getLocaleConfigYaml();
+    bankInformationByLocaleYaml = ResourceFileLoader.getBankInformationByLocaleYaml();
   }
 
   @BeforeMethod(alwaysRun = true)
@@ -1666,11 +1661,7 @@ public class BICQuoteOrder extends ECETestBase {
     coreBicTestBase.uploadAndPunchOutFlow(dataForTTR);
     testDataForEachMethod.put("taxOptionEnabled", "N");
 
-    InputStream inputStream = this.getClass().getClassLoader()
-        .getResourceAsStream(
-            GlobalTestBase.getTestDataDir() + GlobalTestBase.getTestManifest().getProperty("TAX_EXEMPTION_MAPPINGS"));
-    ObjectMapper mapper = new YAMLMapper();
-    TaxExemptionMappings taxMappings = mapper.readValue(inputStream, TaxExemptionMappings.class);
+    TaxExemptionMappings taxMappings = ResourceFileLoader.getTaxExemptionMappings();
 
     TaxOptions taxOptions = null;
     switch (address.country) {

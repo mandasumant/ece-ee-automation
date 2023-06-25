@@ -4,10 +4,11 @@ import static com.autodesk.eceapp.testbase.EceBICTestBase.generateInvoiceDetails
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePayerDetails;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generateProductList;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePurchaserDetails;
-import com.autodesk.ece.testbase.ECETestBase;
-import com.autodesk.ece.testbase.PWSTestBase;
+
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
+import com.autodesk.eceapp.testbase.ece.ECETestBase;
+import com.autodesk.eceapp.testbase.ece.PWSTestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.dto.IInvoiceDetails;
 import com.autodesk.eceapp.dto.IPayerDetails;
 import com.autodesk.eceapp.dto.IProductDetails;
@@ -20,7 +21,6 @@ import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import io.restassured.path.json.JsonPath;
@@ -53,9 +53,9 @@ public class QuoteOrder extends ECETestBase {
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
-    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
-    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
-    bankInformationByLocaleYaml = YamlUtil.loadYmlUsingTestManifest("BANK_INFORMATION_BY_LOCALE");
+    loadYaml = ResourceFileLoader.getBicOrderYaml();
+    localeConfigYaml = ResourceFileLoader.getLocaleConfigYaml();
+    bankInformationByLocaleYaml = ResourceFileLoader.getBankInformationByLocaleYaml();
   }
 
   @BeforeMethod(alwaysRun = true)

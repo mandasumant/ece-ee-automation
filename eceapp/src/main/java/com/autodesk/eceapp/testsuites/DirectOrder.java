@@ -1,7 +1,6 @@
 package com.autodesk.eceapp.testsuites;
 
 import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.constants.EceAppConstants;
 import com.autodesk.eceapp.dto.IProductDetails;
 import com.autodesk.eceapp.dto.IPurchaserDetails;
 import com.autodesk.eceapp.fixtures.CustomerBillingDetails;
@@ -9,11 +8,10 @@ import com.autodesk.eceapp.fixtures.OxygenUser;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceCheckoutTestBase;
 import com.autodesk.eceapp.testbase.EceDotcomTestBase;
-import com.autodesk.testinghub.core.base.GlobalConstants;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.Util;
-import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,8 +36,8 @@ public class DirectOrder {
   public DirectOrder(WebDriver driver, GlobalTestBase testbase) {
     this.driver = driver;
     this.testbase = testbase;
-    loadYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_ENV_RESOURCE_PATH + "BicOrder.yml");
-    localeConfigYaml = YamlUtil.loadYmlWithFileLocation(EceAppConstants.APP_MISC_RESOURCE_PATH + "LocaleConfig.yml");
+    loadYaml = ResourceFileLoader.getBicOrderYaml();
+    localeConfigYaml = ResourceFileLoader.getLocaleConfigYaml();
     
   }
 
