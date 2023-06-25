@@ -12,10 +12,13 @@ import com.autodesk.eceapp.testbase.EceCheckoutTestBase;
 import com.autodesk.eceapp.testbase.EceDotcomTestBase;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
+import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.core.utils.YamlUtil;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
+import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -157,12 +160,11 @@ public class DirectOrder extends ECETestBase {
 
   @Test(groups = {"create-multiline-order"}, description = "Validation of Create Direct O2P Order")
   public void createMultilineDirectOrder() throws MetadataException {
-    String productName2 = "3ds-max";
 
     dotcomTestBase.navigateToDotComPage(productName);
-    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.selectThreeYearSubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
-    dotcomTestBase.navigateToDotComPage(productName2);
+    dotcomTestBase.navigateToDotComPage(productName);
     dotcomTestBase.selectMonthlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
@@ -191,6 +193,164 @@ public class DirectOrder extends ECETestBase {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+    updateTestingHub(testResults);
+  }
+
+  @Test(groups = {"refund-multiline-order"}, description = "Validation of refund Direct O2P SUS Order")
+  public void createRefundMultilineDirectOrder() throws MetadataException {
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectThreeYearSubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+    getBicTestBase().setStorageData();
+    getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
+        billingDetails.address);
+    getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
+    getBicTestBase().submitOrder(testDataForEachMethod);
+    String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
+
+    HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
+    results.put(BICECEConstants.orderNumber, orderNumber);
+    results = pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(testDataForEachMethod));
+
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+
+    // Refund PurchaseOrder details from pelican
+    pelicantb.createRefundOrderV4(results);
+
+    // Adyen delays in IPN response is causing test failures. Until the issue is
+    // resolved lets
+    // add additional 6min sleep for the IPN message to come back.
+    Util.sleep(360000);
+
+    // Getting a PurchaseOrder details from pelican
+    JsonPath jp = pelicantb.getRefundedPurchaseOrderV4WithPolling(results);
+
+    results.put("refund_orderState", jp.get("orderState").toString());
+    results.put("refund_fulfillmentStatus", jp.get("fulfillmentStatus"));
+
+    // Verify that Order status is Refunded
+    AssertUtils.assertEquals("Order status is NOT REFUNDED", results.get("refund_orderState"), "REFUNDED");
+
+    //Get Subscription to check if Subscription is in Terminated status
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    AssertUtils.assertEquals("Subscription is NOT TERMINATED", results.get("response_status"),
+        BICECEConstants.TERMINATED);
+
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+    updateTestingHub(testResults);
+  }
+
+  @Test(groups = {"refund-multiline-order-loc"}, description = "Validation of refund Direct O2P SUS Order with LOC")
+  public void createRefundLOCMultilineDirectOrder() throws MetadataException {
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+    getBicTestBase().setStorageData();
+    getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+    testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, BICECEConstants.CREDITCARD);
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
+        billingDetails.address);
+    getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
+    getBicTestBase().submitOrder(testDataForEachMethod);
+    String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
+
+    HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
+    results.put(BICECEConstants.orderNumber, orderNumber);
+    results = pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(testDataForEachMethod));
+
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, BICECEConstants.LOC);
+    testDataForEachMethod.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
+
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectThreeYearSubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+    getBicTestBase().setStorageData();
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
+        billingDetails.address);
+    getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
+    getBicTestBase().submitOrder(testDataForEachMethod);
+    orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
+
+    results.put(BICECEConstants.orderNumber, orderNumber);
+    results = pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(testDataForEachMethod));
+
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    // Refund PurchaseOrder details from pelican
+    pelicantb.createRefundOrderV4(results);
+
+    // Adyen delays in IPN response is causing test failures. Until the issue is
+    // resolved lets
+    // add additional 6min sleep for the IPN message to come back.
+    Util.sleep(360000);
+
+    // Getting a PurchaseOrder details from pelican
+    JsonPath jp = pelicantb.getRefundedPurchaseOrderV4WithPolling(results);
+
+    results.put("refund_orderState", jp.get("orderState").toString());
+    results.put("refund_fulfillmentStatus", jp.get("fulfillmentStatus"));
+
+    // Verify that Order status is Refunded
+    AssertUtils.assertEquals("Order status is NOT REFUNDED", results.get("refund_orderState"), "REFUNDED");
+
+    //Get Subscription to check if Subscription is in Terminated status
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    AssertUtils.assertEquals("Subscription is NOT TERMINATED", results.get("response_status"),
+        BICECEConstants.TERMINATED);
+
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
           .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
