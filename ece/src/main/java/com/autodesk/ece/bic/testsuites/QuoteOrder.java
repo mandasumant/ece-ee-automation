@@ -4,11 +4,6 @@ import static com.autodesk.eceapp.testbase.EceBICTestBase.generateInvoiceDetails
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePayerDetails;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generateProductList;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePurchaserDetails;
-
-import com.autodesk.eceapp.testbase.ece.PelicanTestBase;
-import com.autodesk.eceapp.utilities.ResourceFileLoader;
-import com.autodesk.eceapp.testbase.ece.ECETestBase;
-import com.autodesk.eceapp.testbase.ece.PWSTestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.dto.IInvoiceDetails;
 import com.autodesk.eceapp.dto.IPayerDetails;
@@ -16,7 +11,11 @@ import com.autodesk.eceapp.dto.IProductDetails;
 import com.autodesk.eceapp.dto.IPurchaserDetails;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
+import com.autodesk.eceapp.testbase.ece.ECETestBase;
+import com.autodesk.eceapp.testbase.ece.PWSTestBase;
+import com.autodesk.eceapp.testbase.ece.PelicanTestBase;
 import com.autodesk.eceapp.utilities.Address;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
@@ -248,6 +247,107 @@ public class QuoteOrder extends ECETestBase {
 
   }
 
+  @Test(groups = {"quote-order-returning-user"}, description = "Validation of Create Quote Order for Returning user")
+  public void validateQuoteOrderReturningUser() throws MetadataException {
+    HashMap<String, String> testResults = new HashMap<>();
+    Address address = getBillingAddress();
+
+    String quoteLineItems = System.setProperty("quoteLineItems",
+        "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+      testResults = getBicTestBase().createPayerAccount(testDataForEachMethod);
+    }
+
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(
+        new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)),
+        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, false);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 5min for Quote to sync to S4");
+    Util.sleep(300000);
+
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+    updateTestingHub(testResults);
+    // Signing out after quote creation
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
+
+    HashMap<String, String> results = getBicTestBase().createQuoteOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+    testResults.put(BICECEConstants.orderNumber, results.get(BICConstants.orderNumber));
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
+        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
+      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
+    }
+
+    updateTestingHub(testResults);
+
+    testDataForEachMethod.put("isReturningUser", BICECEConstants.TRUE);
+
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
+    String quote2Id = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, false);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 5min for Quote to sync to S4");
+    Util.sleep(300000);
+
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quote2Id);
+
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    // Re login during checkout
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+
+    results = getBicTestBase().createQuoteOrder(testDataForEachMethod);
+    testResults.put(BICECEConstants.orderNumber + "_2", results.get(BICConstants.orderNumber));
+    results.putAll(testDataForEachMethod);
+
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Validate Quote Details with Pelican
+    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
+
+    // Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    updateTestingHub(testResults);
+  }
+
   @Test(groups = {"quote-refund-annual"}, description = "Validation of Refund of Quote Order with Annual SUS")
   public void validateQuoteRefundOrderAnnual() throws Exception {
     HashMap<String, String> testResults = new HashMap<String, String>();
@@ -339,7 +439,6 @@ public class QuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
-
   @Test(groups = {"renew-quote-order-annual"}, description = "Validation of Renewal of Quote Order with Annual SUS")
   public void validateRenewQuoteOrderAnnual() throws Exception {
     HashMap<String, String> testResults;
@@ -350,7 +449,8 @@ public class QuoteOrder extends ECETestBase {
 
     testResults = createQuoteOrder(testDataForEachMethod);
 
-    testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,testResults.get(BICConstants.subscriptionId));
+    testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+        testResults.get(BICConstants.subscriptionId));
 
     //Update Subscription Next renewal date
     pelicantb.updateO2PSubscriptionForRenewal(testDataForEachMethod);
@@ -392,7 +492,8 @@ public class QuoteOrder extends ECETestBase {
 
     testResults = createQuoteOrder(testDataForEachMethod);
 
-    testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,testResults.get(BICConstants.subscriptionId));
+    testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+        testResults.get(BICConstants.subscriptionId));
 
     //Update Subscription for Subscription dates
     pelicantb.updateO2PSubscriptionForRenewal(testDataForEachMethod);

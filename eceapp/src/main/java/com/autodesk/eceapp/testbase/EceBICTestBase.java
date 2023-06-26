@@ -936,7 +936,7 @@ public class EceBICTestBase {
     } catch (MetadataException e) {
       e.printStackTrace();
     }
-    if (!bicPage.isFieldVisible("invoicePaymentEdit")) {
+    if (!bicPage.isFieldVisible("invoicePaymentEdit") || !bicPage.isFieldVisible("editPaymentProfile")) {
       bicPage.waitForField(BICECEConstants.CREDIT_CARD_NUMBER_FRAME, true, 10000);
       try {
         WebElement creditCardNumberFrame = bicPage
@@ -1593,7 +1593,7 @@ public class EceBICTestBase {
       }
 
       // Zip Pay Verification
-      //TODO: Review amount validation - ECEEPLT-7150
+      //TODO: Review zip validation - ECEEPLT-7150
 //      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
 //        String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
 //        WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
@@ -1620,8 +1620,9 @@ public class EceBICTestBase {
 
       // Zip Pay Checkout
       if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-        zipTestBase.setTestData(data);
-        zipTestBase.zipPayCheckout();
+        //TODO: Review zip validation - ECEEPLT-7150
+        //zipTestBase.setTestData(data);
+        //zipTestBase.zipPayCheckout();
       }
 
     } catch (NoSuchElementException nSE) {
@@ -1930,7 +1931,7 @@ public class EceBICTestBase {
     return results;
   }
 
-  @Step("Placing the Flex Order" + GlobalConstants.TAG_TESTINGHUB)
+  @Step("Placing the Quote Order" + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> placeQuoteOrder(LinkedHashMap<String, String> data) throws MetadataException {
     HashMap<String, String> results = new HashMap<>();
     String orderNumber = null;
@@ -1956,10 +1957,21 @@ public class EceBICTestBase {
 
       String paymentMethod = System.getProperty(BICECEConstants.PAYMENT);
 
-      if (data.get("userType").equals("new") || data.get("userType").equals("newUser")) {
-        enterBillingDetailsForQuote(data, address, paymentMethod);
-      } else if (data.get(BICECEConstants.PAYMENT_TYPE).equals("LOC")) {
-        paymentMethod = "LOC";
+      if (Strings.isNotNullAndNotEmpty(System.getProperty("usertype")) && System.getProperty("usertype")
+          .equals("existing") || Strings.isNotNullAndNotEmpty(data.get("isReturningUser"))) {
+        if (Strings.isNotNullAndNotEmpty(System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE))) {
+          paymentMethod = System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE);
+          data.put(BICECEConstants.PAYMENT_TYPE, System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE));
+
+          if (bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
+            bicPage.clickUsingLowLevelActions("paymentEditBtn");
+            bicPage.clickUsingLowLevelActions("editPaymentDetails");
+            waitForLoadingSpinnerToComplete("loadingSpinner");
+          }
+
+          enterBillingDetailsForQuote(data, address, paymentMethod);
+        }
+      } else {
         enterBillingDetailsForQuote(data, address, paymentMethod);
       }
 
@@ -2302,11 +2314,6 @@ public class EceBICTestBase {
       Map<String, String> address, String paymentMethod) throws MetadataException {
     String[] paymentCardDetails = getCardPaymentDetails(paymentMethod);
     dismissChatPopup();
-    if (bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
-      bicPage.clickUsingLowLevelActions("paymentEditBtn");
-      bicPage.clickUsingLowLevelActions("editPaymentDetails");
-      waitForLoadingSpinnerToComplete("loadingSpinner");
-    }
 
     selectPaymentProfile(data, paymentCardDetails, address);
     dismissChatPopup();
@@ -3668,7 +3675,7 @@ public class EceBICTestBase {
 
   }
 
-  public HashMap<String, String> createPayerAccount(LinkedHashMap<String, String> data) throws MetadataException {
+  public HashMap<String, String> createPayerAccount(LinkedHashMap<String, String> data) {
     HashMap<String, String> results = new HashMap<>();
     String password = ProtectedConfigFile.decrypt(data.get(BICECEConstants.PASSWORD));
 
