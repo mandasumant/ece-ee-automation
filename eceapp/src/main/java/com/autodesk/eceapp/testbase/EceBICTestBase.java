@@ -1271,6 +1271,8 @@ public class EceBICTestBase {
         bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
       }
 
+      Util.sleep(4000);
+
       int count = 0;
       while (bicPage.checkIfElementExistsInPage("paypalReviewBtn", 5)) {
         count++;
