@@ -451,3 +451,13 @@ validateAddingMultiProductMiniCart:
 
 validateDeleteProductFromMiniCart:
   productID: *NativeOrderPriceID
+
+validateRenewQuoteOrderAnnual:
+  term: "Annual"
+  accessModel: "SU"
+  productType: "3ds max"
+
+validateQuoteOrderSubscriptionStates:
+  term: "Annual"
+  accessModel: "SU"
+  productType: "3ds max"
