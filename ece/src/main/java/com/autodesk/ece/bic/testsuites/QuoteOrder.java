@@ -5,6 +5,7 @@ import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePayerDetails;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generateProductList;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePurchaserDetails;
 
+import com.autodesk.eceapp.testbase.ece.PelicanTestBase;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.testbase.ece.PWSTestBase;
@@ -25,12 +26,16 @@ import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -334,6 +339,90 @@ public class QuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+
+  @Test(groups = {"renew-quote-order-annual"}, description = "Validation of Renewal of Quote Order with Annual SUS")
+  public void validateRenewQuoteOrderAnnual() throws Exception {
+    HashMap<String, String> testResults;
+
+    String quoteLineItems = System.setProperty("quoteLineItems",
+        "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    testResults = createQuoteOrder(testDataForEachMethod);
+
+    testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,testResults.get(BICConstants.subscriptionId));
+
+    //Update Subscription Next renewal date
+    pelicantb.updateO2PSubscriptionForRenewal(testDataForEachMethod);
+
+    // Trigger the Pelican renewal job to renew the subscription
+    triggerPelicanRenewalJob(testResults);
+
+    // Get the subscription in pelican to check if it has renewed
+    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testResults));
+
+    try {
+      // Ensure that the subscription renews in the future
+      String nextBillingDateString = testResults.get(BICECEConstants.NEXT_BILLING_DATE);
+      Util.printInfo("New Billing Date: " + nextBillingDateString);
+      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+          nextBillingDateString);
+      Assert.assertTrue(newBillingDate.after(new Date()),
+          "Check that the O2P subscription has been renewed");
+
+      AssertUtils
+          .assertEquals("The billing date has been updated to next cycle ",
+              testResults.get(BICECEConstants.NEXT_BILLING_DATE).split("\\s")[0],
+              Util.customDate("MM/dd/yyyy", 0, -5, +1));
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    updateTestingHub(testResults);
+
+  }
+
+  @Test(groups = {"quote-order-subscription-status"}, description = "Validation of Quote Order Subscription status")
+  public void validateQuoteOrderSubscriptionStates() throws Exception {
+    HashMap<String, String> testResults;
+
+    String quoteLineItems = System.setProperty("quoteLineItems",
+        "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    testResults = createQuoteOrder(testDataForEachMethod);
+
+    testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,testResults.get(BICConstants.subscriptionId));
+
+    //Update Subscription for Subscription dates
+    pelicantb.updateO2PSubscriptionForRenewal(testDataForEachMethod);
+
+    // Trigger the Pelican renewal job to renew the subscription
+    triggerPelicanRenewalJob(testResults);
+
+    // Get the subscription in pelican to check if it has renewed
+    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testResults));
+
+    try {
+      // Ensure that the subscription renews in the future
+      String dateString = testResults.get(BICECEConstants.NEXT_BILLING_DATE);
+      Date date = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+          dateString);
+      Assert.assertTrue(date.after(new Date()),
+          "Check that the O2P subscription has been renewed");
+
+      AssertUtils
+          .assertEquals("The billing date has been updated to next cycle ",
+              testResults.get(BICECEConstants.NEXT_BILLING_DATE).split("\\s")[0],
+              Util.customDate("MM/dd/yyyy", 0, -5, +1));
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    updateTestingHub(testResults);
+
+  }
+
   private String getSerializedBillingAddress() {
     String billingAddress;
     String addressViaParam = System.getProperty(BICECEConstants.ADDRESS);
@@ -443,6 +532,13 @@ public class QuoteOrder extends ECETestBase {
     portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
     return testResults;
+  }
+
+  private void triggerPelicanRenewalJob(HashMap<String, String> results) {
+    PelicanTestBase pelicanTB = new PelicanTestBase();
+    pelicanTB.renewSubscription(results);
+    // Wait for the Pelican job to complete
+    Util.sleep(600000);
   }
 
 }
