@@ -1271,7 +1271,7 @@ public class EceBICTestBase {
         bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
       }
 
-      Util.sleep(4000);
+      Util.sleep(10000);
 
       int count = 0;
       while (bicPage.checkIfElementExistsInPage("paypalReviewBtn", 5)) {
@@ -2079,6 +2079,11 @@ public class EceBICTestBase {
   @Step("Dot Com: Navigate to Flex Cart from DotCom " + GlobalConstants.TAG_TESTINGHUB)
   public void navigateToFlexCartFromDotCom(LinkedHashMap<String, String> data) throws MetadataException {
     String priceId = navigateToCart(data);
+
+    if (bicPage.checkIfElementExistsInPage("cartContinueButton", 15)) {
+      Util.printInfo("Clicking on Continue button");
+      bicPage.clickUsingLowLevelActions("cartContinueButton");
+    }
 
     // Sign in
     if (data.get("isReturningUser") == null) {
