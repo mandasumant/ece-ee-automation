@@ -1,8 +1,10 @@
 package com.autodesk.eceapp.utilities;
 
 import com.autodesk.eceapp.constants.EceAppConstants;
+import com.autodesk.eceapp.dto.UpdateO2PSubscription;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.YamlUtil;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.restassured.path.json.JsonPath;
@@ -62,8 +64,20 @@ public final class ResourceFileLoader {
         return mapper.readValue(inputStream, TaxExemptionMappings.class);
     }
 
+    public static UpdateO2PSubscription getUpdateO2PSubscriptionJson() throws IOException {
+        InputStreamReader inputStream = getResourceInPayloadDirAsInputStreamReader("O2P_Update_Subscription.json");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(inputStream, UpdateO2PSubscription.class);
+    }
+
     private static InputStreamReader getResourceInMiscAsInputStreamReader(final String resourceName) throws FileNotFoundException {
         final FileInputStream fileStream = new FileInputStream(EceAppConstants.APP_MISC_RESOURCE_PATH + resourceName);
+        return new InputStreamReader(fileStream, StandardCharsets.UTF_8);
+    }
+
+    private static InputStreamReader getResourceInPayloadDirAsInputStreamReader(final String resourceName) throws FileNotFoundException {
+        final FileInputStream fileStream = new FileInputStream(EceAppConstants.APP_PAYLOAD_RESOURCE_PATH + resourceName);
         return new InputStreamReader(fileStream, StandardCharsets.UTF_8);
     }
 

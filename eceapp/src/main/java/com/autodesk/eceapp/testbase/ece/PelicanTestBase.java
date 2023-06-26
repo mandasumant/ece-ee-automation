@@ -2,9 +2,11 @@ package com.autodesk.eceapp.testbase.ece;
 
 import static io.restassured.RestAssured.given;
 import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.dto.UpdateO2PSubscription;
 import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.eceapp.utilities.PelicanRequestSigner;
 import com.autodesk.eceapp.utilities.PelicanRequestSigner.PelicanSignature;
+import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.platformautomation.ApiClient;
 import com.autodesk.platformautomation.ApiException;
 import com.autodesk.platformautomation.Configuration;
@@ -264,6 +266,51 @@ public class PelicanTestBase {
       AssertUtils.fail("Failed to generate SPOC Authorization Token" + e1.getMessage());
     }
     return patchRestResponse(getPurchaseOrderDetailsUrl, header, inputPayload);
+  }
+
+  @Step("Update next renewal,termination,expiration dates " + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> updateO2PSubscriptionForRenewal(HashMap<String, String> data) {
+
+    String getSubscriptionV4Url = data.get("getSubscriptionByIdV4Url");
+    getSubscriptionV4Url = addTokenInResourceUrl(getSubscriptionV4Url,
+            data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
+    Util.printInfo("Get SubscriptionV4 baseURL : " + getSubscriptionV4Url);
+
+    PelicanSignature signature = requestSigner.generateSignature();
+
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
+    String accept = BICECEConstants.APPLICATION_VNDAPI_JSON;
+    HashMap<String, String> header = new HashMap<>();
+    header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, signature.xE2HMACSignature);
+    header.put(BICECEConstants.X_E2_PARTNER_ID, signature.xE2PartnerId);
+    header.put(BICECEConstants.X_E2_APPFAMILY_ID, signature.xE2AppFamilyId);
+    header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
+    header.put("X-Request-Ref", UUID.randomUUID().toString());
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.ACCEPT, accept);
+
+    String contractStartDate;
+    if (data.containsKey("desiredBillingDate")) {
+      contractStartDate = data.get("desiredBillingDate");
+    } else {
+      contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 20:13:28 UTC";
+    }
+    UpdateO2PSubscription updateSubscription;
+    ObjectMapper om = new ObjectMapper();
+    String inputPayload = "";
+    try {
+      updateSubscription = ResourceFileLoader.getUpdateO2PSubscriptionJson();
+      updateSubscription.getData().setNextRenewalDate(contractStartDate);
+      updateSubscription.getData().setSuspensionDate(contractStartDate);
+      updateSubscription.getData().setExpirationDate(contractStartDate);
+      updateSubscription.getData().setTerminationDate(contractStartDate);
+      inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(updateSubscription);
+      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
+    } catch (IOException e1) {
+      e1.printStackTrace();
+      AssertUtils.fail("Failed to generate Authorization Token" + e1.getMessage());
+    }
+    return patchRestResponse(getSubscriptionV4Url, header, inputPayload);
   }
 
   @Step("Update next billing cycle with before date " + GlobalConstants.TAG_TESTINGHUB)
