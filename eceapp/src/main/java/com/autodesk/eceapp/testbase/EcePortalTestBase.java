@@ -1,5 +1,6 @@
 package com.autodesk.eceapp.testbase;
 
+import com.autodesk.testinghub.core.utils.ScreenCapture;
 import static java.util.Objects.isNull;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
@@ -60,6 +61,7 @@ public class EcePortalTestBase {
   private final String accountsProductPageUrl;
   private final EceZipPayTestBase zipTestBase;
   private final EceBICTestBase bicTestBase;
+  private final String accountPortalOxygenLogOut;
   public WebDriver driver = null;
 
   public EcePortalTestBase(GlobalTestBase testbase) {
@@ -80,6 +82,7 @@ public class EcePortalTestBase {
     accountsPortalQuoteUrl = defaultvalues.get("accountsPortalQuoteUrl");
     accountPortalBillingInvoicesUrl = defaultvalues.get("accountPortalBillingInvoicesUrl");
     accountsProductPageUrl = defaultvalues.get("accountsProductPageUrl");
+    accountPortalOxygenLogOut = defaultvalues.get("oxygenLogOut");
   }
 
   public static String timestamp() {
@@ -244,6 +247,10 @@ public class EcePortalTestBase {
         Util.printInfo("Retry: Failed to find the Subscription productXpath in Portal, attempt #" + (attempts + 1));
         Util.sleep(300000);
         Util.printInfo("Part of Retry: Invalidate Portal user cache, by signing out and then back in");
+
+        ScreenCapture.getInstance().captureFullScreenshot();
+        Util.printInfo("Taking screenshot of Account Portal before logging out");
+
         portalLogoutLogin(userName, password);
         attempts++;
       } else {
@@ -299,6 +306,8 @@ public class EcePortalTestBase {
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
+      ScreenCapture.getInstance().captureFullScreenshot();
+      Util.printInfo("Taking screenshot of Account Portal After Log in");
     }
 
     try {
@@ -1817,8 +1826,7 @@ public class EcePortalTestBase {
 
   @Step("Account Portal: Logout & Login " + GlobalConstants.TAG_TESTINGHUB)
   private void portalLogoutLogin(String userEmail, String password) {
-    JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
-    clickWithJavaScriptExecutor(javascriptExecutor, "//*[@data-wat-val=\"me-menu:sign out\"]");
+    openPortalURL(accountPortalOxygenLogOut);
     Util.sleep(3000);
 
     if (isPortalLoginPageVisible()) {
