@@ -267,6 +267,11 @@ validateQuoteOrderPremium:
   accessModel: "SU"
   productType: "premium"
 
+validateQuoteOrderAnnualMYABFLEXPremium:
+  term: "Annual"
+  accessModel: "SU"
+  productType: "premium"
+
 validateQuoteOrderReturningUser:
   term: "Annual"
   accessModel: "SU"

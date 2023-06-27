@@ -2919,9 +2919,13 @@ public class EceBICTestBase {
   }
 
   public void loginToOxygen(String emailID, String password) {
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(bicPage.getFirstFieldLocator("autodeskId"))));
-
+    Util.sleep(10000);
+    try {
+      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(120));
+      wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(bicPage.getFirstFieldLocator("autodeskId"))));
+    } catch (Exception e) {
+      AssertUtils.fail("Unable to redirect to Oxygen Login page.");
+    }
     bicPage.populateField(BICECEConstants.AUTODESK_ID, emailID);
     bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
     bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 5000);

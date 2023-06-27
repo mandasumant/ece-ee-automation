@@ -259,6 +259,22 @@ public class QuoteOrder extends ECETestBase {
 
   }
 
+  @Test(groups = {"quote-order-annual-flex-myab-premium"}, description = "Validation of Create Quote Order with Annual, Flex, MYAB and Premium SUS")
+  public void validateQuoteOrderAnnualMYABFLEXPremium() throws Exception {
+    HashMap<String, String> testResults;
+
+    String quoteLineItems = System.setProperty("quoteLineItems",
+            "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
+                    "access_model:sus,offering_id:OD-000021,term:3_year,usage:commercial,plan:standard|" +
+                    "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:1000|" +
+                    "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium");
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    testResults = createQuoteOrder(testDataForEachMethod);
+    updateTestingHub(testResults);
+
+  }
+
   @Test(groups = {"quote-order-returning-user"}, description = "Validation of Create Quote Order for Returning user")
   public void validateQuoteOrderReturningUser() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
