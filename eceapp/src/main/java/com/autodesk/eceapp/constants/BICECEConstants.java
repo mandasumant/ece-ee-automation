@@ -16,6 +16,7 @@ public class BICECEConstants extends BICConstants {
   public static final String STORE = "store";
   public static final String ENVIRONMENT = "environment";
   public static final String SUBSCRIPTION_ID = "getPOReponse_subscriptionId";
+  public static final String SUBSCRIPTION_STATUS = "subscriptionStatus";
   public static final String SUBSCRIPTION_PERIOD_START_DATE = "getPOReponse_subscriptionPeriodStartDate";
   public static final String SUBSCRIPTION_PERIOD_END_DATE = "getPOReponse_subscriptionPeriodEndDate";
   public static final String NEXT_BILLING_DATE = "response_nextBillingDate";

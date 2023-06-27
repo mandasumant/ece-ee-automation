@@ -152,6 +152,10 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
         PWSTestBase.getQuoteStartDateAsString());
 
+    if(System.getProperty("subscriptionStatus") !=null){
+      testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, System.getProperty("subscriptionStatus"));
+    }
+
   }
 
   @Test(groups = {"quote-order"}, description = "Validation of Create BIC Quote Order")
@@ -624,7 +628,7 @@ public class QuoteOrder extends ECETestBase {
     }
 
     portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
-
+    testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
     return testResults;
   }
 

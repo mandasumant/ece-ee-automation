@@ -10,6 +10,7 @@ import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.platformautomation.ApiClient;
 import com.autodesk.platformautomation.ApiException;
 import com.autodesk.platformautomation.Configuration;
+import com.autodesk.platformautomation.bilinsmpelicansubscriptionv4.client.models.SubscriptionSuccessV4;
 import com.autodesk.platformautomation.bmse2pelicansubscriptionv3.SubscriptionControllerApi;
 import com.autodesk.platformautomation.bmse2pelicansubscriptionv3.models.SubscriptionSuccess;
 import com.autodesk.testinghub.core.base.GlobalConstants;
@@ -272,6 +273,7 @@ public class PelicanTestBase {
   public HashMap<String, String> updateO2PSubscriptionForRenewal(HashMap<String, String> data) {
 
     String getSubscriptionV4Url = data.get("getSubscriptionByIdV4Url");
+    Util.printInfo("Subscription id " + data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
     getSubscriptionV4Url = addTokenInResourceUrl(getSubscriptionV4Url,
             data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
     Util.printInfo("Get SubscriptionV4 baseURL : " + getSubscriptionV4Url);
@@ -279,7 +281,7 @@ public class PelicanTestBase {
     PelicanSignature signature = requestSigner.generateSignature();
 
     String Content_Type = BICECEConstants.APPLICATION_JSON;
-    String accept = BICECEConstants.APPLICATION_VNDAPI_JSON;
+    String accept = BICECEConstants.APPLICATION_JSON;
     HashMap<String, String> header = new HashMap<>();
     header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, signature.xE2HMACSignature);
     header.put(BICECEConstants.X_E2_PARTNER_ID, signature.xE2PartnerId);
@@ -300,10 +302,20 @@ public class PelicanTestBase {
     String inputPayload = "";
     try {
       updateSubscription = ResourceFileLoader.getUpdateO2PSubscriptionJson();
+      if (data.get(BICECEConstants.SUBSCRIPTION_STATUS) != null) {
+        if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.SUSPENDED.toString())) {
+          updateSubscription.getData().setSuspensionDate(contractStartDate);
+          updateSubscription.getData().setStatus(SubscriptionSuccessV4.StatusEnum.SUSPENDED.toString());
+        } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.TERMINATED.toString())) {
+          updateSubscription.getData().setTerminationDate(contractStartDate);
+          updateSubscription.getData().setStatus(SubscriptionSuccessV4.StatusEnum.TERMINATED.toString());
+        } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.EXPIRED.toString())) {
+          updateSubscription.getData().setExpirationDate(contractStartDate);
+          updateSubscription.getData().setStatus(SubscriptionSuccessV4.StatusEnum.EXPIRED.toString());
+        }
+      }
+
       updateSubscription.getData().setNextRenewalDate(contractStartDate);
-      updateSubscription.getData().setSuspensionDate(contractStartDate);
-      updateSubscription.getData().setExpirationDate(contractStartDate);
-      updateSubscription.getData().setTerminationDate(contractStartDate);
       inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(updateSubscription);
       Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
     } catch (IOException e1) {
@@ -607,7 +619,7 @@ public class PelicanTestBase {
   public void renewSubscription(HashMap<String, String> data) {
     String pelicanRenewSubscriptionUrl = data.get("pelicanRenewalURL");
     String getRenewSubscriptionUrl = addTokenInResourceUrl(pelicanRenewSubscriptionUrl,
-        data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
+        data.get(BICConstants.subscriptionId));
     Util.printInfo("Pelican Renew Subscription Url : " + getRenewSubscriptionUrl);
 
     String Content_Type = BICECEConstants.APPLICATION_JSON;

@@ -1,10 +1,13 @@
 {
   "data": {
     "status": "ACTIVE",
-    "nextRenewalDate": "08/05/2023 17:58:58 UTC",
-    "suspensionDate": "06/05/2023 17:58:58 UTC",
-    "terminationDate": "06/05/2023 17:58:58 UTC",
-    "expirationDate": "06/05/2023 17:58:58 UTC",
-    "resolveByDate": "06/05/2023 17:58:58 UTC"
+    "nextRenewalDate": "08/05/2099 17:58:58 UTC",
+    "suspensionDate": "06/05/2099 17:58:58 UTC",
+    "terminationDate": "06/05/2099 17:58:58 UTC",
+    "expirationDate": "06/05/2099 17:58:58 UTC",
+    "resolveByDate": "06/05/2099 17:58:58 UTC"
+  },
+  "meta": {
+    "context": "EDIT_DIRECT"
   }
 }

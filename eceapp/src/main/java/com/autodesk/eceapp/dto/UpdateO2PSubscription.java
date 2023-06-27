@@ -11,6 +11,9 @@ public class UpdateO2PSubscription {
     @JsonProperty("data")
     private UpdateO2PSubscription.Data data;
 
+    @JsonProperty("meta")
+    private UpdateO2PSubscription.Meta meta;
+
     public UpdateO2PSubscription() {
     }
 
@@ -92,5 +95,10 @@ public class UpdateO2PSubscription {
         public void setStatus(String status) {
             this.status = status;
         }
+    }
+
+    public static class Meta {
+        @JsonProperty("context")
+        private String context = "EDIT_DIRECT";
     }
 }
