@@ -17,7 +17,7 @@ public class PwsQuoteDataBuilder {
     final String quoteLineItems = System.getProperty(BICECEConstants.QUOTE_LINE_ITEMS);
     return Optional.ofNullable(quoteLineItems)
         .map(PwsQuoteDataBuilder::getSUSLineItems)
-        .orElse(getFlexLineItems(isMultiLineItem, testData));
+        .orElseGet(() -> getFlexLineItems(isMultiLineItem, testData));
   }
 
   private List<LineItemDTO> getSUSLineItems(final String quotes) {
@@ -40,7 +40,7 @@ public class PwsQuoteDataBuilder {
       LineItemDTO lineItem = LineItemDTO.builder()
           .offeringId(quoteMap.get("offering_id"))
           .action("New")
-          .quantity(Optional.ofNullable(quoteMap.get("quantity")).map(Integer::valueOf).orElse(getRandomInt(1,10)))
+          .quantity(Optional.ofNullable(quoteMap.get("quantity")).map(Integer::valueOf).orElseGet(() -> getRandomInt(1,10)))
           .offer(offer)
           .build();
       lineItems.add(lineItem);
