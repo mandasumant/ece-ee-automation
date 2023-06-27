@@ -252,11 +252,6 @@ validateQuoteOrderAnnualFlex:
   accessModel: "SU"
   productType: "3ds max"
 
-validateQuoteRefundOrderAnnual:
-  term: "Annual"
-  accessModel: "SU"
-  productType: "3ds max"
-
 validateQuoteOrderAnnualMYAB:
   term: "3 Year"
   accessModel: "SU"
@@ -267,6 +262,11 @@ validateQuoteOrderMYAB:
   accessModel: "SU"
   productType: "3ds max"
 
+validateQuoteOrderPremium:
+  term: "Annual"
+  accessModel: "SU"
+  productType: "premium"
+
 validateQuoteOrderReturningUser:
   term: "Annual"
   accessModel: "SU"
@@ -276,6 +276,11 @@ validateQuoteRefundOrder:
   term: "Annual"
   accessModel: "Flex"
   productType: "flex"
+
+validateQuoteRefundOrderAnnual:
+  term: "Annual"
+  accessModel: "SU"
+  productType: "3ds max"
 
 validateMultiLineItemQuoteOrder:
   term: "Annual"

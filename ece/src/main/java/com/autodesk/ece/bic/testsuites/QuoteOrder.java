@@ -246,6 +246,19 @@ public class QuoteOrder extends ECETestBase {
 
   }
 
+  @Test(groups = {"quote-order-premium"}, description = "Validation of Create Quote Order with Premium SUS")
+  public void validateQuoteOrderPremium() throws Exception {
+    HashMap<String, String> testResults;
+
+    String quoteLineItems = System.setProperty("quoteLineItems",
+        "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium");
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    testResults = createQuoteOrder(testDataForEachMethod);
+    updateTestingHub(testResults);
+
+  }
+
   @Test(groups = {"quote-order-returning-user"}, description = "Validation of Create Quote Order for Returning user")
   public void validateQuoteOrderReturningUser() throws MetadataException {
     HashMap<String, String> testResults = new HashMap<>();
