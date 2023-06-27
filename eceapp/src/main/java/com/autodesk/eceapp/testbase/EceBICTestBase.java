@@ -2207,16 +2207,19 @@ public class EceBICTestBase {
       signInIframe(data);
     }
 
-    String dotComPrice = data.get("dotComPrice").replaceAll("[^0-9]", "") + "00";
+    Integer dotComPrice = Integer.valueOf(data.get("dotComPrice").replaceAll("[^0-9]", ""));
 
     if (bicPage.checkIfElementExistsInPage("promocodeAfterDiscountPrice", 10)) {
       String priceAfterDiscount = bicPage.getValueFromGUI("promocodeAfterDiscountPrice").trim()
           .replaceAll("[^0-9]", "");
-      AssertUtils.assertEquals("Price in the Cart and Checkout are not matching", dotComPrice, priceAfterDiscount);
+      Integer priceAfterDiscountRounded = Math.round(Float.valueOf(priceAfterDiscount) / 100);
+      AssertUtils.assertEquals("Price in the Cart and Checkout are not matching", dotComPrice,
+          priceAfterDiscountRounded);
     } else if (bicPage.checkIfElementExistsInPage("promoCodeBeforeDiscountPrice", 10)) {
       String priceBeforeDiscount = bicPage.getValueFromGUI("promoCodeBeforeDiscountPrice").trim()
           .replaceAll("[^0-9]", "");
-      AssertUtils.assertEquals("Price in the Cart and Checkout are matching", dotComPrice, priceBeforeDiscount
+      Integer priceBeforeDiscountRounded = Math.round(Float.valueOf(priceBeforeDiscount) / 100);
+      AssertUtils.assertEquals("Price in the Cart and Checkout are matching", dotComPrice, priceBeforeDiscountRounded
       );
     }
 
