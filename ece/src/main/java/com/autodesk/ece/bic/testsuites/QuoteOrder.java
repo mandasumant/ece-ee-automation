@@ -301,6 +301,8 @@ public class QuoteOrder extends ECETestBase {
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
 
+    testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
+
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
@@ -310,6 +312,10 @@ public class QuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
 
     testDataForEachMethod.put("isReturningUser", BICECEConstants.TRUE);
+
+    if (System.getProperty(BICECEConstants.IS_SAME_PAYER) != null || false) {
+      testDataForEachMethod.put(BICECEConstants.IS_SAME_PAYER, System.getProperty(BICECEConstants.IS_SAME_PAYER));
+    }
 
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
@@ -602,6 +608,8 @@ public class QuoteOrder extends ECETestBase {
 
     // Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+
+    testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

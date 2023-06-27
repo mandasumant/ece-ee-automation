@@ -1361,6 +1361,12 @@ public class EceBICTestBase {
         try {
           if (payByInvoiceDetails.get(BICECEConstants.IS_SAME_PAYER) != null || false && payByInvoiceDetails.get(
               BICECEConstants.IS_SAME_PAYER).equals(BICECEConstants.TRUE)) {
+
+            if (!payByInvoiceDetails.containsKey(BICECEConstants.PAYER_EMAIL)
+                || payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL) == null) {
+              payByInvoiceDetails.put(BICECEConstants.PAYER_EMAIL, payByInvoiceDetails.get(BICConstants.emailid));
+            }
+
             if (bicPage.checkIfElementExistsInPage("cartEmailAddress", 10)) {
               Util.printInfo("Entering Payer email and CSN.");
               bicPage.populateField("cartEmailAddress", payByInvoiceDetails.get(BICECEConstants.PAYER_EMAIL));

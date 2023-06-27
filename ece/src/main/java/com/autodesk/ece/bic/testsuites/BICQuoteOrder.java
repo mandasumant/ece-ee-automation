@@ -1,6 +1,9 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.dto.QuoteDetails;
+import com.autodesk.eceapp.testbase.EceBICTestBase;
+import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient.NewQuoteOrder;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderData;
@@ -8,9 +11,6 @@ import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderFilters;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.testbase.ece.PWSTestBase;
 import com.autodesk.eceapp.testbase.ece.PelicanTestBase;
-import com.autodesk.eceapp.constants.BICECEConstants;
-import com.autodesk.eceapp.testbase.EceBICTestBase;
-import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.eceapp.utilities.TaxExemptionMappings;
@@ -267,7 +267,7 @@ public class BICQuoteOrder extends ECETestBase {
         Util.printInfo("Payer email: " + payerEmail);
         getBicTestBase().goToDotcomSignin(testDataForEachMethod);
         getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
-        getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
+        //getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
         getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
         testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
         testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
@@ -279,7 +279,7 @@ public class BICQuoteOrder extends ECETestBase {
               testDataForEachMethod.get(BICECEConstants.LASTNAME)),
           testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
 
-      getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
+      //getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
       String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
           testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
 
@@ -686,7 +686,7 @@ public class BICQuoteOrder extends ECETestBase {
               testDataForEachMethod.get(BICECEConstants.LASTNAME)),
           testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
 
-      getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
+      //getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
       String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
           testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
 
@@ -1181,7 +1181,7 @@ public class BICQuoteOrder extends ECETestBase {
       Util.printInfo("Payer email: " + payerEmail);
       getBicTestBase().goToDotcomSignin(testDataForEachMethod);
       getBicTestBase().createBICAccount(payerNames, payerEmail, PASSWORD, true);
-      getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
+      //getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
       getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
       testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, payerEmail);
       testResults.put(BICECEConstants.PAYER_EMAIL, payerEmail);
@@ -1191,7 +1191,7 @@ public class BICQuoteOrder extends ECETestBase {
     testDataForEachMethod.put("productType", "flex");
     Address address = getBillingAddress();
 
-    getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
+    //getBicTestBase().goToOxygenLanguageURL(testDataForEachMethod);
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod);
 
