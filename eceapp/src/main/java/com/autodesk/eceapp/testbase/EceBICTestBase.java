@@ -651,7 +651,7 @@ public class EceBICTestBase {
         driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         WebElement element = driver
-            .findElement(By.className("container-payment-chooser-MuiButtonBase-root"));     //findElement(By.className("container-payment-chooser-MuiButtonBase-root")    findElement(By.xpath("//*[@id=\"usi_content\"]")
+            .findElement(By.className("container-payment-chooser-MuiButtonBase-root"));     
         executor.executeScript("arguments[0].click();", element);
       } catch (Exception e) {
         Util.printInfo("Can not find the skip button and click");
