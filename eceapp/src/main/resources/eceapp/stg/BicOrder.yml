@@ -270,7 +270,7 @@ validateQuoteOrderPremium:
 validateQuoteOrderAnnualMYABFLEXPremium:
   term: "Annual"
   accessModel: "SU"
-  productType: "premium"
+  productType: "3ds max"
 
 validateQuoteOrderReturningUser:
   term: "Annual"
