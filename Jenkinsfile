@@ -175,7 +175,6 @@ pipeline {
                 }
             }
         }
-
         stage('Apollo R2.1.1') {
             when {
                 branch 'master'
@@ -187,21 +186,20 @@ pipeline {
                 triggerApolloR2_1_1(serviceBuildHelper, 'INT')
             }
         }
-
         stage('Apollo R2.1.2') {
             when {
                 branch 'master'
                 anyOf {
-                    expression { triggeredBy 'TimerTrigger' }
-                    expression { params.APOLLO_R2_1_2 == true }
+                    triggeredBy 'TimerTrigger'
+                    expression {
+                        params.APOLLO_R2_1_2 == true
+                    }
                 }
             }
             steps {
                 triggerApolloR2_1_2(serviceBuildHelper, 'INT')
             }
         }
-
-
         stage('EDU Tests') {
             when {
                 expression {
