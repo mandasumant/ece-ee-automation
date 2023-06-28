@@ -517,6 +517,10 @@ public class EceBICTestBase {
 
       bicPage.clickToSubmit("guacAddToCart", 3000);
 
+      if (bicPage.checkIfElementExistsInPage("cartContainerToggle", 10)) {
+        bicPage.clickUsingLowLevelActions("cartContainerToggle");
+      }
+
       if (data.containsKey(BICECEConstants.MINI_CART_MULTI_PRODUCT)) {
         addProductToMiniCart(data);
         Util.printInfo("Making sure that we can see selected products on the page");
