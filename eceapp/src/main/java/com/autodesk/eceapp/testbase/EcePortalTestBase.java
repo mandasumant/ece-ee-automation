@@ -1,6 +1,5 @@
 package com.autodesk.eceapp.testbase;
 
-import com.autodesk.testinghub.core.utils.ScreenCapture;
 import static java.util.Objects.isNull;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.EceAppConstants;
@@ -9,14 +8,15 @@ import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
-import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.PDFReader;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
+import com.autodesk.testinghub.core.utils.ScreenCapture;
 import com.autodesk.testinghub.core.utils.SoftAssertUtil;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import io.qameta.allure.Step;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1826,6 +1826,9 @@ public class EcePortalTestBase {
 
   @Step("Account Portal: Logout & Login " + GlobalConstants.TAG_TESTINGHUB)
   private void portalLogoutLogin(String userEmail, String password) {
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("localStorage.clear();sessionStorage.clear();");
+    
     openPortalURL(accountPortalOxygenLogOut);
     Util.sleep(3000);
 
@@ -2048,7 +2051,8 @@ public class EcePortalTestBase {
       return false;
     }
 
-    if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20) && (!portalPage.checkIfElementExistsInPage("mandateAgreementChecked", 20))) {
+    if (portalPage.checkIfElementExistsInPage("portalDebitMandateAgreement", 20)
+        && (!portalPage.checkIfElementExistsInPage("mandateAgreementChecked", 20))) {
       bicTestBase.clickMandateAgreementCheckbox();
     }
     if (System.getProperty(BICECEConstants.PAYMENT).equals(BICECEConstants.PAYMENT_ATM_BANK_TRANSFER)) {
@@ -2260,7 +2264,8 @@ public class EcePortalTestBase {
   }
 
   @Step("Select invoice and credit memo validations without PO Number" + GlobalConstants.TAG_TESTINGHUB)
-  public double selectInvoiceAndValidateCreditMemoWithoutPONumber(Boolean shouldWaitForInvoice, String locale) throws Exception {
+  public double selectInvoiceAndValidateCreditMemoWithoutPONumber(Boolean shouldWaitForInvoice, String locale)
+      throws Exception {
     openPortalURL(accountPortalBillingInvoicesUrl);
     if (shouldWaitForInvoice) {
       waitForInvoicePageLoadToVisible();
@@ -2439,10 +2444,10 @@ public class EcePortalTestBase {
               System.out.println(expectedInvoiceNumbersList.get(i) + " Invoice is Available under Paid Tab");
               break;
             } else if (!invoiceNumbers.get(j).getText().trim().equalsIgnoreCase(expectedInvoiceNumbersList.get(i))
-                    && j == invoiceNumbers.size()) {
+                && j == invoiceNumbers.size()) {
               Util.PrintInfo(expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
               AssertUtils.assertTrue(false,
-                      expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
+                  expectedInvoiceNumbersList.get(i) + " Invoice is Not Available under Paid Tab");
             }
           }
         }
