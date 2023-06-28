@@ -128,7 +128,8 @@ public class DirectOrder extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -181,7 +182,8 @@ public class DirectOrder extends ECETestBase {
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -233,8 +235,8 @@ public class DirectOrder extends ECETestBase {
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
-
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrderV4(results);
@@ -254,7 +256,8 @@ public class DirectOrder extends ECETestBase {
     AssertUtils.assertEquals("Order status is NOT REFUNDED", results.get("refund_orderState"), "REFUNDED");
 
     //Get Subscription to check if Subscription is in Terminated status
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     AssertUtils.assertEquals("Subscription is NOT TERMINATED", results.get("response_status"),
         BICECEConstants.TERMINATED);
 
@@ -302,7 +305,8 @@ public class DirectOrder extends ECETestBase {
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, BICECEConstants.LOC);
     testDataForEachMethod.put(BICECEConstants.IS_SAME_PAYER, BICECEConstants.TRUE);
@@ -325,7 +329,8 @@ public class DirectOrder extends ECETestBase {
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     // Refund PurchaseOrder details from pelican
     pelicantb.createRefundOrderV4(results);
@@ -345,7 +350,8 @@ public class DirectOrder extends ECETestBase {
     AssertUtils.assertEquals("Order status is NOT REFUNDED", results.get("refund_orderState"), "REFUNDED");
 
     //Get Subscription to check if Subscription is in Terminated status
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     AssertUtils.assertEquals("Subscription is NOT TERMINATED", results.get("response_status"),
         BICECEConstants.TERMINATED);
 
@@ -392,7 +398,8 @@ public class DirectOrder extends ECETestBase {
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -414,7 +421,8 @@ public class DirectOrder extends ECETestBase {
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));

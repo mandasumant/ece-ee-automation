@@ -4,13 +4,13 @@ import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
-import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -106,7 +106,8 @@ public class BICRefundOrder extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
     results.put(BICECEConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     // Validate Portal
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
@@ -195,7 +196,8 @@ public class BICRefundOrder extends ECETestBase {
     AssertUtils.assertEquals("Order status is NOT REFUNDED", results.get("refund_orderState"), "REFUNDED");
 
     // Get Subscription Status ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     // Verify that Subscription status is Expired
     AssertUtils

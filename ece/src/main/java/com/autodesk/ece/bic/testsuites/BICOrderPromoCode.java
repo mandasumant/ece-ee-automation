@@ -3,11 +3,11 @@ package com.autodesk.ece.bic.testsuites;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
-import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -116,7 +116,7 @@ public class BICOrderPromoCode extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     String promotionDiscount = results.get("getPOResponse_promotionDiscount");
 

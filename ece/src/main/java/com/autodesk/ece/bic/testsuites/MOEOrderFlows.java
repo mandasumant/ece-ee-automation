@@ -1,8 +1,8 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.testbase.ece.MOETestBase;
-import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
@@ -312,7 +312,8 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -349,7 +350,8 @@ public class MOEOrderFlows extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     // Get Finance Reports
     String result = pelicantb.postReportsFinancePelicanAPI(results);
@@ -415,7 +417,8 @@ public class MOEOrderFlows extends ECETestBase {
           BICECEConstants.GUAC_MOE_ORDER_ORIGIN);
 
       // Get find Subscription ById
-      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
+          results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -483,7 +486,8 @@ public class MOEOrderFlows extends ECETestBase {
           BICECEConstants.GUAC_DTC_ORDER_ORIGIN);
 
       // Get find Subscription ById
-      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
+          results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -556,7 +560,8 @@ public class MOEOrderFlows extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -653,7 +658,8 @@ public class MOEOrderFlows extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

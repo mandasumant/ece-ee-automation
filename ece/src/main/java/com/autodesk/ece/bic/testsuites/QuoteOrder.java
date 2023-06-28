@@ -328,7 +328,8 @@ public class QuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
 
@@ -377,7 +378,8 @@ public class QuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     updateTestingHub(testResults);
   }
@@ -466,7 +468,8 @@ public class QuoteOrder extends ECETestBase {
     }
 
     //Get Subscription to check if Subscription is in Terminated status
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     AssertUtils.assertEquals("Subscription is NOT TERMINATED", results.get("response_status"),
         BICECEConstants.TERMINATED);
 
@@ -493,7 +496,8 @@ public class QuoteOrder extends ECETestBase {
     triggerPelicanRenewalJob(testResults);
 
     // Get the subscription in pelican to check if it has renewed
-    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testResults));
+    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
+        testResults.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       // Ensure that the subscription renews in the future
@@ -536,7 +540,8 @@ public class QuoteOrder extends ECETestBase {
     triggerPelicanRenewalJob(testResults);
 
     // Get the subscription in pelican to check if it has renewed
-    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testResults));
+    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
+        testResults.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       // Ensure that the subscription renews in the future
@@ -636,7 +641,8 @@ public class QuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
 

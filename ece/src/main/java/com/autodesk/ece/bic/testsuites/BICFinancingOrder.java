@@ -3,12 +3,12 @@ package com.autodesk.ece.bic.testsuites;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.google.common.base.Strings;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
@@ -166,7 +166,8 @@ public class BICFinancingOrder extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
         results.get(BICConstants.emailid),
@@ -176,7 +177,8 @@ public class BICFinancingOrder extends ECETestBase {
     pelicantb.forwardNextBillingCycleForFinancingRenewal(results);
 
     // Lookup the subscription in pelican to confirm its renewal date
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       String originalBillingDateString = results.get(BICECEConstants.NEXT_BILLING_DATE);
@@ -204,7 +206,8 @@ public class BICFinancingOrder extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get the subscription in pelican to check if it has renewed
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       // Ensure that the subscription renews in the future
@@ -296,7 +299,8 @@ public class BICFinancingOrder extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderDetails(pelicantb.retryGetPurchaseOrder(results)));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));

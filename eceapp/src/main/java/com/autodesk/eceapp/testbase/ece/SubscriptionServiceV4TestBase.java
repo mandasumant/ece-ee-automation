@@ -16,17 +16,22 @@ import java.util.HashMap;
 
 public class SubscriptionServiceV4TestBase {
 
+  private final String baseUrl;
   private final PelicanRequestSigner requestSigner = new PelicanRequestSigner();
 
+  public SubscriptionServiceV4TestBase() {
+    String pelicanBaseUrl = "https://api.pelican{env}.autodesk.com";
+    baseUrl = pelicanBaseUrl.replace("{env}", GlobalConstants.ENV.toLowerCase());
+  }
+
   @Step("Subscription Service : Get Subscription API" + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> getSubscriptionById(HashMap<String, String> data) {
+  public HashMap<String, String> getSubscriptionById(String id) {
     ApiClient defaultClient = Configuration.getDefaultApiClient();
-    defaultClient.setBasePath(data.get("getPelicanBaseUrl"));
+    defaultClient.setBasePath(baseUrl);
     SubscriptionControllerApi apiInstance = new SubscriptionControllerApi(defaultClient);
 
     PelicanSignature signature = requestSigner.generateSignature();
 
-    String id = data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID);
     HashMap<String, String> results = new HashMap<>();
 
     boolean success = false;

@@ -353,7 +353,8 @@ public class BICQuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -625,7 +626,8 @@ public class BICQuoteOrder extends ECETestBase {
       pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
       // Get find Subscription ById
-      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+      results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
+          results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
       try {
         testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -728,7 +730,8 @@ public class BICQuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -832,7 +835,8 @@ public class BICQuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
       portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
@@ -910,7 +914,8 @@ public class BICQuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
 
@@ -1005,7 +1010,8 @@ public class BICQuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, firstAddress);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -1144,7 +1150,8 @@ public class BICQuoteOrder extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -1235,7 +1242,8 @@ public class BICQuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -1330,7 +1338,8 @@ public class BICQuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
         PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
@@ -1398,7 +1407,8 @@ public class BICQuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     updateTestingHub(testResults);
   }
