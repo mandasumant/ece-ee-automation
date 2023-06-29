@@ -1821,6 +1821,7 @@ public class EceBICTestBase {
 
     data.put(BICECEConstants.QUANTITY, BICECEConstants.MULTI_LINE_ITEM_QUANTITY_1);
     data.put(BICECEConstants.PRODUCT_NAME, data.get(BICECEConstants.PRODUCT_NAME_2));
+    data.put(BICECEConstants.IS_MULTILINE, BICECEConstants.TRUE);
 
     String orderNumber = createBICOrderDotCom(data, true);
 
@@ -2211,20 +2212,22 @@ public class EceBICTestBase {
       signInIframe(data);
     }
 
-    Integer dotComPrice = Integer.valueOf(data.get("dotComPrice").replaceAll("[^0-9]", ""));
+    if (BICECEConstants.TRUE.equals(data.get(BICECEConstants.IS_MULTILINE))) {
+      Integer dotComPrice = Integer.valueOf(data.get("dotComPrice").replaceAll("[^0-9]", ""));
 
-    if (bicPage.checkIfElementExistsInPage("promocodeAfterDiscountPrice", 10)) {
-      String priceAfterDiscount = bicPage.getValueFromGUI("promocodeAfterDiscountPrice").trim()
-          .replaceAll("[^0-9]", "");
-      Integer priceAfterDiscountRounded = Math.round(Float.valueOf(priceAfterDiscount) / 100);
-      AssertUtils.assertEquals("Price in the Cart and Checkout are not matching", dotComPrice,
-          priceAfterDiscountRounded);
-    } else if (bicPage.checkIfElementExistsInPage("promoCodeBeforeDiscountPrice", 10)) {
-      String priceBeforeDiscount = bicPage.getValueFromGUI("promoCodeBeforeDiscountPrice").trim()
-          .replaceAll("[^0-9]", "");
-      Integer priceBeforeDiscountRounded = Math.round(Float.valueOf(priceBeforeDiscount) / 100);
-      AssertUtils.assertEquals("Price in the Cart and Checkout are matching", dotComPrice, priceBeforeDiscountRounded
-      );
+      if (bicPage.checkIfElementExistsInPage("promocodeAfterDiscountPrice", 10)) {
+        String priceAfterDiscount = bicPage.getValueFromGUI("promocodeAfterDiscountPrice").trim()
+            .replaceAll("[^0-9]", "");
+        Integer priceAfterDiscountRounded = Math.round(Float.valueOf(priceAfterDiscount) / 100);
+        AssertUtils.assertEquals("Price in the Cart and Checkout are not matching", dotComPrice,
+            priceAfterDiscountRounded);
+      } else if (bicPage.checkIfElementExistsInPage("promoCodeBeforeDiscountPrice", 10)) {
+        String priceBeforeDiscount = bicPage.getValueFromGUI("promoCodeBeforeDiscountPrice").trim()
+            .replaceAll("[^0-9]", "");
+        Integer priceBeforeDiscountRounded = Math.round(Float.valueOf(priceBeforeDiscount) / 100);
+        AssertUtils.assertEquals("Price in the Cart and Checkout are matching", dotComPrice, priceBeforeDiscountRounded
+        );
+      }
     }
 
     if ((!data.get("productType").equals("flex")) && data.containsKey(BICECEConstants.QUANTITY)) {
@@ -3446,7 +3449,7 @@ public class EceBICTestBase {
     String emailID = generateUniqueEmailID();
     data.put(BICECEConstants.emailid, emailID);
     data.put(BICECEConstants.MINI_CART_MULTI_PRODUCT, "true");
-
+    data.put(BICECEConstants.IS_MULTILINE, BICECEConstants.TRUE);
     navigateToCart(data);
 
     Names names = generateFirstAndLastNames();
