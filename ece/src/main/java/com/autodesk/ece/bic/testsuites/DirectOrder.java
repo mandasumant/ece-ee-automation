@@ -1,5 +1,6 @@
 package com.autodesk.ece.bic.testsuites;
 
+import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.dto.IProductDetails;
@@ -9,20 +10,19 @@ import com.autodesk.eceapp.fixtures.CustomerBillingDetails;
 import com.autodesk.eceapp.fixtures.OxygenUser;
 import com.autodesk.eceapp.testbase.EceCheckoutTestBase;
 import com.autodesk.eceapp.testbase.EceDotcomTestBase;
+import com.autodesk.eceapp.testbase.ece.PWSTestBase;
+import com.autodesk.eceapp.testbase.ece.QuoteOrderTestBase;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
-import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -31,11 +31,9 @@ import org.testng.annotations.Test;
  * A testsuite to hold tests related to validation of scenarios with direct order purchases
  */
 public class DirectOrder extends ECETestBase {
-
-
   private static final String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
-  LinkedHashMap<String, String> testDataForEachMethod = null;
+  LinkedHashMap<String, String> testDataForEachMethod = new LinkedHashMap<>();
   Map<?, ?> localeConfigYaml = null;
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
@@ -47,6 +45,8 @@ public class DirectOrder extends ECETestBase {
   EceDotcomTestBase dotcomTestBase = new EceDotcomTestBase(getDriver(), getTestBase(), locale);
   EceCheckoutTestBase checkoutTestBase = new EceCheckoutTestBase(getDriver(), getTestBase(), locale);
 
+  QuoteOrderTestBase quoteOrderTestBase;
+
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
@@ -57,16 +57,13 @@ public class DirectOrder extends ECETestBase {
   @BeforeMethod(alwaysRun = true)
   @SuppressWarnings("unchecked")
   public void beforeTestMethod(Method name) {
-    testDataForEachMethod = (LinkedHashMap<String, String>) loadYaml
-        .get("default");
-
+    testDataForEachMethod = (LinkedHashMap<String, String>) loadYaml.get("default");
     if (locale == null || locale.trim().isEmpty()) {
       locale = defaultLocale;
     }
     testDataForEachMethod.put("locale", locale);
 
-    localeDataMap = (LinkedHashMap<String, Map<String, String>>) localeConfigYaml
-        .get(BICECEConstants.LOCALE_CONFIG);
+    localeDataMap = (LinkedHashMap<String, Map<String, String>>) localeConfigYaml.get(BICECEConstants.LOCALE_CONFIG);
     testDataForEachMethod.putAll(localeDataMap.get(locale));
 
     String paymentType = System.getProperty("payment");
@@ -74,9 +71,23 @@ public class DirectOrder extends ECETestBase {
 
     testDataForEachMethod.put("taxOptionEnabled", "undefined");
     testDataForEachMethod.put("productType", "flex");
-
     productName = "3ds-max";
-
+    Optional.ofNullable(StringUtils.trimToNull(System.getProperty("currency")))
+            .ifPresent(currency -> testDataForEachMethod.put("currencyStore", currency));
+    Optional.ofNullable(StringUtils.trimToNull(System.getProperty("agentCSN")))
+            .ifPresent(agentCSN -> testDataForEachMethod.put("quoteAgentCsnAccount", agentCSN));
+    Optional.ofNullable(StringUtils.trimToNull(System.getProperty("agentEmail")))
+            .ifPresent(agentEmail -> testDataForEachMethod.put("agentContactEmail", agentEmail));
+    Optional.ofNullable(StringUtils.trimToNull(System.getProperty("subscriptionStatus")))
+            .ifPresent(subscriptionStatus -> testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, subscriptionStatus));
+    testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
+            PWSTestBase.getQuoteStartDateAsString());
+    quoteOrderTestBase = new QuoteOrderTestBase(
+            testDataForEachMethod.get("pwsClientId"),
+            testDataForEachMethod.get("pwsClientSecret"),
+            testDataForEachMethod.get("pwsClientId_v2"),
+            testDataForEachMethod.get("pwsClientSecret_v2"),
+            testDataForEachMethod.get("pwsHostname"));
     billingDetails = new CustomerBillingDetails(testDataForEachMethod, getBicTestBase());
   }
 
@@ -285,16 +296,30 @@ public class DirectOrder extends ECETestBase {
 
   @Test(groups = {"refund-multiline-order-loc"}, description = "Validation of refund Direct O2P SUS Order with LOC")
   public void createRefundLOCMultilineDirectOrder() throws MetadataException {
+    EceBICTestBase.Names names = EceBICTestBase.generateFirstAndLastNames();
+    testDataForEachMethod.put(BICECEConstants.FIRSTNAME, names.firstName);
+    testDataForEachMethod.put(BICECEConstants.LASTNAME, names.lastName);
+    testDataForEachMethod.put(BICECEConstants.emailid, EceBICTestBase.generateUniqueEmailID());
+
+    String quoteLineItems = "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:3000";
+    System.setProperty("quoteLineItems", quoteLineItems);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    HashMap<String, String> quoteResults = quoteOrderTestBase.createQuoteOrder(
+            testDataForEachMethod, portaltb, getBicTestBase(), pelicantb, subscriptionServiceV4Testbase,
+            ECETestBase::updateTestingHub);
+    testDataForEachMethod.putAll(quoteResults);
+
     dotcomTestBase.navigateToDotComPage(productName);
     dotcomTestBase.selectMonthlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
     checkoutTestBase.clickOnContinueButton();
-    getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+
     testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, BICECEConstants.CREDITCARD);
-    getBicTestBase().enterCustomerDetails(billingDetails.address);
     getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
         billingDetails.address);
+     getBicTestBase().populateBillingAddress(billingDetails.address, testDataForEachMethod);
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
     getBicTestBase().submitOrder(testDataForEachMethod);
     String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
@@ -318,8 +343,9 @@ public class DirectOrder extends ECETestBase {
     dotcomTestBase.selectMonthlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
-    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
-        billingDetails.address);
+    getBicTestBase().clickCartContinueButton();
+    getBicTestBase().checkIfCustomerPaymentDetailsComplete();
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails, billingDetails.address);
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
     getBicTestBase().submitOrder(testDataForEachMethod);
     orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
