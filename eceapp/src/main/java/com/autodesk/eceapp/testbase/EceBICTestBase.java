@@ -611,7 +611,7 @@ public class EceBICTestBase {
 
       if (dataPaymentType.equals(BICECEConstants.PAYMENT_BACS) && Strings.isNotNullAndNotEmpty(
           System.getProperty(BICECEConstants.CSN))) {
-        clickOnAddBACSProfileLink();
+       // clickOnAddBACSProfileLink();
       }
       // Temporary solution because currently it does not allow to submit an order with the address from Customer details section
       if (data.get("isNonQuoteFlexOrder") != null) {
@@ -655,7 +655,7 @@ public class EceBICTestBase {
         driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         WebElement element = driver
-            .findElement(By.xpath("//*[@id=\"usi_content\"]"));
+            .findElement(By.className("container-payment-chooser-MuiButtonBase-root"));     
         executor.executeScript("arguments[0].click();", element);
       } catch (Exception e) {
         Util.printInfo("Can not find the skip button and click");
