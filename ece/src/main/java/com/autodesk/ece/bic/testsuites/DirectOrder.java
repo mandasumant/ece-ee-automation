@@ -302,6 +302,7 @@ public class DirectOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.emailid, EceBICTestBase.generateUniqueEmailID());
 
     String quoteLineItems = "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:3000";
+    testDataForEachMethod.put(BICECEConstants.FLEX_TOKENS, "3000");
     System.setProperty("quoteLineItems", quoteLineItems);
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
