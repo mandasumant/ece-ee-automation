@@ -9,8 +9,13 @@ import com.autodesk.eceapp.dto.IInvoiceDetails;
 import com.autodesk.eceapp.dto.IPayerDetails;
 import com.autodesk.eceapp.dto.IProductDetails;
 import com.autodesk.eceapp.dto.IPurchaserDetails;
+import com.autodesk.eceapp.dto.QuoteDetails;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.NewQuoteOrder;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderData;
+import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderFilters;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.testbase.ece.PWSTestBase;
 import com.autodesk.eceapp.testbase.ece.PelicanTestBase;
@@ -25,6 +30,7 @@ import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -34,10 +40,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.util.Strings;
 
 public class QuoteOrder extends ECETestBase {
 
@@ -158,6 +167,75 @@ public class QuoteOrder extends ECETestBase {
 
   }
 
+  @Test(groups = {"quote-only"}, description = "Validation of Create BIC Quote Order")
+  public void createQuote() {
+    String locale = "en_US";
+    Boolean shouldPushToDataStore =
+        !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PUSH_FLAG)) ? Boolean.valueOf(
+            System.getProperty(BICECEConstants.PROJECT78_PUSH_FLAG)) : false;
+
+    Boolean isMultiLineItem =
+        !Objects.isNull(System.getProperty(BICECEConstants.IS_MULTILINE)) ? Boolean.valueOf(
+            System.getProperty(BICECEConstants.IS_MULTILINE)) : false;
+
+    String scenario = !Objects.isNull(System.getProperty(BICECEConstants.SCENARIO)) ?
+            System.getProperty(BICECEConstants.SCENARIO) : "";
+
+    if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
+      locale = System.getProperty("locale");
+    }
+    testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
+
+    Address address = getBillingAddress();
+    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+    getBicTestBase().createBICAccount(
+        new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+            testDataForEachMethod.get(BICECEConstants.LASTNAME)),
+        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
+
+    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, isMultiLineItem);
+
+    //Wait for Quote to sync from CPQ/SFDC to S4.
+    Util.printInfo("Keep calm, sleeping for 10min for Quote to sync to S4");
+    Util.sleep(600000);
+
+    HashMap<String, String> justQuoteDetails = new HashMap<String, String>();
+    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    justQuoteDetails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
+    justQuoteDetails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
+
+    if (shouldPushToDataStore) {
+      try {
+        DatastoreClient dsClient = new DatastoreClient();
+        NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
+            .name(BICECEConstants.QUOTE_TEST_NAME)
+            .emailId(testDataForEachMethod.get(BICECEConstants.emailid))
+            .quoteId(quoteId)
+            .orderNumber(BigInteger.valueOf(0))
+            .paymentType("")
+            .locale(locale)
+            .address(getSerializedBillingAddress())
+            .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
+
+        builder.scenario(scenario);
+
+        if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
+          builder.tenant(System.getProperty(BICECEConstants.TENANT));
+        }
+
+        OrderData orderData = dsClient.queueOrder(builder.build());
+      } catch (Exception e) {
+        Util.printWarning("Failed to push order data to data store");
+      }
+    }
+
+    updateTestingHub(justQuoteDetails);
+    Util.printInfo("Final List " + justQuoteDetails);
+  }
+
   @Test(groups = {"quote-order"}, description = "Validation of Create BIC Quote Order")
   public void validateQuoteOrder() throws Exception {
     HashMap<String, String> testResults = new HashMap<>();
@@ -181,6 +259,8 @@ public class QuoteOrder extends ECETestBase {
   public void validateQuoteOrderFlex() throws Exception {
     HashMap<String, String> testResults;
 
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_FLEX);
+
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:3000");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
@@ -194,6 +274,8 @@ public class QuoteOrder extends ECETestBase {
   public void validateQuoteOrderAnnual() throws Exception {
     HashMap<String, String> testResults;
 
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_ANNUAL);
+
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
@@ -206,6 +288,8 @@ public class QuoteOrder extends ECETestBase {
   @Test(groups = {"quote-order-myab"}, description = "Validation of Create Quote Order with MYAB SUS")
   public void validateQuoteOrderMYAB() throws Exception {
     HashMap<String, String> testResults;
+
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_MYAB);
 
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:3_year,usage:commercial,plan:standard");
@@ -222,6 +306,8 @@ public class QuoteOrder extends ECETestBase {
 
     System.setProperty(BICECEConstants.IS_MULTILINE, "true");
 
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.MULTI_ANNUAL_FLEX);
+
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
             "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:3000");
@@ -235,6 +321,8 @@ public class QuoteOrder extends ECETestBase {
   @Test(groups = {"quote-order-annual-myab"}, description = "Validation of Create Quote Order with Annual and MYAB SUS")
   public void validateQuoteOrderAnnualMYAB() throws Exception {
     HashMap<String, String> testResults;
+
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.MULTI_ANNUAL_MYAB);
 
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
@@ -250,6 +338,8 @@ public class QuoteOrder extends ECETestBase {
   public void validateQuoteOrderPremium() throws Exception {
     HashMap<String, String> testResults;
 
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_PREMIUM);
+
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
@@ -262,6 +352,8 @@ public class QuoteOrder extends ECETestBase {
   @Test(groups = {"quote-order-annual-flex-myab-premium"}, description = "Validation of Create Quote Order with Annual, Flex, MYAB and Premium SUS")
   public void validateQuoteOrderAnnualMYABFLEXPremium() throws Exception {
     HashMap<String, String> testResults;
+
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.MULTI_ANNUAL_FLEX_MYAB_PREMIUM);
 
     String quoteLineItems = System.setProperty("quoteLineItems",
             "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
@@ -390,6 +482,8 @@ public class QuoteOrder extends ECETestBase {
     HashMap<String, String> results = new HashMap<String, String>();
     Address address = getBillingAddress();
 
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_ANNUAL);
+
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
@@ -480,6 +574,8 @@ public class QuoteOrder extends ECETestBase {
   public void validateRenewQuoteOrderAnnual() throws Exception {
     HashMap<String, String> testResults;
 
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_ANNUAL);
+
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
@@ -523,6 +619,8 @@ public class QuoteOrder extends ECETestBase {
   @Test(groups = {"quote-order-subscription-status"}, description = "Validation of Quote Order Subscription status")
   public void validateQuoteOrderSubscriptionStates() throws Exception {
     HashMap<String, String> testResults;
+
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_ANNUAL);
 
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
@@ -590,28 +688,53 @@ public class QuoteOrder extends ECETestBase {
         !Objects.isNull(System.getProperty(BICECEConstants.IS_MULTILINE)) ? Boolean.valueOf(
             System.getProperty(BICECEConstants.IS_MULTILINE)) : false;
 
-    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-      testResults = getBicTestBase().createPayerAccount(testDataForEachMethod);
+    boolean shouldPullFromDataStore;
+    if (StringUtils.trimToNull(System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG)) != null) {
+      shouldPullFromDataStore = Boolean.parseBoolean(System.getProperty(BICECEConstants.PROJECT78_PULL_FLAG));
+    } else if (StringUtils.trimToNull(data.get(BICECEConstants.PROJECT78_PULL_FLAG)) != null) {
+      shouldPullFromDataStore = Boolean.parseBoolean(data.get(BICECEConstants.PROJECT78_PULL_FLAG));
+    } else {
+      shouldPullFromDataStore = false;
     }
 
-    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-    getBicTestBase().createBICAccount(
-        new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-            testDataForEachMethod.get(BICECEConstants.LASTNAME)),
-        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
+    String scenario = "";
+    if (StringUtils.trimToNull(System.getProperty(BICECEConstants.SCENARIO)) != null) {
+      scenario = System.getProperty(BICECEConstants.SCENARIO).trim();
+    } else if (StringUtils.trimToNull(data.get(BICECEConstants.SCENARIO)) != null) {
+      scenario = data.get(BICECEConstants.SCENARIO).trim();
+    }
 
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
-        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, isMultiLineItem);
+    if (shouldPullFromDataStore && loadDataFromP78(BICECEConstants.QUOTE_TEST_NAME, scenario)) {
+      if (Strings.isNotNullAndNotEmpty(testDataForEachMethod.get(BICECEConstants.ADDRESS))) {
+        address = new Address(testDataForEachMethod.get(BICECEConstants.ADDRESS));
+      } else if (Strings.isNotNullAndNotEmpty(System.getProperty(BICECEConstants.ADDRESS))) {
+        address = new Address(System.getProperty(BICECEConstants.ADDRESS));
+      }
+      address.company = testDataForEachMethod.get("company");
+    } else {
+      if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
+        testResults = getBicTestBase().createPayerAccount(testDataForEachMethod);
+      }
 
-    // Wait for Quote to sync from CPQ/SFDC to S4.
-    Util.printInfo("Keep calm, sleeping for 5min for Quote to sync to S4");
-    Util.sleep(300000);
+      getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+      getBicTestBase().createBICAccount(
+          new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+              testDataForEachMethod.get(BICECEConstants.LASTNAME)),
+          testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
 
-    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
-    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+      String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+          testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, isMultiLineItem);
 
-    // Signing out after quote creation
-    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+      // Wait for Quote to sync from CPQ/SFDC to S4.
+      Util.printInfo("Keep calm, sleeping for 5min for Quote to sync to S4");
+      Util.sleep(300000);
+
+      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+      testResults.put(BICECEConstants.QUOTE_ID, quoteId);
+
+      // Signing out after quote creation
+      getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+    }
 
     testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(
         testDataForEachMethod));
@@ -680,6 +803,36 @@ public class QuoteOrder extends ECETestBase {
     pelicanTB.renewSubscription(results);
     // Wait for the Pelican job to complete
     Util.sleep(600000);
+  }
+
+  private boolean loadDataFromP78(String testName, String scenario) {
+    DatastoreClient dsClient = new DatastoreClient();
+    OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder();
+
+    builder
+        .name(testName)
+        .locale(locale)
+        .scenario(scenario);
+
+    OrderData order = dsClient.grabOrder(builder.build());
+    try {
+      testDataForEachMethod.put(BICConstants.emailid, order.getEmailId());
+      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, order.getQuoteId());
+      testDataForEachMethod.put("DS_ORDER_ID", order.getId().toString());
+
+      QuoteDetails quoteDetails = pwsTestBase.getQuoteDetails(
+          testDataForEachMethod.get("quoteAgentCsnAccount"), order.getQuoteId());
+
+      testDataForEachMethod.put("firstname", quoteDetails.getPurchaserFirstName());
+      testDataForEachMethod.put("lastname", quoteDetails.getPurchaserLastName());
+      testDataForEachMethod.put("company", quoteDetails.getEndCustomerName());
+      testDataForEachMethod.put("address", order.getAddress());
+
+    } catch (Exception e) {
+      Util.printInfo("Failed to fetch data from P78, for Quote Orders. Creating via PWS");
+      return false;
+    }
+    return true;
   }
 
 }
