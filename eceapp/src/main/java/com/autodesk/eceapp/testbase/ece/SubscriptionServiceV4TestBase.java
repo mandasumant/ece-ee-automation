@@ -67,6 +67,7 @@ public class SubscriptionServiceV4TestBase {
                 result.getSwitchTermPriceId()) : null);
         results.put("response_status", String.valueOf(result.getStatus()));
         results.put("response_subscriptionCreated", String.valueOf(result.getCreated()));
+        results.put("response_nextRenewalDate", result.getNextRenewalDate());
 
         success = true;
       } catch (ApiException e) {

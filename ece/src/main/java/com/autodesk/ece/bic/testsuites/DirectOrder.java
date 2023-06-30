@@ -1,15 +1,15 @@
 package com.autodesk.ece.bic.testsuites;
 
-import com.autodesk.eceapp.testbase.EceBICTestBase;
-import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.dto.IProductDetails;
 import com.autodesk.eceapp.dto.impl.ProductDetails;
 import com.autodesk.eceapp.dto.impl.PurchaserDetails;
 import com.autodesk.eceapp.fixtures.CustomerBillingDetails;
 import com.autodesk.eceapp.fixtures.OxygenUser;
+import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceCheckoutTestBase;
 import com.autodesk.eceapp.testbase.EceDotcomTestBase;
+import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.testbase.ece.PWSTestBase;
 import com.autodesk.eceapp.testbase.ece.QuoteOrderTestBase;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
@@ -20,9 +20,17 @@ import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
-import java.util.*;
-
-import org.apache.commons.lang3.StringUtils;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.lang.StringUtils;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -476,4 +484,88 @@ public class DirectOrder extends ECETestBase {
     }
     updateTestingHub(testResults);
   }
+
+  @Test(groups = {"direct-order-renew"}, description = "Validation of Create Direct O2P Order")
+  public void directOrderRenew() throws MetadataException {
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+    getBicTestBase().setStorageData();
+    checkoutTestBase.clickOnContinueButton();
+    getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+
+    HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
+    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+    // Compare tax in Checkout and Pelican
+    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    // Get find Subscription ById
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
+        user.emailID,
+        user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
+
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+    updateTestingHub(testResults);
+
+    //Update Subscription Next renewal date
+    pelicantb.updateO2PSubscriptionForRenewal(results);
+
+    results.put(BICConstants.subscriptionId,
+        results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
+
+    // Trigger the Pelican renewal job to renew the subscription
+    pelicantb.renewSubscription(results);
+    // Wait for the Pelican job to complete
+    Util.sleep(600000);
+
+    // Get the subscription in pelican to check if it has renewed
+    testResults.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+
+    try {
+      // Ensure that the subscription renews in the future
+      String nextBillingDateString = testResults.get("response_nextRenewalDate");
+      Util.printInfo("New Billing Date: " + nextBillingDateString);
+      Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+          nextBillingDateString);
+      Assert.assertTrue(newBillingDate.after(new Date()),
+          "Check that the O2P subscription has been renewed");
+
+      AssertUtils
+          .assertEquals("The billing date has been updated to next cycle ",
+              testResults.get("response_nextRenewalDate").split("\\s")[0],
+              Util.customDate("MM/dd/yyyy", 0, -5, +1));
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    updateTestingHub(testResults);
+  }
+
+
 }
