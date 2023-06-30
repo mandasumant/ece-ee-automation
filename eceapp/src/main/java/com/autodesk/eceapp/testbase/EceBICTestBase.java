@@ -1336,6 +1336,17 @@ public class EceBICTestBase {
       while (success) {
         count++;
 
+        if (bicPage.checkIfElementExistsInPage("cartContinueButton", 15)) {
+          Util.printInfo("Clicking on Continue button");
+          bicPage.clickUsingLowLevelActions("cartContinueButton");
+          Util.sleep(3000);
+        }
+
+        if (bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
+          bicPage.clickUsingLowLevelActions("paymentEditBtn");
+          Util.sleep(3000);
+        }
+
         // If we refreshed the page, we need to click on continue again
         if (bicPage.checkIfElementExistsInPage("customerDetailsContinue", 15)) {
           bicPage.waitForFieldPresent("customerDetailsContinue", 10000);
@@ -1483,11 +1494,17 @@ public class EceBICTestBase {
     }
   }
 
+  public void checkIfCustomerPaymentDetailsComplete() throws MetadataException {
+    if (bicPage.checkIfElementExistsInPage("customerPaymentDetailsComplete", 20)) {
+      bicPage.clickUsingLowLevelActions("paymentEditBtn");
+      Util.sleep(3000);
+    }
+  }
+
   @Step("Selecting payment profile" + GlobalConstants.TAG_TESTINGHUB)
   public void selectPaymentProfile(HashMap<String, String> data, String[] paymentCardDetails,
       Map<String, String> address) {
     try {
-
       Util.printInfo("Selecting payment profile : " + data.get(BICECEConstants.PAYMENT_TYPE));
 
       String[] paymentMethods = data.get(BICECEConstants.PAYMENT_METHODS).split(",");
@@ -1560,6 +1577,7 @@ public class EceBICTestBase {
 
   public void submitOrder(HashMap<String, String> data) {
     submitOrder(data, true);
+    Util.sleep(5000);
   }
 
   @Step("Submit Order on Checkout page")
@@ -2083,6 +2101,16 @@ public class EceBICTestBase {
     AssertUtils.assertEquals("Estimated total price should match total price on Checkout page",
         (int) totalCostOrderSummaryDouble,
         (int) estimatedPriceDouble);
+  }
+
+  @Step("Checkout: Click cart continue button " + GlobalConstants.TAG_TESTINGHUB)
+  public void clickCartContinueButton() throws MetadataException {
+
+    if (bicPage.checkIfElementExistsInPage("cartContinueButton", 15)) {
+      Util.printInfo("Clicking on Continue button");
+      bicPage.clickUsingLowLevelActions("cartContinueButton");
+      Util.sleep(5000);
+    }
   }
 
 
