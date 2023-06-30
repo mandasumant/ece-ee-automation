@@ -25,7 +25,7 @@ default:
   paypalUser: "Paypal-buyer-namer@ssttest.net"
   paypalSsap: "7bxJM+6vun/DjvlSXY2/ig==:+IqEDClRWa3GI8ATrHnmRQ=="
   paypalPaymentType: "CREDIT UNION 1"
-  zipPayUsername: "zippayau01@mailinator.com"
+  zipPayUsername: "zippay005@ssttest.net"
   zipPayPassword: "33dMvL0W2XONsQLqHmZaKg==:tY6Q+yefNznhedpc1RTRBQ=="
   zipPayVerificationCode: "123456"
 

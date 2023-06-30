@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DirectOrder-SUS-Multiline-CC" type="Application" factoryName="Application" folderName="DirectOrder">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
+    <module name="ece" />
+    <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=INT -Duserid=svc_s_platform_autob@autodesk.com -Dclassname=com.autodesk.ece.bic.testsuites.DirectOrder -DtestGroup=create-multiline-order -DtestMethod=createMultilineDirectOrder -Dapplication=ece -Dservice=dcle -Dsku=default:1 -Demail= -Dpassword= -Dstore=STORE-AUS -Dlocale=en_AU -Dusertype=new -Dpayment=CREDITCARD -Daddress=&quot;AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT&quot; -Dtimezone=Australia/Sydney" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ece" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

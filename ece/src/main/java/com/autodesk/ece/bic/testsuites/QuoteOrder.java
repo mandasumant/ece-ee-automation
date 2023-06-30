@@ -34,8 +34,14 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -161,7 +167,7 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
         PWSTestBase.getQuoteStartDateAsString());
 
-    if(System.getProperty("subscriptionStatus") !=null){
+    if (System.getProperty("subscriptionStatus") != null) {
       testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, System.getProperty("subscriptionStatus"));
     }
 
@@ -179,7 +185,7 @@ public class QuoteOrder extends ECETestBase {
             System.getProperty(BICECEConstants.IS_MULTILINE)) : false;
 
     String scenario = !Objects.isNull(System.getProperty(BICECEConstants.SCENARIO)) ?
-            System.getProperty(BICECEConstants.SCENARIO) : "";
+        System.getProperty(BICECEConstants.SCENARIO) : "";
 
     if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
       locale = System.getProperty("locale");
@@ -278,11 +284,19 @@ public class QuoteOrder extends ECETestBase {
   @Test(groups = {"quote-order-annual"}, description = "Validation of Create Quote Order with Annual SUS")
   public void validateQuoteOrderAnnual() throws Exception {
     HashMap<String, String> testResults;
+    String quoteLineItems = "";
 
     testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_ANNUAL);
 
-    String quoteLineItems = System.setProperty("quoteLineItems",
-        "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
+    if (testDataForEachMethod.get("paymentType").equals("ZIP")) {
+      quoteLineItems = System.setProperty("quoteLineItems",
+          "offering_id:OD-000171,term:annual,usage:commercial,plan:standard,quantity:1");
+      testDataForEachMethod.put("productType", "fusion 360 cloud");
+    } else {
+      quoteLineItems = System.setProperty("quoteLineItems",
+          "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
+    }
+
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
@@ -379,17 +393,18 @@ public class QuoteOrder extends ECETestBase {
 
   }
 
-  @Test(groups = {"quote-order-annual-flex-myab-premium"}, description = "Validation of Create Quote Order with Annual, Flex, MYAB and Premium SUS")
+  @Test(groups = {
+      "quote-order-annual-flex-myab-premium"}, description = "Validation of Create Quote Order with Annual, Flex, MYAB and Premium SUS")
   public void validateQuoteOrderAnnualMYABFLEXPremium() throws Exception {
     HashMap<String, String> testResults;
 
     testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.MULTI_ANNUAL_FLEX_MYAB_PREMIUM);
 
     String quoteLineItems = System.setProperty("quoteLineItems",
-            "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
-                    "access_model:sus,offering_id:OD-000021,term:3_year,usage:commercial,plan:standard|" +
-                    "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:1000|" +
-                    "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium");
+        "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
+            "access_model:sus,offering_id:OD-000021,term:3_year,usage:commercial,plan:standard|" +
+            "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:1000|" +
+            "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(

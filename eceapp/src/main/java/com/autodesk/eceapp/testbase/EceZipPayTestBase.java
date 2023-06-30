@@ -35,8 +35,10 @@ public class EceZipPayTestBase {
   private static final String ZIP_PAY_DASHBOARD_USERNAME = "zipPayDashboardUsername";
   private static final String ZIP_PAY_DASHBOARD_PASSWORD = "zipPayDashboardPassword";
   private static final String ZIP_PAY_DASHBOARD_VERIFY = "zipPayDashboardVerify";
+  private static final String ZIP_PAY_TRANSACTION_VERIFY = "zipPayTransactionVerify";
   private static final String ZIP_PAY_PAYMENT_SUCCESS = "zipPayPaymentSuccess";
   private static final String ZIP_PAY_DASHBOARD_AMOUNT = "zipPayDashboardAmountAvailable";
+  private static final String ZIP_PAY_SKIP = "zipPayDashboardSkip";
 
   private final Page_ zipPage;
   private final WebDriver driver;
@@ -89,6 +91,14 @@ public class EceZipPayTestBase {
     }
 
     zipPage.click("zipPayConfirmPayment");
+
+    // Verify its you...
+    zipPage.waitForField(ZIP_PAY_TRANSACTION_VERIFY, true, 7000);
+    zipPage.populateField(ZIP_PAY_TRANSACTION_VERIFY,
+        testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
+    zipPage.click(ZIP_PAY_SUBMIT);
+    Util.sleep(60000);
+
   }
 
   private void attemptZipPayCheckoutLogin() {
@@ -132,12 +142,17 @@ public class EceZipPayTestBase {
   private void attemptZipPayVerification() {
     int verificationAttempts = 0;
     String verifyXPath = zipPage.getFirstFieldLocator("zipPayVerificationSubmit");
+    String verifyResend = zipPage.getFirstFieldLocator("zipPayVerificationResend");
 
     zipPage.populateField(ZIP_PAY_VERIFICATION_CODE_KEY,
         testData.get(ZIP_PAY_VERIFICATION_CODE_KEY));
 
     while (verificationAttempts < 5) {
       zipPage.click("zipPayVerificationSubmit");
+
+      if (!driver.findElements(By.xpath(verifyResend)).isEmpty()) {
+        zipPage.click("zipPayVerificationResend");
+      }
 
       try {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
@@ -243,9 +258,24 @@ public class EceZipPayTestBase {
     driver.switchTo().window(tabs.get(0));
   }
 
-  private void VerifySMSOrWaitForField() {
+  private void clickSkipLink() throws MetadataException {
+    if (zipPage.checkIfElementExistsInPage(ZIP_PAY_SKIP, 10)) {
+      String heading = driver.findElement(By.xpath("//h1")).getText();
+      Util.printInfo("Click skip link from: " + heading);
+      zipPage.clickUsingLowLevelActions(ZIP_PAY_SKIP);
+      Util.sleep(5000);
+    }
+  }
+
+  private void VerifySMSOrWaitForField() throws MetadataException {
     String smsVerificationXPath = zipPage.getFirstFieldLocator("zipPayVerificationTitle");
     String amountXPath = zipPage.getFirstFieldLocator(ZIP_PAY_DASHBOARD_AMOUNT);
+
+    zipPage.waitForField(ZIP_PAY_DASHBOARD_USERNAME, true, 10000);
+
+    clickSkipLink();
+
+    clickSkipLink();
 
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
     wait.until(ExpectedConditions.or(

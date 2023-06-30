@@ -68,7 +68,7 @@ public class BICECEConstants extends BICConstants {
   public static final String PAYMENT_METHODS = "paymentMethods";
   public static final String PAYMENT_PROFILE = "<PAYMENTPROFILE>";
   public static final String PAYMENT_TYPE = "paymentType";
-  public static  final String NEW_PAYMENT_TYPE = "newPaymentType";
+  public static final String NEW_PAYMENT_TYPE = "newPaymentType";
   public static final String PAYMENT_TYPE_FINANCING = "FINANCING";
   public static final String PAYMENT_TYPE_GIROPAY = "GIROPAY";
   public static final String PAYMENT_TYPE_SEPA = "SEPA";

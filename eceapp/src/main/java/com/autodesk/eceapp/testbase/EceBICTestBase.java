@@ -611,7 +611,7 @@ public class EceBICTestBase {
 
       if (dataPaymentType.equals(BICECEConstants.PAYMENT_BACS) && Strings.isNotNullAndNotEmpty(
           System.getProperty(BICECEConstants.CSN))) {
-       // clickOnAddBACSProfileLink();
+        // clickOnAddBACSProfileLink();
       }
       // Temporary solution because currently it does not allow to submit an order with the address from Customer details section
       if (data.get("isNonQuoteFlexOrder") != null) {
@@ -655,7 +655,7 @@ public class EceBICTestBase {
         driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         WebElement element = driver
-            .findElement(By.className("container-payment-chooser-MuiButtonBase-root"));     
+            .findElement(By.className("container-payment-chooser-MuiButtonBase-root"));
         executor.executeScript("arguments[0].click();", element);
       } catch (Exception e) {
         Util.printInfo("Can not find the skip button and click");
@@ -1623,13 +1623,12 @@ public class EceBICTestBase {
       }
 
       // Zip Pay Verification
-      //TODO: Review zip validation - ECEEPLT-7150
-//      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-//        String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
-//        WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
-//        zipTestBase.setTestData(data);
-//        zipTestBase.verifyZipBalance(amountDueElement.getText());
-//      }
+      if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
+        String amountDueXPath = bicPage.getFirstFieldLocator("guacAmountTotal");
+        WebElement amountDueElement = driver.findElement(By.xpath(amountDueXPath));
+        zipTestBase.setTestData(data);
+        zipTestBase.verifyZipBalance(amountDueElement.getText());
+      }
 
       try {
         if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)) {
@@ -1650,9 +1649,8 @@ public class EceBICTestBase {
 
       // Zip Pay Checkout
       if (data.get(BICECEConstants.PAYMENT_TYPE).equalsIgnoreCase(BICECEConstants.PAYMENT_TYPE_ZIP)) {
-        //TODO: Review zip validation - ECEEPLT-7150
-        //zipTestBase.setTestData(data);
-        //zipTestBase.zipPayCheckout();
+        zipTestBase.setTestData(data);
+        zipTestBase.zipPayCheckout();
       }
 
     } catch (NoSuchElementException nSE) {
