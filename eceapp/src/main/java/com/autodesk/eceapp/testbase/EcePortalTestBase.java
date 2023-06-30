@@ -129,6 +129,8 @@ public class EcePortalTestBase {
 
   public boolean openPortalBICLaunch(String url) {
     Util.printInfo("launch URL in browser");
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("localStorage.clear();sessionStorage.clear();");
     driver.manage().deleteAllCookies();
     driver.navigate().to(url);
     Util.printInfo("Opened:" + url);
@@ -302,7 +304,7 @@ public class EcePortalTestBase {
   @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderProductInCEP(String cepURL, String portalUserName,
       String portalPassword, String subscriptionID) {
-  /*  boolean status = false;
+    boolean status = false;
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
       portalLogin(portalUserName, portalPassword);
@@ -318,7 +320,7 @@ public class EcePortalTestBase {
 
     if (!status) {
       AssertUtils.fail(BICECEConstants.PRODUCT_IS_DISPLAYED_IN_PORTAL + BICECEConstants.FALSE);
-    }*/
+    }
   }
 
 
@@ -1828,7 +1830,7 @@ public class EcePortalTestBase {
   private void portalLogoutLogin(String userEmail, String password) {
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("localStorage.clear();sessionStorage.clear();");
-    
+
     openPortalURL(accountPortalOxygenLogOut);
     Util.sleep(3000);
 
