@@ -231,7 +231,7 @@ public class DirectOrder extends ECETestBase {
 
     HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
     results.put(BICECEConstants.orderNumber, orderNumber);
-    results = pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod));
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod)));
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
@@ -325,7 +325,7 @@ public class DirectOrder extends ECETestBase {
     orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
 
     results.put(BICECEConstants.orderNumber, orderNumber);
-    results = pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod));
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod)));
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
