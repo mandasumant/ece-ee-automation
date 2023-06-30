@@ -33,13 +33,7 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.testng.Assert;
@@ -76,7 +70,7 @@ public class QuoteOrder extends ECETestBase {
     LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml.get("default");
     LinkedHashMap<String, String> testcasedata = (LinkedHashMap<String, String>) loadYaml.get(name.getName());
 
-    defaultvalues.putAll(testcasedata);
+    defaultvalues.putAll(Optional.ofNullable(testcasedata).orElse(new LinkedHashMap<>()));
     testDataForEachMethod = defaultvalues;
 
     if (locale == null || locale.trim().isEmpty()) {
