@@ -646,7 +646,7 @@ public class QuoteOrder extends ECETestBase {
         testResults.get(BICConstants.subscriptionId));
 
     //Update Subscription Next renewal date
-    pelicantb.updateO2PSubscriptionForRenewal(testDataForEachMethod);
+    pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
 
     // Trigger the Pelican renewal job to renew the subscription
     triggerPelicanRenewalJob(testResults);
@@ -697,7 +697,7 @@ public class QuoteOrder extends ECETestBase {
         testResults.get(BICConstants.subscriptionId));
 
     //Update Subscription for Subscription dates
-    pelicantb.updateO2PSubscriptionForRenewal(testDataForEachMethod);
+    pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
 
     // Trigger the Pelican renewal job to renew the subscription
     triggerPelicanRenewalJob(testResults);

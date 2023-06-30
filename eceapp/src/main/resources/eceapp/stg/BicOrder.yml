@@ -36,6 +36,7 @@ default:
   putPelicanRefundOrderV4Url: "https://api.pelicanstg.autodesk.com/orders/v4/passtoken/operation"
   getSubscriptionByIdUrl: "https://api.pelicanstg.autodesk.com/subscriptions/v3/passtoken"
   getSubscriptionByIdV4Url: "https://api.pelicanstg.autodesk.com/subscriptions/v4/passtoken"
+  updateSubscriptionV4BatchUrl: "https://api.pelicanstg.autodesk.com/subscriptions/v4/batch"
   postReportsFinancePelicanAPIUrl: "https://api.pelicanstg.autodesk.com/orders/v3/reports/finance"
   getPelicanBaseUrl: "https://api.pelicanstg.autodesk.com"
   getPelicanPartnerId: "$automation"

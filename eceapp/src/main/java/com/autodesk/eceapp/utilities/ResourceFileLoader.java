@@ -64,13 +64,6 @@ public final class ResourceFileLoader {
         return mapper.readValue(inputStream, TaxExemptionMappings.class);
     }
 
-    public static UpdateO2PSubscription getUpdateO2PSubscriptionJson() throws IOException {
-        InputStreamReader inputStream = getResourceInPayloadDirAsInputStreamReader("O2P_Update_Subscription.json");
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper.readValue(inputStream, UpdateO2PSubscription.class);
-    }
-
     private static InputStreamReader getResourceInMiscAsInputStreamReader(final String resourceName) throws FileNotFoundException {
         final FileInputStream fileStream = new FileInputStream(EceAppConstants.APP_MISC_RESOURCE_PATH + resourceName);
         return new InputStreamReader(fileStream, StandardCharsets.UTF_8);

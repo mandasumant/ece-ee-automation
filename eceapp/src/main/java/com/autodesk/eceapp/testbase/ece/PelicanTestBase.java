@@ -2,11 +2,13 @@ package com.autodesk.eceapp.testbase.ece;
 
 import static io.restassured.RestAssured.given;
 import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.constants.UpdateSubscriptionConstants;
 import com.autodesk.eceapp.dto.UpdateO2PSubscription;
+import com.autodesk.eceapp.dto.subscription.v4.BatchUpdateSubscriptionDTO;
+import com.autodesk.eceapp.dto.subscription.v4.UpdateSubscriptionDTO;
 import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.eceapp.utilities.PelicanRequestSigner;
 import com.autodesk.eceapp.utilities.PelicanRequestSigner.PelicanSignature;
-import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.platformautomation.ApiClient;
 import com.autodesk.platformautomation.ApiException;
 import com.autodesk.platformautomation.Configuration;
@@ -21,6 +23,7 @@ import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.eseapp.constants.EseCommonConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
@@ -270,7 +273,7 @@ public class PelicanTestBase {
   }
 
   @Step("Update next renewal,termination,expiration dates " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> updateO2PSubscriptionForRenewal(HashMap<String, String> data) {
+  public HashMap<String, String> updateO2PSubscriptionDates(HashMap<String, String> data) throws Exception {
 
     String getSubscriptionV4Url = data.get("getSubscriptionByIdV4Url");
     Util.printInfo("Subscription id " + data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
@@ -278,9 +281,49 @@ public class PelicanTestBase {
             data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
     Util.printInfo("Get SubscriptionV4 baseURL : " + getSubscriptionV4Url);
 
-    PelicanSignature signature = requestSigner.generateSignature();
+    String updatedDate;
+    if (data.containsKey("desiredBillingDate")) {
+      updatedDate = data.get("desiredBillingDate");
+    } else {
+      updatedDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 20:13:28 UTC";
+    }
 
-    String Content_Type = BICECEConstants.APPLICATION_JSON;
+    String inputPayload = "";
+
+    UpdateSubscriptionDTO.Data updateSubscriptionData = null;
+
+      if (data.get(BICECEConstants.SUBSCRIPTION_STATUS) != null) {
+        if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.SUSPENDED.toString())) {
+          updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
+                  .suspensionDate(updatedDate)
+                  .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
+        } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.TERMINATED.toString())) {
+          updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
+                  .terminationDate(updatedDate)
+                  .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
+        } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.EXPIRED.toString())) {
+          updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
+                  .expirationDate(updatedDate)
+                  .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
+        } else {
+          //updating next billing date for default
+          updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
+                  .nextRenewalDate(updatedDate)
+                  .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
+        }
+      } else {
+        throw new Exception("Subscription status can not be null.");
+      }
+      UpdateSubscriptionDTO updateSubscriptionDTO = UpdateSubscriptionDTO.builder().data(updateSubscriptionData).
+              meta(UpdateSubscriptionDTO.Meta.builder().build()).build();
+      inputPayload = new Gson().toJson(updateSubscriptionDTO);
+
+      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
+    return patchRestResponse(getSubscriptionV4Url, getHeaderForUpdateSubscription(), inputPayload);
+  }
+
+  private HashMap<String, String> getHeaderForUpdateSubscription(){
+    PelicanSignature signature = requestSigner.generateSignature();
     String accept = BICECEConstants.APPLICATION_JSON;
     HashMap<String, String> header = new HashMap<>();
     header.put(BICECEConstants.X_E2_HMAC_SIGNATURE, signature.xE2HMACSignature);
@@ -288,42 +331,45 @@ public class PelicanTestBase {
     header.put(BICECEConstants.X_E2_APPFAMILY_ID, signature.xE2AppFamilyId);
     header.put(BICECEConstants.X_E2_HMAC_TIMESTAMP, signature.xE2HMACTimestamp);
     header.put("X-Request-Ref", UUID.randomUUID().toString());
-    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.CONTENT_TYPE, accept);
     header.put(BICECEConstants.ACCEPT, accept);
+    return header;
+  }
 
-    String contractStartDate;
-    if (data.containsKey("desiredBillingDate")) {
-      contractStartDate = data.get("desiredBillingDate");
-    } else {
-      contractStartDate = Util.customDate("MM/dd/yyyy", 0, -5, 0) + " 20:13:28 UTC";
-    }
-    UpdateO2PSubscription updateSubscription;
-    ObjectMapper om = new ObjectMapper();
-    String inputPayload = "";
-    try {
-      updateSubscription = ResourceFileLoader.getUpdateO2PSubscriptionJson();
+  @Step("Expire, terminate and suspend subscription" + GlobalConstants.TAG_TESTINGHUB)
+  public HashMap<String, String> updateO2PSubscriptionStatus(HashMap<String, String> data) throws Exception {
+    String updateSubscriptionV4BatchUrl = data.get("updateSubscriptionV4BatchUrl");
+    String subscriptionId = data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID);
+    Util.printInfo("Subscription id " + subscriptionId);
+    Util.printInfo("Update SubscriptionV4 baseURL : " + updateSubscriptionV4BatchUrl);
+
+    String body = "";
+    BatchUpdateSubscriptionDTO.Meta subMeta = null;
+
       if (data.get(BICECEConstants.SUBSCRIPTION_STATUS) != null) {
         if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.SUSPENDED.toString())) {
-          updateSubscription.getData().setSuspensionDate(contractStartDate);
-          updateSubscription.getData().setStatus(SubscriptionSuccessV4.StatusEnum.SUSPENDED.toString());
+          updateO2PSubscriptionDates(data);
+          subMeta = BatchUpdateSubscriptionDTO.Meta.builder().subscriptionIds(subscriptionId)
+                  .context(UpdateSubscriptionConstants.SUSPEND).origin(UpdateSubscriptionConstants.SUSPENSION_JOB).build();
         } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.TERMINATED.toString())) {
-          updateSubscription.getData().setTerminationDate(contractStartDate);
-          updateSubscription.getData().setStatus(SubscriptionSuccessV4.StatusEnum.TERMINATED.toString());
+          updateO2PSubscriptionDates(data);
+          subMeta = BatchUpdateSubscriptionDTO.Meta.builder().subscriptionIds(subscriptionId)
+                  .context(UpdateSubscriptionConstants.TERMINATE).origin(UpdateSubscriptionConstants.TERMINATION_JOB).build();
         } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.EXPIRED.toString())) {
-          updateSubscription.getData().setExpirationDate(contractStartDate);
-          updateSubscription.getData().setStatus(SubscriptionSuccessV4.StatusEnum.EXPIRED.toString());
+          updateO2PSubscriptionDates(data);
+          subMeta = BatchUpdateSubscriptionDTO.Meta.builder().subscriptionIds(subscriptionId)
+                  .context(UpdateSubscriptionConstants.EXPIRE).origin(UpdateSubscriptionConstants.EXPIRATION_JOB).build();
         }
+      } else {
+        throw new Exception("Subscription status can not be null.");
       }
-
-      updateSubscription.getData().setNextRenewalDate(contractStartDate);
-      inputPayload = om.writerWithDefaultPrettyPrinter().writeValueAsString(updateSubscription);
-      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
-    } catch (IOException e1) {
-      e1.printStackTrace();
-      AssertUtils.fail("Failed to generate Authorization Token" + e1.getMessage());
-    }
-    return patchRestResponse(getSubscriptionV4Url, header, inputPayload);
+      BatchUpdateSubscriptionDTO batchUpdateSubscriptionDTO = BatchUpdateSubscriptionDTO.builder().meta(subMeta).
+              data(BatchUpdateSubscriptionDTO.Data.builder().build()).build();
+      body = new Gson().toJson(batchUpdateSubscriptionDTO);
+      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + body + "\n");
+    return patchRestResponse(updateSubscriptionV4BatchUrl, getHeaderForUpdateSubscription(), body);
   }
+
 
   @Step("Update next billing cycle with before date " + GlobalConstants.TAG_TESTINGHUB)
   public HashMap<String, String> forwardNextBillingCycleForFinancingRenewal(HashMap<String, String> data) {
@@ -392,18 +438,19 @@ public class PelicanTestBase {
             "Response code must be 200 but the API return " + responseStatusCode);
       }
 
-      String result = response.getBody().asString();
-      Util.printInfo("" + result);
-      JsonPath jp = new JsonPath(result);
-      String purchaseOrderId = jp.get("data.purchaseOrderId").toString();
-      String exportControlStatus = jp.get("data.exportControlStatus").toString();
-      String priceId = jp.get(BICECEConstants.DATA_PRICE_ID).toString();
-      String nextBillingDate = jp.get("data.nextBillingInfo.nextBillingDate").toString();
 
-      results.put("purchaseOrderId", purchaseOrderId);
-      results.put("exportControlStatus", exportControlStatus);
-      results.put("priceId", priceId);
-      results.put("nextBillingDate", nextBillingDate);
+        String result = response.getBody().asString();
+      if (result != "") {
+        Util.printInfo("" + result);
+        JsonPath jp = new JsonPath(result);
+        String purchaseOrderId = jp.get("purchaseOrderId").toString();
+        String exportControlStatus = jp.get("exportControlStatus").toString();
+        String nextRenewalDate = jp.get("nextRenewalDate").toString();
+
+        results.put("purchaseOrderId", purchaseOrderId);
+        results.put("exportControlStatus", exportControlStatus);
+        results.put("nextRenewalDate", nextRenewalDate);
+      }
 
     } catch (Exception e) {
       e.printStackTrace();

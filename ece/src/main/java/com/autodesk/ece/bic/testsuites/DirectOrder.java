@@ -9,6 +9,7 @@ import com.autodesk.eceapp.fixtures.OxygenUser;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceCheckoutTestBase;
 import com.autodesk.eceapp.testbase.EceDotcomTestBase;
+import com.autodesk.eceapp.testbase.ece.MOETestBase;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.testbase.ece.PWSTestBase;
 import com.autodesk.eceapp.testbase.ece.QuoteOrderTestBase;
@@ -53,8 +54,8 @@ public class DirectOrder extends ECETestBase {
   EceDotcomTestBase dotcomTestBase = new EceDotcomTestBase(getDriver(), getTestBase(), locale);
   EceCheckoutTestBase checkoutTestBase = new EceCheckoutTestBase(getDriver(), getTestBase(), locale);
 
+  MOETestBase moeTestBase = new MOETestBase(this.getTestBase(), testDataForEachMethod);
   QuoteOrderTestBase quoteOrderTestBase;
-
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
@@ -97,6 +98,10 @@ public class DirectOrder extends ECETestBase {
             testDataForEachMethod.get("pwsClientSecret_v2"),
             testDataForEachMethod.get("pwsHostname"));
     billingDetails = new CustomerBillingDetails(testDataForEachMethod, getBicTestBase());
+
+    if (System.getProperty("subscriptionStatus") != null) {
+      testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, System.getProperty("subscriptionStatus"));
+    }
   }
 
   @Test(groups = {"create-direct-order-test"}, description = "Validation of Create Direct O2P Order")
@@ -153,27 +158,7 @@ public class DirectOrder extends ECETestBase {
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
-    HashMap<String, String> testResults = new HashMap<String, String>();
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
-      testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
-      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
-      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
-      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
-      testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
-      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-      testResults
-          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
-    updateTestingHub(testResults);
+    populateTestResultsForTestingHub(results);
   }
 
   @Test(groups = {"create-multiline-order"}, description = "Validation of Create Direct O2P Order")
@@ -207,27 +192,7 @@ public class DirectOrder extends ECETestBase {
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
-    HashMap<String, String> testResults = new HashMap<String, String>();
-    try {
-      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
-      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
-      testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
-      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
-      testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
-      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
-      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
-      testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
-      testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
-      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
-      testResults
-          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
-    } catch (Exception e) {
-      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
-    }
-    updateTestingHub(testResults);
+    populateTestResultsForTestingHub(results);
   }
 
   @Test(groups = {"refund-multiline-order"}, description = "Validation of refund Direct O2P SUS Order")
@@ -280,7 +245,7 @@ public class DirectOrder extends ECETestBase {
     AssertUtils.assertEquals("Subscription is NOT TERMINATED", results.get("response_status"),
         BICECEConstants.TERMINATED);
 
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
@@ -462,6 +427,39 @@ public class DirectOrder extends ECETestBase {
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
+    populateTestResultsForTestingHub(results);
+  }
+
+  @Test(groups = {"direct-order-subscription-status"}, description = "Validation of Subscription status O2P Order")
+  public void validateDirectOrderSubscriptionStatus() throws Exception {
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+    getBicTestBase().setStorageData();
+    checkoutTestBase.clickOnContinueButton();
+    getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+    getBicTestBase().enterCustomerDetails(billingDetails.address);
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails, billingDetails.address);
+    moeTestBase.submitPayment();
+    getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
+    getBicTestBase().submitOrder(testDataForEachMethod);
+    String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
+
+    HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
+    results.put(BICECEConstants.orderNumber, orderNumber);
+    // Getting a PurchaseOrder details from pelican
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
+
+//     Get find Subscription ById
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+    //Update subscription date using update subscription api and then call BATCH update subscription to update status
+    pelicantb.updateO2PSubscriptionStatus(results);
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+    AssertUtils.assertEquals("Subscription status is NOT updated", results.get("response_status"), testDataForEachMethod.get(BICECEConstants.SUBSCRIPTION_STATUS));
+    populateTestResultsForTestingHub(results);
+  }
+
+  private void populateTestResultsForTestingHub(HashMap<String, String> results) {
     HashMap<String, String> testResults = new HashMap<String, String>();
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
@@ -469,16 +467,16 @@ public class DirectOrder extends ECETestBase {
       testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+              .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
       testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
       testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+              results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
       testResults.put(BICConstants.subscriptionPeriodEndDate,
-          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+              results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
       testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
       testResults
-          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+              .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
@@ -486,7 +484,7 @@ public class DirectOrder extends ECETestBase {
   }
 
   @Test(groups = {"direct-order-renew"}, description = "Validation of Create Direct O2P Order")
-  public void directOrderRenew() throws MetadataException {
+  public void directOrderRenew() throws Exception {
     dotcomTestBase.navigateToDotComPage(productName);
     dotcomTestBase.selectMonthlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
@@ -533,7 +531,7 @@ public class DirectOrder extends ECETestBase {
     updateTestingHub(testResults);
 
     //Update Subscription Next renewal date
-    pelicantb.updateO2PSubscriptionForRenewal(results);
+    pelicantb.updateO2PSubscriptionDates(results);
 
     results.put(BICConstants.subscriptionId,
         results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
@@ -566,6 +564,4 @@ public class DirectOrder extends ECETestBase {
 
     updateTestingHub(testResults);
   }
-
-
 }
