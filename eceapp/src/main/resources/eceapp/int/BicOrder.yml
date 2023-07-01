@@ -44,6 +44,7 @@ default:
   getPelicanActorSecret: "CuvXm69JlLqWgFKyMDau7w==:2cY4r8CAiTXMbzDzmHC2Ng=="
   quantity: "1"
   productType: "bic"
+  accountPortalProductType: "premium"
 
   commerceNotPaymentUrl: "https://commerce.ocint.autodesk.com/v1/cancel-order/"
 

@@ -62,6 +62,7 @@ public class EcePortalTestBase {
   private final EceZipPayTestBase zipTestBase;
   private final EceBICTestBase bicTestBase;
   private final String accountPortalOxygenLogOut;
+  private final String accountPortalProductType;
   public WebDriver driver = null;
 
   public EcePortalTestBase(GlobalTestBase testbase) {
@@ -83,6 +84,7 @@ public class EcePortalTestBase {
     accountPortalBillingInvoicesUrl = defaultvalues.get("accountPortalBillingInvoicesUrl");
     accountsProductPageUrl = defaultvalues.get("accountsProductPageUrl");
     accountPortalOxygenLogOut = defaultvalues.get("oxygenLogOut");
+    accountPortalProductType = defaultvalues.get("accountPortalProductType");
   }
 
   public static String timestamp() {
@@ -229,14 +231,20 @@ public class EcePortalTestBase {
   @Step("Verify if Subscription exists in Product and Services Page" + GlobalConstants.TAG_TESTINGHUB)
   public boolean isSubscriptionInPortal(String subscriptionId, String userName, String password) {
     boolean status = false;
+    String productXpath = "";
     int attempts = 0;
     WebElement element = null;
 
     while (attempts < 5) {
       try {
         openPortalURL(accountsPortalSubscriptionsUrl);
-        String productXpath = portalPage
-            .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
+        if (accountPortalProductType.equals("premium")) {
+          productXpath = portalPage
+                  .getFirstFieldLocator("premiumSubscriptionID").replace("TOKEN1", subscriptionId);
+        } else {
+          productXpath = portalPage
+                  .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
+        }
         element = driver.findElement(By.xpath(productXpath));
       } catch (Exception e) {
         //Do nothing here.
