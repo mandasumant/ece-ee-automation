@@ -4,18 +4,17 @@ import static com.autodesk.eceapp.testbase.EceBICTestBase.generateInvoiceDetails
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePayerDetails;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generateProductList;
 import static com.autodesk.eceapp.testbase.EceBICTestBase.generatePurchaserDetails;
+import static com.autodesk.testinghub.core.common.EISTestBase.driver;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.dto.IInvoiceDetails;
 import com.autodesk.eceapp.dto.IPayerDetails;
 import com.autodesk.eceapp.dto.IProductDetails;
 import com.autodesk.eceapp.dto.IPurchaserDetails;
-import com.autodesk.eceapp.dto.QuoteDetails;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceBICTestBase.Names;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient.NewQuoteOrder;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderData;
-import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderFilters;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
 import com.autodesk.eceapp.testbase.ece.PWSTestBase;
 import com.autodesk.eceapp.testbase.ece.PelicanTestBase;
@@ -42,12 +41,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.util.Strings;
 
 public class QuoteOrder extends ECETestBase {
 
@@ -60,10 +58,9 @@ public class QuoteOrder extends ECETestBase {
   LinkedHashMap<String, Map<String, String>> localeDataMap = null;
   String locale = System.getProperty(BICECEConstants.LOCALE);
   String taxOptionEnabled = System.getProperty(BICECEConstants.TAX_OPTION);
+  QuoteOrderTestBase quoteOrderTestBase;
   private String PASSWORD;
   private PWSTestBase pwsTestBase;
-
-  QuoteOrderTestBase quoteOrderTestBase;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -138,7 +135,8 @@ public class QuoteOrder extends ECETestBase {
     final String pwsHostname = testDataForEachMethod.get("pwsHostname");
 
     pwsTestBase = new PWSTestBase(pwsClientId, pwsClientSecret, pwsClientId_v2, pwsClientSecret_v2, pwsHostname);
-    quoteOrderTestBase = new QuoteOrderTestBase(pwsClientId, pwsClientSecret, pwsClientId_v2, pwsClientSecret_v2, pwsHostname);
+    quoteOrderTestBase = new QuoteOrderTestBase(pwsClientId, pwsClientSecret, pwsClientId_v2, pwsClientSecret_v2,
+        pwsHostname);
 
     Names names = EceBICTestBase.generateFirstAndLastNames();
     testDataForEachMethod.put(BICECEConstants.FIRSTNAME, names.firstName);
@@ -272,11 +270,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
   }
@@ -300,11 +298,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
   }
@@ -320,11 +318,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
   }
@@ -343,11 +341,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
   }
@@ -364,11 +362,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
   }
@@ -384,11 +382,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
   }
@@ -408,11 +406,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
   }
@@ -426,65 +424,14 @@ public class QuoteOrder extends ECETestBase {
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
-    if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
-      testResults = getBicTestBase().createPayerAccount(testDataForEachMethod);
-    }
-
-    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-    getBicTestBase().createBICAccount(
-        new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-            testDataForEachMethod.get(BICECEConstants.LASTNAME)),
-        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
-
-    String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
-        testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, false);
-
-    //Wait for Quote to sync from CPQ/SFDC to S4.
-    Util.printInfo("Keep calm, sleeping for 5min for Quote to sync to S4");
-    Util.sleep(300000);
-
-    testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
-    testResults.put(BICECEConstants.QUOTE_ID, quoteId);
-    updateTestingHub(testResults);
-    // Signing out after quote creation
-    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
-
-    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
-    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
-    // Re login during checkout
-    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
-    getBicTestBase().refreshCartIfEmpty();
-
     HashMap<String, String> results = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     results.putAll(testDataForEachMethod);
     testResults.put(BICECEConstants.orderNumber, results.get(BICConstants.orderNumber));
-
-    // Getting a PurchaseOrder details from pelican
-    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
-
-    // Compare tax in Checkout and Pelican
-    getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
-        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
-
-    // Validate Quote Details with Pelican
-    pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
-
-    // Get find Subscription ById
-    results.putAll(
-        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
-
-    testDataForEachMethod.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
-
-    portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL), results.get(BICConstants.emailid),
-        PASSWORD, results.get(BICECEConstants.SUBSCRIPTION_ID));
-    if (!testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.PAYMENT_BACS)) {
-      portaltb.validateBICOrderDetails(results.get(BICECEConstants.FINAL_TAX_AMOUNT));
-    }
 
     updateTestingHub(testResults);
 
@@ -494,6 +441,11 @@ public class QuoteOrder extends ECETestBase {
       testDataForEachMethod.put(BICECEConstants.IS_SAME_PAYER, System.getProperty(BICECEConstants.IS_SAME_PAYER));
     }
 
+    // Clear Storage data
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("localStorage.clear();sessionStorage.clear();");
+
+    // Signing out after quote creation
     getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
 
     String quote2Id = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
@@ -636,11 +588,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
 
     testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
         testResults.get(BICConstants.subscriptionId));
@@ -687,11 +639,11 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod,
-            portaltb, getBicTestBase(),
-            pelicantb,
-            subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
 
     testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
         testResults.get(BICConstants.subscriptionId));
