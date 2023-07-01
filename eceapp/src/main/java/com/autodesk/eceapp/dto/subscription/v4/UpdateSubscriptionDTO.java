@@ -26,7 +26,3 @@ public class UpdateSubscriptionDTO {
         private String resolveByDate;
     }
 }
-
-
-
-

@@ -20,6 +20,7 @@ public class BICECEConstants extends BICConstants {
   public static final String SUBSCRIPTION_PERIOD_START_DATE = "getPOReponse_subscriptionPeriodStartDate";
   public static final String SUBSCRIPTION_PERIOD_END_DATE = "getPOReponse_subscriptionPeriodEndDate";
   public static final String NEXT_BILLING_DATE = "response_nextBillingDate";
+  public static final String NEXT_RENEWAL_DATE = "response_nextRenewalDate";
   public static final String PAYMENT_PROFILE_ID = "getPOReponse_storedPaymentProfileId";
   public static final String TESTINGHUB_UPDATE_FAILURE_MESSAGE = "Failed to update results to Testing hub.";
   public static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss z";

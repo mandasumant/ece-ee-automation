@@ -272,8 +272,15 @@ public class PelicanTestBase {
     return patchRestResponse(getPurchaseOrderDetailsUrl, header, inputPayload);
   }
 
+  /**
+   * If subscription status is not passed in data then nextRenewalDate will be updated.
+   * Otherwise depending on status dates are updated.
+   * @param data
+   * @return
+   * @throws Exception
+   */
   @Step("Update next renewal,termination,expiration dates " + GlobalConstants.TAG_TESTINGHUB)
-  public HashMap<String, String> updateO2PSubscriptionDates(HashMap<String, String> data) throws Exception {
+  public HashMap<String, String> updateO2PSubscriptionDates(HashMap<String, String> data) {
 
     String getSubscriptionV4Url = data.get("getSubscriptionByIdV4Url");
     Util.printInfo("Subscription id " + data.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID));
@@ -305,14 +312,12 @@ public class PelicanTestBase {
           updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
                   .expirationDate(updatedDate)
                   .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
-        } else {
-          //updating next billing date for default
-          updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
-                  .nextRenewalDate(updatedDate)
-                  .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
         }
       } else {
-        throw new Exception("Subscription status can not be null.");
+        //updating next billing date for default
+        updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
+                .nextRenewalDate(updatedDate)
+                .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
       }
       UpdateSubscriptionDTO updateSubscriptionDTO = UpdateSubscriptionDTO.builder().data(updateSubscriptionData).
               meta(UpdateSubscriptionDTO.Meta.builder().build()).build();

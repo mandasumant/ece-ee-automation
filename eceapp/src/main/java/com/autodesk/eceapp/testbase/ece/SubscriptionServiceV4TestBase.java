@@ -46,11 +46,12 @@ public class SubscriptionServiceV4TestBase {
         break;
       }
       try {
+        Util.printInfo("Subscription id in getSubscriptionById " + id);
         SubscriptionSuccessV4 result = apiInstance.findSubscriptionById(signature.xE2PartnerId,
             signature.xE2AppFamilyId, signature.xE2HMACTimestamp, signature.xE2HMACSignature, Long.parseLong(id),
             null, null, null);
         Util.PrintInfo(BICECEConstants.RESULT + result);
-        results.put("response_nextBillingDate", result.getNextBillingDate());
+        results.put(BICECEConstants.NEXT_BILLING_DATE, result.getNextBillingDate());
         results.put("response_subscriptionQuantity",
             String.valueOf(result.getQuantity()));
         results.put("response_quantityToReduce",
@@ -67,7 +68,7 @@ public class SubscriptionServiceV4TestBase {
                 result.getSwitchTermPriceId()) : null);
         results.put("response_status", String.valueOf(result.getStatus()));
         results.put("response_subscriptionCreated", String.valueOf(result.getCreated()));
-        results.put("response_nextRenewalDate", result.getNextRenewalDate());
+        results.put(BICECEConstants.NEXT_RENEWAL_DATE, result.getNextRenewalDate());
 
         success = true;
       } catch (ApiException e) {

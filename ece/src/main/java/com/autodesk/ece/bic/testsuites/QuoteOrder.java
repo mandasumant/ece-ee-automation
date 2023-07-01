@@ -603,6 +603,9 @@ public class QuoteOrder extends ECETestBase {
     // Trigger the Pelican renewal job to renew the subscription
     triggerPelicanRenewalJob(testResults);
 
+    testResults.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+            testResults.get(BICConstants.subscriptionId));
+
     // Get the subscription in pelican to check if it has renewed
     testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
         testResults.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
@@ -647,8 +650,10 @@ public class QuoteOrder extends ECETestBase {
 
     testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
         testResults.get(BICConstants.subscriptionId));
+    //Save the date for validation
+    Date dateBeforeSubscriptionRenewal = new Date();
 
-    //Update Subscription for Subscription dates
+    //Update Subscription date for renewal
     pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
 
     // Trigger the Pelican renewal job to renew the subscription
@@ -660,15 +665,16 @@ public class QuoteOrder extends ECETestBase {
 
     try {
       // Ensure that the subscription renews in the future
-      String dateString = testResults.get(BICECEConstants.NEXT_BILLING_DATE);
-      Date date = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
-          dateString);
-      Assert.assertTrue(date.after(new Date()),
+      //for O2P subscription verify nextRenewalDate
+      String dateAfterSubscriptionRenewalString = testResults.get(BICECEConstants.NEXT_RENEWAL_DATE);
+      Date dateAfterSubscriptionRenewal = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+          dateAfterSubscriptionRenewalString);
+      Assert.assertTrue(dateAfterSubscriptionRenewal.after(dateBeforeSubscriptionRenewal),
           "Check that the O2P subscription has been renewed");
 
       AssertUtils
-          .assertEquals("The billing date has been updated to next cycle ",
-              testResults.get(BICECEConstants.NEXT_BILLING_DATE).split("\\s")[0],
+          .assertEquals("The next renewal date has been updated to next cycle ",
+              testResults.get(BICECEConstants.NEXT_RENEWAL_DATE).split("\\s")[0],
               Util.customDate("MM/dd/yyyy", 0, -5, +1));
     } catch (ParseException e) {
       e.printStackTrace();
