@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Q2O-Premium" type="Application" factoryName="Application" folderName="QuoteOrder">
+  <configuration default="false" name="Q2O-Premium-CC" type="Application" factoryName="Application" folderName="QuoteOrder">
     <option name="ALTERNATIVE_JRE_PATH" value="17" />
     <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
     <module name="ece" />

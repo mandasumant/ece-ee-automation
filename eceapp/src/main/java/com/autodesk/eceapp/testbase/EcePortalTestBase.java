@@ -46,6 +46,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.util.Strings;
 
 public class EcePortalTestBase {
 
@@ -62,7 +63,7 @@ public class EcePortalTestBase {
   private final EceZipPayTestBase zipTestBase;
   private final EceBICTestBase bicTestBase;
   private final String accountPortalOxygenLogOut;
-  private final String accountPortalProductType;
+
   public WebDriver driver = null;
 
   public EcePortalTestBase(GlobalTestBase testbase) {
@@ -84,7 +85,6 @@ public class EcePortalTestBase {
     accountPortalBillingInvoicesUrl = defaultvalues.get("accountPortalBillingInvoicesUrl");
     accountsProductPageUrl = defaultvalues.get("accountsProductPageUrl");
     accountPortalOxygenLogOut = defaultvalues.get("oxygenLogOut");
-    accountPortalProductType = defaultvalues.get("accountPortalProductType");
   }
 
   public static String timestamp() {
@@ -235,15 +235,17 @@ public class EcePortalTestBase {
     int attempts = 0;
     WebElement element = null;
 
+    String productName = System.getProperty(BICECEConstants.PRODUCT_NAME);
+
     while (attempts < 5) {
       try {
         openPortalURL(accountsPortalSubscriptionsUrl);
-        if (accountPortalProductType.equals("premium")) {
+        if (Strings.isNotNullAndNotEmpty(productName) && productName.equals("premium")) {
           productXpath = portalPage
-                  .getFirstFieldLocator("premiumSubscriptionID").replace("TOKEN1", subscriptionId);
+              .getFirstFieldLocator("premiumSubscriptionID").replace("TOKEN1", subscriptionId);
         } else {
           productXpath = portalPage
-                  .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
+              .getFirstFieldLocator("subscriptionIDInBO").replace("TOKEN1", subscriptionId);
         }
         element = driver.findElement(By.xpath(productXpath));
       } catch (Exception e) {

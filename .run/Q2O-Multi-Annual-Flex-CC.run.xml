@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Q2O-Multi-Annual-Flex" type="Application" factoryName="Application" folderName="QuoteOrder">
+  <configuration default="false" name="Q2O-Multi-Annual-Flex-CC" type="Application" factoryName="Application" folderName="QuoteOrder">
     <option name="ALTERNATIVE_JRE_PATH" value="17" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />

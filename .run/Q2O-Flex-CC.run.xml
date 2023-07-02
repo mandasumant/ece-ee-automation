@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Q2O-Flex" type="Application" factoryName="Application" folderName="QuoteOrder">
+  <configuration default="false" name="Q2O-Flex-CC" type="Application" factoryName="Application" folderName="QuoteOrder">
     <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
     <module name="ece" />
     <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=INT -Duserid=svc_s_platform_autob@autodesk.com -Dclassname=com.autodesk.ece.bic.testsuites.QuoteOrder -DtestGroup=quote-order-flex -Dapplication=ece -Dusertype=new -Demail= -Dpassword= -Dstore=STORE-AUS -Dlocale=en_AU -DemailType=biz -Dsku=default:1 -Dpayment=CREDITCARD -Daddress=&quot;AutodeskAU@71 Barratt Road@Airville@4807@397202088@Australia@QLD&quot; -Dtimezone=Australia/Sydney" />

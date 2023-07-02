@@ -376,6 +376,7 @@ public class QuoteOrder extends ECETestBase {
     HashMap<String, String> testResults;
 
     testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_PREMIUM);
+    System.setProperty(BICECEConstants.PRODUCT_NAME, "premium");
 
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium");
@@ -604,7 +605,7 @@ public class QuoteOrder extends ECETestBase {
     triggerPelicanRenewalJob(testResults);
 
     testResults.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
-            testResults.get(BICConstants.subscriptionId));
+        testResults.get(BICConstants.subscriptionId));
 
     // Get the subscription in pelican to check if it has renewed
     testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
