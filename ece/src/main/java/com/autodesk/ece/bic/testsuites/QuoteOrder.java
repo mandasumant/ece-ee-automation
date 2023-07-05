@@ -266,7 +266,8 @@ public class QuoteOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_FLEX);
 
     String quoteLineItems = System.setProperty("quoteLineItems",
-        "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:3000");
+        "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:"
+            + testDataForEachMethod.get(BICECEConstants.FLEX_TOKENS));
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
@@ -337,7 +338,8 @@ public class QuoteOrder extends ECETestBase {
 
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
-            "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:3000");
+            "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:"
+            + testDataForEachMethod.get(BICECEConstants.FLEX_TOKENS));
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
@@ -402,7 +404,8 @@ public class QuoteOrder extends ECETestBase {
     String quoteLineItems = System.setProperty("quoteLineItems",
         "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard|" +
             "access_model:sus,offering_id:OD-000021,term:3_year,usage:commercial,plan:standard|" +
-            "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:1000|" +
+            "access_model:flex,offering_id:OD-000163,term:annual,usage:commercial,plan:standard,quantity:"
+            + testDataForEachMethod.get(BICECEConstants.FLEX_TOKENS) + "|" +
             "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 

@@ -1,18 +1,18 @@
 package com.autodesk.eceapp.testbase.ece.service.quote.impl;
 
 import static io.restassured.RestAssured.given;
+import com.autodesk.eceapp.constants.BICECEConstants;
+import com.autodesk.eceapp.dto.PWSAccessInfo;
+import com.autodesk.eceapp.dto.QuoteDetails;
 import com.autodesk.eceapp.dto.quote.AgentAccountDTO;
 import com.autodesk.eceapp.dto.quote.AgentContactDTO;
 import com.autodesk.eceapp.dto.quote.EndCustomerDTO;
 import com.autodesk.eceapp.dto.quote.FinalizeQuoteDTO;
-import com.autodesk.eceapp.dto.PWSAccessInfo;
 import com.autodesk.eceapp.dto.quote.PurchaserDTO;
-import com.autodesk.eceapp.dto.QuoteDetails;
 import com.autodesk.eceapp.dto.quote.v2.LineItemDTO;
 import com.autodesk.eceapp.dto.quote.v2.QuoteDTO;
 import com.autodesk.eceapp.testbase.ece.service.quote.PwsQuoteDataBuilder;
 import com.autodesk.eceapp.testbase.ece.service.quote.QuoteService;
-import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
@@ -34,6 +34,7 @@ import java.util.Optional;
  * Service with Apollo R2.1.2 APIs
  */
 public class PWSV2Service implements QuoteService {
+
   private final String clientId;
   private final String clientSecret;
   private final String hostname;
@@ -240,7 +241,8 @@ public class PWSV2Service implements QuoteService {
   }
 
   private Response getQuoteStatus(Map<String, String> headers, String transactionId) {
-    final String getQuoteStatusUrl = MessageFormat.format("https://{0}/v1/quotes/status?transactionId={1}", hostname, transactionId);
+    final String getQuoteStatusUrl = MessageFormat.format("https://{0}/v1/quotes/status?transactionId={1}", hostname,
+        transactionId);
     Util.printInfo("Get Quote Status URL: " + getQuoteStatusUrl);
 
     return given()
@@ -248,14 +250,16 @@ public class PWSV2Service implements QuoteService {
         .get(getQuoteStatusUrl)
         .then().extract().response();
   }
+
   @Step("Get Quote" + GlobalConstants.TAG_TESTINGHUB)
   public QuoteDetails getQuoteDetails(String agentCSN, String quoteNo) {
     final Response quoteDetails = getQuoteDetailsResponse(agentCSN, quoteNo);
 
     return Optional.of(quoteDetails)
-      .map(ResponseBodyExtractionOptions::jsonPath)
-      .map(this::createObjectFromJsonPath)
-      .orElseThrow(() -> new RuntimeException("Could not retrieve purchaser / end customer information from Quote Details API"));
+        .map(ResponseBodyExtractionOptions::jsonPath)
+        .map(this::createObjectFromJsonPath)
+        .orElseThrow(() -> new RuntimeException(
+            "Could not retrieve purchaser / end customer information from Quote Details API"));
   }
 
   @Step("Get Quote Response" + GlobalConstants.TAG_TESTINGHUB)
@@ -279,7 +283,8 @@ public class PWSV2Service implements QuoteService {
   }
 
   protected String getQuoteDetailsUrl(final String hostname, final String quoteNo) {
-    final String getQuoteDetailsURL = MessageFormat.format("https://{0}/v2/quotes?filter[quoteNumber]={1}", hostname, quoteNo);
+    final String getQuoteDetailsURL = MessageFormat.format("https://{0}/v2/quotes?filter[quoteNumber]={1}", hostname,
+        quoteNo);
     Util.printInfo("Get Quote Details URL: " + getQuoteDetailsURL);
 
     return getQuoteDetailsURL;
@@ -287,14 +292,14 @@ public class PWSV2Service implements QuoteService {
 
   private QuoteDetails createObjectFromJsonPath(final JsonPath jsonPath) {
     return QuoteDetails.builder()
-      .purchaserFirstName(jsonPath.getString("purchaser.firstName"))
-      .purchaserLastName(jsonPath.getString("purchaser.lastName"))
-      .endCustomerName(jsonPath.getString("endCustomer.name"))
-      .endCustomerAccountCsn(jsonPath.getString("endCustomer.accountCsn"))
-      .endCustomerAddressLine1(jsonPath.getString("endCustomer.addressLine1"))
-      .endCustomerCity(jsonPath.getString("endCustomer.city"))
-      .endCustomerCountryCode(jsonPath.getString("endCustomer.countryCode"))
-      .endCustomerPostalCode(jsonPath.getString("endCustomer.postalCode"))
-      .build();
+        .purchaserFirstName(jsonPath.getString("results[0][0].purchaser.firstName"))
+        .purchaserLastName(jsonPath.getString("results[0][0].purchaser.lastName"))
+        .endCustomerName(jsonPath.getString("results[0][0].endCustomer.name"))
+        .endCustomerAccountCsn(jsonPath.getString("results[0][0].endCustomer.accountCsn"))
+        .endCustomerAddressLine1(jsonPath.getString("results[0][0].endCustomer.addressLine1"))
+        .endCustomerCity(jsonPath.getString("results[0][0].endCustomer.city"))
+        .endCustomerCountryCode(jsonPath.getString("results[0][0].endCustomer.countryCode"))
+        .endCustomerPostalCode(jsonPath.getString("results[0][0].endCustomer.postalCode"))
+        .build();
   }
 }
