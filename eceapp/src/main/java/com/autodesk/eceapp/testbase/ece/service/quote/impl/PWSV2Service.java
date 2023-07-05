@@ -290,10 +290,15 @@ public class PWSV2Service implements QuoteService {
     return getQuoteDetailsURL;
   }
 
-  private QuoteDetails createObjectFromJsonPath(final JsonPath jsonPath) {
+  protected QuoteDetails createObjectFromJsonPath(final JsonPath jsonPath) {
     return QuoteDetails.builder()
         .purchaserFirstName(jsonPath.getString("results[0][0].purchaser.firstName"))
         .purchaserLastName(jsonPath.getString("results[0][0].purchaser.lastName"))
+        .quantity(
+            Optional.ofNullable(jsonPath.getString("results[0][0].lineItems[0].quantity"))
+                .map(q -> (int) Float.parseFloat(q))
+                .orElse(0)
+        )
         .endCustomerName(jsonPath.getString("results[0][0].endCustomer.name"))
         .endCustomerAccountCsn(jsonPath.getString("results[0][0].endCustomer.accountCsn"))
         .endCustomerAddressLine1(jsonPath.getString("results[0][0].endCustomer.addressLine1"))

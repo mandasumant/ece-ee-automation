@@ -1594,6 +1594,7 @@ public class BICQuoteOrder extends ECETestBase {
       QuoteDetails quoteDetails = pwsTestBase.getQuoteDetails(
           testDataForEachMethod.get("quoteAgentCsnAccount"), order.getQuoteId());
 
+      testDataForEachMethod.put("tokens", String.valueOf(quoteDetails.getQuantity()));
       testDataForEachMethod.put("firstname", quoteDetails.getPurchaserFirstName());
       testDataForEachMethod.put("lastname", quoteDetails.getPurchaserLastName());
       testDataForEachMethod.put("company", quoteDetails.getEndCustomerName());

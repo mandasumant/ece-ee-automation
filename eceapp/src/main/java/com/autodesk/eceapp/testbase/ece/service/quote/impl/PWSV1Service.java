@@ -1,22 +1,24 @@
 package com.autodesk.eceapp.testbase.ece.service.quote.impl;
 
-import com.autodesk.eceapp.dto.quote.v1.OfferDTO;
+import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.dto.QuoteDetails;
 import com.autodesk.eceapp.dto.quote.AgentAccountDTO;
 import com.autodesk.eceapp.dto.quote.AgentContactDTO;
 import com.autodesk.eceapp.dto.quote.EndCustomerDTO;
 import com.autodesk.eceapp.dto.quote.PurchaserDTO;
 import com.autodesk.eceapp.dto.quote.v1.LineItemDTO;
+import com.autodesk.eceapp.dto.quote.v1.OfferDTO;
 import com.autodesk.eceapp.dto.quote.v1.QuoteDTO;
 import com.autodesk.eceapp.testbase.ece.service.quote.QuoteService;
-import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.utilities.Address;
 import com.autodesk.testinghub.core.utils.Util;
 import com.google.gson.Gson;
+import io.restassured.path.json.JsonPath;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This class can be deleted without modifying any code in tests when Apollo R2.1.2 is DONE
@@ -99,5 +101,24 @@ public class PWSV1Service extends PWSV2Service implements QuoteService {
         .build();
 
     return new Gson().toJson(quote);
+  }
+
+  @Override
+  protected QuoteDetails createObjectFromJsonPath(final JsonPath jsonPath) {
+    return QuoteDetails.builder()
+        .purchaserFirstName(jsonPath.getString("purchaser.firstName"))
+        .purchaserLastName(jsonPath.getString("purchaser.lastName"))
+        .quantity(
+            Optional.ofNullable(jsonPath.getString("lineItems[0].quantity"))
+                .map(q -> (int) Float.parseFloat(q))
+                .orElse(0)
+        )
+        .endCustomerName(jsonPath.getString("endCustomer.name"))
+        .endCustomerAccountCsn(jsonPath.getString("endCustomer.accountCsn"))
+        .endCustomerAddressLine1(jsonPath.getString("endCustomer.addressLine1"))
+        .endCustomerCity(jsonPath.getString("endCustomer.city"))
+        .endCustomerCountryCode(jsonPath.getString("endCustomer.countryCode"))
+        .endCustomerPostalCode(jsonPath.getString("endCustomer.postalCode"))
+        .build();
   }
 }

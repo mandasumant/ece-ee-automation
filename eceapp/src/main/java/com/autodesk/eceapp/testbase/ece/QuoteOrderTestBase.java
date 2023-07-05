@@ -210,6 +210,7 @@ public class QuoteOrderTestBase {
       testDataForEachMethod.put("lastname", quoteDetails.getPurchaserLastName());
       testDataForEachMethod.put("company", quoteDetails.getEndCustomerName());
       testDataForEachMethod.put("address", order.getAddress());
+      testDataForEachMethod.put("quantity", String.valueOf(quoteDetails.getQuantity()));
 
     } catch (Exception e) {
       Util.printInfo("Failed to fetch data from P78, for Quote Orders. Creating via PWS");

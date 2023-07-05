@@ -9,6 +9,7 @@ public class QuoteDetails {
   private String purchaserFirstName;
   private String purchaserLastName;
 
+  private int quantity;
   private String endCustomerName;
   private String endCustomerAccountCsn;
   private String endCustomerAddressLine1;
