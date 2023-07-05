@@ -168,7 +168,7 @@ public class DirectOrder extends ECETestBase {
     dotcomTestBase.selectThreeYearSubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     dotcomTestBase.navigateToDotComPage(productName);
-    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.selectYearlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
     checkoutTestBase.clickOnContinueButton();
@@ -201,7 +201,7 @@ public class DirectOrder extends ECETestBase {
     dotcomTestBase.selectThreeYearSubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     dotcomTestBase.navigateToDotComPage(productName);
-    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.selectYearlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
     checkoutTestBase.clickOnContinueButton();
@@ -285,7 +285,7 @@ public class DirectOrder extends ECETestBase {
     testDataForEachMethod.putAll(quoteResults);
 
     dotcomTestBase.navigateToDotComPage(productName);
-    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.selectYearlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
     checkoutTestBase.clickOnContinueButton();
@@ -572,7 +572,7 @@ public class DirectOrder extends ECETestBase {
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
 
     dotcomTestBase.navigateToDotComPage(productName);
-    dotcomTestBase.selectMonthlySubscription();
+    dotcomTestBase.selectYearlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
 
     dotcomTestBase.navigateToDotComPage(productName);

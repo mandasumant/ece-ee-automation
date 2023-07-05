@@ -728,6 +728,7 @@ public class EceBICTestBase {
     } else if (bicPage.waitForFieldPresent("creditCardRadioButton", 5000)) {
       Util.printInfo("clicking review button");
       bicPage.clickUsingLowLevelActions("reviewLOCOrder");
+      waitForLoadingSpinnerToComplete("loadingSpinner");
     } else if (bicPage.waitForFieldPresent("giroPayContinueButton", 5000)) {
       Util.printInfo("clicking on GiroPay Continue Button");
       bicPage.clickUsingLowLevelActions("giroPayContinueButton");
@@ -1631,18 +1632,23 @@ public class EceBICTestBase {
       }
 
       try {
-        if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)) {
+        WebElement submitPaymentButton = bicPage.getMultipleWebElementsfromField("SubmitOrderButton").get(0);
+        Util.printInfo("Checking if submit Order button is Available and enabled");
+        if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10) && !submitPaymentButton.getAttribute("class").contains("disabled")) {
+          Util.printInfo("Submit Order Button is Available and Enabled. So,clicking on Submit Order Button");
           bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
+          waitForLoadingSpinnerToComplete("loadingSpinner");
         }
       } catch (Exception e) {
         e.printStackTrace();
         debugPageUrl(e.getMessage());
         if (shouldFail) {
-          AssertUtils.fail("Failed to click on Submit button.");
+          AssertUtils.fail("Failed to Click on Submit Order Button as Button is Disabled");
+          ScreenCapture.getInstance().captureFullScreenshot();
         } else {
           ScreenCapture.getInstance().captureFullScreenshot();
           Util.printInfo(
-              "Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
+                  "Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
           return;
         }
       }
