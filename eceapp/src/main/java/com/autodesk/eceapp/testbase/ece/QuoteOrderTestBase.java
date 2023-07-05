@@ -76,6 +76,8 @@ public class QuoteOrderTestBase {
       if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
         testResults = bicTestBase.createPayerAccount(testDataForEachMethod);
       }
+
+      bicTestBase.goToDotcomSignin(testDataForEachMethod);
       bicTestBase.createBICAccount(
           new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
               testDataForEachMethod.get(BICECEConstants.LASTNAME)),
