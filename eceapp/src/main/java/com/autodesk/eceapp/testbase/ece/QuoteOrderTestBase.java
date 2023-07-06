@@ -161,6 +161,7 @@ public class QuoteOrderTestBase {
 
     portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
     testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+    testResults.put(BICECEConstants.SCENARIO, scenario);
     return testResults;
   }
 

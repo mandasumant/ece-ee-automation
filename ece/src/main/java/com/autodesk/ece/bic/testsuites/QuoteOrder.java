@@ -255,7 +255,7 @@ public class QuoteOrder extends ECETestBase {
 
     results.putAll(testDataForEachMethod);
 
-    testResults.putAll(testDataForEachMethod);
+    testResults.putAll(results);
     updateTestingHub(testResults);
   }
 
@@ -277,6 +277,8 @@ public class QuoteOrder extends ECETestBase {
         subscriptionServiceV4Testbase,
         ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
+
+    publishToP78(testResults);
 
   }
 
@@ -306,6 +308,8 @@ public class QuoteOrder extends ECETestBase {
         ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
+    publishToP78(testResults);
+
   }
 
   @Test(groups = {"quote-order-myab"}, description = "Validation of Create Quote Order with MYAB SUS")
@@ -325,6 +329,8 @@ public class QuoteOrder extends ECETestBase {
         subscriptionServiceV4Testbase,
         ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
+
+    publishToP78(testResults);
 
   }
 
@@ -350,6 +356,8 @@ public class QuoteOrder extends ECETestBase {
         ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
+    publishToP78(testResults);
+
   }
 
   @Test(groups = {"quote-order-annual-myab"}, description = "Validation of Create Quote Order with Annual and MYAB SUS")
@@ -371,6 +379,8 @@ public class QuoteOrder extends ECETestBase {
         ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
 
+    publishToP78(testResults);
+
   }
 
   @Test(groups = {"quote-order-premium"}, description = "Validation of Create Quote Order with Premium SUS")
@@ -391,6 +401,8 @@ public class QuoteOrder extends ECETestBase {
         subscriptionServiceV4Testbase,
         ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
+
+    publishToP78(testResults);
 
   }
 
@@ -416,6 +428,8 @@ public class QuoteOrder extends ECETestBase {
         subscriptionServiceV4Testbase,
         ECETestBase::updateTestingHub);
     updateTestingHub(testResults);
+
+    publishToP78(testResults);
 
   }
 
@@ -485,6 +499,7 @@ public class QuoteOrder extends ECETestBase {
         subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     updateTestingHub(testResults);
+
   }
 
   @Test(groups = {"quote-refund-annual"}, description = "Validation of Refund of Quote Order with Annual SUS")
@@ -633,6 +648,8 @@ public class QuoteOrder extends ECETestBase {
 
     updateTestingHub(testResults);
 
+    publishToP78(testResults);
+
   }
 
   @Test(groups = {"quote-order-subscription-status"}, description = "Validation of Quote Order Subscription status")
@@ -710,6 +727,33 @@ public class QuoteOrder extends ECETestBase {
     pelicanTB.renewSubscription(results);
     // Wait for the Pelican job to complete
     Util.sleep(600000);
+  }
+
+  private void publishToP78(HashMap<String, String> data) {
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+      try {
+        DatastoreClient dsClient = new DatastoreClient();
+        NewQuoteOrder.NewQuoteOrderBuilder builder = NewQuoteOrder.builder()
+            .name(BICECEConstants.LOC_TEST_NAME)
+            .emailId(data.get(BICConstants.emailid))
+            .orderNumber(new BigInteger(data.get(BICECEConstants.ORDER_ID)))
+            .quoteId(data.get(BICECEConstants.QUOTE_ID))
+            .paymentType(testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE))
+            .address(getSerializedBillingAddress())
+            .scenario(testDataForEachMethod.get(BICECEConstants.SCENARIO))
+            .expiry(new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 30).toInstant().toString());
+
+        if (!Objects.isNull(System.getProperty(BICECEConstants.TENANT))) {
+          builder.tenant(System.getProperty(BICECEConstants.TENANT));
+        }
+
+        OrderData orderData = dsClient.queueOrder(builder.build());
+        data.put("Stored LOC order data ID", orderData.getId().toString());
+        updateTestingHub(data);
+      } catch (Exception e) {
+        Util.printWarning("Failed to push order data to data store");
+      }
+    }
   }
 
 }
