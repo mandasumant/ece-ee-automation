@@ -131,6 +131,7 @@ public class EcePortalTestBase {
 
   public boolean openPortalBICLaunch(String url) {
     Util.printInfo("launch URL in browser");
+    openPortalURL(accountPortalOxygenLogOut);
     JavascriptExecutor js = (JavascriptExecutor) driver;
     js.executeScript("localStorage.clear();sessionStorage.clear();");
     driver.manage().deleteAllCookies();
