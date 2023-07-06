@@ -315,8 +315,7 @@ public class EcePortalTestBase {
   @Step("CEP : Bic Order capture " + GlobalConstants.TAG_TESTINGHUB)
   public void validateBICOrderProductInCEP(String cepURL, String portalUserName,
       String portalPassword, String subscriptionID) {
-    /*
-    //TODO: Uncomment once APLR2PMO-18112 is fixed.
+
     boolean status = false;
     openPortalBICLaunch(cepURL);
     if (isPortalLoginPageVisible()) {
@@ -334,7 +333,6 @@ public class EcePortalTestBase {
     if (!status) {
       AssertUtils.fail(BICECEConstants.PRODUCT_IS_DISPLAYED_IN_PORTAL + BICECEConstants.FALSE);
     }
-    */
   }
 
 
