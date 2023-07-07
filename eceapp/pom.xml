@@ -207,7 +207,7 @@
             <artifactId>bilinsm-pelican-subscription-v4-java-client</artifactId>
             <groupId>com.autodesk.platformautomation.bilinsmpelicansubscriptionv4</groupId>
             <scope>compile</scope>
-            <version>4.0</version>
+            <version>4.0-1</version>
         </dependency>
 
         <dependency>
