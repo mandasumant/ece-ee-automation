@@ -665,38 +665,15 @@ public class QuoteOrder extends ECETestBase {
 
     testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
         testResults.get(BICConstants.subscriptionId));
-    //Save the date for validation
-    Date dateBeforeSubscriptionRenewal = new Date();
 
-    //Update Subscription date for renewal
-    pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
-
-    // Trigger the Pelican renewal job to renew the subscription
-    triggerPelicanRenewalJob(testResults);
-
-    // Get the subscription in pelican to check if it has renewed
-    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
-        testResults.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
-
-    try {
-      // Ensure that the subscription renews in the future
-      //for O2P subscription verify nextRenewalDate
-      String dateAfterSubscriptionRenewalString = testResults.get(BICECEConstants.NEXT_RENEWAL_DATE);
-      Date dateAfterSubscriptionRenewal = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
-          dateAfterSubscriptionRenewalString);
-      Assert.assertTrue(dateAfterSubscriptionRenewal.after(dateBeforeSubscriptionRenewal),
-          "Check that the O2P subscription has been renewed");
-
-      AssertUtils
-          .assertEquals("The next renewal date has been updated to next cycle ",
-              testResults.get(BICECEConstants.NEXT_RENEWAL_DATE).split("\\s")[0],
-              Util.customDate("MM/dd/yyyy", 0, -5, +1));
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
+    //Get find Subscription ById
+    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testResults.get(BICConstants.subscriptionId)));
+    //Update subscription date using update subscription api and then call BATCH update subscription to update status
+    pelicantb.updateO2PSubscriptionStatus(testResults);
+    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testResults.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+    AssertUtils.assertEquals("Subscription status is NOT updated", testResults.get("response_status"), testDataForEachMethod.get(BICECEConstants.SUBSCRIPTION_STATUS));
 
     updateTestingHub(testResults);
-
   }
 
   private String getSerializedBillingAddress() {

@@ -450,7 +450,7 @@ public class DirectOrder extends ECETestBase {
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
-//     Get find Subscription ById
+    //Get find Subscription ById
     results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     //Update subscription date using update subscription api and then call BATCH update subscription to update status
     pelicantb.updateO2PSubscriptionStatus(results);
