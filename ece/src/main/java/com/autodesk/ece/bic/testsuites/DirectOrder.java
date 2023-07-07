@@ -212,9 +212,9 @@ public class DirectOrder extends ECETestBase {
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
     getBicTestBase().submitOrder(testDataForEachMethod);
     String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.orderNumber, orderNumber);
 
     HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
-    results.put(BICECEConstants.orderNumber, orderNumber);
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod)));
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
