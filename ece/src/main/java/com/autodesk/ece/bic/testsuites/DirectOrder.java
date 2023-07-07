@@ -557,7 +557,7 @@ public class DirectOrder extends ECETestBase {
       AssertUtils
           .assertEquals("The billing date has been updated to next cycle ",
               testResults.get("response_nextRenewalDate").split("\\s")[0],
-              Util.customDate("MM/dd/yyyy", 0, -5, +1));
+              Util.customDate("MM/dd/yyyy", +1, -5, 0));
     } catch (ParseException e) {
       e.printStackTrace();
     }
