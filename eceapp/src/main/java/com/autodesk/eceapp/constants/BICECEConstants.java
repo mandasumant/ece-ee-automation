@@ -209,8 +209,8 @@ public class BICECEConstants extends BICConstants {
   public static final String SINGLE_ANNUAL = "SINGLE_ANNUAL";
   public static final String SINGLE_MYAB = "SINGLE_MYAB";
   public static final String SINGLE_PREMIUM = "SINGLE_PREMIUM";
-  public static final String SINGLE_FLEX = "SINGLE_FLEX";
 
+  public static final String SINGLE_FLEX = "SINGLE_FLEX";
   public static final String MULTI_ANNUAL_MYAB = "MULTI_ANNUAL_MYAB";
   public static final String MULTI_ANNUAL_FLEX = "MULTI_ANNUAL_FLEX";
   public static final String MULTI_ANNUAL_FLEX_MYAB_PREMIUM = "MULTI_ANNUAL_FLEX_MYAB_PREMIUM";

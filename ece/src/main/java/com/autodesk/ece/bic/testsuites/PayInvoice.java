@@ -67,7 +67,7 @@ public class PayInvoice extends ECETestBase {
     //Q2O SUS - Single Line Item - Annual - AU - LOC
     //scenario=SINGLE_ANNUAL
     //For testing: use data from Postgres to get Quote user credentials.
-    //Postgres: environment='INT' and scenario='SINGLE_ANNUAL' and status='PENDING'
+    //Postgres: environment='INT' and scenario='SINGLE_ANNUAL' and name='LOC_ORDER'
     results.put("orderNumber", "1000142901");
     testDataForEachMethod.put(BICConstants.emailid, "biz-thubstoreausztgxizdxvztt@letscheck.pw");
 

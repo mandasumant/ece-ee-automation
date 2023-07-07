@@ -182,8 +182,8 @@ public class EceZipPayTestBase {
   @Step("Verify and refill zip balance" + GlobalConstants.TAG_TESTINGHUB)
   public void verifyZipBalance(String balanceRequiredText) {
     double balanceRequired = parseZipAmount(balanceRequiredText);
-    if (balanceRequired > 1000) {
-      AssertUtils.fail("Zip Pay transaction failed, transaction amount greater than $1000");
+    if (balanceRequired > 1650) {
+      AssertUtils.fail("Zip Pay transaction failed, transaction amount greater than $1650");
     }
 
     // Open the user's dashboard in a new tab

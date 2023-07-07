@@ -289,14 +289,8 @@ public class QuoteOrder extends ECETestBase {
 
     testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_ANNUAL);
 
-    if (testDataForEachMethod.get("paymentType").equals("ZIP")) {
-      quoteLineItems = System.setProperty("quoteLineItems",
-          "offering_id:OD-000171,term:annual,usage:commercial,plan:standard,quantity:1");
-      testDataForEachMethod.put("productType", "fusion 360 cloud");
-    } else {
-      quoteLineItems = System.setProperty("quoteLineItems",
-          "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
-    }
+    quoteLineItems = System.setProperty("quoteLineItems",
+        "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard");
 
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
@@ -391,7 +385,7 @@ public class QuoteOrder extends ECETestBase {
     System.setProperty(BICECEConstants.PRODUCT_NAME, "premium");
 
     String quoteLineItems = System.setProperty("quoteLineItems",
-        "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium");
+        "access_model:sus,offering_id:OD-000321,term:annual,usage:commercial,plan:premium,quantity:3");
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     testResults = quoteOrderTestBase.createQuoteOrder(
