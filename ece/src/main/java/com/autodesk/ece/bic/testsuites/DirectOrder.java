@@ -9,8 +9,8 @@ import com.autodesk.eceapp.fixtures.OxygenUser;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
 import com.autodesk.eceapp.testbase.EceCheckoutTestBase;
 import com.autodesk.eceapp.testbase.EceDotcomTestBase;
-import com.autodesk.eceapp.testbase.ece.MOETestBase;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
+import com.autodesk.eceapp.testbase.ece.MOETestBase;
 import com.autodesk.eceapp.testbase.ece.PWSTestBase;
 import com.autodesk.eceapp.testbase.ece.QuoteOrderTestBase;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
@@ -179,9 +179,9 @@ public class DirectOrder extends ECETestBase {
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
     getBicTestBase().submitOrder(testDataForEachMethod);
     String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.orderNumber, orderNumber);
 
     HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
-    results.put(BICECEConstants.orderNumber, orderNumber);
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod)));
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
@@ -584,22 +584,22 @@ public class DirectOrder extends ECETestBase {
     getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
     getBicTestBase().enterCustomerDetails(billingDetails.address);
     getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
-            billingDetails.address);
+        billingDetails.address);
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
     getBicTestBase().submitOrder(testDataForEachMethod);
     String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.orderNumber, orderNumber);
 
     HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
-    results.put(BICECEConstants.orderNumber, orderNumber);
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod)));
 
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
-            results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+        results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
     results.putAll(
-            subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
     portaltb.validateBICOrderProductInCEP(results.get(BICConstants.cepURL),
-            user.emailID,
-            user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
+        user.emailID,
+        user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
     HashMap<String, String> testResults = new HashMap<String, String>();
     try {
