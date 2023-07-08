@@ -448,7 +448,7 @@ public class QuoteOrder extends ECETestBase {
     updateTestingHub(testResults);
 
     testDataForEachMethod.put("isReturningUser", BICECEConstants.TRUE);
-
+    testDataForEachMethod.put(BICECEConstants.END_CUSTOMER_CSN, results.get(BICECEConstants.END_CUSTOMER_CSN));
     if (System.getProperty(BICECEConstants.IS_SAME_PAYER) != null || false) {
       testDataForEachMethod.put(BICECEConstants.IS_SAME_PAYER, System.getProperty(BICECEConstants.IS_SAME_PAYER));
     }
@@ -484,6 +484,10 @@ public class QuoteOrder extends ECETestBase {
     // Compare tax in Checkout and Pelican
     getBicTestBase().validatePelicanTaxWithCheckoutTax(results.get(BICECEConstants.FINAL_TAX_AMOUNT),
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
+
+    if (testDataForEachMethod.get("isReturningUser").equals(BICECEConstants.TRUE)) {
+      address.company = testDataForEachMethod.get(BICECEConstants.END_CUSTOMER_COMPANY);
+    }
 
     // Validate Quote Details with Pelican
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
@@ -674,6 +678,7 @@ public class QuoteOrder extends ECETestBase {
     AssertUtils.assertEquals("Subscription status is NOT updated", testResults.get("response_status"), testDataForEachMethod.get(BICECEConstants.SUBSCRIPTION_STATUS));
 
     updateTestingHub(testResults);
+
   }
 
   private String getSerializedBillingAddress() {

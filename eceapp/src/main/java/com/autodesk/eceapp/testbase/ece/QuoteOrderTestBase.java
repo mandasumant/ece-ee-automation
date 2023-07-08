@@ -88,7 +88,7 @@ public class QuoteOrderTestBase {
           testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, isMultiLineItem);
 
       // Wait for Quote to sync from CPQ/SFDC to S4.
-      Util.printInfo("Keep calm, sleeping for 5min for Quote to sync to S4");
+      Util.printInfo("Keep calm, sleeping for 5 minutes for Quote to sync to S4");
       Util.sleep(300000);
 
       testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
@@ -149,6 +149,7 @@ public class QuoteOrderTestBase {
       testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
       testResults.put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
       testResults.put(BICECEConstants.PAYER_CSN, results.get(BICECEConstants.PAYER_CSN));
+      testResults.put(BICECEConstants.END_CUSTOMER_CSN, results.get(BICECEConstants.END_CUSTOMER_ACCOUNT_CSN));
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
@@ -162,6 +163,7 @@ public class QuoteOrderTestBase {
     portaltb.checkIfQuoteIsStillPresent(testResults.get("quoteId"));
     testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
     testResults.put(BICECEConstants.SCENARIO, scenario);
+
     return testResults;
   }
 

@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.testng.util.Strings;
 
 /**
  * Service with Apollo R2.1.2 APIs
@@ -62,6 +63,9 @@ public class PWSV2Service implements QuoteService {
     EndCustomerDTO endCustomer = null;
     if (System.getProperty("existingCSN") != null) {
       endCustomer = new EndCustomerDTO(System.getProperty("existingCSN"));
+    } else if (BICECEConstants.TRUE.equals(data.get("isReturningUser")) && Strings.isNotNullAndNotEmpty(
+        data.get(BICECEConstants.END_CUSTOMER_CSN))) {
+      endCustomer = new EndCustomerDTO(data.get(BICECEConstants.END_CUSTOMER_CSN));
     } else if (data.get(BICECEConstants.PAYER_CSN) != null) {
       endCustomer = new EndCustomerDTO(data.get(BICECEConstants.PAYER_CSN));
     } else {

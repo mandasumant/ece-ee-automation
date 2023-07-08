@@ -43,6 +43,9 @@ public class BICECEConstants extends BICConstants {
   public static final String ORDER_STATE = "getPOReponse_orderState";
   public static final String FULFILLMENT_STATUS = "getPOReponse_fulfillmentStatus";
   public static final String FULFILLMENT_DATE = "getPOReponse_fulfillmentDate";
+  public static final String END_CUSTOMER_ACCOUNT_CSN = "getPOResponse_endCustomer_accountCsn";
+  public static final String END_CUSTOMER_COMPANY = "getPOResponse_endCustomer_company";
+
   public static final String SUBTOTAL_WITH_TAX = "getPOResponse_subtotalAfterPromotionsWithTax";
   public static final String FINAL_TAX_AMOUNT = "finalTaxAmount";
   public static final String ORGANIZATION_NAME = "Organization_Name";
@@ -209,8 +212,8 @@ public class BICECEConstants extends BICConstants {
   public static final String SINGLE_ANNUAL = "SINGLE_ANNUAL";
   public static final String SINGLE_MYAB = "SINGLE_MYAB";
   public static final String SINGLE_PREMIUM = "SINGLE_PREMIUM";
-
   public static final String SINGLE_FLEX = "SINGLE_FLEX";
+
   public static final String MULTI_ANNUAL_MYAB = "MULTI_ANNUAL_MYAB";
   public static final String MULTI_ANNUAL_FLEX = "MULTI_ANNUAL_FLEX";
   public static final String MULTI_ANNUAL_FLEX_MYAB_PREMIUM = "MULTI_ANNUAL_FLEX_MYAB_PREMIUM";
