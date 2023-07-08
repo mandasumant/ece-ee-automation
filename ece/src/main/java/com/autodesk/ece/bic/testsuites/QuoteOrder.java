@@ -625,7 +625,7 @@ public class QuoteOrder extends ECETestBase {
 
     try {
       // Ensure that the subscription renews in the future
-      String nextBillingDateString = testResults.get(BICECEConstants.NEXT_BILLING_DATE);
+      String nextBillingDateString = testResults.get(BICECEConstants.NEXT_RENEWAL_DATE);
       Util.printInfo("New Billing Date: " + nextBillingDateString);
       Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
           nextBillingDateString);
@@ -634,7 +634,7 @@ public class QuoteOrder extends ECETestBase {
 
       AssertUtils
           .assertEquals("The billing date has been updated to next cycle ",
-              testResults.get(BICECEConstants.NEXT_BILLING_DATE).split("\\s")[0],
+              testResults.get(BICECEConstants.NEXT_RENEWAL_DATE).split("\\s")[0],
               Util.customDate("MM/dd/yyyy", 0, -5, +1));
     } catch (ParseException e) {
       e.printStackTrace();
