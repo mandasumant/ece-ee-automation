@@ -1224,78 +1224,85 @@ public class EceBICTestBase {
       bicPage.waitForPageToLoad();
       bicPage.waitForElementToDisappear("paypalPageLoader", 30);
 
-      bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("paypalTitle").get(0), 45);
-
-      Util.printInfo("Checking Accept cookies button and clicking on it...");
-      if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
-        bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
-      }
-
-      if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
-        bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
-      }
-
-      bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
-      bicPage.populateField("paypalUsernameField", paypalEmail);
-
-      bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
-
-      Util.printInfo("Entering paypal password...");
-      bicPage.waitForElementVisible(
-          bicPage.getMultipleWebElementsfromField("paypalPasswordField").get(0), 10);
-      bicPage.populateField("paypalPasswordField",
-          ProtectedConfigFile.decrypt(data.get("paypalSsap")));
-
-      Util.printInfo("Clicking on login button...");
-      bicPage.clickUsingLowLevelActions("paypalLoginBtn");
-      bicPage.waitForElementToDisappear("paypalPageLoader", 30);
-
-      Util.printInfo("Checking Accept cookies button and clicking on it...");
-      if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 15)) {
-        bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
-        Util.sleep(5000);
+      Util.printInfo("Checking if agree button is there...");
+      if (bicPage.checkIfElementExistsInPage("paypalAgreeAndContinue", 20)) {
+        Util.printInfo("Clicking on agree button.");
+        bicPage.clickUsingLowLevelActions("paypalAgreeAndContinue");
       } else {
-        Util.printInfo("Accept cookies button not present.");
-      }
+        bicPage.waitForElementVisible(
+            bicPage.getMultipleWebElementsfromField("paypalTitle").get(0), 45);
 
-      bicPage.scrollToBottomOfPage();
+        Util.printInfo("Checking Accept cookies button and clicking on it...");
+        if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 10)) {
+          bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
+        }
 
-      if (System.getProperty("store").equals("STORE-NAMER") && !bicPage.checkIfElementExistsInPage(
-          "creditUnionPaymentSelected", 10)) {
-        bicPage.clickUsingLowLevelActions("creditUnionPaymentButton");
-      }
+        if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON, 10)) {
+          bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_CHANGE_USERNAME_BUTTON);
+        }
 
-      Util.sleep(2000);
+        Util.printInfo("Entering paypal email...");
+        bicPage.waitForElementVisible(
+            bicPage.getMultipleWebElementsfromField("paypalUsernameField").get(0), 10);
+        bicPage.populateField("paypalUsernameField", paypalEmail);
 
-      bicPage.executeJavascript("window.scrollBy(0,1000);");
+        bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_NEXT_BUTTON);
 
-      if (bicPage.checkIfElementExistsInPage("paypalSaveAndContinueBtn", 5)) {
-        Util.printInfo("Clicking on Save And Continue button.");
-        bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
-      }
+        Util.printInfo("Entering paypal password...");
+        bicPage.waitForElementVisible(
+            bicPage.getMultipleWebElementsfromField("paypalPasswordField").get(0), 10);
+        bicPage.populateField("paypalPasswordField",
+            ProtectedConfigFile.decrypt(data.get("paypalSsap")));
 
-      Util.sleep(10000);
+        Util.printInfo("Clicking on login button...");
+        bicPage.clickUsingLowLevelActions("paypalLoginBtn");
+        bicPage.waitForElementToDisappear("paypalPageLoader", 30);
 
-      int count = 0;
-      while (bicPage.checkIfElementExistsInPage("paypalReviewBtn", 5)) {
-        count++;
-
-        if (count > 3) {
-          AssertUtils.fail("Unable to click on Continue button.");
+        Util.printInfo("Checking Accept cookies button and clicking on it...");
+        if (bicPage.checkIfElementExistsInPage(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN, 15)) {
+          bicPage.clickUsingLowLevelActions(BICECEConstants.PAYPAL_ACCEPT_COOKIES_BTN);
+          Util.sleep(5000);
         } else {
-          String continueBtn = driver.findElement(
-              By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getText();
+          Util.printInfo("Accept cookies button not present.");
+        }
 
-          if (!Strings.isNotNullAndNotEmpty(continueBtn)) {
-            continueBtn = driver.findElement(
-                By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getAttribute("value");
+        bicPage.scrollToBottomOfPage();
+
+        if (System.getProperty("store").equals("STORE-NAMER") && !bicPage.checkIfElementExistsInPage(
+            "creditUnionPaymentSelected", 10)) {
+          bicPage.clickUsingLowLevelActions("creditUnionPaymentButton");
+        }
+
+        Util.sleep(2000);
+
+        bicPage.executeJavascript("window.scrollBy(0,1000);");
+
+        if (bicPage.checkIfElementExistsInPage("paypalSaveAndContinueBtn", 5)) {
+          Util.printInfo("Clicking on Save And Continue button.");
+          bicPage.clickUsingLowLevelActions("paypalSaveAndContinueBtn");
+        }
+
+        Util.sleep(10000);
+
+        int count = 0;
+        while (bicPage.checkIfElementExistsInPage("paypalReviewBtn", 5)) {
+          count++;
+
+          if (count > 3) {
+            AssertUtils.fail("Unable to click on Continue button.");
+          } else {
+            String continueBtn = driver.findElement(
+                By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getText();
+
+            if (!Strings.isNotNullAndNotEmpty(continueBtn)) {
+              continueBtn = driver.findElement(
+                  By.xpath(bicPage.getFirstFieldLocator("paypalReviewBtn"))).getAttribute("value");
+            }
+
+            Util.printInfo("Clicking on '" + continueBtn + "' button.");
+            bicPage.clickUsingLowLevelActions("paypalReviewBtn");
+            Util.sleep(3000);
           }
-
-          Util.printInfo("Clicking on '" + continueBtn + "' button.");
-          bicPage.clickUsingLowLevelActions("paypalReviewBtn");
-          Util.sleep(3000);
         }
       }
 
@@ -1306,19 +1313,6 @@ public class EceBICTestBase {
         bicPage.clickUsingLowLevelActions("sameAsCustomerDetails");
         Util.sleep(5000);
       }
-
-      /*
-      if (System.getProperty("store").equals("STORE-JP")) {
-        String paypalString = driver.findElement(By.xpath(
-                "//*[@data-testid=\"payment-section-add\"]//div[2]/div[2]/div[2]/p"))
-            .getText();
-        AssertUtils.assertEquals(paypalString,
-            "PayPal が支払い方法として選択されています。");
-      } else if (System.getProperty("store").equals("STORE-NAMER")) {
-        AssertUtils.assertEquals(bicPage.getTextFromLink("paypalConfirmationText"),
-            "PayPal is selected for payment.");
-      }
-      */
 
     } catch (MetadataException e) {
       e.printStackTrace();
