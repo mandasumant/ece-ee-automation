@@ -502,9 +502,16 @@ public class DirectOrder extends ECETestBase {
     getBicTestBase().setStorageData();
     checkoutTestBase.clickOnContinueButton();
     getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+    getBicTestBase().enterCustomerDetails(billingDetails.address);
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
+            billingDetails.address);
+    getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
+    getBicTestBase().submitOrder(testDataForEachMethod);
+    String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
 
     HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
-    results.putAll(getBicTestBase().placeFlexOrder(testDataForEachMethod));
+    results.put(BICECEConstants.orderNumber, orderNumber);
+
     // Getting a PurchaseOrder details from pelican
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
