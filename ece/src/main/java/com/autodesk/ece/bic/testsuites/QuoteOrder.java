@@ -663,7 +663,7 @@ public class QuoteOrder extends ECETestBase {
         subscriptionServiceV4Testbase,
         ECETestBase::updateTestingHub);
 
-    testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+    testResults.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
         testResults.get(BICConstants.subscriptionId));
 
     //Get find Subscription ById
