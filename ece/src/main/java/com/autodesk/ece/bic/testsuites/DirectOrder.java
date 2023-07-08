@@ -40,6 +40,7 @@ import org.testng.annotations.Test;
  * A testsuite to hold tests related to validation of scenarios with direct order purchases
  */
 public class DirectOrder extends ECETestBase {
+
   private static final String defaultLocale = "en_US";
   Map<?, ?> loadYaml = null;
   LinkedHashMap<String, String> testDataForEachMethod = new LinkedHashMap<>();
@@ -56,6 +57,7 @@ public class DirectOrder extends ECETestBase {
 
   MOETestBase moeTestBase = new MOETestBase(this.getTestBase(), testDataForEachMethod);
   QuoteOrderTestBase quoteOrderTestBase;
+
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     NetworkLogs.getObject().fetchLogs(getDriver());
@@ -82,21 +84,22 @@ public class DirectOrder extends ECETestBase {
     testDataForEachMethod.put("productType", "flex");
     productName = "3ds-max";
     Optional.ofNullable(StringUtils.trimToNull(System.getProperty("currency")))
-            .ifPresent(currency -> testDataForEachMethod.put("currencyStore", currency));
+        .ifPresent(currency -> testDataForEachMethod.put("currencyStore", currency));
     Optional.ofNullable(StringUtils.trimToNull(System.getProperty("agentCSN")))
-            .ifPresent(agentCSN -> testDataForEachMethod.put("quoteAgentCsnAccount", agentCSN));
+        .ifPresent(agentCSN -> testDataForEachMethod.put("quoteAgentCsnAccount", agentCSN));
     Optional.ofNullable(StringUtils.trimToNull(System.getProperty("agentEmail")))
-            .ifPresent(agentEmail -> testDataForEachMethod.put("agentContactEmail", agentEmail));
+        .ifPresent(agentEmail -> testDataForEachMethod.put("agentContactEmail", agentEmail));
     Optional.ofNullable(StringUtils.trimToNull(System.getProperty("subscriptionStatus")))
-            .ifPresent(subscriptionStatus -> testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, subscriptionStatus));
+        .ifPresent(
+            subscriptionStatus -> testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, subscriptionStatus));
     testDataForEachMethod.put(BICECEConstants.QUOTE_SUBSCRIPTION_START_DATE,
-            PWSTestBase.getQuoteStartDateAsString());
+        PWSTestBase.getQuoteStartDateAsString());
     quoteOrderTestBase = new QuoteOrderTestBase(
-            testDataForEachMethod.get("pwsClientId"),
-            testDataForEachMethod.get("pwsClientSecret"),
-            testDataForEachMethod.get("pwsClientId_v2"),
-            testDataForEachMethod.get("pwsClientSecret_v2"),
-            testDataForEachMethod.get("pwsHostname"));
+        testDataForEachMethod.get("pwsClientId"),
+        testDataForEachMethod.get("pwsClientSecret"),
+        testDataForEachMethod.get("pwsClientId_v2"),
+        testDataForEachMethod.get("pwsClientSecret_v2"),
+        testDataForEachMethod.get("pwsHostname"));
     billingDetails = new CustomerBillingDetails(testDataForEachMethod, getBicTestBase());
 
     if (System.getProperty("subscriptionStatus") != null) {
@@ -280,8 +283,8 @@ public class DirectOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
 
     HashMap<String, String> quoteResults = quoteOrderTestBase.createQuoteOrder(
-            testDataForEachMethod, portaltb, getBicTestBase(), pelicantb, subscriptionServiceV4Testbase,
-            ECETestBase::updateTestingHub);
+        testDataForEachMethod, portaltb, getBicTestBase(), pelicantb, subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
     testDataForEachMethod.putAll(quoteResults);
 
     dotcomTestBase.navigateToDotComPage(productName);
@@ -293,7 +296,7 @@ public class DirectOrder extends ECETestBase {
     testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, BICECEConstants.CREDITCARD);
     getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
         billingDetails.address);
-     getBicTestBase().populateBillingAddress(billingDetails.address, testDataForEachMethod);
+    getBicTestBase().populateBillingAddress(billingDetails.address, testDataForEachMethod);
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
     getBicTestBase().submitOrder(testDataForEachMethod);
     String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
@@ -319,7 +322,8 @@ public class DirectOrder extends ECETestBase {
     getBicTestBase().setStorageData();
     getBicTestBase().clickCartContinueButton();
     getBicTestBase().checkIfCustomerPaymentDetailsComplete();
-    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails, billingDetails.address);
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
+        billingDetails.address);
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
     getBicTestBase().submitOrder(testDataForEachMethod);
     orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
@@ -404,11 +408,15 @@ public class DirectOrder extends ECETestBase {
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
+    getBicTestBase().driver.manage().deleteAllCookies();
+    getBicTestBase().getUrl(testDataForEachMethod.get("oxygenLogOut"));
+
     dotcomTestBase.navigateToDotComPage(productName);
     dotcomTestBase.selectMonthlySubscription();
     dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
     getBicTestBase().setStorageData();
-    getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
+    checkoutTestBase.clickOnContinueButton();
+    getBicTestBase().loginFromOxygenFrame(user.emailID, user.password);
     getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
         billingDetails.address);
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
@@ -439,7 +447,8 @@ public class DirectOrder extends ECETestBase {
     checkoutTestBase.clickOnContinueButton();
     getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false); // Rename to createOxygenAccount
     getBicTestBase().enterCustomerDetails(billingDetails.address);
-    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails, billingDetails.address);
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
+        billingDetails.address);
     moeTestBase.submitPayment();
     getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
     getBicTestBase().submitOrder(testDataForEachMethod);
@@ -451,11 +460,15 @@ public class DirectOrder extends ECETestBase {
     results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
 
     //Get find Subscription ById
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+
     //Update subscription date using update subscription api and then call BATCH update subscription to update status
     pelicantb.updateO2PSubscriptionStatus(results);
-    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
-    AssertUtils.assertEquals("Subscription status is NOT updated", results.get("response_status"), testDataForEachMethod.get(BICECEConstants.SUBSCRIPTION_STATUS));
+    results.putAll(
+        subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+    AssertUtils.assertEquals("Subscription status is NOT updated", results.get("response_status"),
+        testDataForEachMethod.get(BICECEConstants.SUBSCRIPTION_STATUS));
     populateTestResultsForTestingHub(results);
   }
 
@@ -467,16 +480,16 @@ public class DirectOrder extends ECETestBase {
       testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-              .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
       testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
       testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
-              results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
       testResults.put(BICConstants.subscriptionPeriodEndDate,
-              results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
       testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
       testResults
-              .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }
@@ -608,16 +621,16 @@ public class DirectOrder extends ECETestBase {
       testResults.put(BICConstants.orderNumberSAP, results.get(BICConstants.orderNumberSAP));
       testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
       testResults
-              .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+          .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
       testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
       testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
       testResults.put(BICConstants.subscriptionPeriodStartDate,
-              results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
       testResults.put(BICConstants.subscriptionPeriodEndDate,
-              results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+          results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
       testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
       testResults
-              .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+          .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
     } catch (Exception e) {
       Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
     }

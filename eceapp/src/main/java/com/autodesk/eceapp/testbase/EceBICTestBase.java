@@ -1634,7 +1634,8 @@ public class EceBICTestBase {
       try {
         WebElement submitPaymentButton = bicPage.getMultipleWebElementsfromField("SubmitOrderButton").get(0);
         Util.printInfo("Checking if submit Order button is Available and enabled");
-        if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10) && !submitPaymentButton.getAttribute("class").contains("disabled")) {
+        if (bicPage.checkIfElementExistsInPage(BICECEConstants.SUBMIT_ORDER_BUTTON, 10)
+            && !submitPaymentButton.getAttribute("class").contains("disabled")) {
           Util.printInfo("Submit Order Button is Available and Enabled. So,clicking on Submit Order Button");
           bicPage.clickUsingLowLevelActions(BICECEConstants.SUBMIT_ORDER_BUTTON);
           waitForLoadingSpinnerToComplete("loadingSpinner");
@@ -1648,7 +1649,7 @@ public class EceBICTestBase {
         } else {
           ScreenCapture.getInstance().captureFullScreenshot();
           Util.printInfo(
-                  "Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
+              "Taking screenshot, failed to find an element in Submit Order flow. Dont worry we have retries");
           return;
         }
       }
@@ -2993,6 +2994,33 @@ public class EceBICTestBase {
     Util.printInfo("Set session storage data 'nonsensitiveHasNonLocalModalLaunched' from 'loginToOxygen'.");
     js.executeScript("window.sessionStorage.setItem(\"nonsensitiveHasNonLocalModalLaunched\",\"true\");");
     driver.navigate().refresh();
+
+    Util.printInfo("Successfully logged in");
+  }
+
+  public void loginFromOxygenFrame(String emailID, String password) {
+
+    driver.switchTo().frame(0);
+
+    bicPage.populateField(BICECEConstants.AUTODESK_ID, emailID);
+    bicPage.click(BICECEConstants.USER_NAME_NEXT_BUTTON);
+    bicPage.waitForField(BICECEConstants.LOGIN_PASSWORD, true, 5000);
+    bicPage.click(BICECEConstants.LOGIN_PASSWORD);
+    bicPage.populateField(BICECEConstants.LOGIN_PASSWORD, password);
+    bicPage.click(BICECEConstants.LOGIN_BUTTON);
+    Util.sleep(10000);
+
+    if (bicPage.isFieldPresent(BICECEConstants.GET_STARTED_SKIP_LINK)) {
+      bicPage.click(BICECEConstants.GET_STARTED_SKIP_LINK);
+      waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
+
+    if (bicPage.isFieldPresent(BICECEConstants.BIC_AGREE)) {
+      bicPage.clickUsingJavaScriptExecutor(BICECEConstants.BIC_AGREE);
+      Util.printInfo("Clicking Continue Button on Terms of service");
+      bicPage.clickUsingJavaScriptExecutor("termsContinueButton");
+      waitForLoadingSpinnerToComplete("loadingSpinner");
+    }
 
     Util.printInfo("Successfully logged in");
   }
