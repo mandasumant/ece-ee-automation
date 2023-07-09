@@ -486,9 +486,9 @@ public class QuoteOrder extends ECETestBase {
         results.get(BICECEConstants.SUBTOTAL_WITH_TAX));
 
     if (testDataForEachMethod.get("isReturningUser").equals(BICECEConstants.TRUE)) {
-      address.company = testDataForEachMethod.get(BICECEConstants.END_CUSTOMER_COMPANY);
+      address.company = results.get(BICECEConstants.END_CUSTOMER_COMPANY);
     }
-
+  
     // Validate Quote Details with Pelican
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
