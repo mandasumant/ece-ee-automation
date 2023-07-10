@@ -700,9 +700,10 @@ public class EceBICTestBase {
 
       Util.printInfo("Clicking on Save button from tab: " + tabKey);
 
-      Util.sleep(10000);
+      Util.sleep(15000);
       WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
-      WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid=\"save-payment-profile\"]"));
+      WebElement continueButton = paymentTab.findElement(By.xpath("//*[@data-testid=\"save-payment-profile\"]"));
+
       if (continueButton.isDisplayed()) {
         int attempts = 0;
         while (attempts < 5) {
@@ -2400,7 +2401,7 @@ public class EceBICTestBase {
       return;
     }
 
-    Util.sleep(2000);
+    Util.sleep(5000);
     Util.printInfo("Checking if submit payment button enabled or not");
     WebElement submitPaymentButton = bicPage.getMultipleWebElementsfromField("submitPaymentButton").get(0);
     if (submitPaymentButton.getAttribute("class").contains("disabled")) {

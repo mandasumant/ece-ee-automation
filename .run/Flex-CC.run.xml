@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Flex-CC" type="Application" factoryName="Application" folderName="PayInvoice">
+    <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
+    <module name="ece" />
+    <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=INT -Duserid=svc_s_platform_autob@autodesk.com -Dclassname=com.autodesk.ece.bic.testsuites.PayInvoice -DtestGroup=pay-invoice -Dapplication=ece -Dusertype=new -Demail= -Dpassword= -Dstore=STORE-AUS -Dlocale=en_AU -DemailType=biz -Dsku=default:1 -Dpayment=LOC -DnewPaymentType=CREDITCARD -Daddress=&quot;AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT&quot; -Dtimezone=Australia/Sydney -Dscenario=SINGLE_FLEX" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ece" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

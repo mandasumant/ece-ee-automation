@@ -3,7 +3,7 @@
     <option name="ALTERNATIVE_JRE_PATH" value="17" />
     <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
     <module name="ece" />
-    <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=INT -Duserid=svc_s_platform_autob@autodesk.com -Dclassname=com.autodesk.ece.bic.testsuites.QuoteOrder -DtestGroup=quote-order-premium -Dapplication=ece -Dusertype=new -Demail= -Dpassword= -Dstore=STORE-AUS -Dlocale=en_AU -DemailType=biz -Dsku=default:1 -Dpayment=CREDITCARD -Daddress=&quot;AutodeskAU@71 Barratt Road@Airville@4807@397202088@Australia@QLD&quot; -Dtimezone=Australia/Sydney" />
+    <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=INT -Duserid=svc_s_platform_autob@autodesk.com -Dclassname=com.autodesk.ece.bic.testsuites.QuoteOrder -DtestGroup=quote-order-premium -Dapplication=ece -Dusertype=new -Demail= -Dpassword= -Dstore=STORE-AUS -Dlocale=en_AU -DemailType=biz -Dsku=default:1 -Dpayment=CREDITCARD -Daddress=&quot;AutodeskAU@131 Abala Rd@Marrara@0812@397202088@Australia@NT&quot; -Dtimezone=Australia/Sydney" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ece" />
     <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
       <option name="credential" />

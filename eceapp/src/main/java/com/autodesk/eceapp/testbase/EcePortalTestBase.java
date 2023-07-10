@@ -2517,8 +2517,8 @@ public class EcePortalTestBase {
         Util.sleep(60000);
 
         //click on "New Renew Button " if the "portalRenewingSubscription" button is not displayed
-        if(!portalPage.checkIfElementExistsInPage("portalRenewingSubscription",0)){
-          try{
+        if (!portalPage.checkIfElementExistsInPage("portalRenewingSubscription", 0)) {
+          try {
             portalPage.clickUsingLowLevelActions("portalNewRenewingSubscription");
             Util.printInfo("Redirecting to checkout page with new Renew Button...`");
             Util.sleep(5000);
