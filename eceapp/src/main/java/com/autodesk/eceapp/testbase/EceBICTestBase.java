@@ -248,6 +248,7 @@ public class EceBICTestBase {
     ba.put(BICECEConstants.CITY, newAddress.city);
     ba.put(BICECEConstants.ZIPCODE, newAddress.postalCode);
     ba.put(BICECEConstants.PHONE_NUMBER, newAddress.phoneNumber);
+    ba.put(BICECEConstants.COUNTRY_CODE, newAddress.countryCode);
 
     if (System.getProperty(BICECEConstants.STORE).equals("STORE-JP")) {
       ba.put(BICECEConstants.STATE_PROVINCE, "大阪府");
@@ -2422,8 +2423,11 @@ public class EceBICTestBase {
 
     if (bicPage.checkIfElementExistsInPage("selectCountryField", 10)) {
       bicPage.clickUsingLowLevelActions("selectCountryField");
+      final String countryCode = (StringUtils.trimToNull(address.get(BICECEConstants.COUNTRY)) != null) ?
+          address.get(BICECEConstants.COUNTRY_CODE) :
+          System.getProperty(BICECEConstants.LOCALE).substring(3);
       String selectCountryOption = bicPage.getFirstFieldLocator("selectCountryOption")
-          .replace("<COUNTRY>", System.getProperty(BICECEConstants.LOCALE).substring(3));
+          .replace("<COUNTRY>", countryCode);
       driver.findElement(By.xpath(selectCountryOption)).click();
     }
 

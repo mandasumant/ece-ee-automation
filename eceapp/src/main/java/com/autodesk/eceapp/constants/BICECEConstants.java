@@ -54,6 +54,7 @@ public class BICECEConstants extends BICConstants {
   public static final String ZIPCODE = "Zipcode";
   public static final String PHONE_NUMBER = "Phone_Number";
   public static final String COUNTRY = "Country";
+  public static final String COUNTRY_CODE = "countryCode";
   public static final String OVERVIEW = "/overview";
   public static final String STATE_PROVINCE = "State_Province";
   public static final String BIC_FN = "bic_FN";

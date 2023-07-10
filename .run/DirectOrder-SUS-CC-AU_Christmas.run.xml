@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DirectOrder-SUS-CC-AU/Christmas" type="Application" factoryName="Application" folderName="DirectOrder">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
+    <module name="ece" />
+    <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=INT -Duserid=svc_s_platform_autob@autodesk.com -Dclassname=com.autodesk.ece.bic.testsuites.DirectOrder -DtestGroup=create-direct-order -DtestMethod=createDirectOrder -Dapplication=ece -Daddress=&quot;AutodeskAU@33 Phosphate Hill Rd@Christmas Island@6798@397202088@Christmas Island&quot; -Dtimezone=Australia/Sydney -DpushToDataStore=False -Dusertype=new -Dstore=STORE-AUS -Dlocale=en_AU -Dpassword= -DemailType=biz -Dservice=dcle -Dpayment=CREDITCARD -Dsku=default:1 -Demail=" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ece" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
