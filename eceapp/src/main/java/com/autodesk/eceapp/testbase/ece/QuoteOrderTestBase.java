@@ -72,6 +72,7 @@ public class QuoteOrderTestBase {
         address = new Address(System.getProperty(BICECEConstants.ADDRESS));
       }
       address.company = testDataForEachMethod.get("company");
+      testDataForEachMethod.put(BICECEConstants.P78_LOAD_SUCCESSFUL, "True");
     } else {
       if (Objects.equals(System.getProperty(BICECEConstants.CREATE_PAYER), BICECEConstants.TRUE)) {
         testResults = bicTestBase.createPayerAccount(testDataForEachMethod);
@@ -214,7 +215,10 @@ public class QuoteOrderTestBase {
       testDataForEachMethod.put("company", quoteDetails.getEndCustomerName());
       testDataForEachMethod.put("address", order.getAddress());
       testDataForEachMethod.put("quantity", String.valueOf(quoteDetails.getQuantity()));
-
+      if (testDataForEachMethod.get(BICECEConstants.OVERRIDE_PRODUCT_TYPE_FROM_API) != null && Boolean.parseBoolean(
+          testDataForEachMethod.get(BICECEConstants.OVERRIDE_PRODUCT_TYPE_FROM_API))) {
+        testDataForEachMethod.put(BICECEConstants.PRODUCT_TYPE, quoteDetails.getProductType());
+      }
     } catch (Exception e) {
       Util.printInfo("Failed to fetch data from P78, for Quote Orders. Creating via PWS");
       return false;

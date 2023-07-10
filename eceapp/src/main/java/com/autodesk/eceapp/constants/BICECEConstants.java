@@ -201,6 +201,7 @@ public class BICECEConstants extends BICConstants {
   public static final String INVOICE_NOTES = "invoiceNotes";
   public static final String PAYER_EMAIL = "payerEmail";
   public static final String PURCHASER_EMAIL = "purchaserEmail";
+  public static final String PURCHASER_CSN = "purchaserCSN";
   public static final String PAYER_CSN = "payerCSN";
   public static final String SOLD_TO_SSN = "soldToCSN";
   public static final String CREATE_PAYER = "createPayer";
@@ -213,11 +214,13 @@ public class BICECEConstants extends BICConstants {
   public static final String SINGLE_MYAB = "SINGLE_MYAB";
   public static final String SINGLE_PREMIUM = "SINGLE_PREMIUM";
   public static final String SINGLE_FLEX = "SINGLE_FLEX";
-
+  public static final String IS_RENEWAL_QUOTE = "isRenewalQuote";
   public static final String MULTI_ANNUAL_MYAB = "MULTI_ANNUAL_MYAB";
   public static final String MULTI_ANNUAL_FLEX = "MULTI_ANNUAL_FLEX";
   public static final String MULTI_ANNUAL_FLEX_MYAB_PREMIUM = "MULTI_ANNUAL_FLEX_MYAB_PREMIUM";
-
+  public static final String RENEWAL_QUOTE_SINGLE_ANNUAL_3DS_MAX = "RENEWAL_QUOTE_SINGLE_ANNUAL_3DS_MAX";
+  public static final String OVERRIDE_PRODUCT_TYPE_FROM_API = "OVERRIDE_PRODUCT_TYPE_FROM_API";
+  public static final String PRODUCT_TYPE = "PRODUCT_TYPE";
   public static final String MULTI_LINE_ITEM = "MultiLineItem";
   public static final String EXISTING_PAYER_CSN = "existingPayerCSN";
   public static final String EXISTING_PAYER_EMAIL = "existingPayerEmail";
@@ -242,8 +245,11 @@ public class BICECEConstants extends BICConstants {
   public static final String LOC_TEST_NAME = "LOC_ORDER";
   public static final String QUOTE_TEST_NAME = "QUOTE";
   public static final String QUOTE_LINE_ITEMS = "quoteLineItems";
+  public static final String RENEWAL_QUOTE_LINE_ITEMS = "renewalQuoteLineItems";
+  public static final String RENEWAL_QUOTES_ONLY = "renewalQuotesOnly";
   public static final String PROJECT78_PUSH_FLAG = "pushToDataStore";
   public static final String PROJECT78_PULL_FLAG = "pullFromDataStore";
+  public static final String P78_LOAD_SUCCESSFUL = "P78_LOAD_SUCCESSFUL";
   public static final String IS_MULTILINE = "isMultiLineItem";
 
 

@@ -3,7 +3,6 @@ package com.autodesk.eceapp.testbase.ece;
 import static io.restassured.RestAssured.given;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.UpdateSubscriptionConstants;
-import com.autodesk.eceapp.dto.UpdateO2PSubscription;
 import com.autodesk.eceapp.dto.subscription.v4.BatchUpdateSubscriptionDTO;
 import com.autodesk.eceapp.dto.subscription.v4.UpdateSubscriptionDTO;
 import com.autodesk.eceapp.utilities.Address;
@@ -16,11 +15,11 @@ import com.autodesk.platformautomation.bilinsmpelicansubscriptionv4.client.model
 import com.autodesk.platformautomation.bmse2pelicansubscriptionv3.SubscriptionControllerApi;
 import com.autodesk.platformautomation.bmse2pelicansubscriptionv3.models.SubscriptionSuccess;
 import com.autodesk.testinghub.core.base.GlobalConstants;
-import com.autodesk.testinghub.eseapp.bicapiModel.UpdateNextBilling;
-import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
 import com.autodesk.testinghub.core.utils.Util;
+import com.autodesk.testinghub.eseapp.bicapiModel.UpdateNextBilling;
+import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import com.autodesk.testinghub.eseapp.constants.EseCommonConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -41,6 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -299,31 +299,38 @@ public class PelicanTestBase {
 
     UpdateSubscriptionDTO.Data updateSubscriptionData = null;
 
-      if (data.get(BICECEConstants.SUBSCRIPTION_STATUS) != null) {
-        if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.SUSPENDED.toString())) {
-          updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
-                  .suspensionDate(updatedDate)
-                  .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
-        } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.TERMINATED.toString())) {
-          updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
-                  .terminationDate(updatedDate)
-                  .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
-        } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.EXPIRED.toString())) {
-          updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
-                  .expirationDate(updatedDate)
-                  .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
-        }
-      } else {
-        //updating next billing date for default
+    if (StringUtils.trimToNull(data.get(BICECEConstants.SUBSCRIPTION_STATUS)) != null) {
+      if (data.get(BICECEConstants.SUBSCRIPTION_STATUS).equals(SubscriptionSuccessV4.StatusEnum.SUSPENDED.toString())) {
         updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
-                .nextRenewalDate(updatedDate)
-                .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
+            .suspensionDate(updatedDate)
+            .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
+      } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS)
+          .equals(SubscriptionSuccessV4.StatusEnum.TERMINATED.toString())) {
+        updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
+            .terminationDate(updatedDate)
+            .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
+      } else if (data.get(BICECEConstants.SUBSCRIPTION_STATUS)
+          .equals(SubscriptionSuccessV4.StatusEnum.EXPIRED.toString())) {
+        updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
+            .expirationDate(updatedDate)
+            .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
       }
-      UpdateSubscriptionDTO updateSubscriptionDTO = UpdateSubscriptionDTO.builder().data(updateSubscriptionData).
-              meta(UpdateSubscriptionDTO.Meta.builder().build()).build();
-      inputPayload = new Gson().toJson(updateSubscriptionDTO);
+    } else {
+      //updating next billing date for default
+      updateSubscriptionData = UpdateSubscriptionDTO.Data.builder()
+          .nextRenewalDate(updatedDate)
+          .status(SubscriptionSuccessV4.StatusEnum.ACTIVE.toString()).build();
 
-      Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
+      if (Optional.ofNullable(StringUtils.trimToNull(System.getProperty(BICECEConstants.IS_RENEWAL_QUOTE)))
+          .map(Boolean::parseBoolean).orElse(false)) {
+        updateSubscriptionData.setExpirationDate(Util.customDate("MM/dd/yyyy", 0, 20, 0) + " 20:13:28 UTC");
+      }
+    }
+    UpdateSubscriptionDTO updateSubscriptionDTO = UpdateSubscriptionDTO.builder().data(updateSubscriptionData).
+        meta(UpdateSubscriptionDTO.Meta.builder().build()).build();
+    inputPayload = new Gson().toJson(updateSubscriptionDTO);
+
+    Util.PrintInfo(BICECEConstants.PAYLOAD_AUTH + inputPayload + "\n");
     return patchRestResponse(getSubscriptionV4Url, getHeaderForUpdateSubscription(), inputPayload);
   }
 

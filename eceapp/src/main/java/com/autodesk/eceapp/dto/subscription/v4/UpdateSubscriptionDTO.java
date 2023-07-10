@@ -11,12 +11,14 @@ public class UpdateSubscriptionDTO {
     private Data data;
 
     @SuperBuilder
+    @lombok.Data
     public static class Meta {
         @Builder.Default
         private String context = "EDIT_DIRECT";
     }
 
     @SuperBuilder
+    @lombok.Data
     public static class Data {
         private String status;
         private String nextRenewalDate;

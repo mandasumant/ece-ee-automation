@@ -16,4 +16,5 @@ public class QuoteDetails {
   private String endCustomerCity;
   private String endCustomerCountryCode;
   private String endCustomerPostalCode;
+  private String productType;
 }

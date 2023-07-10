@@ -11,4 +11,5 @@ public class LineItemDTO {
   private Integer quantity;
   private String startDate;
   private OfferDTO offer;
+  private String subscriptionId;
 }

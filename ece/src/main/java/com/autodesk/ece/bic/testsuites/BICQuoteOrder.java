@@ -35,6 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -71,7 +72,7 @@ public class BICQuoteOrder extends ECETestBase {
     LinkedHashMap<String, String> defaultvalues = (LinkedHashMap<String, String>) loadYaml.get("default");
     LinkedHashMap<String, String> testcasedata = (LinkedHashMap<String, String>) loadYaml.get(name.getName());
 
-    defaultvalues.putAll(testcasedata);
+    defaultvalues.putAll(Optional.ofNullable(testcasedata).orElse(new LinkedHashMap<>()));
     testDataForEachMethod = defaultvalues;
 
     if (locale == null || locale.trim().isEmpty()) {

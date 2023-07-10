@@ -309,6 +309,7 @@ public class PWSV2Service implements QuoteService {
         .endCustomerCity(jsonPath.getString("results[0][0].endCustomer.city"))
         .endCustomerCountryCode(jsonPath.getString("results[0][0].endCustomer.countryCode"))
         .endCustomerPostalCode(jsonPath.getString("results[0][0].endCustomer.postalCode"))
+        .productType((jsonPath.getString("results[0][0].lineItems[0].offeringName")).toLowerCase().trim())
         .build();
   }
 }

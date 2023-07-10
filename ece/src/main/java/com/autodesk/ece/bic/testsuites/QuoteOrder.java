@@ -31,6 +31,7 @@ import com.autodesk.testinghub.eseapp.constants.TestingHubConstants;
 import io.restassured.path.json.JsonPath;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -172,7 +174,7 @@ public class QuoteOrder extends ECETestBase {
   }
 
   @Test(groups = {"quote-only"}, description = "Validation of Create BIC Quote Order")
-  public void createQuote() {
+  public void createQuote() throws MetadataException {
     String locale = "en_US";
     Boolean shouldPushToDataStore =
         !Objects.isNull(System.getProperty(BICECEConstants.PROJECT78_PUSH_FLAG)) ? Boolean.valueOf(
@@ -189,13 +191,42 @@ public class QuoteOrder extends ECETestBase {
       locale = System.getProperty("locale");
     }
     testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
-
     Address address = getBillingAddress();
-    getBicTestBase().goToDotcomSignin(testDataForEachMethod);
-    getBicTestBase().createBICAccount(
-        new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
-            testDataForEachMethod.get(BICECEConstants.LASTNAME)),
-        testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
+
+    // Renewal quotes
+    if (Optional.ofNullable(StringUtils.trimToNull(System.getProperty(BICECEConstants.IS_RENEWAL_QUOTE)))
+        .map(Boolean::parseBoolean).orElse(false)) {
+      System.setProperty(BICECEConstants.PROJECT78_PULL_FLAG, "False");
+      testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.SINGLE_ANNUAL);
+      testDataForEachMethod.put(BICECEConstants.PAYMENT, BICECEConstants.CREDITCARD); // can be set as CLI param
+      HashMap<String, String> testResults = quoteOrderTestBase.createQuoteOrder(
+          testDataForEachMethod,
+          portaltb, getBicTestBase(),
+          pelicantb,
+          subscriptionServiceV4Testbase,
+          ECETestBase::updateTestingHub);
+      updateTestingHub(testResults);
+
+      String subscriptionId = testResults.get(BICConstants.subscriptionId);
+      testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID, subscriptionId);
+      testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, "");
+
+      pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
+
+      System.setProperty(BICECEConstants.RENEWAL_QUOTES_ONLY, "True");
+      scenario = BICECEConstants.RENEWAL_QUOTE_SINGLE_ANNUAL_3DS_MAX;
+      System.setProperty(BICECEConstants.SCENARIO, scenario);
+      System.setProperty(
+          BICECEConstants.RENEWAL_QUOTE_LINE_ITEMS,
+          MessageFormat.format("subscription_id:{0},quantity:1", subscriptionId)
+      );
+    } else {
+      getBicTestBase().goToDotcomSignin(testDataForEachMethod);
+      getBicTestBase().createBICAccount(
+          new Names(testDataForEachMethod.get(BICECEConstants.FIRSTNAME),
+              testDataForEachMethod.get(BICECEConstants.LASTNAME)),
+          testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD, true);
+    }
 
     String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
         testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, isMultiLineItem);
@@ -674,11 +705,97 @@ public class QuoteOrder extends ECETestBase {
     testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testResults.get(BICConstants.subscriptionId)));
     //Update subscription date using update subscription api and then call BATCH update subscription to update status
     pelicantb.updateO2PSubscriptionStatus(testResults);
-    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(testResults.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
-    AssertUtils.assertEquals("Subscription status is NOT updated", testResults.get("response_status"), testDataForEachMethod.get(BICECEConstants.SUBSCRIPTION_STATUS));
+    testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
+        testResults.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+    AssertUtils.assertEquals("Subscription status is NOT updated", testResults.get("response_status"),
+        testDataForEachMethod.get(BICECEConstants.SUBSCRIPTION_STATUS));
 
     updateTestingHub(testResults);
 
+  }
+
+  @Test(groups = {"renewalquote-order"}, description = "Validation of Renewal Q2O")
+  public void renewalQuoteOrder() throws Exception {
+    HashMap<String, String> testResults;
+    HashMap<String, String> results = new HashMap<>();
+
+    if (System.getProperty("locale") != null && !System.getProperty("locale").isEmpty()) {
+      locale = System.getProperty("locale");
+    }
+    System.setProperty(BICECEConstants.PROJECT78_PULL_FLAG, "True");
+    testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
+    testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.RENEWAL_QUOTE_SINGLE_ANNUAL_3DS_MAX);
+    testDataForEachMethod.put("overrideProductTypeFromApi", "True");
+
+    // Set Payment as CC
+    String quoteLineItems = "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard";
+    System.setProperty("quoteLineItems", quoteLineItems);
+    testDataForEachMethod.put(BICECEConstants.QUOTE_LINE_ITEMS, quoteLineItems);
+
+    testResults = quoteOrderTestBase.createQuoteOrder(
+        testDataForEachMethod,
+        portaltb, getBicTestBase(),
+        pelicantb,
+        subscriptionServiceV4Testbase,
+        ECETestBase::updateTestingHub);
+    updateTestingHub(testResults);
+
+    if (!Optional.ofNullable(testDataForEachMethod.get(BICECEConstants.P78_LOAD_SUCCESSFUL))
+        .map(Boolean::parseBoolean).orElse(false)) {
+
+      String subscriptionId = testResults.get(BICConstants.subscriptionId);
+      testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID, subscriptionId);
+      testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, "");
+
+      pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
+      Util.sleep(120000); // syn pelican changes in SFDC
+
+      System.setProperty(BICECEConstants.RENEWAL_QUOTES_ONLY, "True");
+      System.setProperty(
+          BICECEConstants.RENEWAL_QUOTE_LINE_ITEMS,
+          MessageFormat.format("subscription_id:{0},quantity:1", subscriptionId)
+      );
+
+      Address address = getBillingAddress();
+      // Renewal quote
+      String quoteId = pwsTestBase.createAndFinalizeQuote(address, testDataForEachMethod.get("quoteAgentCsnAccount"),
+          testDataForEachMethod.get("agentContactEmail"), testDataForEachMethod, false);
+
+      Util.printInfo("Keep calm, sleeping for 10min for renewal quote to sync to S4");
+      Util.sleep(300000);
+
+      HashMap<String, String> justQuoteDetails = new HashMap<String, String>();
+      testDataForEachMethod.put(BICECEConstants.QUOTE_ID, quoteId);
+      testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(testDataForEachMethod));
+      getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+      justQuoteDetails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
+      justQuoteDetails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
+      Util.printInfo("Renewal Quote Details " + justQuoteDetails);
+    } else {
+      testDataForEachMethod.put("overrideProductTypeFromApi", "True");
+    }
+
+    testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(
+        testDataForEachMethod));
+    getBicTestBase().navigateToQuoteCheckout(testDataForEachMethod);
+    testResults.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
+    testResults.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
+
+    getBicTestBase().loginToOxygen(testDataForEachMethod.get(BICECEConstants.emailid), PASSWORD);
+    getBicTestBase().refreshCartIfEmpty();
+    String oxygenId = getBicTestBase().driver.manage().getCookieNamed("identity-sso").getValue();
+    testDataForEachMethod.put(BICConstants.oxid, oxygenId);
+
+    testResults.putAll(results);
+    updateTestingHub(testResults);
+
+    results = getBicTestBase().createQuoteOrder(testDataForEachMethod);
+    results.putAll(testDataForEachMethod);
+
+    testResults.putAll(testDataForEachMethod);
+    updateTestingHub(testResults);
+
+    results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(results)));
   }
 
   private String getSerializedBillingAddress() {
