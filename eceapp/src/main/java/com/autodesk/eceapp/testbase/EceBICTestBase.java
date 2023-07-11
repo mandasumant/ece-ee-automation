@@ -848,9 +848,13 @@ public class EceBICTestBase {
       driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
 
       if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address
-          .get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
-        driver.findElement(By.xpath(stateXpath))
-            .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
+              .get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
+        driver.findElement(By.xpath(stateXpath)).click();
+        String selectStateOption = bicPage.getFirstFieldLocator("stateValueDropDown")
+                .replace("<PAYMENTPROFILE>", paymentTypeToken).replace("<STATE_PROVINCE>", address.get(BICECEConstants.STATE_PROVINCE));
+        driver.findElement(By.xpath(selectStateOption)).click();
+        driver.findElement(By.xpath(selectStateOption)).sendKeys(Keys.ENTER);
+        Util.sleep(5000);
       }
 
       String taxId = System.getProperty(BICECEConstants.TAX_ID);
