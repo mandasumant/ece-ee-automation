@@ -853,7 +853,7 @@ public class EceBICTestBase {
         String selectStateOption = bicPage.getFirstFieldLocator("stateValueDropDown")
                 .replace("<PAYMENTPROFILE>", paymentTypeToken).replace("<STATE_PROVINCE>", address.get(BICECEConstants.STATE_PROVINCE));
         driver.findElement(By.xpath(selectStateOption)).click();
-        driver.findElement(By.xpath(selectStateOption)).sendKeys(Keys.ENTER);
+        driver.findElement(By.xpath(stateXpath)).sendKeys(Keys.TAB);
         Util.sleep(5000);
       }
 
