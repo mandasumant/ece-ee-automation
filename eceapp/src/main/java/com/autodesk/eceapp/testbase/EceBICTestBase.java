@@ -849,11 +849,8 @@ public class EceBICTestBase {
 
       if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address
               .get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
-        driver.findElement(By.xpath(stateXpath)).click();
-        String selectStateOption = bicPage.getFirstFieldLocator("stateValueDropDown")
-                .replace("<PAYMENTPROFILE>", paymentTypeToken).replace("<STATE_PROVINCE>", address.get(BICECEConstants.STATE_PROVINCE));
-        driver.findElement(By.xpath(selectStateOption)).click();
-        driver.findElement(By.xpath(stateXpath)).sendKeys(Keys.TAB);
+        driver.findElement(By.xpath(stateXpath))
+                .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
         Util.sleep(5000);
       }
 
