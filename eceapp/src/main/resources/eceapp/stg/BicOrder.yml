@@ -473,3 +473,8 @@ validateQuoteOrderSubscriptionStates:
   term: "Annual"
   accessModel: "SU"
   productType: "3ds max"
+
+renewalQuoteOrder:
+  term: "Annual"
+  accessModel: "SU"
+  productType: "3ds max"

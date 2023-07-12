@@ -211,9 +211,11 @@ public class QuoteOrder extends ECETestBase {
       testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID, subscriptionId);
       testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, "");
 
+      System.setProperty(BICECEConstants.RENEWAL_QUOTES_ONLY, "True");
       pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
 
-      System.setProperty(BICECEConstants.RENEWAL_QUOTES_ONLY, "True");
+      Util.sleep(120000);
+
       scenario = BICECEConstants.RENEWAL_QUOTE_SINGLE_ANNUAL_3DS_MAX;
       System.setProperty(BICECEConstants.SCENARIO, scenario);
       System.setProperty(
@@ -725,7 +727,6 @@ public class QuoteOrder extends ECETestBase {
     System.setProperty(BICECEConstants.PROJECT78_PULL_FLAG, "True");
     testDataForEachMethod.put(BICECEConstants.LOCALE, locale);
     testDataForEachMethod.put(BICECEConstants.SCENARIO, BICECEConstants.RENEWAL_QUOTE_SINGLE_ANNUAL_3DS_MAX);
-    testDataForEachMethod.put("overrideProductTypeFromApi", "True");
 
     // Set Payment as CC
     String quoteLineItems = "access_model:sus,offering_id:OD-000021,term:annual,usage:commercial,plan:standard";
@@ -747,10 +748,10 @@ public class QuoteOrder extends ECETestBase {
       testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID, subscriptionId);
       testDataForEachMethod.put(BICECEConstants.SUBSCRIPTION_STATUS, "");
 
+      System.setProperty(BICECEConstants.RENEWAL_QUOTES_ONLY, "True");
       pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
       Util.sleep(120000); // syn pelican changes in SFDC
 
-      System.setProperty(BICECEConstants.RENEWAL_QUOTES_ONLY, "True");
       System.setProperty(
           BICECEConstants.RENEWAL_QUOTE_LINE_ITEMS,
           MessageFormat.format("subscription_id:{0},quantity:1", subscriptionId)
@@ -771,8 +772,6 @@ public class QuoteOrder extends ECETestBase {
       justQuoteDetails.put("checkoutUrl", testDataForEachMethod.get("checkoutUrl"));
       justQuoteDetails.put("emailId", testDataForEachMethod.get(BICECEConstants.emailid));
       Util.printInfo("Renewal Quote Details " + justQuoteDetails);
-    } else {
-      testDataForEachMethod.put("overrideProductTypeFromApi", "True");
     }
 
     testDataForEachMethod.put("quote2OrderCartURL", getBicTestBase().getQuote2OrderCartURL(
