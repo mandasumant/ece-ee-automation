@@ -3,6 +3,7 @@ package com.autodesk.eceapp.utilities;
 import com.autodesk.testinghub.core.utils.Util;
 import io.restassured.path.json.JsonPath;
 import java.io.FileNotFoundException;
+import java.text.MessageFormat;
 import java.util.Random;
 import org.apache.commons.lang.RandomStringUtils;
 
@@ -48,7 +49,7 @@ public class Address {
     if (!this.province.equals("")) {
       try {
         JsonPath jp = ResourceFileLoader.getProvincesJson();
-        provinceName = jp.get(this.province);
+        provinceName = jp.get(MessageFormat.format("\"{0}\"", this.province));
       } catch (FileNotFoundException e) {
         Util.printError("Failed to load country codes file: " + e.getMessage());
       }

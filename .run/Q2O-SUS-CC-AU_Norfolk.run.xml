@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="QuoteOrder-SUS-CC-AU_Norfolk" type="Application" factoryName="Application" folderName="QuoteOrder">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
+    <module name="ece" />
+    <option name="VM_PARAMETERS" value="-Dtest=TestExecutionRunner -DexecutionType=defined -Dparallel=methods -DthreadCount=1 -Denvironment=INT -Duserid=svc_s_platform_autob@autodesk.com -Dclassname=com.autodesk.ece.bic.testsuites.QuoteOrder -DtestGroup=quote-order-annual -Dapplication=ece -Dusertype=new -Demail= -Dpassword= -Dstore=STORE-AUS -Dlocale=en_AU -DemailType=biz -Dsku=default:1 -Dpayment=CREDITCARD -Daddress=&quot;AutodeskAU@53 Hemus Road@Burnt Pine@2899@397202088@Norfolk Island&quot; -DagentCSN=5070132993 -DagentEmail=&quot;partneruser_da_int_5070132993@letscheck.email&quot; -Dtimezone=Australia/Sydney" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ece" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
