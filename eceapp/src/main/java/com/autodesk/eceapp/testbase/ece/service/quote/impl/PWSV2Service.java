@@ -183,6 +183,7 @@ public class PWSV2Service implements QuoteService {
 
     final String finalizeQuoteURL = MessageFormat.format("https://{0}/v1/quotes/finalize", hostname);
     Util.printInfo("Finalize Quote URL: " + finalizeQuoteURL);
+    Util.printInfo("Finalize Quote Body: " + finalizeBody);
 
     Response response = given()
         .body(finalizeBody)
