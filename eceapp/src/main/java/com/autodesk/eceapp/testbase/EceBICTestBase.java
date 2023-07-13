@@ -702,8 +702,8 @@ public class EceBICTestBase {
       Util.printInfo("Clicking on Save button from tab: " + tabKey);
 
       Util.sleep(15000);
-      WebElement paymentTab = driver.findElement(By.cssSelector("[data-testid=\"tabs-panel-" + tabKey + "\"]"));
-      WebElement continueButton = paymentTab.findElement(By.xpath("//*[@data-testid=\"save-payment-profile\"]"));
+      WebElement paymentTab = driver.findElement(By.xpath("//*[@data-testid=\"tabs-panel-" + tabKey + "\"]"));
+      WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid='save-payment-profile']"));
 
       if (continueButton.isDisplayed()) {
         int attempts = 0;
@@ -848,9 +848,9 @@ public class EceBICTestBase {
       driver.findElement(By.xpath(phoneXpath)).sendKeys("2333422112");
 
       if (address.get(BICECEConstants.STATE_PROVINCE) != null && !address
-              .get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
+          .get(BICECEConstants.STATE_PROVINCE).isEmpty()) {
         driver.findElement(By.xpath(stateXpath))
-                .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
+            .sendKeys(address.get(BICECEConstants.STATE_PROVINCE));
         Util.sleep(5000);
       }
 
@@ -1728,7 +1728,7 @@ public class EceBICTestBase {
     Util.printAssertingMessage("First name of the account :: " + data.get(BICECEConstants.FIRSTNAME));
     Util.printAssertingMessage("Last name of the account  :: " + data.get(BICECEConstants.LASTNAME));
     Util.printAssertingMessage("Address used to place order :: " + address);
-    Util.printAssertingMessage("paymentMethod used to place order :: " + System.getProperty(BICECEConstants.PAYMENT));
+    Util.printAssertingMessage("Payment method used to place order :: " + data.get(BICECEConstants.PAYMENT_TYPE));
     Util.printAssertingMessage("Order placed successfully :: " + OrderNumber + "\n");
     Util.printInfo("*************************************************************");
   }
