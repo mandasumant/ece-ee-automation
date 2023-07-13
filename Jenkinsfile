@@ -317,8 +317,6 @@ def triggerApolloR2_1_2(def serviceBuildHelper, String env) {
     script {
         println("Building Testing Hub API Input Map - O2P")
 
-        def addresses = readJSON file: "./testdata/addresses.json"
-
         def testingHubInputMap = [:]
         def authInputMap = [clientCredentialsId: 'testing-hub-clientid', patTokenId: 'testing-hub-pattoken']
         testingHubInputMap.authToken = serviceBuildHelper.ambassadorService.getForgeAuthToken(authInputMap)
