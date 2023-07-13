@@ -15,7 +15,6 @@ import com.autodesk.eceapp.utilities.AnalyticsNetworkLogs;
 import com.autodesk.eceapp.utilities.NumberUtil;
 import com.autodesk.testinghub.core.base.GlobalConstants;
 import com.autodesk.testinghub.core.base.GlobalTestBase;
-import com.autodesk.testinghub.core.common.EISTestBase;
 import com.autodesk.testinghub.core.common.tools.web.Page_;
 import com.autodesk.testinghub.core.exception.MetadataException;
 import com.autodesk.testinghub.core.utils.AssertUtils;
@@ -45,7 +44,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -652,18 +650,21 @@ public class EceBICTestBase {
         status = populateBillingDetails(address, paymentType);
       }
 
-      try {
-        driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
-        JavascriptExecutor executor = (JavascriptExecutor) driver;
-        WebElement element = driver
-            .findElement(By.className("container-payment-chooser-MuiButtonBase-root"));
-        executor.executeScript("arguments[0].click();", element);
-      } catch (Exception e) {
-        Util.printInfo("Can not find the skip button and click");
-      } finally {
-        driver.manage().timeouts()
-            .implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
-      }
+      //TODO: Commenting out for testing purpose. To be removed. ECEEPLT-7502
+//      try {
+//        driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
+//        JavascriptExecutor executor = (JavascriptExecutor) driver;
+//        WebElement element = driver
+//            .findElement(By.className("container-payment-chooser-MuiButtonBase-root"));
+//        executor.executeScript("arguments[0].click();", element);
+//        Util.printInfo("Clicked on Save button.");
+//        Util.sleep(5000);
+//      } catch (Exception e) {
+//        Util.printInfo("Can not find the skip button and click");
+//      } finally {
+//        driver.manage().timeouts()
+//            .implicitlyWait(EISTestBase.getDefaultPageWaitTimeout(), TimeUnit.MILLISECONDS);
+//      }
 
       clickOnContinueBtn(paymentType);
 
@@ -683,7 +684,7 @@ public class EceBICTestBase {
   }
 
   public void clickOnContinueBtn(String paymentType) throws MetadataException {
-    Util.sleep(2000);
+    Util.sleep(5000);
 
     if (bicPage.waitForFieldPresent("creditCardPaymentTab", 5000)) {
       String tabKey = paymentType.toLowerCase();
@@ -701,7 +702,6 @@ public class EceBICTestBase {
 
       Util.printInfo("Clicking on Save button from tab: " + tabKey);
 
-      Util.sleep(15000);
       WebElement paymentTab = driver.findElement(By.xpath("//*[@data-testid=\"tabs-panel-" + tabKey + "\"]"));
       WebElement continueButton = paymentTab.findElement(By.cssSelector("[data-testid='save-payment-profile']"));
 
