@@ -297,20 +297,20 @@ public class PWSV2Service implements QuoteService {
 
   protected QuoteDetails createObjectFromJsonPath(final JsonPath jsonPath) {
     return QuoteDetails.builder()
-        .purchaserFirstName(jsonPath.getString("results[0][0].purchaser.firstName"))
-        .purchaserLastName(jsonPath.getString("results[0][0].purchaser.lastName"))
+        .purchaserFirstName(jsonPath.getString("[0].purchaser.firstName"))
+        .purchaserLastName(jsonPath.getString("[0].purchaser.lastName"))
         .quantity(
-            Optional.ofNullable(jsonPath.getString("results[0][0].lineItems[0].quantity"))
+            Optional.ofNullable(jsonPath.getString("[0].lineItems[0].quantity"))
                 .map(q -> (int) Float.parseFloat(q))
                 .orElse(0)
         )
-        .endCustomerName(jsonPath.getString("results[0][0].endCustomer.name"))
-        .endCustomerAccountCsn(jsonPath.getString("results[0][0].endCustomer.accountCsn"))
-        .endCustomerAddressLine1(jsonPath.getString("results[0][0].endCustomer.addressLine1"))
-        .endCustomerCity(jsonPath.getString("results[0][0].endCustomer.city"))
-        .endCustomerCountryCode(jsonPath.getString("results[0][0].endCustomer.countryCode"))
-        .endCustomerPostalCode(jsonPath.getString("results[0][0].endCustomer.postalCode"))
-        .productType((jsonPath.getString("results[0][0].lineItems[0].offeringName")).toLowerCase().trim())
+        .endCustomerName(jsonPath.getString("[0].endCustomer.name"))
+        .endCustomerAccountCsn(jsonPath.getString("[0].endCustomer.accountCsn"))
+        .endCustomerAddressLine1(jsonPath.getString("[0].endCustomer.addressLine1"))
+        .endCustomerCity(jsonPath.getString("[0].endCustomer.city"))
+        .endCustomerCountryCode(jsonPath.getString("[0].endCustomer.countryCode"))
+        .endCustomerPostalCode(jsonPath.getString("[0].endCustomer.postalCode"))
+        .productType((jsonPath.getString("[0].lineItems[0].offeringName")).toLowerCase().trim())
         .build();
   }
 }

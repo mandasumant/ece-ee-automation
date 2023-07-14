@@ -220,7 +220,6 @@ public class BICECEConstants extends BICConstants {
   public static final String MULTI_ANNUAL_FLEX = "MULTI_ANNUAL_FLEX";
   public static final String MULTI_ANNUAL_FLEX_MYAB_PREMIUM = "MULTI_ANNUAL_FLEX_MYAB_PREMIUM";
   public static final String RENEWAL_QUOTE_SINGLE_ANNUAL_3DS_MAX = "RENEWAL_QUOTE_SINGLE_ANNUAL_3DS_MAX";
-  public static final String OVERRIDE_PRODUCT_TYPE_FROM_API = "OVERRIDE_PRODUCT_TYPE_FROM_API";
   public static final String PRODUCT_TYPE = "PRODUCT_TYPE";
   public static final String MULTI_LINE_ITEM = "MultiLineItem";
   public static final String EXISTING_PAYER_CSN = "existingPayerCSN";
