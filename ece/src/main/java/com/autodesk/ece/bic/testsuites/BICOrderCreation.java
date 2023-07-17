@@ -787,7 +787,7 @@ public class BICOrderCreation extends ECETestBase {
         results.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
       }
       // Refund PurchaseOrder details from pelican
-      pelicantb.createRefundOrderV4(results);
+      pelicantb.createRefundOrderV4(results, new ArrayList<>());
 
       //Adyen delays in IPN response is causing test failures. Until the issue is resolved lets
       // add additional 6min sleep for the IPN message to come back.

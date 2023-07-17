@@ -514,6 +514,7 @@ public class EceBICTestBase {
       Util.printInfo(MessageFormat.format("Subscription Amount: [{0}]", subscriptionAmount));
       AssertUtils.assertTrue(subscriptionAmount != null, "Subscription Price cannot be null");
 
+      //Click on Add to Basket
       bicPage.clickToSubmit("guacAddToCart", 3000);
 
       if (bicPage.checkIfElementExistsInPage("cartContainerToggle", 10)) {

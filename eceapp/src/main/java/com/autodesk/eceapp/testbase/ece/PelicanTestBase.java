@@ -3,6 +3,7 @@ package com.autodesk.eceapp.testbase.ece;
 import static io.restassured.RestAssured.given;
 import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.constants.UpdateSubscriptionConstants;
+import com.autodesk.eceapp.dto.purchaseOrder.v4.LineItemDTO;
 import com.autodesk.eceapp.dto.subscription.v4.BatchUpdateSubscriptionDTO;
 import com.autodesk.eceapp.dto.subscription.v4.UpdateSubscriptionDTO;
 import com.autodesk.eceapp.utilities.Address;
@@ -40,6 +41,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
@@ -57,13 +60,16 @@ public class PelicanTestBase {
 
   @SuppressWarnings("unchecked")
   @Step("Create refund order" + GlobalConstants.TAG_TESTINGHUB)
-  public static Response createRefundOrder(String baseUrl, Map<String, String> header) {
+  public static Response createRefundOrder(String baseUrl, Map<String, String> header, List<Integer> lineItemIdsList) {
 
     JSONObject requestParams = new JSONObject();
     requestParams.put("requestedBy", "462719");
     requestParams.put("event", "REFUND_REQUEST");
     requestParams.put("operation", "ORDER_UPDATED");
     requestParams.put("subOperation", "REFUND_REQUEST_PROCESSED");
+    if (lineItemIdsList.size() > 0) {
+      requestParams.put("lineItemIds", lineItemIdsList);
+    }
     Util.printInfo("Refund URL: " + baseUrl);
     Util.printInfo("Request Body: " + requestParams.toJSONString());
     Response response = RestAssured.given().headers(header).body(requestParams.toJSONString()).post(baseUrl);
@@ -621,10 +627,10 @@ public class PelicanTestBase {
         .withTimeout(Duration.ofMinutes(30L))
         .pollingEvery(Duration.ofMinutes(5L))
         .until(input -> {
-          Util.printInfo("Polling purchase order V4 API until order status is REFUNDED");
+          Util.printInfo("Polling purchase order V4 API until order status is REFUNDED or PARTIALLY_REFUNDED");
           return Optional.of(getPurchaseOrderV4(input))
               .map(JsonPath::new)
-              .filter(jsonPath -> jsonPath.get("orderState").toString().equals("REFUNDED"))
+              .filter(jsonPath -> jsonPath.get("orderState").toString().contains(BICECEConstants.REFUNDED))
               .orElse(null);
         });
   }
@@ -647,13 +653,13 @@ public class PelicanTestBase {
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
     header.put(BICECEConstants.ACCEPT, Content_Type);
 
-    Response response = createRefundOrder(getPurchaseOrderDetailsUrl, header);
+    Response response = createRefundOrder(getPurchaseOrderDetailsUrl, header, new ArrayList<>());
     String result = response.getBody().asString();
     Util.PrintInfo(BICECEConstants.RESULT + result);
   }
 
   @Step("Refund O2P Orders" + GlobalConstants.TAG_TESTINGHUB)
-  public void createRefundOrderV4(HashMap<String, String> data) {
+  public void createRefundOrderV4(HashMap<String, String> data, List<Integer> lineItemIdsList) {
     String refundPurchaseOrderUrl = data.get("putPelicanRefundOrderV4Url");
     String refundPurchaseOrderV4Url = addTokenInResourceUrl(refundPurchaseOrderUrl,
         data.get(BICConstants.orderNumber));
@@ -669,7 +675,28 @@ public class PelicanTestBase {
     header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
     header.put(BICECEConstants.ACCEPT, Content_Type);
 
-    Response response = createRefundOrder(refundPurchaseOrderV4Url, header);
+    Response response = createRefundOrder(refundPurchaseOrderV4Url, header, lineItemIdsList);
+    String result = response.getBody().asString();
+  }
+
+  @Step("Partial Refund O2P Orders" + GlobalConstants.TAG_TESTINGHUB)
+  public void createPartialRefundOrderV4(HashMap<String, String> data) {
+    String refundPurchaseOrderUrl = data.get("putPelicanRefundOrderV4Url");
+    String refundPurchaseOrderV4Url = addTokenInResourceUrl(refundPurchaseOrderUrl,
+            data.get(BICConstants.orderNumber));
+    Util.printInfo("Order Service Refund Url : " + refundPurchaseOrderV4Url);
+    String Content_Type = BICECEConstants.APPLICATION_JSON;
+    PelicanSignature signature = requestSigner.generateSignature();
+
+    Map<String, String> header = new HashMap<>();
+    header.put("x-e2-hmac-signature", signature.xE2HMACSignature);
+    header.put("x-e2-partnerid", signature.xE2PartnerId);
+    header.put("x-e2-appfamilyid", signature.xE2AppFamilyId);
+    header.put("x-e2-hmac-timestamp", signature.xE2HMACTimestamp);
+    header.put(BICECEConstants.CONTENT_TYPE, Content_Type);
+    header.put(BICECEConstants.ACCEPT, Content_Type);
+
+    Response response = createRefundOrder(refundPurchaseOrderV4Url, header, new ArrayList<>());
     String result = response.getBody().asString();
 
   }
@@ -849,6 +876,31 @@ public class PelicanTestBase {
       Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service V4 API" + e.getMessage());
     }
     return results;
+  }
+
+  @Step("Order Service : Get line item details " + GlobalConstants.TAG_TESTINGHUB)
+  public List<LineItemDTO> getLineItemDetailsForMultiLineOrder(String poResponse, int numberOfLineItems) {
+    HashMap<String, String> results = new HashMap<>();
+    JsonPath jsonPath = new JsonPath(poResponse);
+    List<LineItemDTO> list = new ArrayList<>();
+    try {
+      results.put(BICECEConstants.ORDER_ID, jsonPath.get("id").toString());
+      for (int i = 0; i < numberOfLineItems; i++) {
+        String lineItem = String.format("lineItems[%s].", i);
+        LineItemDTO dto = LineItemDTO.builder().lineItemid(jsonPath.get(lineItem + "id").toString())
+                .subscriptionId(jsonPath.get(lineItem + "subscriptionInfo.subscriptionId").toString())
+                .state(jsonPath.get(lineItem + "state").toString())
+                .offeringId(jsonPath.get(lineItem + "offering.id").toString())
+                .purchaseOrderId(jsonPath.get("id").toString()).build();
+        list.add(dto);
+      }
+    } catch (NullPointerException e) {
+      Util.printTestFailedMessage("Number of line items are not correct in po response." + e.getMessage());
+      AssertUtils.fail("Number of line items are not correct in po response.");
+    } catch (Exception e) {
+      Util.printTestFailedMessage("Unable to get Purchase Order Details from Order Service V4 API" + e.getMessage());
+    }
+    return list;
   }
 
   public String addTokenInResourceUrl(String resourceUrl, String tokenString) {

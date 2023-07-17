@@ -4,6 +4,7 @@ import com.autodesk.eceapp.constants.BICECEConstants;
 import com.autodesk.eceapp.dto.IProductDetails;
 import com.autodesk.eceapp.dto.impl.ProductDetails;
 import com.autodesk.eceapp.dto.impl.PurchaserDetails;
+import com.autodesk.eceapp.dto.purchaseOrder.v4.LineItemDTO;
 import com.autodesk.eceapp.fixtures.CustomerBillingDetails;
 import com.autodesk.eceapp.fixtures.OxygenUser;
 import com.autodesk.eceapp.testbase.EceBICTestBase;
@@ -30,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -226,7 +228,7 @@ public class DirectOrder extends ECETestBase {
         subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     // Refund PurchaseOrder details from pelican
-    pelicantb.createRefundOrderV4(results);
+    pelicantb.createRefundOrderV4(results, new ArrayList<>());
 
     // Adyen delays in IPN response is causing test failures. Until the issue is
     // resolved lets
@@ -335,7 +337,7 @@ public class DirectOrder extends ECETestBase {
         subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
 
     // Refund PurchaseOrder details from pelican
-    pelicantb.createRefundOrderV4(results);
+    pelicantb.createRefundOrderV4(results, new ArrayList<>());
 
     // Adyen delays in IPN response is causing test failures. Until the issue is
     // resolved lets
@@ -619,7 +621,7 @@ public class DirectOrder extends ECETestBase {
         user.emailID,
         user.password, results.get(BICECEConstants.SUBSCRIPTION_ID));
 
-    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> testResults = new HashMap<>();
     try {
       testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
       testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
@@ -642,5 +644,88 @@ public class DirectOrder extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  @Test(groups = {"partial-refund-multiline-order"}, description = "Validation of refund Direct O2P SUS Order")
+  public void validatePartialRefundMultilineDirectOrder() throws MetadataException {
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectThreeYearSubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+    dotcomTestBase.navigateToDotComPage(productName);
+    dotcomTestBase.selectYearlySubscription();
+    dotcomTestBase.subscribeAndAddToCart(testDataForEachMethod);
+
+    getBicTestBase().setStorageData();
+    checkoutTestBase.clickOnContinueButton();
+    getBicTestBase().createBICAccount(user.names, user.emailID, user.password, false);
+    getBicTestBase().enterCustomerDetails(billingDetails.address);
+    getBicTestBase().selectPaymentProfile(testDataForEachMethod, billingDetails.paymentCardDetails,
+            billingDetails.address);
+    getBicTestBase().clickOnContinueBtn(billingDetails.paymentMethod);
+    getBicTestBase().submitOrder(testDataForEachMethod);
+    //get purchase order number
+    String orderNumber = getBicTestBase().getOrderNumber(testDataForEachMethod);
+    testDataForEachMethod.put(BICECEConstants.orderNumber, orderNumber);
+
+    //Get line item details along with subscription id
+    HashMap<String, String> results = new HashMap<>(testDataForEachMethod);
+    List<LineItemDTO> lineItemDetailsBeforeRefund = pelicantb.getLineItemDetailsForMultiLineOrder(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod), 2);
+
+    // Refund one line item from multi line order
+    List<Integer> lineItemRefundedList = new ArrayList<>();
+    String refundedLineItemId = lineItemDetailsBeforeRefund.get(0).getLineItemid();
+    String refundedSubscriptionId = lineItemDetailsBeforeRefund.get(0).getSubscriptionId();
+    String nonRefundedSubscriptionId = lineItemDetailsBeforeRefund.get(1).getSubscriptionId();
+    lineItemRefundedList.add(Integer.valueOf(refundedLineItemId));
+    pelicantb.createRefundOrderV4(results, lineItemRefundedList);
+
+    // Getting PurchaseOrder details after refund from pelican
+    JsonPath poAfterRefundJson = pelicantb.getRefundedPurchaseOrderV4WithPolling(results);
+    //Get line item details after refund
+    List<LineItemDTO> lineItemDetailsAfterRefund = pelicantb.getLineItemDetailsForMultiLineOrder(poAfterRefundJson.prettify(), 2);
+
+    results.put("refund_orderState", poAfterRefundJson.get("orderState").toString());
+    results.put("refund_fulfillmentStatus", poAfterRefundJson.get("fulfillmentStatus"));
+
+    // Verify that Order status is Partially Refunded
+    AssertUtils.assertEquals("Order status is NOT PARTIALLY REFUNDED", results.get("refund_orderState"), BICECEConstants.PARTIALLY_REFUNDED);
+
+    //Refunded Line item validation
+    //Get Subscription to check if refunded Subscription is in Terminated status
+    results.putAll(subscriptionServiceV4Testbase.getSubscriptionById(refundedSubscriptionId));
+    //verify that subscription with refunded line item id is terminated
+    AssertUtils.assertEquals("Subscription is TERMINATED", results.get("response_status"),
+            BICECEConstants.TERMINATED);
+    //Verify that refunded line item status is refunded
+    AssertUtils.assertEquals("Line item is Refunded", lineItemDetailsAfterRefund.get(0).getState(),
+            BICECEConstants.REFUNDED);
+
+    //Non Refunded Line item validation
+    //verify that subscription with non refunded line item id is Active
+    AssertUtils.assertEquals("Subscription is ACTIVE", subscriptionServiceV4Testbase.getSubscriptionById(nonRefundedSubscriptionId).get("response_status"),
+            BICECEConstants.ACTIVE);
+    //Verify that non refunded line item status is CHARGED
+    AssertUtils.assertEquals("Line item is Charged", lineItemDetailsAfterRefund.get(1).getState(),
+            BICECEConstants.CHARGED);
+
+    HashMap<String, String> testResults = new HashMap<>();
+    try {
+      testResults.put(BICConstants.emailid, results.get(BICConstants.emailid));
+      testResults.put(BICConstants.orderNumber, results.get(BICECEConstants.ORDER_ID));
+      testResults.put(BICConstants.orderState, results.get(BICECEConstants.ORDER_STATE));
+      testResults
+              .put(BICConstants.fulfillmentStatus, results.get(BICECEConstants.FULFILLMENT_STATUS));
+      testResults.put(BICConstants.fulfillmentDate, results.get(BICECEConstants.FULFILLMENT_DATE));
+      testResults.put(BICConstants.subscriptionId, results.get(BICECEConstants.SUBSCRIPTION_ID));
+      testResults.put(BICConstants.subscriptionPeriodStartDate,
+              results.get(BICECEConstants.SUBSCRIPTION_PERIOD_START_DATE));
+      testResults.put(BICConstants.subscriptionPeriodEndDate,
+              results.get(BICECEConstants.SUBSCRIPTION_PERIOD_END_DATE));
+      testResults.put(BICConstants.nextBillingDate, results.get(BICECEConstants.NEXT_BILLING_DATE));
+      testResults
+              .put(BICConstants.payment_ProfileId, results.get(BICECEConstants.PAYMENT_PROFILE_ID));
+    } catch (Exception e) {
+      Util.printTestFailedMessage(BICECEConstants.TESTINGHUB_UPDATE_FAILURE_MESSAGE);
+    }
+    updateTestingHub(testResults);
+  }
 
 }

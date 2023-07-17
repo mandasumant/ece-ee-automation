@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ArrayList;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -844,7 +845,7 @@ public class BICQuoteOrder extends ECETestBase {
     }
 
     // Refund PurchaseOrder details from pelican
-    pelicantb.createRefundOrderV4(results);
+    pelicantb.createRefundOrderV4(results, new ArrayList<>());
 
     // Adyen delays in IPN response is causing test failures. Until the issue is
     // resolved lets

@@ -290,4 +290,8 @@ public class BICECEConstants extends BICConstants {
   public static final String THREE_YEAR = "3-YEAR";
 
   public static final String TERMINATED = "TERMINATED";
+  public static final String REFUNDED = "REFUNDED";
+  public static final String ACTIVE = "ACTIVE";
+  public static final String CHARGED = "CHARGED";
+  public static final String PARTIALLY_REFUNDED = "PARTIALLY_REFUNDED";
 }

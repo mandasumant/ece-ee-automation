@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="O2P-Subscription-Suspend" type="Application" factoryName="Application" folderName="DirectOrder">
+  <configuration default="false" name="DirectOrder-Subscription-Suspend" type="Application" factoryName="Application" folderName="DirectOrder">
     <option name="ALTERNATIVE_JRE_PATH" value="17" />
     <option name="MAIN_CLASS_NAME" value="com.autodesk.testinghub.core.base.TestExecutionRunner" />
     <module name="ece" />

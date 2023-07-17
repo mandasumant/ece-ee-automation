@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
@@ -595,7 +596,7 @@ public class QuoteOrder extends ECETestBase {
     pelicantb.validateQuoteDetailsWithPelican(testDataForEachMethod, results, address);
 
     // Refund PurchaseOrder details from pelican
-    pelicantb.createRefundOrderV4(results);
+    pelicantb.createRefundOrderV4(results, new ArrayList<>());
 
     // Adyen delays in IPN response is causing test failures. Until the issue is
     // resolved lets
