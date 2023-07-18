@@ -7,12 +7,17 @@ import com.autodesk.eceapp.testbase.ece.DatastoreClient;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderData;
 import com.autodesk.eceapp.testbase.ece.DatastoreClient.OrderFilters;
 import com.autodesk.eceapp.testbase.ece.ECETestBase;
+import com.autodesk.eceapp.testbase.ece.PelicanTestBase;
 import com.autodesk.eceapp.utilities.ResourceFileLoader;
 import com.autodesk.testinghub.core.utils.AssertUtils;
 import com.autodesk.testinghub.core.utils.NetworkLogs;
 import com.autodesk.testinghub.core.utils.ProtectedConfigFile;
+import com.autodesk.testinghub.core.utils.Util;
 import com.autodesk.testinghub.eseapp.constants.BICConstants;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -198,6 +203,111 @@ public class PayInvoice extends ECETestBase {
     updateTestingHub(testResults);
   }
 
+  @Test(groups = {"renew-loc-subscription"}, description = "Validate Pay Invoice")
+  public void validateLOCRenewal() throws Exception {
+    HashMap<String, String> testResults = new HashMap<String, String>();
+    HashMap<String, String> results = new HashMap<String, String>();
+    Boolean isLoggedOut = true;
+    Integer attempt = 0;
+
+    String scenario = "";
+    if ((StringUtils.trimToNull(System.getProperty(BICECEConstants.SCENARIO)) != null)) {
+      scenario = System.getProperty(BICECEConstants.SCENARIO).trim();
+    } else {
+      AssertUtils.fail("Scenario is required to run Pay Invoice flow.");
+    }
+
+    loadInvoiceDataFromP78(scenario, testDataForEachMethod);
+
+    results.putAll(testDataForEachMethod);
+
+    if (results.containsKey(BICConstants.orderNumber) && results.get(BICConstants.orderNumber) != null) {
+      results.put(BICECEConstants.ORDER_ID, results.get(BICConstants.orderNumber));
+    }
+
+    if (testDataForEachMethod.get(BICECEConstants.PAYMENT_TYPE).equals(BICECEConstants.LOC)) {
+      String paymentType = System.getProperty(BICECEConstants.NEW_PAYMENT_TYPE) != null ? System.getProperty(
+          BICECEConstants.NEW_PAYMENT_TYPE)
+          : System.getProperty(BICECEConstants.STORE).equalsIgnoreCase("STORE-NAMER")
+              ? BICECEConstants.VISA
+              : BICECEConstants.CREDITCARD;
+      testDataForEachMethod.put(BICECEConstants.PAYMENT_TYPE, paymentType);
+      System.setProperty(BICECEConstants.PAYMENT, paymentType);
+
+      //For purchaser as Payer test cases we need to update the Payer email address for login.
+      if (!testDataForEachMethod.containsKey(BICECEConstants.PAYER_EMAIL)
+          || testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL) == null) {
+        testDataForEachMethod.put(BICECEConstants.PAYER_EMAIL, testDataForEachMethod.get(BICConstants.emailid));
+      }
+      while (isLoggedOut) {
+        attempt++;
+        if (attempt > 5) {
+          Assert.fail("Retries Exhausted: Payment of Invoice failed because Session issues. Check Screenshots!");
+        }
+
+        portaltb.loginToAccountPortal(testDataForEachMethod, testDataForEachMethod.get(BICECEConstants.PAYER_EMAIL),
+            PASSWORD);
+
+        portaltb.selectInvoiceAndValidateCreditMemoWithoutPONumber(
+            false, testDataForEachMethod.get(BICECEConstants.LOCALE));
+        isLoggedOut = portaltb.payInvoice(testDataForEachMethod);
+      }
+
+      results.putAll(pelicantb.getPurchaseOrderV4Details(pelicantb.retryO2PGetPurchaseOrder(testDataForEachMethod)));
+      results.putAll(
+          subscriptionServiceV4Testbase.getSubscriptionById(results.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+
+      testDataForEachMethod.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+          testResults.get(BICConstants.subscriptionId));
+
+      //Update Subscription Next renewal date
+      pelicantb.updateO2PSubscriptionDates(testDataForEachMethod);
+
+      // Trigger the Pelican renewal job to renew the subscription
+      triggerPelicanRenewalJob(testResults);
+
+      testResults.put(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID,
+          testResults.get(BICConstants.subscriptionId));
+
+      // Get the subscription in pelican to check if it has renewed
+      testResults.putAll(subscriptionServiceV4Testbase.getSubscriptionById(
+          testResults.get(BICECEConstants.GET_POREPONSE_SUBSCRIPTION_ID)));
+
+      try {
+        // Ensure that the subscription renews in the future
+        String nextBillingDateString = testResults.get(BICECEConstants.NEXT_RENEWAL_DATE);
+        Util.printInfo("New Billing Date: " + nextBillingDateString);
+        Date newBillingDate = new SimpleDateFormat(BICECEConstants.DATE_FORMAT).parse(
+            nextBillingDateString);
+        org.testng.Assert.assertTrue(newBillingDate.after(new Date()),
+            "Check that the O2P subscription has been renewed");
+
+        AssertUtils
+            .assertEquals("The billing date has been updated to next cycle ",
+                testResults.get(BICECEConstants.NEXT_RENEWAL_DATE).split("\\s")[0],
+                Util.customDate("MM/dd/yyyy", 0, -5, +1));
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+
+
+    } else {
+      Assert.fail("NON LOC Orders Do NOT have Pay Invoice Flow!!!");
+    }
+
+    if (getBicTestBase().shouldValidateSAP()) {
+      portaltb.validateBICOrderTaxInvoice(results);
+    }
+
+    if (testDataForEachMethod.containsKey("DS_ORDER_ID")) {
+      int orderId = Integer.parseInt(testDataForEachMethod.get("DS_ORDER_ID"));
+      DatastoreClient dsClient = new DatastoreClient();
+      dsClient.completeOrder(orderId);
+    }
+
+    updateTestingHub(testResults);
+  }
+
   private void loadInvoiceDataFromP78(String scenario, LinkedHashMap<String, String> testDataForEachMethod) {
     DatastoreClient dsClient = new DatastoreClient();
     OrderFilters.OrderFiltersBuilder builder = OrderFilters.builder();
@@ -238,6 +348,13 @@ public class PayInvoice extends ECETestBase {
       AssertUtils.fail("Failed to fetch data from P78, for Pay Invoice");
     }
 
+  }
+
+  private void triggerPelicanRenewalJob(HashMap<String, String> results) {
+    PelicanTestBase pelicanTB = new PelicanTestBase();
+    pelicanTB.renewSubscription(results);
+    // Wait for the Pelican job to complete
+    Util.sleep(600000);
   }
 
 
